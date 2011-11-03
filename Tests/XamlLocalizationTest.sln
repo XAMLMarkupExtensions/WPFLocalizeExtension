@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XamlLocalizationTest", "XamlLocalizationTest\XamlLocalizationTest.csproj", "{F2E7E31D-6EDD-4A3D-92E5-2577BF76D003}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResourceAssembly", "ResourceAssembly\ResourceAssembly.csproj", "{B76576C2-D09F-417A-AEE3-47F31210DF14}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPFLocalizeExtension", "..\WPFLocalizeExtension\WPFLocalizeExtension.csproj", "{E8C5B094-2CB4-4C26-87F0-351B03612179}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencies", "{7141B014-FF60-4105-B88C-9812838D6D0D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F2E7E31D-6EDD-4A3D-92E5-2577BF76D003}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2E7E31D-6EDD-4A3D-92E5-2577BF76D003}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2E7E31D-6EDD-4A3D-92E5-2577BF76D003}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2E7E31D-6EDD-4A3D-92E5-2577BF76D003}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B76576C2-D09F-417A-AEE3-47F31210DF14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B76576C2-D09F-417A-AEE3-47F31210DF14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B76576C2-D09F-417A-AEE3-47F31210DF14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B76576C2-D09F-417A-AEE3-47F31210DF14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8C5B094-2CB4-4C26-87F0-351B03612179}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8C5B094-2CB4-4C26-87F0-351B03612179}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8C5B094-2CB4-4C26-87F0-351B03612179}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8C5B094-2CB4-4C26-87F0-351B03612179}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E8C5B094-2CB4-4C26-87F0-351B03612179} = {7141B014-FF60-4105-B88C-9812838D6D0D}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,33 @@
+﻿<Window x:Class="XamlLocalizationTest.Window2"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:lex="http://schemas.root-project.org/xaml/presentation"
+    Title="Window2" Height="300" Width="300">
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type sys:String}" x:Key="DataTemplate1">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="{lex:LocText Key=resBack, Dict=ResTexts, Assembly=XamlLocalizationTest}" />
+                <ContentPresenter Content="{TemplateBinding Content}" Margin="10,0,0,0" />
+            </StackPanel>
+        </DataTemplate>
+    </Window.Resources>
+    <StackPanel>
+        <TextBlock Text="{lex:LocText Key=resBack, Dict=ResTexts, Assembly=XamlLocalizationTest}" />
+        <ContentPresenter ContentTemplate="{StaticResource DataTemplate1}">
+            <ContentPresenter.Content>
+                <sys:String>Hello 1!</sys:String>
+            </ContentPresenter.Content>
+        </ContentPresenter>
+        <ContentPresenter ContentTemplate="{StaticResource DataTemplate1}">
+            <ContentPresenter.Content>
+                <sys:String>Hello 2!</sys:String>
+            </ContentPresenter.Content>
+        </ContentPresenter>
+        <ContentPresenter ContentTemplate="{StaticResource DataTemplate1}">
+            <ContentPresenter.Content>
+                <sys:String>Hello 3!</sys:String>
+            </ContentPresenter.Content>
+        </ContentPresenter>
+    </StackPanel>
+</Window>
