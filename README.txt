@@ -34,3 +34,6 @@ Features:
 Homepage:
     http://wpflocalizeextension.codeplex.com/
     http://root-project.org/
+
+NuGet Package:
+    https://nuget.org/packages/WpfLocalizeExtension/
