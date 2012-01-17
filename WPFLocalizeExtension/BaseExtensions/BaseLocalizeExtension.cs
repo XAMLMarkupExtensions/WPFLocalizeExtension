@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Markup;
 using WPFLocalizeExtension.Engine;
+using System.Linq;
 
 namespace WPFLocalizeExtension.BaseExtensions
 {
@@ -89,8 +90,22 @@ namespace WPFLocalizeExtension.BaseExtensions
         {
             get
             {
-                return this.assembly ??
-                       LocalizeDictionary.Instance.GetAssemblyName(System.Reflection.Assembly.GetExecutingAssembly());
+                // Get the last loaded default assembly - this is needed during design time and at startup.
+                string defaultAssembly = LocalizeDictionary.Instance.DefAssembly;
+
+                // If there is a DependencyObject in the targets list, then try to get the inheritet value of the dependency property.
+                if (targetObjects != null)
+                {
+                    var targets = (from o in targetObjects.Keys
+                                   where typeof(DependencyObject).IsAssignableFrom(o.Target.GetType())
+                                   select o.Target as DependencyObject).ToList();
+
+                    if (targets.Count > 0)
+                        defaultAssembly = LocalizeDictionary.GetDefaultAssembly(targets[0]) ?? defaultAssembly;
+                }
+
+                // Return the assembly that was parsed or the default assembly.
+                return this.assembly ?? defaultAssembly;
             }
 
             set { this.assembly = !string.IsNullOrEmpty(value) ? value : null; }
@@ -98,7 +113,7 @@ namespace WPFLocalizeExtension.BaseExtensions
 
         /// <summary>
         /// Gets the current value.
-        /// This property has only a value, if the <c>BaseLocalizeExtension</c> is binded to a target.
+        /// This property has only a value, if the <c>BaseLocalizeExtension</c> is bound to a target.
         /// </summary>
         /// <value>The current value.</value>
         public TValue CurrentValue
@@ -125,7 +140,25 @@ namespace WPFLocalizeExtension.BaseExtensions
         /// </summary>
         public string Dict
         {
-            get { return this.dict ?? LocalizeDictionary.ResourcesName; }
+            get
+            {
+                // Get the last loaded default dictionary - this is needed during design time and at startup.
+                string defaultDictionary = LocalizeDictionary.Instance.DefDictionary;
+
+                // If there is a DependencyObject in the targets list, then try to get the inheritet value of the dependency property.
+                if (targetObjects != null)
+                {
+                    var targets = (from o in targetObjects.Keys
+                                   where typeof(DependencyObject).IsAssignableFrom(o.Target.GetType())
+                                   select o.Target as DependencyObject).ToList();
+
+                    if (targets.Count > 0)
+                        defaultDictionary = LocalizeDictionary.GetDefaultDictionary(targets[0]) ?? defaultDictionary;
+                }
+
+                // Return the dictionary that was parsed or the default assembly.
+                return this.dict ?? defaultDictionary;
+            }
 
             set { this.dict = !string.IsNullOrEmpty(value) ? value : null; }
         }

@@ -22,6 +22,26 @@ namespace WPFLocalizeExtension.Engine
     public sealed class LocalizeDictionary : DependencyObject
     {
         /// <summary>
+        /// <see cref="DependencyProperty"/> DefaultDictionary to set the fallback resource dictionary.
+        /// </summary>
+        public static readonly DependencyProperty DefaultDictionaryProperty =
+            DependencyProperty.RegisterAttached(
+            "DefaultDictionary",
+            typeof(string),
+            typeof(LocalizeDictionary),
+            new FrameworkPropertyMetadata(ResourcesName, FrameworkPropertyMetadataOptions.Inherits, SetDictionaryFromDependencyProperty));
+
+        /// <summary>
+        /// <see cref="DependencyProperty"/> DefaultAssembly to set the fallback assembly.
+        /// </summary>
+        public static readonly DependencyProperty DefaultAssemblyProperty =
+            DependencyProperty.RegisterAttached(
+            "DefaultAssembly",
+            typeof(string),
+            typeof(LocalizeDictionary),
+            new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.Inherits, SetAssemblyFromDependencyProperty));
+        
+        /// <summary>
         /// <see cref="DependencyProperty"/> DesignCulture to set the Culture.
         /// Only supported at DesignTime.
         /// </summary>
@@ -66,6 +86,16 @@ namespace WPFLocalizeExtension.Engine
         /// Holds the current chosen <see cref="CultureInfo"/>
         /// </summary>
         private CultureInfo culture;
+
+        /// <summary>
+        /// Holds the default dictionary if specified by the corresponding dependency property.
+        /// </summary>
+        public string DefDictionary { get; private set; }
+
+        /// <summary>
+        /// Holds the default assembly if specified by the corresponding dependency property.
+        /// </summary>
+        public string DefAssembly { get; private set; }
 
         /// <summary>
         /// Prevents a default instance of the <see cref="LocalizeDictionary"/> class from being created.
@@ -189,6 +219,26 @@ namespace WPFLocalizeExtension.Engine
         }
 
         /// <summary>
+        /// Getter of <see cref="DependencyProperty"/> default dictionary.
+        /// </summary>
+        /// <param name="obj">The dependency object to get the default dictionary from.</param>
+        /// <returns>The default dictionary.</returns>
+        public static string GetDefaultDictionary(DependencyObject obj)
+        {
+            return (obj != null) ? (string)obj.GetValue(DefaultDictionaryProperty) : null;
+        }
+
+        /// <summary>
+        /// Getter of <see cref="DependencyProperty"/> default assembly.
+        /// </summary>
+        /// <param name="obj">The dependency object to get the default assembly from.</param>
+        /// <returns>The default assembly.</returns>
+        public static string GetDefaultAssembly(DependencyObject obj)
+        {
+            return (obj != null) ? (string)obj.GetValue(DefaultAssemblyProperty) : null;
+        }
+
+        /// <summary>
         /// Getter of <see cref="DependencyProperty"/> Culture.
         /// Only supported at DesignTime.
         /// If its in Runtime, <see cref="LocalizeDictionary"/>.Culture will be returned.
@@ -259,6 +309,26 @@ namespace WPFLocalizeExtension.Engine
                     throw new ArgumentNullException("inKey");
                 }
             }
+        }
+
+        /// <summary>
+        /// Setter of <see cref="DependencyProperty"/> default dictionary.
+        /// </summary>
+        /// <param name="obj">The dependency object to set the default dictionary to.</param>
+        /// <param name="value">The dictionary.</param>
+        public static void SetDefaultDictionary(DependencyObject obj, string value)
+        {
+            obj.SetValue(DefaultDictionaryProperty, value);
+        }
+
+        /// <summary>
+        /// Setter of <see cref="DependencyProperty"/> default assembly.
+        /// </summary>
+        /// <param name="obj">The dependency object to set the default assembly to.</param>
+        /// <param name="value">The assembly.</param>
+        public static void SetDefaultAssembly(DependencyObject obj, string value)
+        {
+            obj.SetValue(DefaultAssemblyProperty, value);
         }
 
         /// <summary>
@@ -408,6 +478,7 @@ namespace WPFLocalizeExtension.Engine
                 }
                 else
                 {
+                    return null;
                     throw;
                 }
             }
@@ -509,6 +580,7 @@ namespace WPFLocalizeExtension.Engine
             }
         }
 
+        #region Dependency Property Callbacks
         /// <summary>
         /// Callback function. Used to set the <see cref="LocalizeDictionary"/>.Culture if set in Xaml.
         /// Only supported at DesignTime.
@@ -527,7 +599,7 @@ namespace WPFLocalizeExtension.Engine
 
             try
             {
-                culture = CultureInfo.GetCultureInfo((string) args.NewValue);
+                culture = CultureInfo.GetCultureInfo((string)args.NewValue);
             }
             catch
             {
@@ -546,6 +618,51 @@ namespace WPFLocalizeExtension.Engine
                 Instance.Culture = culture;
             }
         }
+
+        /// <summary>
+        /// Callback function. Used to set the <see cref="LocalizeDictionary"/>.DefaultDictionary if set in Xaml.
+        /// </summary>
+        /// <param name="obj">The dependency object.</param>
+        /// <param name="args">The event argument.</param>
+        private static void SetDictionaryFromDependencyProperty(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+        {
+            try
+            {
+                Instance.DefDictionary = (string)args.NewValue;
+
+                if (Instance.OnCultureChanged != null)
+                {
+                    Instance.OnCultureChanged();
+                }
+            }
+            catch
+            {
+                Instance.DefDictionary = null;
+            }
+        }
+
+        /// <summary>
+        /// Callback function. Used to set the <see cref="LocalizeDictionary"/>.DefaultAssembly if set in Xaml.
+        /// </summary>
+        /// <param name="obj">The dependency object.</param>
+        /// <param name="args">The event argument.</param>
+        private static void SetAssemblyFromDependencyProperty(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+        {
+            try
+            {
+                Instance.DefAssembly = (string)args.NewValue;
+
+                if (Instance.OnCultureChanged != null)
+                {
+                    Instance.OnCultureChanged();
+                }
+            }
+            catch
+            {
+                Instance.DefAssembly = null;
+            }
+        } 
+        #endregion
 
         /// <summary>
         /// Looks up in the cached <see cref="ResourceManager"/> list for the searched <see cref="ResourceManager"/>.
@@ -693,6 +810,7 @@ namespace WPFLocalizeExtension.Engine
             return resManager;
         }
 
+        #region WeakCultureChangedEventManager
         /// <summary>
         /// This in line class is used to handle weak events to avoid memory leaks
         /// </summary>
@@ -729,7 +847,7 @@ namespace WPFLocalizeExtension.Engine
                     Type managerType = typeof(WeakCultureChangedEventManager);
 
                     // try to retrieve an existing instance of the stored type
-                    WeakCultureChangedEventManager manager = (WeakCultureChangedEventManager) GetCurrentManager(managerType);
+                    WeakCultureChangedEventManager manager = (WeakCultureChangedEventManager)GetCurrentManager(managerType);
 
                     // if the manager does not exists
                     if (manager == null)
@@ -833,6 +951,7 @@ namespace WPFLocalizeExtension.Engine
                     }
                 }
             }
-        }
+        } 
+        #endregion
     }
 }
