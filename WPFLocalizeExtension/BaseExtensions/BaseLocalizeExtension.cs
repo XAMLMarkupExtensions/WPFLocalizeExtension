@@ -312,8 +312,8 @@ namespace WPFLocalizeExtension.BaseExtensions
             object localizedObject = LocalizeDictionary.Instance.GetLocalizedObject<object>(
                 this.Assembly, this.Dict, this.Key, targetCulture);
 
-            // check if the found localized object is type of TValue
-            if (localizedObject is TValue)
+            // check if the found localized object can be converted with this extension
+            if (this.CanProvideValue(localizedObject.GetType()))
             {
                 // format the localized object
                 object formattedOutput = this.FormatOutput(localizedObject);
@@ -500,6 +500,16 @@ namespace WPFLocalizeExtension.BaseExtensions
         /// <param name="input">The object that will be modified</param>
         /// <returns>Returns the modified object</returns>
         protected abstract object FormatOutput(object input);
+
+        /// <summary>
+        /// Determines whether this instance can provide a value for the specified resource type.
+        /// </summary>
+        /// <param name="resourceType">Type of the resource.</param>
+        /// <returns><c>true</c> if instance can provide a value for the specified resource type; otherwise, <c>false</c>.</returns>
+        protected virtual bool CanProvideValue(Type resourceType)
+        {
+            return true;
+        }
 
         /// <summary>
         /// If Culture property defines a valid <see cref="CultureInfo"/>, a <see cref="CultureInfo"/> instance will get

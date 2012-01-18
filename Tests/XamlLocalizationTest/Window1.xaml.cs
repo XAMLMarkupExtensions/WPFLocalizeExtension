@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 using WPFLocalizeExtension.Engine;
 using WPFLocalizeExtension.Extensions;
 
@@ -181,6 +182,14 @@ namespace XamlLocalizationTest
                 .SetBinding(this.txtSizeLower, TextBlock.TextProperty);
 
             this.DoBindingTest();
+
+            this.CheckBitmapResolving();
+        }
+
+        private void CheckBitmapResolving()
+        {
+            BitmapSource bmp;
+            bool success = new LocImageExtension { Key = "ImageTest", Dict = "ResTexts", Assembly = "XamlLocalizationTest" }.ResolveLocalizedValue(out bmp);
         }
     }
 }
