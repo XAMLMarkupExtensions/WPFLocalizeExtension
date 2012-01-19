@@ -49,8 +49,8 @@ namespace WPFLocalizeExtension.Extensions
             {
                 return obj;
             }
-            
-            if (obj.GetType().Equals(typeof(System.Drawing.Bitmap)))
+
+            if (this.CanProvideValue(obj.GetType()))
             {
                 return this.FormatOutput(obj);
             }
@@ -60,6 +60,16 @@ namespace WPFLocalizeExtension.Extensions
                     "ResourceKey '{0}' returns '{1}' which is not type of System.Drawing.Bitmap",
                     this.Key,
                     obj.GetType().FullName));
+        }
+
+        /// <summary>
+        /// Determines whether this instance can provide a value for the specified resource type.
+        /// </summary>
+        /// <param name="resourceType">Type of the resource.</param>
+        /// <returns><c>true</c> if instance can provide a value for the specified resource type; otherwise, <c>false</c>.</returns>
+        protected override bool CanProvideValue(Type resourceType)
+        {
+            return resourceType != null && resourceType.Equals(typeof(System.Drawing.Bitmap));
         }
 
         /// <summary>

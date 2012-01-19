@@ -49,8 +49,8 @@ namespace WPFLocalizeExtension.Extensions
             {
                 return obj;
             }
-            
-            if (obj.GetType().Equals(typeof(string)))
+
+            if (this.CanProvideValue(obj.GetType()))
             {
                 // dont call GetLocalizedText at this point, otherwise you will get prefix and suffix twice appended
                 return obj;
