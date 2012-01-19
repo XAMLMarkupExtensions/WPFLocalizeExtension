@@ -82,11 +82,26 @@ namespace WPFLocalizeExtension.BaseExtensions
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private DependencyObject GetTarget()
+        private KeyValuePair<WeakReference, object> GetTargetKVP()
         {
-            return (from o in targetObjects.Keys
-                    where (o.Target != null) && typeof(DependencyObject).IsAssignableFrom(o.Target.GetType())
-                    select o.Target as DependencyObject).FirstOrDefault();
+            return (from o in targetObjects
+                    where (o.Key.Target != null) && typeof(DependencyObject).IsAssignableFrom(o.Key.Target.GetType())
+                    select o).FirstOrDefault();
+        }
+
+        protected DependencyObject GetTargetObject()
+        {
+            var key = GetTargetKVP().Key;
+
+            if (key == null)
+                return null;
+
+            return key.Target as DependencyObject;
+        }
+
+        protected object GetTargetProperty()
+        {
+            return GetTargetKVP().Value;
         }
 
         /// <summary>
@@ -103,10 +118,17 @@ namespace WPFLocalizeExtension.BaseExtensions
                 // If there is a DependencyObject in the targets list, then try to get the inheritet value of the dependency property.
                 if (targetObjects != null)
                 {
-                    var target = GetTarget();
+                    var target = GetTargetObject();
 
-                    if (target != null)
-                        defaultAssembly = LocalizeDictionary.GetDefaultAssembly(target) ?? defaultAssembly;
+                    while (target != null)
+                    {
+                        defaultAssembly = LocalizeDictionary.GetDefaultAssembly(target);
+
+                        if (String.IsNullOrEmpty(defaultAssembly))
+                            target = LogicalTreeHelper.GetParent(target);
+                        else
+                            target = null;
+                    }
                 }
 
                 // Return the assembly that was parsed or the default assembly.
@@ -153,10 +175,17 @@ namespace WPFLocalizeExtension.BaseExtensions
                 // If there is a DependencyObject in the targets list, then try to get the inheritet value of the dependency property.
                 if (targetObjects != null)
                 {
-                    var target = GetTarget();
+                    var target = GetTargetObject();
 
-                    if (target != null)
-                        defaultDictionary = LocalizeDictionary.GetDefaultDictionary(target) ?? defaultDictionary;
+                    while (target != null)
+                    {
+                        defaultDictionary = LocalizeDictionary.GetDefaultDictionary(target);
+
+                        if (String.IsNullOrEmpty(defaultDictionary))
+                            target = LogicalTreeHelper.GetParent(target);
+                        else
+                            target = null;
+                    }
                 }
 
                 // Return the dictionary that was parsed or the default assembly.
@@ -309,7 +338,7 @@ namespace WPFLocalizeExtension.BaseExtensions
 
             // return the new value for the DependencyProperty
             return LocalizeDictionary.Instance.GetLocalizedObject<object>(
-                this.Assembly, this.Dict, this.Key, this.GetForcedCultureOrDefault());
+                this.Assembly, this.Dict, this.Key, this.GetForcedCultureOrDefault()) ?? this;
         }
 
         /// <summary>

@@ -61,6 +61,15 @@ namespace AssemblyTest {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Aqua.
+        /// </summary>
+        internal static string Brush {
+            get {
+                return ResourceManager.GetString("Brush", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to de.
         /// </summary>
         internal static string ButtonDE {
@@ -79,11 +88,45 @@ namespace AssemblyTest {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to LeftToRight.
+        /// </summary>
+        internal static string Flow {
+            get {
+                return ResourceManager.GetString("Flow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 10,5,20,15.
+        /// </summary>
+        internal static string Padding {
+            get {
+                return ResourceManager.GetString("Padding", resourceCulture);
+            }
+        }
+        
+        internal static System.Drawing.Bitmap TestImage {
+            get {
+                object obj = ResourceManager.GetObject("TestImage", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This is a test..
         /// </summary>
         internal static string TestText {
             get {
                 return ResourceManager.GetString("TestText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 75.
+        /// </summary>
+        internal static string Width {
+            get {
+                return ResourceManager.GetString("Width", resourceCulture);
             }
         }
     }

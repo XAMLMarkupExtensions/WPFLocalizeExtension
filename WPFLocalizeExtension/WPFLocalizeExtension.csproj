@@ -87,6 +87,7 @@
     <Compile Include="Engine\OddsFormatType.cs" />
     <Compile Include="Extensions\LocBrushExtension.cs" />
     <Compile Include="Extensions\LocDoubleExtension.cs" />
+    <Compile Include="Extensions\LocExtension.cs" />
     <Compile Include="Extensions\LocFlowDirectionExtension.cs" />
     <Compile Include="Extensions\LocImageExtension.cs" />
     <Compile Include="Extensions\LocTextExtension.cs" />

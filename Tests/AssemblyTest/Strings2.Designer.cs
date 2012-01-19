@@ -78,6 +78,13 @@ namespace AssemblyTest {
             }
         }
         
+        internal static System.Drawing.Bitmap TestImage {
+            get {
+                object obj = ResourceManager.GetObject("TestImage", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
         /// <summary>
         ///   Looks up a localized string similar to And now with different resource files..
         /// </summary>

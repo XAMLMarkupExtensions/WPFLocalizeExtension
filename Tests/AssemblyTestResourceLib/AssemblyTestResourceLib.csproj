@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -69,6 +70,18 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings2.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Test.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Test1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Test11.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Test12.bmp" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

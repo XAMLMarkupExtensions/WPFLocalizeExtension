@@ -29,7 +29,7 @@ namespace WPFLocalizeExtension.Engine
             "DefaultDictionary",
             typeof(string),
             typeof(LocalizeDictionary),
-            new FrameworkPropertyMetadata(ResourcesName, FrameworkPropertyMetadataOptions.Inherits, SetDictionaryFromDependencyProperty));
+            new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.Inherits, SetDictionaryFromDependencyProperty));
 
         /// <summary>
         /// <see cref="DependencyProperty"/> DefaultAssembly to set the fallback assembly.
