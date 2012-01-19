@@ -82,6 +82,13 @@ namespace WPFLocalizeExtension.BaseExtensions
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
+        private DependencyObject GetTarget()
+        {
+            return (from o in targetObjects.Keys
+                    where typeof(DependencyObject).IsAssignableFrom(o.Target.GetType())
+                    select o.Target as DependencyObject).FirstOrDefault();
+        }
+
         /// <summary>
         /// Gets or sets the name of the Assembly where the .resx is located.
         /// If it's null, the executing assembly (where this LocalizeEngine is located at) will get returned
@@ -96,12 +103,10 @@ namespace WPFLocalizeExtension.BaseExtensions
                 // If there is a DependencyObject in the targets list, then try to get the inheritet value of the dependency property.
                 if (targetObjects != null)
                 {
-                    var targets = (from o in targetObjects.Keys
-                                   where typeof(DependencyObject).IsAssignableFrom(o.Target.GetType())
-                                   select o.Target as DependencyObject).ToList();
+                    var target = GetTarget();
 
-                    if (targets.Count > 0)
-                        defaultAssembly = LocalizeDictionary.GetDefaultAssembly(targets[0]) ?? defaultAssembly;
+                    if (target != null)
+                        defaultAssembly = LocalizeDictionary.GetDefaultAssembly(target) ?? defaultAssembly;
                 }
 
                 // Return the assembly that was parsed or the default assembly.
@@ -148,12 +153,10 @@ namespace WPFLocalizeExtension.BaseExtensions
                 // If there is a DependencyObject in the targets list, then try to get the inheritet value of the dependency property.
                 if (targetObjects != null)
                 {
-                    var targets = (from o in targetObjects.Keys
-                                   where typeof(DependencyObject).IsAssignableFrom(o.Target.GetType())
-                                   select o.Target as DependencyObject).ToList();
+                    var target = GetTarget();
 
-                    if (targets.Count > 0)
-                        defaultDictionary = LocalizeDictionary.GetDefaultDictionary(targets[0]) ?? defaultDictionary;
+                    if (target != null)
+                        defaultDictionary = LocalizeDictionary.GetDefaultDictionary(target) ?? defaultDictionary;
                 }
 
                 // Return the dictionary that was parsed or the default assembly.
