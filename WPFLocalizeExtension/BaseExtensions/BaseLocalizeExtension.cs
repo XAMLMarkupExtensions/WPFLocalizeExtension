@@ -90,7 +90,7 @@ namespace WPFLocalizeExtension.BaseExtensions
             get
             {
                 return this.assembly ??
-                       LocalizeDictionary.Instance.GetAssemblyName(System.Reflection.Assembly.GetExecutingAssembly());
+                       LocalizeDictionary.DefaultAssembly;
             }
 
             set { this.assembly = !string.IsNullOrEmpty(value) ? value : null; }
@@ -125,7 +125,7 @@ namespace WPFLocalizeExtension.BaseExtensions
         /// </summary>
         public string Dict
         {
-            get { return this.dict ?? LocalizeDictionary.ResourcesName; }
+            get { return this.dict ?? LocalizeDictionary.DefaultDict; }
 
             set { this.dict = !string.IsNullOrEmpty(value) ? value : null; }
         }
@@ -322,7 +322,7 @@ namespace WPFLocalizeExtension.BaseExtensions
                 if (formattedOutput != null)
                 {
                     // set the content of the resolved value
-                    resolvedValue = (TValue) formattedOutput;
+                    resolvedValue = (TValue)formattedOutput;
                 }
 
                 // return true: resolve was successfully
@@ -389,9 +389,9 @@ namespace WPFLocalizeExtension.BaseExtensions
                 // get the initial value of the dependency property
                 object output = this.FormatOutput(
                     LocalizeDictionary.Instance.GetLocalizedObject<object>(
-                        this.Assembly, 
-                        this.Dict, 
-                        this.Key, 
+                        this.Assembly,
+                        this.Dict,
+                        this.Key,
                         this.GetForcedCultureOrDefault()));
 
                 // set the value to the dependency object
@@ -578,7 +578,7 @@ namespace WPFLocalizeExtension.BaseExtensions
             // set the new value to the current value, if its the type of TValue
             if (newValue is TValue)
             {
-                this.CurrentValue = (TValue) newValue;
+                this.CurrentValue = (TValue)newValue;
             }
 
             // if the list of dependency objects is empty or the target property is null, return
@@ -593,7 +593,7 @@ namespace WPFLocalizeExtension.BaseExtensions
                 // set the new value of the target, if the target DependencyTarget is still alive
                 if (dpo.Key.IsAlive)
                 {
-                    this.SetTargetValue((DependencyObject) dpo.Key.Target, dpo.Value, newValue);
+                    this.SetTargetValue((DependencyObject)dpo.Key.Target, dpo.Value, newValue);
                 }
             }
         }
@@ -621,13 +621,13 @@ namespace WPFLocalizeExtension.BaseExtensions
             // check if the target property is a DependencyProperty
             if (targetProperty is DependencyProperty)
             {
-                this.SetTargetValue(targetObject, (DependencyProperty) targetProperty, value);
+                this.SetTargetValue(targetObject, (DependencyProperty)targetProperty, value);
             }
-                
+
             // check if the target property is a PropertyInfo
             if (targetProperty is PropertyInfo)
             {
-                this.SetTargetValue(targetObject, (PropertyInfo) targetProperty, value);
+                this.SetTargetValue(targetObject, (PropertyInfo)targetProperty, value);
             }
         }
 
