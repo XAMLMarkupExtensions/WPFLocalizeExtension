@@ -85,7 +85,7 @@ namespace WPFLocalizeExtension.BaseExtensions
         private DependencyObject GetTarget()
         {
             return (from o in targetObjects.Keys
-                    where typeof(DependencyObject).IsAssignableFrom(o.Target.GetType())
+                    where (o.Target != null) && typeof(DependencyObject).IsAssignableFrom(o.Target.GetType())
                     select o.Target as DependencyObject).FirstOrDefault();
         }
 
@@ -98,7 +98,7 @@ namespace WPFLocalizeExtension.BaseExtensions
             get
             {
                 // Get the last loaded default assembly - this is needed during design time and at startup.
-                string defaultAssembly = LocalizeDictionary.Instance.DefAssembly;
+                string defaultAssembly = null;
 
                 // If there is a DependencyObject in the targets list, then try to get the inheritet value of the dependency property.
                 if (targetObjects != null)
@@ -148,7 +148,7 @@ namespace WPFLocalizeExtension.BaseExtensions
             get
             {
                 // Get the last loaded default dictionary - this is needed during design time and at startup.
-                string defaultDictionary = LocalizeDictionary.Instance.DefDictionary;
+                string defaultDictionary = null;
 
                 // If there is a DependencyObject in the targets list, then try to get the inheritet value of the dependency property.
                 if (targetObjects != null)

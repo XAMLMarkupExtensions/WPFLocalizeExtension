@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:Engine="clr-namespace:WPFLocalizeExtension.Engine;assembly=WPFLocalizeExtension"
         Engine:LocalizeDictionary.DesignCulture="de"
-        Engine:LocalizeDictionary.DefaultAssembly="AssemblyTest"
+        Engine:LocalizeDictionary.DefaultAssembly="AssemblyTestResourceLib"
         Engine:LocalizeDictionary.DefaultDictionary="Strings"
         xmlns:lex="clr-namespace:WPFLocalizeExtension.Extensions;assembly=WPFLocalizeExtension"
         Title="MainWindow" mc:Ignorable="d" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" d:DesignHeight="114" d:DesignWidth="248" SizeToContent="WidthAndHeight">

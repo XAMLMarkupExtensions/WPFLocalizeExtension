@@ -88,16 +88,6 @@ namespace WPFLocalizeExtension.Engine
         private CultureInfo culture;
 
         /// <summary>
-        /// Holds the default dictionary if specified by the corresponding dependency property.
-        /// </summary>
-        public string DefDictionary { get; private set; }
-
-        /// <summary>
-        /// Holds the default assembly if specified by the corresponding dependency property.
-        /// </summary>
-        public string DefAssembly { get; private set; }
-
-        /// <summary>
         /// Prevents a default instance of the <see cref="LocalizeDictionary"/> class from being created.
         /// Static Constructor
         /// </summary>
@@ -422,83 +412,37 @@ namespace WPFLocalizeExtension.Engine
             CultureInfo cultureToUse) where TType : class
         {
             // Validation
-            if (resourceAssembly == null)
-            {
-                throw new ArgumentNullException("resourceAssembly");
-            }
+            if (String.IsNullOrEmpty(resourceAssembly))
+                return null;
 
-            if (resourceAssembly == string.Empty)
-            {
-                throw new ArgumentException("resourceAssembly is empty", "resourceAssembly");
-            }
+            if (String.IsNullOrEmpty(resourceDictionary))
+                return null;
 
-            if (resourceDictionary == null)
-            {
-                throw new ArgumentNullException("resourceDictionary");
-            }
+            if (String.IsNullOrEmpty(resourceKey))
+                return null;
 
-            if (resourceDictionary == string.Empty)
-            {
-                throw new ArgumentException("resourceDictionary is empty", "resourceDictionary");
-            }
-
-            if (string.IsNullOrEmpty(resourceKey))
-            {
-                if (this.GetIsInDesignMode())
-                {
-                    return null;
-                }
-                else
-                {
-                    if (resourceKey == null)
-                    {
-                        throw new ArgumentNullException("resourceKey");
-                    }
-                    else if (resourceKey == string.Empty)
-                    {
-                        throw new ArgumentException("resourceKey is empty", "resourceKey");
-                    }
-                }
-            }
-
-            // declaring local ResourceManager
+            // declaring local resource manager
             ResourceManager resManager;
 
             // try to get the resouce manager
             try
             {
-                resManager = this.GetResourceManager(resourceAssembly, resourceDictionary, resourceKey);
+                resManager = this.GetResourceManager(resourceAssembly, resourceDictionary);
             }
             catch
             {
-                // if an error occour, throw exception, if in runtime
-                if (this.GetIsInDesignMode())
-                {
-                    return null;
-                }
-                else
-                {
-                    return null;
-                    throw;
-                }
+                return null;
             }
 
             // gets the resourceobject with the choosen localization
-            object retVal = resManager.GetObject(resourceKey, cultureToUse) as TType;
+            TType retVal = resManager.GetObject(resourceKey, cultureToUse) as TType;
 
-            // if the retVal is null, throw exception, if in runtime
+            // if the retVal is null, return null
             if (retVal == null && !this.GetIsInDesignMode())
-            {
-                throw new ArgumentException(
-                    string.Format(
-                        "No resource key with name '{0}' in dictionary '{1}' in assembly '{2}' founded! ({2}.{1}.{0})",
-                        resourceKey,
-                        resourceDictionary,
-                        resourceAssembly));
-            }
+                return null;
 
             // finally, return the searched object as type of the generic type
-            return retVal as TType;
+            return retVal;
         }
 
         /// <summary>
@@ -511,6 +455,7 @@ namespace WPFLocalizeExtension.Engine
             WeakCultureChangedEventManager.RemoveListener(listener);
         }
 
+        #region ResourceKeyExistsChecks - Obsolete?
         /// <summary>
         /// Looks up the ResourceManagers for the searched <paramref name="resourceKey"/> 
         /// in the <paramref name="resourceDictionary"/> in the <paramref name="resourceAssembly"/>
@@ -564,21 +509,27 @@ namespace WPFLocalizeExtension.Engine
             try
             {
                 return
-                    this.GetResourceManager(resourceAssembly, resourceDictionary, resourceKey).GetObject(
+                    this.GetResourceManager(resourceAssembly, resourceDictionary).GetObject(
                         resourceKey, cultureToUse) != null;
             }
             catch
             {
-                if (this.GetIsInDesignMode())
-                {
-                    return false;
-                }
-                else
-                {
-                    throw;
-                }
+                return false;
+
+                // This function should also return false on exceptions as they indicate definitely,
+                // that the resource (or assembly or dictionary) don't exist.
+
+                //if (this.GetIsInDesignMode())
+                //{
+                //    return false;
+                //}
+                //else
+                //{
+                //    throw;
+                //}
             }
-        }
+        } 
+        #endregion
 
         #region Dependency Property Callbacks
         /// <summary>
@@ -626,18 +577,9 @@ namespace WPFLocalizeExtension.Engine
         /// <param name="args">The event argument.</param>
         private static void SetDictionaryFromDependencyProperty(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-            try
+            if (Instance.OnCultureChanged != null)
             {
-                Instance.DefDictionary = (string)args.NewValue;
-
-                if (Instance.OnCultureChanged != null)
-                {
-                    Instance.OnCultureChanged();
-                }
-            }
-            catch
-            {
-                Instance.DefDictionary = null;
+                Instance.OnCultureChanged();
             }
         }
 
@@ -648,18 +590,9 @@ namespace WPFLocalizeExtension.Engine
         /// <param name="args">The event argument.</param>
         private static void SetAssemblyFromDependencyProperty(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-            try
+            if (Instance.OnCultureChanged != null)
             {
-                Instance.DefAssembly = (string)args.NewValue;
-
-                if (Instance.OnCultureChanged != null)
-                {
-                    Instance.OnCultureChanged();
-                }
-            }
-            catch
-            {
-                Instance.DefAssembly = null;
+                Instance.OnCultureChanged();
             }
         } 
         #endregion
@@ -669,7 +602,6 @@ namespace WPFLocalizeExtension.Engine
         /// </summary>
         /// <param name="resourceAssembly">The resource assembly (e.g.: <c>BaseLocalizeExtension</c>). NULL = Name of the executing assembly</param>
         /// <param name="resourceDictionary">The dictionary to look up (e.g.: ResHelp, Resources, ...). NULL = Name of the default resource file (Resources)</param>
-        /// <param name="resourceKey">The key of the searched entry (e.g.: <c>btnHelp</c>, Cancel, ...). NULL = Exception</param>
         /// <returns>
         /// The founded <see cref="ResourceManager"/>
         /// </returns>
@@ -679,10 +611,7 @@ namespace WPFLocalizeExtension.Engine
         /// <exception cref="System.ArgumentException">
         /// If the searched <see cref="ResourceManager"/> wasn't found
         /// </exception>
-        /// <exception cref="System.ArgumentException">
-        /// If the <paramref name="resourceKey"/> is null or empty
-        /// </exception>
-        private ResourceManager GetResourceManager(string resourceAssembly, string resourceDictionary, string resourceKey)
+        private ResourceManager GetResourceManager(string resourceAssembly, string resourceDictionary)
         {
             if (resourceAssembly == null)
             {
@@ -692,11 +621,6 @@ namespace WPFLocalizeExtension.Engine
             if (resourceDictionary == null)
             {
                 resourceDictionary = ResourcesName;
-            }
-
-            if (string.IsNullOrEmpty(resourceKey))
-            {
-                throw new ArgumentNullException("resourceKey");
             }
 
             PropertyInfo propInfo;
@@ -770,8 +694,7 @@ namespace WPFLocalizeExtension.Engine
                 {
                     throw new ArgumentException(
                         string.Format(
-                            "No resource key with name '{0}' in dictionary '{1}' in assembly '{2}' founded! ({2}.{1}.{0})",
-                            resourceKey,
+                            "No resource manager for dictionary '{0}' in assembly '{1}' founded! ({1}.{0})",
                             resourceDictionary,
                             resourceAssembly));
                 }
