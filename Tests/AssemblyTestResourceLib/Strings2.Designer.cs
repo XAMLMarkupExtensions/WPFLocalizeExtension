@@ -78,6 +78,15 @@ namespace AssemblyTestResourceLib {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string similar to ButtonDE.
+        /// </summary>
+        internal static string KeyButtonDE {
+            get {
+                return ResourceManager.GetString("KeyButtonDE", resourceCulture);
+            }
+        }
+        
         internal static System.Drawing.Bitmap TestImage {
             get {
                 object obj = ResourceManager.GetObject("TestImage", resourceCulture);

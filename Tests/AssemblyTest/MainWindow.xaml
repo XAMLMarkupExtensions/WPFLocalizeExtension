@@ -14,10 +14,14 @@
             <RowDefinition Height="25" />
             <RowDefinition Height="100" />
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" Content="{lex:Loc TestText}" Height="28" HorizontalAlignment="Center"/>
+        <Label Grid.Row="0" Content="{lex:LocText TestText}" Height="28" HorizontalAlignment="Center"/>
         <StackPanel Name="TestPanel" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Engine:LocalizeDictionary.DefaultDictionary="Strings2">
-            <Button Content="{lex:Loc ButtonDE}" Height="23" Width="75" Click="ButtonDE_Click" Engine:LocalizeDictionary.DefaultAssembly="AssemblyTestResourceLib" />
-            <Button Content="{lex:Loc ButtonEN}" Height="23" Width="75" Click="ButtonEN_Click" />
+            <Button Content="{lex:LocText ButtonDE}" Height="23" Width="75" Click="ButtonDE_Click" Engine:LocalizeDictionary.DefaultAssembly="AssemblyTestResourceLib" />
+            <Button Content="{lex:Loc Key={lex:Loc KeyButtonDE}}" Height="23" Width="75" Click="ButtonEN_Click">
+                <!--<Button.Content>
+                    <lex:LocExtension Key="{lex:Loc AssemblyTestResourceLib:Strings2:KeyButtonDE}" />
+                </Button.Content>-->
+            </Button>
         </StackPanel>
         <Button HorizontalAlignment="Center" Name="ButtonAssembly" Content="Assembly" Grid.Row="2" Height="23" Width="75" Click="ButtonAssembly_Click" />
         <Image Source="{lex:Loc TestImage}" Grid.Row="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />

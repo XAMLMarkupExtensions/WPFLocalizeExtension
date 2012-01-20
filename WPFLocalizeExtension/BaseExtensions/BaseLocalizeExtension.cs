@@ -85,18 +85,32 @@ namespace WPFLocalizeExtension.BaseExtensions
         private KeyValuePair<WeakReference, object> GetTargetKVP()
         {
             return (from o in targetObjects
-                    where (o.Key.Target != null) && typeof(DependencyObject).IsAssignableFrom(o.Key.Target.GetType())
+                    where (o.Key.Target != null)
                     select o).FirstOrDefault();
         }
 
-        protected DependencyObject GetTargetObject()
+        protected DependencyObject GetTargetDependencyObject()
+        {
+            var target = GetTargetObject();
+
+            if (target == null)
+                return null;
+
+            // If nested, return the target's dependency object, or its targets targets dep obj ...
+            if (typeof(BaseLocalizeExtension<>).IsAssignableFrom(target.GetType()))
+                return (target as BaseLocalizeExtension<TValue>).GetTargetDependencyObject();
+
+            return target as DependencyObject;
+        }
+
+        protected object GetTargetObject()
         {
             var key = GetTargetKVP().Key;
 
             if (key == null)
                 return null;
 
-            return key.Target as DependencyObject;
+            return key.Target;
         }
 
         protected object GetTargetProperty()
@@ -118,7 +132,7 @@ namespace WPFLocalizeExtension.BaseExtensions
                 // If there is a DependencyObject in the targets list, then try to get the inheritet value of the dependency property.
                 if (targetObjects != null)
                 {
-                    var target = GetTargetObject();
+                    var target = GetTargetDependencyObject();
 
                     while (target != null)
                     {
@@ -175,7 +189,7 @@ namespace WPFLocalizeExtension.BaseExtensions
                 // If there is a DependencyObject in the targets list, then try to get the inheritet value of the dependency property.
                 if (targetObjects != null)
                 {
-                    var target = GetTargetObject();
+                    var target = GetTargetDependencyObject();
 
                     while (target != null)
                     {
@@ -320,7 +334,8 @@ namespace WPFLocalizeExtension.BaseExtensions
             }
 
             // if the target is a dependency object and it's not collected already, collect it
-            if (service.TargetObject is DependencyObject && !foundInWeakReferences)
+            //if (service.TargetObject is DependencyObject && !foundInWeakReferences)
+            if (!foundInWeakReferences)
             {
                 // if it's the first object, add an event handler too
                 if (this.targetObjects.Count == 0)
@@ -658,7 +673,10 @@ namespace WPFLocalizeExtension.BaseExtensions
                 // set the new value of the target, if the target DependencyTarget is still alive
                 if (dpo.Key.IsAlive)
                 {
-                    this.SetTargetValue((DependencyObject) dpo.Key.Target, dpo.Value, newValue);
+                    if (dpo.Value is DependencyProperty)
+                        this.SetTargetValue((DependencyObject) dpo.Key.Target, dpo.Value, newValue);
+                    if (dpo.Value is PropertyInfo)
+                        (dpo.Value as PropertyInfo).SetValue(dpo.Key.Target, newValue, null);
                 }
             }
         }
