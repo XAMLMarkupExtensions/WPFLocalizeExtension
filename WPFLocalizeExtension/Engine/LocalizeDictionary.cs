@@ -26,12 +26,76 @@ namespace WPFLocalizeExtension.Engine
         /// <see cref="DependencyProperty"/> DesignCulture to set the Culture.
         /// Only supported at DesignTime.
         /// </summary>
-        [DesignOnly(true)] public static readonly DependencyProperty DesignCultureProperty =
+        [DesignOnly(true)]
+        public static readonly DependencyProperty DesignCultureProperty =
             DependencyProperty.RegisterAttached(
-                "DesignCulture",
-                typeof(string),
-                typeof(LocalizeDictionary),
-                new PropertyMetadata(SetCultureFromDependencyProperty));
+            "DesignCulture",
+            typeof(string),
+            typeof(LocalizeDictionary),
+            new PropertyMetadata(SetCultureFromDependencyProperty));
+
+        /// <summary>
+        /// Holds default assembly name
+        /// </summary>
+        private static string defaultAssembly = "";
+
+        /// <summary>
+        /// Gets / Sets default assembly
+        /// </summary>
+        public static string DefaultAssembly
+        {
+            get
+            {
+                return !String.IsNullOrEmpty(defaultAssembly) ?
+                                                defaultAssembly :
+                                                Instance.GetAssemblyName(System.Reflection.Assembly.GetExecutingAssembly());
+            }
+            private set
+            {
+                defaultAssembly = value;
+            }
+        }
+
+        /// <summary>
+        /// Holds default dictionary name
+        /// </summary>
+        private static string defaultDict = "";
+
+        /// <summary>
+        /// Gets / Sets default dictionary
+        /// </summary>
+        public static string DefaultDict
+        {
+            get
+            {
+                return !String.IsNullOrEmpty(defaultDict) ? defaultDict : ResourcesName;
+            }
+            private set
+            {
+                defaultDict = value;
+            }
+        }
+
+        /// <summary>
+        /// Tells if defaults has been set
+        /// </summary>
+        private static bool defaultsSet = false;
+
+        /// <summary>
+        /// Sets default values for assembly and dictionary
+        /// </summary>
+        /// <param name="defaultAssembly">Default assmebly</param>
+        /// <param name="defaultDictionary">Default dictionary</param>
+        public static void InitializeDefaultValues(string _defaultAssembly, string _defaultDictionary)
+        {
+            if (!defaultsSet)
+            {
+                DefaultAssembly = _defaultAssembly;
+                DefaultDict = _defaultDictionary;
+            }
+
+            defaultsSet = true;
+        }
 
         /// <summary>
         /// Holds the default <see cref="ResourceDictionary"/> name
@@ -201,7 +265,7 @@ namespace WPFLocalizeExtension.Engine
         {
             if (Instance.GetIsInDesignMode())
             {
-                return (string) obj.GetValue(DesignCultureProperty);
+                return (string)obj.GetValue(DesignCultureProperty);
             }
             else
             {
@@ -235,20 +299,23 @@ namespace WPFLocalizeExtension.Engine
                     outDict = !string.IsNullOrEmpty(split[1]) ? split[1] : null;
                     outKey = split[2];
                 }
-                
+
                 // dict:key
                 // assembly = ExecutingAssembly
                 if (split.Length == 2)
                 {
+                    outAssembly = !String.IsNullOrEmpty(DefaultAssembly) ? DefaultAssembly : null;
                     outDict = !string.IsNullOrEmpty(split[0]) ? split[0] : null;
                     outKey = split[1];
                 }
-                
+
                 // key
                 // assembly = ExecutingAssembly
                 // dict = standard resourcedictionary
                 if (split.Length == 1)
                 {
+                    outAssembly = !String.IsNullOrEmpty(DefaultAssembly) ? DefaultAssembly : null;
+                    outDict = !String.IsNullOrEmpty(DefaultDict) ? DefaultDict : null;
                     outKey = split[0];
                 }
             }
@@ -528,7 +595,7 @@ namespace WPFLocalizeExtension.Engine
 
             try
             {
-                culture = CultureInfo.GetCultureInfo((string) args.NewValue);
+                culture = CultureInfo.GetCultureInfo((string)args.NewValue);
             }
             catch
             {
@@ -687,9 +754,9 @@ namespace WPFLocalizeExtension.Engine
 
                     // get the static ResourceManager property
                     object resManObject = methodInfo.Invoke(null, null);
-                    
+
                     // cast it to a ResourceManager for better working with
-                    resManager = (ResourceManager) resManObject;
+                    resManager = (ResourceManager)resManObject;
                 }
                 catch (Exception ex)
                 {
@@ -741,7 +808,7 @@ namespace WPFLocalizeExtension.Engine
                     Type managerType = typeof(WeakCultureChangedEventManager);
 
                     // try to retrieve an existing instance of the stored type
-                    WeakCultureChangedEventManager manager = (WeakCultureChangedEventManager) GetCurrentManager(managerType);
+                    WeakCultureChangedEventManager manager = (WeakCultureChangedEventManager)GetCurrentManager(managerType);
 
                     // if the manager does not exists
                     if (manager == null)
