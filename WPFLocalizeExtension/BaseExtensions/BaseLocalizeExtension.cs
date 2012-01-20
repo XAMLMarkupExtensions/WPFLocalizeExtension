@@ -178,7 +178,7 @@ namespace WPFLocalizeExtension.BaseExtensions
         /// </summary>
         /// <param name="serviceProvider">The <see cref="System.Windows.Markup.IProvideValueTarget"/> provided from the <see cref="MarkupExtension"/></param>
         /// <returns>
-        /// The founded item from the .resx directory or null if not founded
+        /// The found item from the .resx directory or null if not found
         /// </returns>
         /// <remarks>
         /// This method register the <see cref="EventHandler"/><c>OnCultureChanged</c> on <c>LocalizeDictionary</c>

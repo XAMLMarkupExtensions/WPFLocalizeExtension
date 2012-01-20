@@ -177,12 +177,12 @@ namespace WPFLocalizeExtension.Extensions
         /// <param name="serviceProvider">
         /// The <see cref="System.Windows.Markup.IProvideValueTarget"/> provided from the <see cref="MarkupExtension"/>
         /// </param>
-        /// <returns>The founded item from the .resx directory or null if not founded</returns>
+        /// <returns>The found item from the .resx directory or null if not found</returns>
         /// <exception cref="System.InvalidOperationException">
         /// thrown if <paramref name="serviceProvider"/> is not type of <see cref="System.Windows.Markup.IProvideValueTarget"/>
         /// </exception>
         /// <exception cref="System.NotSupportedException">
-        /// thrown if the founded object is not type of <see cref="System.String"/>
+        /// thrown if the found object is not type of <see cref="System.String"/>
         /// </exception>
         public override object ProvideValue(IServiceProvider serviceProvider)
         {

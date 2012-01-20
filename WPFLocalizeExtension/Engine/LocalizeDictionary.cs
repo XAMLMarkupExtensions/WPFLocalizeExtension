@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
 using System.Resources;
 using System.Runtime.CompilerServices;
@@ -325,7 +326,7 @@ namespace WPFLocalizeExtension.Engine
         /// <param name="resourceKey">The key for the resource</param>
         /// <param name="cultureToUse">The culture to use.</param>
         /// <returns>
-        /// The founded object or NULL if not found or wrong <typeparamref name="TType"/> is given
+        /// The found object or NULL if not found or wrong <typeparamref name="TType"/> is given
         /// </returns>
         /// <exception cref="System.ArgumentNullException">
         /// <paramref name="resourceDictionary"/> is null
@@ -343,7 +344,7 @@ namespace WPFLocalizeExtension.Engine
         /// Ambiguous resource name {<paramref name="resourceDictionary"/>}
         /// </exception>
         /// <exception cref="System.ArgumentException">
-        /// No resource with name '{<paramref name="resourceDictionary"/>}' founded
+        /// No resource with name '{<paramref name="resourceDictionary"/>}' found
         /// </exception>
         public TType GetLocalizedObject<TType>(
             string resourceAssembly,
@@ -420,7 +421,7 @@ namespace WPFLocalizeExtension.Engine
             {
                 throw new ArgumentException(
                     string.Format(
-                        "No resource key with name '{0}' in dictionary '{1}' in assembly '{2}' founded! ({2}.{1}.{0})",
+                        "No resource key with name '{0}' in dictionary '{1}' in assembly '{2}' found! ({2}.{1}.{0})",
                         resourceKey,
                         resourceDictionary,
                         resourceAssembly));
@@ -554,7 +555,7 @@ namespace WPFLocalizeExtension.Engine
         /// <param name="resourceDictionary">The dictionary to look up (e.g.: ResHelp, Resources, ...). NULL = Name of the default resource file (Resources)</param>
         /// <param name="resourceKey">The key of the searched entry (e.g.: <c>btnHelp</c>, Cancel, ...). NULL = Exception</param>
         /// <returns>
-        /// The founded <see cref="ResourceManager"/>
+        /// The found <see cref="ResourceManager"/>
         /// </returns>
         /// <exception cref="System.InvalidOperationException">
         /// If the ResourceManagers cannot be looked up
@@ -586,7 +587,7 @@ namespace WPFLocalizeExtension.Engine
             MethodInfo methodInfo;
             Assembly assembly = null;
             ResourceManager resManager;
-            string foundedResource = null;
+            string foundResource = null;
             string resManagerNameToSearch = "." + resourceDictionary + ResourceFileExtension;
             string[] availableResources;
 
@@ -643,32 +644,43 @@ namespace WPFLocalizeExtension.Engine
                         availableResources[i].EndsWith(resManagerNameToSearch))
                     {
                         // take the first occurrence and break
-                        foundedResource = availableResources[i];
+                        foundResource = availableResources[i];
                         break;
                     }
                 }
 
                 // if no one was found, exception
-                if (foundedResource == null)
+                if (foundResource == null)
                 {
                     throw new ArgumentException(
                         string.Format(
-                            "No resource key with name '{0}' in dictionary '{1}' in assembly '{2}' founded! ({2}.{1}.{0})",
+                            "No resource key with name '{0}' in dictionary '{1}' in assembly '{2}' found! ({2}.{1}.{0})",
                             resourceKey,
                             resourceDictionary,
                             resourceAssembly));
                 }
 
                 // remove ".resources" from the end
-                foundedResource = foundedResource.Substring(0, foundedResource.Length - ResourceFileExtension.Length);
+                foundResource = foundResource.Substring(0, foundResource.Length - ResourceFileExtension.Length);
 
-                //// Resources.{foundedResource}.ResourceManager.GetObject()
+                //// Resources.{foundResource}.ResourceManager.GetObject()
                 //// ^^ prop-info      ^^ method get
 
                 try
                 {
-                    // get the propertyinfo from resManager over the type from foundedResource
-                    propInfo = assembly.GetType(foundedResource).GetProperty(ResourceManagerName, ResourceBindingFlags);
+                    // get the propertyinfo from resManager over the type from foundResource
+                    var resourceManagerType = assembly.GetType(foundResource);
+
+                    // check if the resource manager was found.
+                    // if not, assume that the assembly was build with VisualBasic.
+                    // in this case try to manipulate the resource identifier.
+                    if (resourceManagerType == null)
+                    {
+                        var assemblyName = assembly.GetName().Name;
+                        resourceManagerType = assembly.GetType(foundResource.Replace(assemblyName, assemblyName + ".My.Resources"));
+                    }
+
+                    propInfo = resourceManagerType.GetProperty(ResourceManagerName, ResourceBindingFlags);
 
                     // get the GET-method from the methodinfo
                     methodInfo = propInfo.GetGetMethod(true);
@@ -689,7 +701,7 @@ namespace WPFLocalizeExtension.Engine
                 this.ResourceManagerList.Add(resourceAssembly + resManagerNameToSearch, resManager);
             }
 
-            // return the founded ResourceManager
+            // return the found ResourceManager
             return resManager;
         }
 
