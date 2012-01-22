@@ -97,9 +97,12 @@ namespace WPFLocalizeExtension.BaseExtensions
                 return null;
 
             // If nested, return the target's dependency object, or its targets targets dep obj ...
-            if (typeof(BaseLocalizeExtension<>).IsAssignableFrom(target.GetType()))
-                return (target as BaseLocalizeExtension<TValue>).GetTargetDependencyObject();
+            var t = target as BaseLocalizeExtension<TValue>;
 
+            if (t != null)
+                return t.GetTargetDependencyObject();
+
+            // finally, try to cast into a DependencyObject
             return target as DependencyObject;
         }
 
@@ -676,7 +679,7 @@ namespace WPFLocalizeExtension.BaseExtensions
                     if (dpo.Value is DependencyProperty)
                         this.SetTargetValue((DependencyObject) dpo.Key.Target, dpo.Value, newValue);
                     if (dpo.Value is PropertyInfo)
-                        (dpo.Value as PropertyInfo).SetValue(dpo.Key.Target, newValue, null);
+                        ((PropertyInfo)dpo.Value).SetValue(dpo.Key.Target, newValue, null);
                 }
             }
         }

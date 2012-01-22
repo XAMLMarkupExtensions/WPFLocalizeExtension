@@ -122,7 +122,17 @@
         /// <summary>
         /// The target property TypeConverter.
         /// </summary>
-        public TypeConverter TargetPropertyTypeConverter { get; private set; } 
+        public TypeConverter TargetPropertyTypeConverter { get; private set; }
+
+        /// <summary>
+        /// The forced target type if not null.
+        /// </summary>
+        private Type forceTargetType = null;
+        public Type ForceTargetType
+        {
+            get { return forceTargetType; }
+            set { forceTargetType = value; }
+        }
         #endregion
 
         #region Constructors
@@ -173,28 +183,28 @@
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
             object obj = base.ProvideValue(serviceProvider);
-
+            
             var targetObject = GetTargetObject();
             var targetProperty = GetTargetProperty();
+            this.TargetPropertyType = this.ForceTargetType;
 
-            if ((targetObject != null) && (targetProperty != null))
+            if ((this.TargetPropertyType == null) && (targetObject != null) && (targetProperty != null))
             {
-                this.TargetPropertyType = null;
-
                 if (targetProperty is DependencyProperty)
                 {
-                    this.TargetPropertyType = (targetProperty as DependencyProperty).PropertyType;
+                    this.TargetPropertyType = ((DependencyProperty)targetProperty).PropertyType;
                 }
                 else if (targetProperty is PropertyInfo)
                 {
-                    this.TargetPropertyType = (targetProperty as PropertyInfo).PropertyType;
+                    this.TargetPropertyType = ((PropertyInfo)targetProperty).PropertyType;
                 }
                 else
                     return null;
-
-                if (this.TargetPropertyType.Equals(typeof(System.Windows.Media.ImageSource)))
-                    this.TargetPropertyType = typeof(BitmapSource);
             }
+
+            // Change image source to bitmap source to enable our custom type converter.
+            if (this.TargetPropertyType.Equals(typeof(System.Windows.Media.ImageSource)))
+                this.TargetPropertyType = typeof(BitmapSource);
 
             // TODO: Delete this for later extension of automatic suffix/prefix based on object and property names/IDs.
             if (obj == null)
@@ -205,8 +215,10 @@
 
             if ((this.TargetPropertyType != null) && (this.TargetPropertyType.IsValueType))
                 return Activator.CreateInstance(this.TargetPropertyType);
-            else
+            else if (LocalizeDictionary.Instance.GetIsInDesignMode())
                 return null;
+
+            return this;
         }
 
         protected override void HandleNewValue()

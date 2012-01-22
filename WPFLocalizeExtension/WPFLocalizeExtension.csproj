@@ -80,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseExtensions\BaseLocalizeExtension.cs" />
+    <Compile Include="Engine\LocBinding.cs" />
     <Compile Include="Engine\LocalizeDictionary.cs" />
     <Compile Include="Engine\LocalizedObjectOperation.cs" />
     <Compile Include="Engine\ObjectDependencyManager.cs" />
