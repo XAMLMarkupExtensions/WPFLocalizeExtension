@@ -309,7 +309,7 @@ namespace WPFLocalizeExtension.Extensions
         /// The <see cref="System.Windows.Markup.IProvideValueTarget"/> provided from the <see cref="MarkupExtension"/>.
         /// </param>
         /// <returns>
-        /// The founded item from the .resx directory or null if not founded.
+        /// The found item from the .resx directory or null if not found.
         /// </returns>
         /// <exception cref="System.InvalidOperationException">
         /// thrown if <paramref name="serviceProvider"/> is not type of <see cref="System.Windows.Markup.IProvideValueTarget"/>.
