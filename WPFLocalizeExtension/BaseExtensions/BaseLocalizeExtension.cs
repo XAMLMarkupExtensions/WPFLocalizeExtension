@@ -224,7 +224,14 @@ namespace WPFLocalizeExtension.BaseExtensions
         {
             get { return this.key; }
 
-            set { this.key = value; }
+            set
+            {
+                string oldKey = this.key;
+                this.key = value;
+
+                if (oldKey != this.key)
+                    this.HandleNewValue();
+            }
         }
 
         /// <summary>
