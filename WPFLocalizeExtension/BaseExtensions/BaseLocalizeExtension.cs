@@ -363,7 +363,7 @@ namespace WPFLocalizeExtension.BaseExtensions
 
             // return the new value for the DependencyProperty
             return LocalizeDictionary.Instance.GetLocalizedObject<object>(
-                this.Assembly, this.Dict, this.Key, this.GetForcedCultureOrDefault()) ?? this;
+                this.Assembly, this.Dict, this.Key, this.GetForcedCultureOrDefault());
         }
 
         /// <summary>

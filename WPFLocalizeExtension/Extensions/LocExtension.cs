@@ -215,8 +215,6 @@
 
             if ((this.TargetPropertyType != null) && (this.TargetPropertyType.IsValueType))
                 return Activator.CreateInstance(this.TargetPropertyType);
-            else if (LocalizeDictionary.Instance.GetIsInDesignMode())
-                return null;
 
             return this;
         }
