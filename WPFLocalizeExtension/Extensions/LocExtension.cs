@@ -3,135 +3,153 @@
     #region Uses
     using System;
     using System.Windows.Markup;
-    using WPFLocalizeExtension.BaseExtensions;
-    using WPFLocalizeExtension.Engine;
     using System.Windows;
     using System.Reflection;
     using System.ComponentModel;
     using System.Linq;
+    using System.Windows.Media;
     using System.Windows.Media.Imaging;
-    using System.Drawing;
-    using System.Drawing.Imaging;
+    using XAMLMarkupExtensions.Base;
+    using System.Globalization;
+    using System.Collections.Generic;
+    using System.Windows.Data;
+    using WPFLocalizeExtension.Engine;
     #endregion
 
-    public static class RegisterMissingTypeConverters
-    {
-        private static bool registered = false;
-
-        public static void Register()
-        {
-            if (registered)
-                return;
-
-            TypeDescriptor.AddAttributes(typeof(BitmapSource), new Attribute[] { new TypeConverterAttribute(typeof(BitmapSourceTypeConverter)) });
-
-            registered = true;
-        }
-    }
-
     /// <summary>
-    /// A type converter class for Bitmap resources that are used in WPF.
+    /// A generic localization extension.
+    /// Based on <see cref="https://github.com/MrCircuit/WPFLocalizationExtension"/>
     /// </summary>
-    public class BitmapSourceTypeConverter : TypeConverter
+    [ContentProperty("ResourceIdentifierKey")]
+    public class LocExtension : NestedMarkupExtension, IWeakEventListener, INotifyPropertyChanged
     {
-        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
-        {
-            return ((sourceType != null) && (sourceType.Equals(typeof(System.Drawing.Bitmap))));
-        }
-
-        public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
-        {
-            return ((destinationType != null) && (destinationType.Equals(typeof(System.Drawing.Bitmap))));
-        }
-
-        public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
-        {
-            Bitmap bitmap = value as Bitmap;
-
-            if (bitmap == null)
-                return null;
-
-            IntPtr bmpPt = bitmap.GetHbitmap();
-
-            // create the bitmapSource
-            System.Windows.Media.Imaging.BitmapSource bitmapSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
-                bmpPt,
-                IntPtr.Zero,
-                Int32Rect.Empty,
-                System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
-
-            // freeze the bitmap to avoid hooking events to the bitmap
-            bitmapSource.Freeze();
-
-            // free memory
-            DeleteObject(bmpPt);
-
-            // return bitmapSource
-            return bitmapSource;
-        }
+        #region PropertyChanged Logic
+        /// <summary>
+        /// Informiert über sich ändernde Eigenschaften.
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
-        /// Frees memory of a pointer.
+        /// Notify that a property has changed
         /// </summary>
-        /// <param name="o">Object to remove from memory.</param>
-        /// <returns>0 if the removing was success, otherwise another number.</returns>
-        [System.Runtime.InteropServices.DllImport("gdi32.dll")]
-        private static extern int DeleteObject(IntPtr o);
-
-        public override object ConvertTo(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType)
+        /// <param name="property">
+        /// The property that changed
+        /// </param>
+        internal void OnNotifyPropertyChanged(string property)
         {
-            BitmapSource source = value as BitmapSource;
-            
-            if (value == null)
-                return null;
-
-            Bitmap bmp = new Bitmap(
-                source.PixelWidth,
-                source.PixelHeight,
-                PixelFormat.Format32bppPArgb);
-
-            BitmapData data = bmp.LockBits(
-                new Rectangle(System.Drawing.Point.Empty, bmp.Size),
-                ImageLockMode.WriteOnly,
-                PixelFormat.Format32bppPArgb);
-            
-            source.CopyPixels(
-                Int32Rect.Empty,
-                data.Scan0,
-                data.Height * data.Stride,
-                data.Stride);
-            
-            bmp.UnlockBits(data);
-
-            return bmp;
+            if (this.PropertyChanged != null)
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(property));
+            }
         }
-    }
+        #endregion
 
-    /// <summary>
-    /// A generic <c>BaseLocalizeExtension</c>.
-    /// </summary>
-    [MarkupExtensionReturnType(typeof(object))]
-    public class LocExtension : BaseLocalizeExtension<object>
-	{
+        #region Variables
+        private static Dictionary<Type, TypeConverter> TypeConverters = new Dictionary<Type, TypeConverter>();
+        private static Dictionary<string, object> ResourceBuffer = new Dictionary<string, object>();
+
+        /// <summary>
+        /// Holds the name of the Assembly where the .resx is located
+        /// </summary>
+        private string assembly;
+
+        /// <summary>
+        /// Holds the Name of the .resx dictionary.
+        /// If it's null, "Resources" will get returned
+        /// </summary>
+        private string dict;
+
+        /// <summary>
+        /// Holds the Key to a .resx object
+        /// </summary>
+        private string key;
+
+        /// <summary>
+        /// A custom converter, supplied in the XAML code.
+        /// </summary>
+        private IValueConverter converter = null;
+
+        /// <summary>
+        /// A parameter that can be supplied along with the converter object.
+        /// </summary>
+        private object converterParameter = null;
+        #endregion
+
         #region Properties
         /// <summary>
-        /// The target property type.
+        /// Gets or sets the Key to a .resx object
         /// </summary>
-        public Type TargetPropertyType { get; private set; }
-
-        /// <summary>
-        /// The target property TypeConverter.
-        /// </summary>
-        public TypeConverter TargetPropertyTypeConverter { get; private set; }
-
-        /// <summary>
-        /// The forced target type if not null.
-        /// </summary>
-        private Type forceTargetType = null;
-        public Type ForceTargetType
+        public string Key
         {
-            get { return forceTargetType; }
-            set { forceTargetType = value; }
+            get { return this.key; }
+            set
+            {
+                string oldKey = this.key;
+                this.key = value;
+
+                if (oldKey != this.key)
+                    UpdateNewValue();
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the name of the Assembly where the .resx is located.
+        /// </summary>
+        public string Assembly
+        {
+            get { return this.assembly; }
+            set { this.assembly = !string.IsNullOrWhiteSpace(value) ? value : null; }
+        }
+
+        /// <summary>
+        /// Gets or sets the name of the Dict where the .resx is located.
+        /// </summary>
+        public string Dict
+        {
+            get { return this.dict; }
+            set { this.dict = !string.IsNullOrWhiteSpace(value) ? value : null; }
+        }
+
+        /// <summary>
+        /// Gets or sets the custom value converter.
+        /// </summary>
+        public IValueConverter Converter
+        {
+            get { return converter; }
+            set { converter = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the converter parameter.
+        /// </summary>
+        public object ConverterParameter
+        {
+            get { return converterParameter; }
+            set { converterParameter = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the culture to force a fixed localized object
+        /// </summary>
+        public string ForceCulture { get; set; }
+
+        /// <summary>
+        /// Gets or sets the initialize value.
+        /// This is ONLY used to support the localize extension in blend!
+        /// </summary>
+        /// <value>The initialize value.</value>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        [ConstructorArgument("key")]
+        public string InitializeValue { get; set; }
+
+        /// <summary>
+        /// Gets or sets the Key that identifies a resource (Assembly:Dictionary:Key)
+        /// </summary>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public string ResourceIdentifierKey
+        {
+            get { return string.Format("{0}:{1}:{2}", this.Assembly, this.Dict, this.Key ?? "(null)"); }
+            set { ParseKey(value, out this.assembly, out this.dict, out this.key); }
         }
         #endregion
 
@@ -139,120 +157,331 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="LocExtension"/> class.
         /// </summary>
-        public LocExtension() { }
+        public LocExtension()
+        {
+            // Register this extension as an event listener on the first target.
+            base.OnFirstTarget = () =>
+            {
+                LocalizeDictionary.Instance.AddEventListener(this);
+            };
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LocExtension"/> class.
         /// </summary>
         /// <param name="key">The resource identifier.</param>
-        public LocExtension(string key) : base(key) { } 
+        public LocExtension(string key)
+            : this()
+        {
+            // parse the key value and split it up if necessary
+            ParseKey(key, out this.assembly, out this.dict, out this.key);
+        } 
         #endregion
 
-        protected override bool CanProvideValue(Type resourceType)
+        #region IWeakEventListener implementation
+        /// <summary>
+        /// This method will be called through the interface, passed to the
+        /// <see cref="LocalizeDictionary"/>.<see cref="LocalizeDictionary.WeakLocChangedEventManager"/> to get notified on culture changed
+        /// </summary>
+        /// <param name="managerType">The manager Type.</param>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The event argument.</param>
+        /// <returns>
+        /// True if the listener handled the event. It is considered an error by the <see cref="T:System.Windows.WeakEventManager"/> handling in WPF to register a listener for an event that the listener does not handle. Regardless, the method should return false if it receives an event that it does not recognize or handle.
+        /// </returns>
+        bool IWeakEventListener.ReceiveWeakEvent(Type managerType, object sender, EventArgs e)
         {
-            if (this.TargetPropertyType == null)
-                return false;
-
-            if (resourceType == null)
-                return false;
-
-            // Simplest case - direct assignment possible.
-            if (this.TargetPropertyType.Equals(typeof(System.Object)))
-                return true;
-
-            // Simple case: The resource equals the target type as for string.
-            if (resourceType.Equals(this.TargetPropertyType))
-                return true;
-
-            // Register missing type converters - this class will do this only once per appdomain.
-            RegisterMissingTypeConverters.Register();
-
-            // Take the default type converter.
-            if (this.TargetPropertyTypeConverter == null)
+            // if the passed handler is type of LocalizeDictionary.WeakLocChangedEventManager, handle it
+            if (managerType == typeof(LocalizeDictionary.WeakLocChangedEventManager))
             {
-                // Get the type converter.
-                this.TargetPropertyTypeConverter = TypeDescriptor.GetConverter(this.TargetPropertyType);
+                // Update, if this object is in our endpoint list.
+                if ((sender == null) || IsEndpointObject(sender))
+                    UpdateNewValue();
+
+                // return true, to notify the event was processed
+                return true;
             }
 
-            if (this.TargetPropertyTypeConverter == null)
-                return false;
+            // return false, to notify the event was not processed
+            return false;
+        } 
+        #endregion
 
-            return this.TargetPropertyTypeConverter.CanConvertFrom(resourceType);
-        }
-
-        public override object ProvideValue(IServiceProvider serviceProvider)
+        #region Forced culture handling
+        /// <summary>
+        /// If Culture property defines a valid <see cref="CultureInfo"/>, a <see cref="CultureInfo"/> instance will get
+        /// created and returned, otherwise <see cref="LocalizeDictionary"/>.Culture will get returned.
+        /// </summary>
+        /// <returns>The <see cref="CultureInfo"/></returns>
+        /// <exception cref="System.ArgumentException">
+        /// thrown if the parameter Culture don't defines a valid <see cref="CultureInfo"/>
+        /// </exception>
+        protected CultureInfo GetForcedCultureOrDefault()
         {
-            object obj = base.ProvideValue(serviceProvider);
-            
-            var targetObject = GetTargetObject();
-            var targetProperty = GetTargetProperty();
-            this.TargetPropertyType = this.ForceTargetType;
+            // define a culture info
+            CultureInfo cultureInfo;
 
-            if ((this.TargetPropertyType == null) && (targetObject != null) && (targetProperty != null))
+            // check if the forced culture is not null or empty
+            if (!string.IsNullOrEmpty(this.ForceCulture))
             {
-                if (targetProperty is DependencyProperty)
+                // try to create a valid cultureinfo, if defined
+                try
                 {
-                    this.TargetPropertyType = ((DependencyProperty)targetProperty).PropertyType;
+                    // try to create a specific culture from the forced one
+                    cultureInfo = CultureInfo.CreateSpecificCulture(this.ForceCulture);
                 }
-                else if (targetProperty is PropertyInfo)
+                catch (ArgumentException ex)
                 {
-                    this.TargetPropertyType = ((PropertyInfo)targetProperty).PropertyType;
+                    // on error, check if designmode is on
+                    if (LocalizeDictionary.Instance.GetIsInDesignMode())
+                    {
+                        // cultureInfo will be set to the current specific culture
+                        cultureInfo = LocalizeDictionary.Instance.SpecificCulture;
+                    }
+                    else
+                    {
+                        // tell the customer, that the forced culture cannot be converted propperly
+                        throw new ArgumentException("Cannot create a CultureInfo with '" + this.ForceCulture + "'", ex);
+                    }
                 }
-                else
-                    return null;
+            }
+            else
+            {
+                // take the current specific culture
+                cultureInfo = LocalizeDictionary.Instance.SpecificCulture;
             }
 
-            // Change image source to bitmap source to enable our custom type converter.
-            if (this.TargetPropertyType.Equals(typeof(System.Windows.Media.ImageSource)))
-                this.TargetPropertyType = typeof(BitmapSource);
+            // return the evaluated culture info
+            return cultureInfo;
+        } 
+        #endregion
 
-            // TODO: Delete this for later extension of automatic suffix/prefix based on object and property names/IDs.
-            if (obj == null)
-                return null;
-
-            if (this.CanProvideValue(obj.GetType()))
-                return this.FormatOutput(obj);
-
-            if ((this.TargetPropertyType != null) && (this.TargetPropertyType.IsValueType))
-                return Activator.CreateInstance(this.TargetPropertyType);
-
-            return this;
-        }
-
-        protected override void HandleNewValue()
+        #region Assembly/Dictionary/Key
+        /// <summary>
+        /// Returns the resource assembly name that may be subject to the information stored in the endpoint.
+        /// </summary>
+        /// <param name="endPoint">Information about the endpoint.</param>
+        /// <returns>The name of the resource assembly.</returns>
+        public string GetAssembly(TargetInfo endPoint)
         {
-            var obj = LocalizeDictionary.Instance.GetLocalizedObject<object>(this.Assembly, this.Dict, this.Key, this.GetForcedCultureOrDefault());
+            string ret = null;
 
-            if (obj == null)
-                return;
+            if (assembly != null)
+                ret = assembly;
+            else if ((endPoint != null) && endPoint.IsDependencyObject)
+                ret = LocalizeDictionary.GetDefaultAssembly((DependencyObject)endPoint.TargetObject);
 
-            if (this.CanProvideValue(obj.GetType()))
-                this.SetNewValue(this.FormatOutput(obj));
+            return ret;
         }
 
-        protected override object FormatOutput(object input)
-        {           
-            if (input == null)
-                return null;
+        /// <summary>
+        /// Returns the resource dictionary name that may be subject to the information stored in the endpoint.
+        /// </summary>
+        /// <param name="endPoint">Information about the endpoint.</param>
+        /// <returns>The name of the resource dictionary.</returns>
+        public string GetDict(TargetInfo endPoint)
+        {
+            string ret = null;
 
-            if (this.TargetPropertyType.Equals(typeof(System.Object)) || input.GetType().Equals(this.TargetPropertyType))
-                return input;
+            if (dict != null)
+                ret = dict;
+            else if ((endPoint != null) && endPoint.IsDependencyObject)
+                ret = LocalizeDictionary.GetDefaultDictionary((DependencyObject)endPoint.TargetObject);
 
-            if (this.TargetPropertyTypeConverter == null)
-                return null;
-            
+            return ret;
+        }
+
+        /// <summary>
+        /// Parses a key ([[Assembly:]Dict:]Key and return the parts of it.
+        /// </summary>
+        /// <param name="inKey">The key to parse.</param>
+        /// <param name="outAssembly">The found or default assembly.</param>
+        /// <param name="outDict">The found or default dictionary.</param>
+        /// <param name="outKey">The found or default key.</param>
+        private void ParseKey(string inKey, out string outAssembly, out string outDict, out string outKey)
+        {
+            // reset the vars to null
+            outAssembly = null;
+            outDict = null;
+            outKey = null;
+
+            // its a assembly/dict/key pair
+            if (!string.IsNullOrEmpty(inKey))
+            {
+                string[] split = inKey.Trim().Split(":".ToCharArray(), 3);
+
+                // assembly:dict:key
+                if (split.Length == 3)
+                {
+                    outAssembly = !string.IsNullOrEmpty(split[0]) ? split[0] : null;
+                    outDict = !string.IsNullOrEmpty(split[1]) ? split[1] : null;
+                    outKey = split[2];
+                }
+
+                // dict:key
+                // assembly = ExecutingAssembly
+                if (split.Length == 2)
+                {
+                    outDict = !string.IsNullOrEmpty(split[0]) ? split[0] : null;
+                    outKey = split[1];
+                }
+
+                // key
+                // assembly = ExecutingAssembly
+                // dict = standard resourcedictionary
+                if (split.Length == 1)
+                {
+                    outKey = split[0];
+                }
+            }
+            else
+            {
+                // if the passed value is null pr empty, throw an exception if in runtime
+                if (!LocalizeDictionary.Instance.GetIsInDesignMode())
+                {
+                    throw new ArgumentNullException("inKey");
+                }
+            }
+        }
+        #endregion
+
+        #region TargetMarkupExtension implementation
+        /// <summary>
+        /// This function returns the properly prepared output of the markup extension.
+        /// </summary>
+        /// <param name="info">Information about the target.</param>
+        /// <param name="endPoint">Information about the endpoint.</param>
+        public override object FormatOutput(TargetInfo endPoint, TargetInfo info)
+        {
             object result = null;
 
-            try
+            if (endPoint == null)
+                return null;
+
+            // Get target type. Change ImageSource to BitmapSource in order to use our own converter.
+            Type targetType = info.TargetPropertyType;
+
+            if (targetType.Equals(typeof(System.Windows.Media.ImageSource)))
+                targetType = typeof(BitmapSource);
+
+            // Try to get the localized input from the resource.
+            string resourceAssembly = GetAssembly(endPoint);
+            string resourceDictionary = GetDict(endPoint);
+            string resourceKey = this.Key;
+            CultureInfo ci = GetForcedCultureOrDefault();
+
+            // Extract the names of the endpoint object and property
+            string epName = "";
+            string epProp = "";
+
+            if (endPoint.TargetObject is FrameworkElement)
+                epName = (string)((FrameworkElement)endPoint.TargetObject).GetValue(FrameworkElement.NameProperty);
+            else if (endPoint.TargetObject is FrameworkContentElement)
+                epName = (string)((FrameworkContentElement)endPoint.TargetObject).GetValue(FrameworkContentElement.NameProperty);
+
+            if (endPoint.TargetProperty is PropertyInfo)
+                epProp = ((PropertyInfo)endPoint.TargetProperty).Name;
+            else if (endPoint.TargetProperty is DependencyProperty)
+                epProp = ((DependencyProperty)endPoint.TargetProperty).Name;
+
+            // TODO: What are these names during design time good for? Any suggestions?
+            if (epProp.Contains("FrameworkElementWidth5"))
+                epProp = "Height";
+            else if (epProp.Contains("FrameworkElementWidth6"))
+                epProp = "Width";
+            else if (epProp.Contains("FrameworkElementMargin12"))
+                epProp = "Margin";
+
+            string resKeyBase = ci.Name + ":" + targetType.Name + ":" + resourceAssembly + ":" + resourceDictionary + ":";
+            string resKeyNameProp = epName + LocalizeDictionary.Instance.Separation + epProp;
+            string resKeyName = epName;
+            
+            // Check, if the key is already in our resource buffer.
+            if (ResourceBuffer.ContainsKey(resKeyBase + resourceKey))
+                result = ResourceBuffer[resKeyBase + resourceKey];
+            else if (ResourceBuffer.ContainsKey(resKeyBase + resKeyNameProp))
+                result = ResourceBuffer[resKeyBase + resKeyNameProp];
+            else if (ResourceBuffer.ContainsKey(resKeyBase + resKeyName))
+                result = ResourceBuffer[resKeyBase + resKeyName];
+            else
             {
-                result = this.TargetPropertyTypeConverter.ConvertFrom(input);
-            }
-            catch
-            {
-                result = Activator.CreateInstance(this.TargetPropertyType);
+                object input = LocalizeDictionary.Instance.GetLocalizedObject(resourceAssembly, resourceDictionary, resourceKey, ci);
+
+                if (input == null)
+                {
+                    // Try get the key + Name of the DependencyObject [Separator] Property name
+                    input = LocalizeDictionary.Instance.GetLocalizedObject(resourceAssembly, resourceDictionary, resKeyNameProp, ci);
+
+                    if (input == null)
+                    {
+                        // Try get the key + just the Name of the DependencyObject
+                        input = LocalizeDictionary.Instance.GetLocalizedObject(resourceAssembly, resourceDictionary, resKeyName, ci);
+
+                        if (input == null)
+                            return null;
+                        
+                        resKeyBase += resKeyName;
+                    }
+                    else
+                        resKeyBase += resKeyNameProp;
+                }
+                else
+                    resKeyBase += resourceKey;
+
+                Type resourceType = input.GetType();
+
+                // Simplest cases: The target type is object or same as the input.
+                if (targetType.Equals(typeof(System.Object)) || resourceType.Equals(targetType))
+                    return input;
+
+                // Check, if a converter was supplied by the user.
+                if (converter != null)
+                    return converter.Convert(input, targetType, converterParameter, ci);
+
+                // Register missing type converters - this class will do this only once per appdomain.
+                RegisterMissingTypeConverters.Register();
+
+                // Is the type already known?
+                if (!TypeConverters.ContainsKey(targetType))
+                {
+                    // Get the type converter and store it in the dictionary (even if it is NULL).
+                    TypeConverters.Add(targetType, TypeDescriptor.GetConverter(targetType));
+                }
+
+                // Get the converter.
+                TypeConverter conv = TypeConverters[targetType];
+
+                // No converter or not convertable?
+                if ((conv == null) || !conv.CanConvertFrom(resourceType))
+                    return null;
+
+                // Finally, try to convert the value.
+                try
+                {
+                    result = conv.ConvertFrom(input);
+                }
+                catch
+                {
+                    result = Activator.CreateInstance(info.TargetPropertyType);
+                }
+
+                ResourceBuffer.Add(resKeyBase, result);
             }
 
             return result;
         }
+
+        /// <summary>
+        /// This method must return true, if an update shall be executed when the given endpoint is reached.
+        /// This method is called each time an endpoint is reached.
+        /// </summary>
+        /// <param name="endpoint">Information on the specific endpoint.</param>
+        /// <returns>True, if an update of the path to this endpoint shall be performed.</returns>
+        protected override bool UpdateOnEndpoint(TargetInfo endpoint)
+        {
+            // This extension must be updated, when an endpoint is reached.
+            return true;
+        } 
+        #endregion
     }
 }

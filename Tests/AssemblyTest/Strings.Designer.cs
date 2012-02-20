@@ -63,9 +63,45 @@ namespace AssemblyTest {
         /// <summary>
         ///   Looks up a localized string similar to Aqua.
         /// </summary>
-        internal static string Brush {
+        internal static string ButtonAssembly_Background {
             get {
-                return ResourceManager.GetString("Brush", resourceCulture);
+                return ResourceManager.GetString("ButtonAssembly_Background", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Change Assembly!.
+        /// </summary>
+        internal static string ButtonAssembly_Content {
+            get {
+                return ResourceManager.GetString("ButtonAssembly_Content", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LeftToRight.
+        /// </summary>
+        internal static string ButtonAssembly_FlowDirection {
+            get {
+                return ResourceManager.GetString("ButtonAssembly_FlowDirection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 10,5,20,15.
+        /// </summary>
+        internal static string ButtonAssembly_Margin {
+            get {
+                return ResourceManager.GetString("ButtonAssembly_Margin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 150.
+        /// </summary>
+        internal static string ButtonAssembly_Width {
+            get {
+                return ResourceManager.GetString("ButtonAssembly_Width", resourceCulture);
             }
         }
         
@@ -84,24 +120,6 @@ namespace AssemblyTest {
         internal static string ButtonEN {
             get {
                 return ResourceManager.GetString("ButtonEN", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to LeftToRight.
-        /// </summary>
-        internal static string Flow {
-            get {
-                return ResourceManager.GetString("Flow", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 10,5,20,15.
-        /// </summary>
-        internal static string Padding {
-            get {
-                return ResourceManager.GetString("Padding", resourceCulture);
             }
         }
         

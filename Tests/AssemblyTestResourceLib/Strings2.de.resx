@@ -117,6 +117,21 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ButtonAssembly_Background" xml:space="preserve">
+    <value>Yellow</value>
+  </data>
+  <data name="ButtonAssembly_Content" xml:space="preserve">
+    <value>Assembly ändern!</value>
+  </data>
+  <data name="ButtonAssembly_FlowDirection" xml:space="preserve">
+    <value>RightToLeft</value>
+  </data>
+  <data name="ButtonAssembly_Margin" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="ButtonAssembly_Width" xml:space="preserve">
+    <value>100</value>
+  </data>
   <data name="ButtonDE" xml:space="preserve">
     <value>DEUTSCH</value>
   </data>

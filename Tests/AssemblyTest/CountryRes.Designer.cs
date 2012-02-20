@@ -85,6 +85,15 @@ namespace AssemblyTest {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string similar to Country.
+        /// </summary>
+        internal static string CountryKey {
+            get {
+                return ResourceManager.GetString("CountryKey", resourceCulture);
+            }
+        }
+        
         internal static System.Drawing.Bitmap France {
             get {
                 object obj = ResourceManager.GetObject("France", resourceCulture);
@@ -96,6 +105,15 @@ namespace AssemblyTest {
             get {
                 object obj = ResourceManager.GetObject("Germany", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The area of {0} amounts {1} sqkm..
+        /// </summary>
+        internal static string TestFormat {
+            get {
+                return ResourceManager.GetString("TestFormat", resourceCulture);
             }
         }
         
