@@ -98,7 +98,7 @@
         public string Assembly
         {
             get { return this.assembly; }
-            set { this.assembly = !string.IsNullOrWhiteSpace(value) ? value : null; }
+            set { this.assembly = !string.IsNullOrEmpty(value) ? value : null; }
         }
 
         /// <summary>
@@ -107,7 +107,7 @@
         public string Dict
         {
             get { return this.dict; }
-            set { this.dict = !string.IsNullOrWhiteSpace(value) ? value : null; }
+            set { this.dict = !string.IsNullOrEmpty(value) ? value : null; }
         }
 
         /// <summary>
@@ -428,44 +428,7 @@
                 else
                     resKeyBase += resourceKey;
 
-                Type resourceType = input.GetType();
-
-                // Simplest cases: The target type is object or same as the input.
-                if (targetType.Equals(typeof(System.Object)) || resourceType.Equals(targetType))
-                    return input;
-
-                // Check, if a converter was supplied by the user.
-                if (converter != null)
-                    return converter.Convert(input, targetType, converterParameter, ci);
-
-                // Register missing type converters - this class will do this only once per appdomain.
-                RegisterMissingTypeConverters.Register();
-
-                // Is the type already known?
-                if (!TypeConverters.ContainsKey(targetType))
-                {
-                    // Get the type converter and store it in the dictionary (even if it is NULL).
-                    TypeConverters.Add(targetType, TypeDescriptor.GetConverter(targetType));
-                }
-
-                // Get the converter.
-                TypeConverter conv = TypeConverters[targetType];
-
-                // No converter or not convertable?
-                if ((conv == null) || !conv.CanConvertFrom(resourceType))
-                    return null;
-
-                // Finally, try to convert the value.
-                try
-                {
-                    result = conv.ConvertFrom(input);
-                }
-                catch
-                {
-                    result = Activator.CreateInstance(info.TargetPropertyType);
-                }
-
-                ResourceBuffer.Add(resKeyBase, result);
+                result = ConvertAndBufferResult(input, targetType, ci, resKeyBase);
             }
 
             return result;
@@ -481,7 +444,180 @@
         {
             // This extension must be updated, when an endpoint is reached.
             return true;
+        }
+        #endregion
+
+        #region Value conversion and buffering
+        /// <summary>
+        /// Converts the input according to the given target type and stores it in the resource buffer under the given resKey.
+        /// </summary>
+        /// <param name="input">The input object.</param>
+        /// <param name="targetType">The target type of the conversion.</param>
+        /// <param name="ci">The culture info, if used with a TypeConverter.</param>
+        /// <param name="resKey">The key for the resource buffer.</param>
+        /// <returns></returns>
+        private object ConvertAndBufferResult(object input, Type targetType, CultureInfo ci, string resKey)
+        {
+            object result = null;
+            Type resourceType = input.GetType();
+
+            // Simplest cases: The target type is object or same as the input.
+            if (targetType.Equals(typeof(System.Object)) || resourceType.Equals(targetType))
+                return input;
+
+            // Check, if a converter was supplied by the user.
+            if (converter != null)
+                return converter.Convert(input, targetType, converterParameter, ci);
+
+            // Register missing type converters - this class will do this only once per appdomain.
+            RegisterMissingTypeConverters.Register();
+
+            // Is the type already known?
+            if (!TypeConverters.ContainsKey(targetType))
+            {
+                // Get the type converter and store it in the dictionary (even if it is NULL).
+                TypeConverters.Add(targetType, TypeDescriptor.GetConverter(targetType));
+            }
+
+            // Get the converter.
+            TypeConverter conv = TypeConverters[targetType];
+
+            // No converter or not convertable?
+            if ((conv == null) || !conv.CanConvertFrom(resourceType))
+                return null;
+
+            // Finally, try to convert the value.
+            try
+            {
+                result = conv.ConvertFrom(input);
+            }
+            catch
+            {
+                result = Activator.CreateInstance(targetType);
+            }
+
+            ResourceBuffer.Add(resKey, result);
+
+            return result;
         } 
+        #endregion
+
+        #region Resolve functions
+        // TODO: Add resolve functions that support retrieval of assembly and dictionary from a given target
+
+        /// <summary>
+        /// Resolves the localized value of the current Assembly, Dict, Key pair.
+        /// </summary>
+        /// <param name="resolvedValue">The resolved value.</param>
+        /// <typeparam name="TValue">The type of the return value.</typeparam>
+        /// <returns>
+        /// True if the resolve was success, otherwise false.
+        /// </returns>
+        /// <exception>
+        /// If the Assembly, Dict, Key pair was not found.
+        /// </exception>
+        public bool ResolveLocalizedValue<TValue>(out TValue resolvedValue)
+        {
+            // return the resolved localized value with the current or forced culture.
+            return this.ResolveLocalizedValue(out resolvedValue, this.GetForcedCultureOrDefault());
+        }
+
+        /// <summary>
+        /// Resolves the localized value of the current Assembly, Dict, Key pair.
+        /// </summary>
+        /// <param name="resolvedValue">The resolved value.</param>
+        /// <param name="targetCulture">The target culture.</param>
+        /// <typeparam name="TValue">The type of the return value.</typeparam>
+        /// <returns>
+        /// True if the resolve was success, otherwise false.
+        /// </returns>
+        /// <exception>
+        /// If the Assembly, Dict, Key pair was not found.
+        /// </exception>
+        public bool ResolveLocalizedValue<TValue>(out TValue resolvedValue, CultureInfo targetCulture)
+        {
+            // define the default value of the resolved value
+            resolvedValue = default(TValue);
+
+            // get the localized object from the dictionary
+            string resKey = targetCulture.Name + ":" + typeof(TValue).Name + ":" + this.Assembly + ":" + this.Dict + ":" + this.Key;
+
+            if (ResourceBuffer.ContainsKey(resKey))
+            {
+                resolvedValue = (TValue)ResourceBuffer[resKey];
+            }
+            else
+            {
+                object localizedObject = LocalizeDictionary.Instance.GetLocalizedObject(this.Assembly, this.Dict, this.Key, targetCulture);
+                object result = ConvertAndBufferResult(localizedObject, typeof(TValue), targetCulture, resKey);
+                if (result is TValue)
+                    resolvedValue = (TValue)result;
+            }
+
+            if (resolvedValue != null)
+                return true;
+
+            // return false: resulve was not successfully.
+            return false;
+        }
+        #endregion
+
+        #region Code-behind binding
+        /// <summary>
+        /// Sets a binding between a <see cref="DependencyObject"/> with its <see cref="DependencyProperty"/>
+        /// or <see cref="PropertyInfo"/> and the <c>LocExtension</c>.
+        /// </summary>
+        /// <param name="targetObject">The target dependency object</param>
+        /// <param name="targetProperty">The target dependency property</param>
+        /// <returns>
+        /// TRUE if the binding was setup successfully, otherwise FALSE (Binding already exists).
+        /// </returns>
+        /// <exception cref="ArgumentException">
+        /// If the <paramref name="targetProperty"/> is
+        /// not a <see cref="DependencyProperty"/> or <see cref="PropertyInfo"/>.
+        /// </exception>
+        public bool SetBinding(DependencyObject targetObject, object targetProperty)
+        {
+            return SetBinding(targetObject, targetProperty, -1);
+        }
+
+        /// <summary>
+        /// Sets a binding between a <see cref="DependencyObject"/> with its <see cref="DependencyProperty"/>
+        /// or <see cref="PropertyInfo"/> and the <c>LocExtension</c>.
+        /// </summary>
+        /// <param name="targetObject">The target dependency object</param>
+        /// <param name="targetProperty">The target dependency property</param>
+        /// <param name="targetPropertyIndex">The index of the target property. (only used for Lists)</param>
+        /// <returns>
+        /// TRUE if the binding was setup successfully, otherwise FALSE (Binding already exists).
+        /// </returns>
+        /// <exception cref="ArgumentException">
+        /// If the <paramref name="targetProperty"/> is
+        /// not a <see cref="DependencyProperty"/> or <see cref="PropertyInfo"/>.
+        /// </exception>
+        public bool SetBinding(DependencyObject targetObject, object targetProperty, int targetPropertyIndex)
+        {
+            var existingBinding = (from info in GetTargetPropertyPaths()
+                                   where (info.EndPoint.TargetObject == targetObject) && (info.EndPoint.TargetProperty == targetProperty)
+                                   select info).FirstOrDefault();
+
+            // Return false, if the binding already exists
+            if (existingBinding != null)
+                return false;
+
+            Type targetPropertyType = null;
+
+            if (targetProperty is DependencyProperty)
+                targetPropertyType = ((DependencyProperty)targetProperty).PropertyType;
+            else if (targetProperty is PropertyInfo)
+                targetPropertyType = ((PropertyInfo)targetProperty).PropertyType;
+
+            var result = ProvideValue(new SimpleProvideValueServiceProvider(targetObject, targetProperty, targetPropertyType, targetPropertyIndex));
+
+            SetPropertyValue(result, new TargetInfo(targetObject, targetProperty, targetPropertyType, targetPropertyIndex), false);
+
+            return true;
+        }
         #endregion
     }
 }
