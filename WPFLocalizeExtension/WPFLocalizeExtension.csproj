@@ -31,6 +31,7 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -77,23 +78,18 @@
     <Reference Include="WindowsBase">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="XAMLMarkupExtensions">
+      <HintPath>..\Tests\packages\XAMLMarkupExtensions.1.0.1\lib\net35\XAMLMarkupExtensions.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BaseExtensions\BaseLocalizeExtension.cs" />
+    <Compile Include="Engine\LocBinding.cs" />
     <Compile Include="Engine\LocalizeDictionary.cs" />
-    <Compile Include="Engine\LocalizedObjectOperation.cs" />
     <Compile Include="Engine\ObjectDependencyManager.cs" />
-    <Compile Include="Engine\OddsFormatManager.cs" />
-    <Compile Include="Engine\OddsFormatType.cs" />
-    <Compile Include="Extensions\LocBrushExtension.cs" />
-    <Compile Include="Extensions\LocDoubleExtension.cs" />
-    <Compile Include="Extensions\LocFlowDirectionExtension.cs" />
-    <Compile Include="Extensions\LocImageExtension.cs" />
-    <Compile Include="Extensions\LocTextExtension.cs" />
-    <Compile Include="Extensions\LocTextLowerExtension.cs" />
-    <Compile Include="Extensions\LocTextUpperExtension.cs" />
-    <Compile Include="Extensions\LocThicknessExtension.cs" />
-    <Compile Include="Extensions\OddsFormatExtension.cs" />
+    <Compile Include="Extensions\BitmapSourceTypeConverter.cs" />
+    <Compile Include="Extensions\Compatibility.cs" />
+    <Compile Include="Extensions\LocExtension.cs" />
+    <Compile Include="Extensions\RegisterMissingTypeConverters.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -112,6 +108,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,38 +1,226 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Globalization;
-using System.Linq;
-using System.Reflection;
-using System.Resources;
-using System.Runtime.CompilerServices;
-using System.Windows;
-using System.Windows.Markup;
-
-//// Register this namespace under admirals one with prefix
-[assembly: XmlnsDefinition("http://schemas.root-project.org/xaml/presentation", "WPFLocalizeExtension.Engine")]
-[assembly: XmlnsDefinition("http://schemas.root-project.org/xaml/presentation", "WPFLocalizeExtension.Extensions")]
-//// Assign a default namespace prefix for the schema
-[assembly: XmlnsPrefix("http://schemas.root-project.org/xaml/presentation", "lex")]
-
-namespace WPFLocalizeExtension.Engine
+﻿namespace WPFLocalizeExtension.Engine
 {
+    #region Uses
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Globalization;
+    using System.Linq;
+    using System.Reflection;
+    using System.Resources;
+    using System.Runtime.CompilerServices;
+    using System.Windows;
+    using System.Windows.Markup;
+    using XAMLMarkupExtensions.Base;
+    #endregion
+
     /// <summary>
     /// Represents the culture interface for localization
     /// </summary>
     public sealed class LocalizeDictionary : DependencyObject
     {
+        #region Dependency Properties
+        /// <summary>
+        /// <see cref="DependencyProperty"/> DefaultDictionary to set the fallback resource dictionary.
+        /// </summary>
+        public static readonly DependencyProperty DefaultDictionaryProperty =
+                DependencyProperty.RegisterAttached(
+                "DefaultDictionary",
+                typeof(string),
+                typeof(LocalizeDictionary),
+                new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.Inherits, SetDictionaryFromDependencyProperty));
+
+        /// <summary>
+        /// <see cref="DependencyProperty"/> DefaultAssembly to set the fallback assembly.
+        /// </summary>
+        public static readonly DependencyProperty DefaultAssemblyProperty =
+            DependencyProperty.RegisterAttached(
+                "DefaultAssembly",
+                typeof(string),
+                typeof(LocalizeDictionary),
+                new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.Inherits, SetAssemblyFromDependencyProperty));
+
         /// <summary>
         /// <see cref="DependencyProperty"/> DesignCulture to set the Culture.
         /// Only supported at DesignTime.
         /// </summary>
-        [DesignOnly(true)] public static readonly DependencyProperty DesignCultureProperty =
+        [DesignOnly(true)]
+        public static readonly DependencyProperty DesignCultureProperty =
             DependencyProperty.RegisterAttached(
                 "DesignCulture",
                 typeof(string),
                 typeof(LocalizeDictionary),
                 new PropertyMetadata(SetCultureFromDependencyProperty));
 
+        /// <summary>
+        /// <see cref="DependencyProperty"/> Separation to set the separation character/string for resource name patterns.
+        /// </summary>
+        public static readonly DependencyProperty SeparationProperty =
+            DependencyProperty.RegisterAttached(
+                "Separation",
+                typeof(string),
+                typeof(LocalizeDictionary),
+                new FrameworkPropertyMetadata(LocalizeDictionary.DefaultSeparation, SetSeparationFromDependencyProperty));
+        #endregion
+
+        #region Dependency Property Callbacks
+        /// <summary>
+        /// Callback function. Used to set the <see cref="LocalizeDictionary"/>.Culture if set in Xaml.
+        /// Only supported at DesignTime.
+        /// </summary>
+        /// <param name="obj">The dependency object.</param>
+        /// <param name="args">The event argument.</param>
+        [DesignOnly(true)]
+        private static void SetCultureFromDependencyProperty(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+        {
+            if (!Instance.GetIsInDesignMode())
+                return;
+
+            CultureInfo culture;
+
+            try
+            {
+                culture = CultureInfo.GetCultureInfo((string)args.NewValue);
+            }
+            catch
+            {
+                if (Instance.GetIsInDesignMode())
+                    culture = DefaultCultureInfo;
+                else
+                    throw;
+            }
+
+            if (culture != null)
+                Instance.Culture = culture;
+        }
+
+        /// <summary>
+        /// Callback function. Used to set the <see cref="LocalizeDictionary"/>.DefaultDictionary if set in Xaml.
+        /// </summary>
+        /// <param name="obj">The dependency object.</param>
+        /// <param name="args">The event argument.</param>
+        private static void SetDictionaryFromDependencyProperty(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+        {
+            if (Instance.OnLocChanged != null)
+                Instance.OnLocChanged(obj);
+        }
+
+        /// <summary>
+        /// Callback function. Used to set the <see cref="LocalizeDictionary"/>.DefaultAssembly if set in Xaml.
+        /// </summary>
+        /// <param name="obj">The dependency object.</param>
+        /// <param name="args">The event argument.</param>
+        private static void SetAssemblyFromDependencyProperty(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+        {
+            if (Instance.OnLocChanged != null)
+                Instance.OnLocChanged(obj);
+        }
+
+        /// <summary>
+        /// Callback function. Used to set the <see cref="LocalizeDictionary"/>.Separation if set in Xaml.
+        /// </summary>
+        /// <param name="obj">The dependency object.</param>
+        /// <param name="args">The event argument.</param>
+        private static void SetSeparationFromDependencyProperty(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+        {
+            string sep;
+
+            try
+            {
+                sep = (string)args.NewValue;
+            }
+            catch
+            {
+                throw;
+            }
+
+            if (sep != null)
+                Instance.Separation = sep;
+        }
+        #endregion
+
+        #region Dependency Property Management
+        #region Get
+        /// <summary>
+        /// Getter of <see cref="DependencyProperty"/> default dictionary.
+        /// </summary>
+        /// <param name="obj">The dependency object to get the default dictionary from.</param>
+        /// <returns>The default dictionary.</returns>
+        public static string GetDefaultDictionary(DependencyObject obj)
+        {
+            return (obj != null) ? (string)obj.GetValue(DefaultDictionaryProperty) : null;
+        }
+
+        /// <summary>
+        /// Getter of <see cref="DependencyProperty"/> default assembly.
+        /// </summary>
+        /// <param name="obj">The dependency object to get the default assembly from.</param>
+        /// <returns>The default assembly.</returns>
+        public static string GetDefaultAssembly(DependencyObject obj)
+        {
+            return (obj != null) ? (string)obj.GetValue(DefaultAssemblyProperty) : null;
+        }
+
+        /// <summary>
+        /// Getter of <see cref="DependencyProperty"/> Culture.
+        /// Only supported at DesignTime.
+        /// If its in Runtime, <see cref="LocalizeDictionary"/>.Culture will be returned.
+        /// </summary>
+        /// <param name="obj">The dependency object to get the design culture from.</param>
+        /// <returns>The design culture at design time or the current culture at runtime.</returns>
+        [DesignOnly(true)]
+        public static string GetDesignCulture(DependencyObject obj)
+        {
+            if (Instance.GetIsInDesignMode())
+            {
+                return (string)obj.GetValue(DesignCultureProperty);
+            }
+            else
+            {
+                return Instance.Culture.ToString();
+            }
+        }
+        #endregion
+
+        #region Set
+        /// <summary>
+        /// Setter of <see cref="DependencyProperty"/> default dictionary.
+        /// </summary>
+        /// <param name="obj">The dependency object to set the default dictionary to.</param>
+        /// <param name="value">The dictionary.</param>
+        public static void SetDefaultDictionary(DependencyObject obj, string value)
+        {
+            obj.SetValue(DefaultDictionaryProperty, value);
+        }
+
+        /// <summary>
+        /// Setter of <see cref="DependencyProperty"/> default assembly.
+        /// </summary>
+        /// <param name="obj">The dependency object to set the default assembly to.</param>
+        /// <param name="value">The assembly.</param>
+        public static void SetDefaultAssembly(DependencyObject obj, string value)
+        {
+            obj.SetValue(DefaultAssemblyProperty, value);
+        }
+
+        /// <summary>
+        /// Setter of <see cref="DependencyProperty"/> Culture.
+        /// Only supported at DesignTime.
+        /// </summary>
+        /// <param name="obj">The dependency object to set the culture to.</param>
+        /// <param name="value">The odds format.</param>
+        [DesignOnly(true)]
+        public static void SetDesignCulture(DependencyObject obj, string value)
+        {
+            if (Instance.GetIsInDesignMode())
+            {
+                obj.SetValue(DesignCultureProperty, value);
+            }
+        }
+        #endregion
+        #endregion
+
+        #region Variables
         /// <summary>
         /// Holds the default <see cref="ResourceDictionary"/> name
         /// </summary>
@@ -69,25 +257,44 @@ namespace WPFLocalizeExtension.Engine
         private CultureInfo culture;
 
         /// <summary>
+        /// Holds the separation char/string.
+        /// </summary>
+        private string separation = LocalizeDictionary.DefaultSeparation;
+        #endregion
+
+        #region Constructor
+        /// <summary>
         /// Prevents a default instance of the <see cref="LocalizeDictionary"/> class from being created.
         /// Static Constructor
         /// </summary>
         private LocalizeDictionary()
         {
             this.ResourceManagerList = new Dictionary<string, ResourceManager>();
-        }
+        } 
+        #endregion
 
+        #region Events and Actions
         /// <summary>
         /// Get raised if the <see cref="LocalizeDictionary"/>.Culture is changed.
         /// </summary>
-        internal event Action OnCultureChanged;
+        internal event Action<DependencyObject> OnLocChanged; 
+        #endregion
 
+        #region Static Properties
         /// <summary>
         /// Gets the default <see cref="CultureInfo"/> to initialize the <see cref="LocalizeDictionary"/>.<see cref="CultureInfo"/>
         /// </summary>
         public static CultureInfo DefaultCultureInfo
         {
             get { return CultureInfo.InvariantCulture; }
+        }
+
+        /// <summary>
+        /// Gets the default separation char/string.
+        /// </summary>
+        public static string DefaultSeparation
+        {
+            get { return "_"; }
         }
 
         /// <summary>
@@ -118,11 +325,13 @@ namespace WPFLocalizeExtension.Engine
                 // return the existing/new instance
                 return instance;
             }
-        }
+        } 
+        #endregion
 
+        #region Properties
         /// <summary>
         /// Gets or sets the <see cref="CultureInfo"/> for localization.
-        /// On set, <see cref="OnCultureChanged"/> is raised.
+        /// On set, <see cref="OnLocChanged"/> is raised.
         /// </summary>
         /// <exception cref="System.InvalidOperationException">
         /// You have to set <see cref="LocalizeDictionary"/>.Culture first or 
@@ -134,42 +343,52 @@ namespace WPFLocalizeExtension.Engine
             get
             {
                 if (this.culture == null)
-                {
                     this.culture = DefaultCultureInfo;
-
-                    //// try {
-                    //// culture = System.Windows.Application.Current.MainWindow.Language.GetEquivalentCulture();
-                    //// }
-                    //// catch (InvalidOperationException) {
-                    //// throw;
-                    //// }
-                    //// catch (Exception ex) {
-                    //// throw new InvalidOperationException("Cannot read CultureInfo from " +
-                    //// "System.Windows.Application.Current.MainWindow.Language. " +
-                    //// "You have to set LocDictionary.Culture first or wait until " + 
-                    //// "System.Windows.Application.Current.MainWindow is created.", ex);
-                    //// }
-                }
 
                 return this.culture;
             }
 
             set
             {
-                // the cultureinfo cannot contains a null reference
+                // the cultureinfo cannot contain a null reference
                 if (value == null)
-                {
                     throw new ArgumentNullException("value");
-                }
 
                 // Set the CultureInfo
                 this.culture = value;
 
-                // Raise the OnCultureChanged event
-                if (this.OnCultureChanged != null)
-                {
-                    this.OnCultureChanged();
-                }
+                // Raise the OnLocChanged event
+                if (this.OnLocChanged != null)
+                    this.OnLocChanged(null);
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the separation char/string for resource name patterns.
+        /// On set, <see cref="OnLocChanged"/> is raised.
+        /// </summary>
+        public string Separation
+        {
+            get
+            {
+                if (separation == null)
+                    separation = DefaultSeparation;
+
+                return separation;
+            }
+
+            set
+            {
+                // the separation cannot contain a null reference
+                if (value == null)
+                    throw new ArgumentNullException("value");
+
+                // Set the separation
+                this.separation = value;
+
+                // Raise the OnLocChanged event
+                if (this.OnLocChanged != null)
+                    this.OnLocChanged(null);
             }
         }
 
@@ -187,96 +406,10 @@ namespace WPFLocalizeExtension.Engine
         public CultureInfo SpecificCulture
         {
             get { return CultureInfo.CreateSpecificCulture(this.Culture.ToString()); }
-        }
+        } 
+        #endregion
 
-        /// <summary>
-        /// Getter of <see cref="DependencyProperty"/> Culture.
-        /// Only supported at DesignTime.
-        /// If its in Runtime, <see cref="LocalizeDictionary"/>.Culture will be returned.
-        /// </summary>
-        /// <param name="obj">The dependency object to get the design culture from.</param>
-        /// <returns>The design culture at design time or the current culture at runtime.</returns>
-        [DesignOnly(true)]
-        public static string GetDesignCulture(DependencyObject obj)
-        {
-            if (Instance.GetIsInDesignMode())
-            {
-                return (string) obj.GetValue(DesignCultureProperty);
-            }
-            else
-            {
-                return Instance.Culture.ToString();
-            }
-        }
-
-        /// <summary>
-        /// Parses a key ([[Assembly:]Dict:]Key and return the parts of it.
-        /// </summary>
-        /// <param name="inKey">The key to parse.</param>
-        /// <param name="outAssembly">The found or default assembly.</param>
-        /// <param name="outDict">The found or default dictionary.</param>
-        /// <param name="outKey">The found or default key.</param>
-        public static void ParseKey(string inKey, out string outAssembly, out string outDict, out string outKey)
-        {
-            // reset the vars to null
-            outAssembly = null;
-            outDict = null;
-            outKey = null;
-
-            // its a assembly/dict/key pair
-            if (!string.IsNullOrEmpty(inKey))
-            {
-                string[] split = inKey.Trim().Split(":".ToCharArray(), 3);
-
-                // assembly:dict:key
-                if (split.Length == 3)
-                {
-                    outAssembly = !string.IsNullOrEmpty(split[0]) ? split[0] : null;
-                    outDict = !string.IsNullOrEmpty(split[1]) ? split[1] : null;
-                    outKey = split[2];
-                }
-                
-                // dict:key
-                // assembly = ExecutingAssembly
-                if (split.Length == 2)
-                {
-                    outDict = !string.IsNullOrEmpty(split[0]) ? split[0] : null;
-                    outKey = split[1];
-                }
-                
-                // key
-                // assembly = ExecutingAssembly
-                // dict = standard resourcedictionary
-                if (split.Length == 1)
-                {
-                    outKey = split[0];
-                }
-            }
-            else
-            {
-                // if the passed value is null pr empty, throw an exception if in runtime
-                if (!Instance.GetIsInDesignMode())
-                {
-                    throw new ArgumentNullException("inKey");
-                }
-            }
-        }
-
-        /// <summary>
-        /// Setter of <see cref="DependencyProperty"/> Culture.
-        /// Only supported at DesignTime.
-        /// </summary>
-        /// <param name="obj">The dependency object to set the culture to.</param>
-        /// <param name="value">The odds format.</param>
-        [DesignOnly(true)]
-        public static void SetDesignCulture(DependencyObject obj, string value)
-        {
-            if (Instance.GetIsInDesignMode())
-            {
-                obj.SetValue(DesignCultureProperty, value);
-            }
-        }
-
+        #region WeakEventListener Management
         /// <summary>
         /// Attach an WeakEventListener to the <see cref="LocalizeDictionary"/>
         /// </summary>
@@ -284,151 +417,7 @@ namespace WPFLocalizeExtension.Engine
         public void AddEventListener(IWeakEventListener listener)
         {
             // calls AddListener from the inline WeakCultureChangedEventManager
-            WeakCultureChangedEventManager.AddListener(listener);
-        }
-
-        /// <summary>
-        /// Returns the <see cref="AssemblyName"/> of the passed assembly instance
-        /// </summary>
-        /// <param name="assembly">The Assembly where to get the name from</param>
-        /// <returns>The Assembly name</returns>
-        public string GetAssemblyName(Assembly assembly)
-        {
-            if (assembly == null)
-            {
-                throw new ArgumentNullException("assembly");
-            }
-
-            if (assembly.FullName == null)
-            {
-                throw new NullReferenceException("assembly.FullName is null");
-            }
-
-            return assembly.FullName.Split(',')[0];
-        }
-
-        /// <summary>
-        /// Gets the status of the design mode
-        /// </summary>
-        /// <returns>TRUE if in design mode, else FALSE</returns>
-        public bool GetIsInDesignMode()
-        {
-            return DesignerProperties.GetIsInDesignMode(this);
-        }
-
-        /// <summary>
-        /// Returns an object from the passed dictionary with the given name.
-        /// If a wrong <typeparamref name="TType"/> is passed, no exception will get thrown (return obj as <typeparamref name="TType"/>).
-        /// </summary>
-        /// <typeparam name="TType">Type of result type. Have to be a class.</typeparam>
-        /// <param name="resourceAssembly">The Assembly where the Resource is located at</param>
-        /// <param name="resourceDictionary">Name of the resource directory</param>
-        /// <param name="resourceKey">The key for the resource</param>
-        /// <param name="cultureToUse">The culture to use.</param>
-        /// <returns>
-        /// The found object or NULL if not found or wrong <typeparamref name="TType"/> is given
-        /// </returns>
-        /// <exception cref="System.ArgumentNullException">
-        /// <paramref name="resourceDictionary"/> is null
-        /// </exception>
-        /// <exception cref="System.ArgumentException">
-        /// <paramref name="resourceDictionary"/> is empty
-        /// </exception>
-        /// <exception cref="System.ArgumentNullException">
-        /// <paramref name="resourceKey"/> is null
-        /// </exception>
-        /// <exception cref="System.ArgumentException">
-        /// <paramref name="resourceKey"/> is empty
-        /// </exception>
-        /// <exception cref="System.ArgumentException">
-        /// Ambiguous resource name {<paramref name="resourceDictionary"/>}
-        /// </exception>
-        /// <exception cref="System.ArgumentException">
-        /// No resource with name '{<paramref name="resourceDictionary"/>}' found
-        /// </exception>
-        public TType GetLocalizedObject<TType>(
-            string resourceAssembly,
-            string resourceDictionary,
-            string resourceKey,
-            CultureInfo cultureToUse) where TType : class
-        {
-            // Validation
-            if (resourceAssembly == null)
-            {
-                throw new ArgumentNullException("resourceAssembly");
-            }
-
-            if (resourceAssembly == string.Empty)
-            {
-                throw new ArgumentException("resourceAssembly is empty", "resourceAssembly");
-            }
-
-            if (resourceDictionary == null)
-            {
-                throw new ArgumentNullException("resourceDictionary");
-            }
-
-            if (resourceDictionary == string.Empty)
-            {
-                throw new ArgumentException("resourceDictionary is empty", "resourceDictionary");
-            }
-
-            if (string.IsNullOrEmpty(resourceKey))
-            {
-                if (this.GetIsInDesignMode())
-                {
-                    return null;
-                }
-                else
-                {
-                    if (resourceKey == null)
-                    {
-                        throw new ArgumentNullException("resourceKey");
-                    }
-                    else if (resourceKey == string.Empty)
-                    {
-                        throw new ArgumentException("resourceKey is empty", "resourceKey");
-                    }
-                }
-            }
-
-            // declaring local ResourceManager
-            ResourceManager resManager;
-
-            // try to get the resouce manager
-            try
-            {
-                resManager = this.GetResourceManager(resourceAssembly, resourceDictionary, resourceKey);
-            }
-            catch
-            {
-                // if an error occour, throw exception, if in runtime
-                if (this.GetIsInDesignMode())
-                {
-                    return null;
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            // gets the resourceobject with the choosen localization
-            object retVal = resManager.GetObject(resourceKey, cultureToUse) as TType;
-
-            // if the retVal is null, throw exception, if in runtime
-            if (retVal == null && !this.GetIsInDesignMode())
-            {
-                throw new ArgumentException(
-                    string.Format(
-                        "No resource key with name '{0}' in dictionary '{1}' in assembly '{2}' found! ({2}.{1}.{0})",
-                        resourceKey,
-                        resourceDictionary,
-                        resourceAssembly));
-            }
-
-            // finally, return the searched object as type of the generic type
-            return retVal as TType;
+            WeakLocChangedEventManager.AddListener(listener);
         }
 
         /// <summary>
@@ -438,122 +427,16 @@ namespace WPFLocalizeExtension.Engine
         public void RemoveEventListener(IWeakEventListener listener)
         {
             // calls RemoveListener from the inline WeakCultureChangedEventManager
-            WeakCultureChangedEventManager.RemoveListener(listener);
+            WeakLocChangedEventManager.RemoveListener(listener);
         }
+        #endregion
 
-        /// <summary>
-        /// Looks up the ResourceManagers for the searched <paramref name="resourceKey"/> 
-        /// in the <paramref name="resourceDictionary"/> in the <paramref name="resourceAssembly"/>
-        /// with an Invariant Culture.
-        /// </summary>
-        /// <param name="resourceAssembly">The resource assembly (e.g.: <c>BaseLocalizeExtension</c>). NULL = Name of the executing assembly</param>
-        /// <param name="resourceDictionary">The dictionary to look up (e.g.: ResHelp, Resources, ...). NULL = Name of the default resource file (Resources)</param>
-        /// <param name="resourceKey">The key of the searched entry (e.g.: <c>btnHelp</c>, Cancel, ...). NULL = Exception</param>
-        /// <returns>
-        /// TRUE if the searched one is found, otherwise FALSE
-        /// </returns>
-        /// <exception cref="System.InvalidOperationException">
-        /// If the ResourceManagers cannot be looked up
-        /// </exception>
-        /// <exception cref="System.ArgumentException">
-        /// If the searched <see cref="ResourceManager"/> wasn't found (only in runtime)
-        /// </exception>
-        /// <exception cref="System.ArgumentException">
-        /// If the <paramref name="resourceKey"/> is null or empty
-        /// </exception>
-        public bool ResourceKeyExists(string resourceAssembly, string resourceDictionary, string resourceKey)
-        {
-            return this.ResourceKeyExists(resourceAssembly, resourceDictionary, resourceKey, CultureInfo.InvariantCulture);
-        }
-
-        /// <summary>
-        /// Looks up the ResourceManagers for the searched <paramref name="resourceKey"/>
-        /// in the <paramref name="resourceDictionary"/> in the <paramref name="resourceAssembly"/>
-        /// with the passed culture. If the searched one does not exists with the passed culture, is will searched
-        /// until the invariant culture is used.
-        /// </summary>
-        /// <param name="resourceAssembly">The resource assembly (e.g.: <c>BaseLocalizeExtension</c>). NULL = Name of the executing assembly</param>
-        /// <param name="resourceDictionary">The dictionary to look up (e.g.: ResHelp, Resources, ...). NULL = Name of the default resource file (Resources)</param>
-        /// <param name="resourceKey">The key of the searched entry (e.g.: <c>btnHelp</c>, Cancel, ...). NULL = Exception</param>
-        /// <param name="cultureToUse">The culture to use.</param>
-        /// <returns>
-        /// TRUE if the searched one is found, otherwise FALSE
-        /// </returns>
-        /// <exception cref="System.InvalidOperationException">
-        /// If the ResourceManagers cannot be looked up
-        /// </exception>
-        /// <exception cref="System.ArgumentException">
-        /// If the searched <see cref="ResourceManager"/> wasn't found (only in runtime)
-        /// </exception>
-        /// <exception cref="System.ArgumentException">
-        /// If the <paramref name="resourceKey"/> is null or empty
-        /// </exception>
-        public bool ResourceKeyExists(
-            string resourceAssembly, string resourceDictionary, string resourceKey, CultureInfo cultureToUse)
-        {
-            try
-            {
-                return
-                    this.GetResourceManager(resourceAssembly, resourceDictionary, resourceKey).GetObject(
-                        resourceKey, cultureToUse) != null;
-            }
-            catch
-            {
-                if (this.GetIsInDesignMode())
-                {
-                    return false;
-                }
-                else
-                {
-                    throw;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Callback function. Used to set the <see cref="LocalizeDictionary"/>.Culture if set in Xaml.
-        /// Only supported at DesignTime.
-        /// </summary>
-        /// <param name="obj">The dependency object.</param>
-        /// <param name="args">The event argument.</param>
-        [DesignOnly(true)]
-        private static void SetCultureFromDependencyProperty(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-        {
-            if (!Instance.GetIsInDesignMode())
-            {
-                return;
-            }
-
-            CultureInfo culture;
-
-            try
-            {
-                culture = CultureInfo.GetCultureInfo((string) args.NewValue);
-            }
-            catch
-            {
-                if (Instance.GetIsInDesignMode())
-                {
-                    culture = DefaultCultureInfo;
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            if (culture != null)
-            {
-                Instance.Culture = culture;
-            }
-        }
-
+        #region ResourceManager Management
         /// <summary>
         /// Looks up in the cached <see cref="ResourceManager"/> list for the searched <see cref="ResourceManager"/>.
         /// </summary>
         /// <param name="resourceAssembly">The resource assembly (e.g.: <c>BaseLocalizeExtension</c>). NULL = Name of the executing assembly</param>
         /// <param name="resourceDictionary">The dictionary to look up (e.g.: ResHelp, Resources, ...). NULL = Name of the default resource file (Resources)</param>
-        /// <param name="resourceKey">The key of the searched entry (e.g.: <c>btnHelp</c>, Cancel, ...). NULL = Exception</param>
         /// <returns>
         /// The found <see cref="ResourceManager"/>
         /// </returns>
@@ -563,10 +446,7 @@ namespace WPFLocalizeExtension.Engine
         /// <exception cref="System.ArgumentException">
         /// If the searched <see cref="ResourceManager"/> wasn't found
         /// </exception>
-        /// <exception cref="System.ArgumentException">
-        /// If the <paramref name="resourceKey"/> is null or empty
-        /// </exception>
-        private ResourceManager GetResourceManager(string resourceAssembly, string resourceDictionary, string resourceKey)
+        private ResourceManager GetResourceManager(string resourceAssembly, string resourceDictionary)
         {
             if (resourceAssembly == null)
             {
@@ -576,11 +456,6 @@ namespace WPFLocalizeExtension.Engine
             if (resourceDictionary == null)
             {
                 resourceDictionary = ResourcesName;
-            }
-
-            if (string.IsNullOrEmpty(resourceKey))
-            {
-                throw new ArgumentNullException("resourceKey");
             }
 
             PropertyInfo propInfo;
@@ -654,8 +529,7 @@ namespace WPFLocalizeExtension.Engine
                 {
                     throw new ArgumentException(
                         string.Format(
-                            "No resource key with name '{0}' in dictionary '{1}' in assembly '{2}' found! ({2}.{1}.{0})",
-                            resourceKey,
+                            "No resource manager for dictionary '{0}' in assembly '{1}' found! ({1}.{0})",
                             resourceDictionary,
                             resourceAssembly));
                 }
@@ -687,9 +561,9 @@ namespace WPFLocalizeExtension.Engine
 
                     // get the static ResourceManager property
                     object resManObject = methodInfo.Invoke(null, null);
-                    
+
                     // cast it to a ResourceManager for better working with
-                    resManager = (ResourceManager) resManObject;
+                    resManager = (ResourceManager)resManObject;
                 }
                 catch (Exception ex)
                 {
@@ -704,11 +578,96 @@ namespace WPFLocalizeExtension.Engine
             // return the found ResourceManager
             return resManager;
         }
+        #endregion
 
+        #region Localization Core
+        /// <summary>
+        /// Returns an object from the passed dictionary with the given name.
+        /// </summary>
+        /// <param name="resourceAssembly">The Assembly where the Resource is located at</param>
+        /// <param name="resourceDictionary">Name of the resource directory</param>
+        /// <param name="resourceKey">The key for the resource</param>
+        /// <param name="cultureToUse">The culture to use.</param>
+        /// <returns>
+        /// The found object or NULL if not found.
+        /// </returns>
+        public object GetLocalizedObject(
+            string resourceAssembly,
+            string resourceDictionary,
+            string resourceKey,
+            CultureInfo cultureToUse)
+        {
+            // Validation
+            if (String.IsNullOrEmpty(resourceAssembly))
+                return null;
+
+            if (String.IsNullOrEmpty(resourceDictionary))
+                return null;
+
+            if (String.IsNullOrEmpty(resourceKey))
+                return null;
+
+            // declaring local resource manager
+            ResourceManager resManager;
+
+            // try to get the resouce manager
+            try
+            {
+                resManager = this.GetResourceManager(resourceAssembly, resourceDictionary);
+            }
+            catch
+            {
+                return null;
+            }
+
+            // gets the resourceobject with the choosen localization
+            object retVal = resManager.GetObject(resourceKey, cultureToUse);
+
+            // if the retVal is null, return null
+            if (retVal == null && !this.GetIsInDesignMode())
+                return null;
+
+            // finally, return the searched object as type of the generic type
+            return retVal;
+        }
+        #endregion
+
+        #region Helper Functions
+        /// <summary>
+        /// Returns the <see cref="AssemblyName"/> of the passed assembly instance
+        /// </summary>
+        /// <param name="assembly">The Assembly where to get the name from</param>
+        /// <returns>The Assembly name</returns>
+        public string GetAssemblyName(Assembly assembly)
+        {
+            if (assembly == null)
+            {
+                throw new ArgumentNullException("assembly");
+            }
+
+            if (assembly.FullName == null)
+            {
+                throw new NullReferenceException("assembly.FullName is null");
+            }
+
+            return assembly.FullName.Split(',')[0];
+        }
+
+        /// <summary>
+        /// Gets the status of the design mode
+        /// </summary>
+        /// <returns>TRUE if in design mode, else FALSE</returns>
+        public bool GetIsInDesignMode()
+        {
+            return DesignerProperties.GetIsInDesignMode(this);
+        }
+        #endregion
+
+        #region WeakLocChangedEventManager
         /// <summary>
         /// This in line class is used to handle weak events to avoid memory leaks
         /// </summary>
-        internal sealed class WeakCultureChangedEventManager : WeakEventManager
+        internal sealed class WeakLocChangedEventManager : WeakEventManager
         {
             /// <summary>
             /// Indicates, if the current instance is listening on the source event
@@ -721,33 +680,33 @@ namespace WPFLocalizeExtension.Engine
             private ListenerList listeners;
 
             /// <summary>
-            /// Prevents a default instance of the <see cref="WeakCultureChangedEventManager"/> class from being created. 
+            /// Prevents a default instance of the <see cref="WeakLocChangedEventManager"/> class from being created. 
             /// Creates a new instance of WeakCultureChangedEventManager
             /// </summary>
-            private WeakCultureChangedEventManager()
+            private WeakLocChangedEventManager()
             {
                 // creates a new list and assign it to listeners
                 this.listeners = new ListenerList();
             }
 
             /// <summary>
-            /// Gets the singleton instance of <see cref="WeakCultureChangedEventManager"/>
+            /// Gets the singleton instance of <see cref="WeakLocChangedEventManager"/>
             /// </summary>
-            private static WeakCultureChangedEventManager CurrentManager
+            private static WeakLocChangedEventManager CurrentManager
             {
                 get
                 {
                     // store the type of this WeakEventManager
-                    Type managerType = typeof(WeakCultureChangedEventManager);
+                    Type managerType = typeof(WeakLocChangedEventManager);
 
                     // try to retrieve an existing instance of the stored type
-                    WeakCultureChangedEventManager manager = (WeakCultureChangedEventManager) GetCurrentManager(managerType);
+                    WeakLocChangedEventManager manager = (WeakLocChangedEventManager)GetCurrentManager(managerType);
 
                     // if the manager does not exists
                     if (manager == null)
                     {
                         // create a new instance of WeakCultureChangedEventManager
-                        manager = new WeakCultureChangedEventManager();
+                        manager = new WeakLocChangedEventManager();
 
                         // add the new instance to the WeakEventManager manager-store
                         SetCurrentManager(managerType, manager);
@@ -793,7 +752,7 @@ namespace WPFLocalizeExtension.Engine
             {
                 if (!this.isListening)
                 {
-                    Instance.OnCultureChanged += this.Instance_OnCultureChanged;
+                    Instance.OnLocChanged += this.OnLocChanged;
                     this.isListening = true;
                 }
             }
@@ -807,7 +766,7 @@ namespace WPFLocalizeExtension.Engine
             {
                 if (this.isListening)
                 {
-                    Instance.OnCultureChanged -= this.Instance_OnCultureChanged;
+                    Instance.OnLocChanged -= this.OnLocChanged;
                     this.isListening = false;
                 }
             }
@@ -816,10 +775,10 @@ namespace WPFLocalizeExtension.Engine
             /// This method is called if the <see cref="LocalizeDictionary"/>.OnCultureChanged
             /// is called and the listening process is enabled
             /// </summary>
-            private void Instance_OnCultureChanged()
+            private void OnLocChanged(DependencyObject obj)
             {
                 // tells every listener in the list that the event is occurred
-                this.DeliverEventToList(Instance, EventArgs.Empty, this.listeners);
+                this.DeliverEventToList(obj, EventArgs.Empty, this.listeners);
             }
 
             /// <summary>
@@ -845,6 +804,7 @@ namespace WPFLocalizeExtension.Engine
                     }
                 }
             }
-        }
+        } 
+        #endregion
     }
 }
