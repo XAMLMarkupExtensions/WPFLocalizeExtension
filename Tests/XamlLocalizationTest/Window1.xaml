@@ -1,11 +1,17 @@
 ﻿<Window x:Class="XamlLocalizationTest.Window1"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:loc="clr-namespace:XamlLocalizationTest"
-    xmlns:lex="http://schemas.root-project.org/xaml/presentation"
-    lex:LocalizeDictionary.DesignCulture="de-at"
-    Title="{lex:LocText Key=resTitel, Dict=ResTexts, Assembly=XamlLocalizationTest}"
-    Height="900" Width="1200">
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:loc="clr-namespace:XamlLocalizationTest"
+        xmlns:Engine="clr-namespace:WPFLocalizeExtension.Engine;assembly=WPFLocalizeExtension"
+        xmlns:lex="clr-namespace:WPFLocalizeExtension.Extensions;assembly=WPFLocalizeExtension"
+        Engine:LocalizeDictionary.DesignCulture="de-at"
+        Engine:LocalizeDictionary.DefaultAssembly="XamlLocalizationTest"
+        Engine:LocalizeDictionary.DefaultDictionary="ResTexts"
+        Title="{lex:LocText Key=resTitel}"
+        Height="900" Width="1200">
+
+    <!--xmlns:lex="http://schemas.root-project.org/xaml/presentation"-->
+
     <Window.Resources>
         <DataTemplate x:Key="myDataTemplate">
             <Border Name="border" BorderBrush="Red" BorderThickness="1" Padding="5" Margin="5">
