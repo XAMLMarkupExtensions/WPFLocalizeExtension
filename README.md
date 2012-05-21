@@ -1,5 +1,5 @@
 # LocalizationExtension #
-## is a realy easy way to localize any type of DependencyProperties or native Properties on DependencyObects ##
+### is a realy easy way to localize any type of DependencyProperties or native Properties on DependencyObects ###
 
 ### Features:###
 
