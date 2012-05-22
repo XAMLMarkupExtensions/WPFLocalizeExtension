@@ -14,6 +14,7 @@
     using System.Collections.Generic;
     using System.Windows.Data;
     using WPFLocalizeExtension.Engine;
+    using System.Collections;
     #endregion
 
     /// <summary>
@@ -364,6 +365,10 @@
             if (targetType.Equals(typeof(System.Windows.Media.ImageSource)))
                 targetType = typeof(BitmapSource);
 
+            // In case of a list target, get the correct list element type.
+            if ((info.TargetPropertyIndex != -1) && typeof(IList).IsAssignableFrom(info.TargetPropertyType))
+                targetType = info.TargetPropertyType.GetGenericArguments()[0];
+            
             // Try to get the localized input from the resource.
             string resourceAssembly = GetAssembly(endPoint);
             string resourceDictionary = GetDict(endPoint);
