@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <version>1.0.3</version>
+    <authors>Bernhard Millauer</authors>
+    <owners>Bernhard Millauer</owners>
+    <licenseUrl>http://wpflocalizeextension.codeplex.com/license</licenseUrl>
+    <projectUrl>http://wpflocalizeextension.codeplex.com/</projectUrl>
+    <dependencies>
+      <dependency id="XAMLMarkupExtensions" />
+    </dependencies>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="WindowsBase" targetFramework="" />
+      <frameworkAssembly assemblyName="PresentationCore" targetFramework="" />
+      <frameworkAssembly assemblyName="PresentationFramework" targetFramework="" />
+      <frameworkAssembly assemblyName="System.Drawing" targetFramework="" />
+    </frameworkAssemblies>
+    <id>WpfLocalizeExtension</id>
+    <title>WPF Localization Extension</title>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>LocalizationExtension is a realy easy way to localize any type of DependencyProperties or native Properties on DependencyObects</description>
+    <summary>LocalizationExtension is a realy easy way to localize any type of DependencyProperties or native Properties on DependencyObects</summary>
+    <releaseNotes />
+    <copyright>Bernhard Millauer</copyright>
+    <language>en-US</language>
+    <tags>wpf localization extension globalization resx resource language</tags>
+  </metadata>
+  <files>
+    <file src="lib\WPFLocalizeExtension.dll" target="lib\WPFLocalizeExtension.dll" />
+    <file src="lib\WPFLocalizeExtension.xml" target="lib\WPFLocalizeExtension.xml" />
+  </files>
+</package>
