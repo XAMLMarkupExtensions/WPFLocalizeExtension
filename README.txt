@@ -1,4 +1,4 @@
-LocalizationExtension is a realy easy way to localize any type of DependencyProperties or native Properties on DependencyObects
+LocalizationExtension is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObects
 
 Features:
 
