@@ -11,8 +11,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencie
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "VbWpfApplication", "VbWpfApplication\VbWpfApplication.vbproj", "{1F6BCD30-6F08-448F-B3FF-D47C27B32025}"
 EndProject
-
-
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssemblyTest", "AssemblyTest\AssemblyTest.csproj", "{DA56BE11-7D65-4602-9B5B-3EE51C20E830}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssemblyTestResourceLib", "AssemblyTestResourceLib\AssemblyTestResourceLib.csproj", "{F8ED06E5-39CA-458B-8B84-E043C335BDE2}"

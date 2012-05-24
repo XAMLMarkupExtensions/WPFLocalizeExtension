@@ -26,3 +26,6 @@ obj/
 [Rr]elease*/
 _ReSharper*/
 [Tt]est[Rr]esult*
+Sandbox
+*Sandbox*
+*.ncrunchsolution

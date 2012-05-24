@@ -121,7 +121,7 @@
     <value>Yellow</value>
   </data>
   <data name="ButtonAssembly_Content" xml:space="preserve">
-    <value>Assembly ändern!</value>
+    <value>Assembly ändern {0}!</value>
   </data>
   <data name="ButtonAssembly_FlowDirection" xml:space="preserve">
     <value>RightToLeft</value>

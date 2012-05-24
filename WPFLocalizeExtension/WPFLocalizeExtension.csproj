@@ -78,9 +78,9 @@
     <Reference Include="WindowsBase">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="XAMLMarkupExtensions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="XAMLMarkupExtensions, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Tests\packages\XAMLMarkupExtensions.1.0.1\lib\net35\XAMLMarkupExtensions.dll</HintPath>
+      <HintPath>..\Tests\packages\XAMLMarkupExtensions.1.0.2\lib\net35\XAMLMarkupExtensions.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

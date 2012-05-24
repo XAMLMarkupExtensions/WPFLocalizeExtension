@@ -121,7 +121,7 @@
     <value>Aqua</value>
   </data>
   <data name="ButtonAssembly_Content" xml:space="preserve">
-    <value>Change Assembly!</value>
+    <value>Change Assembly {0}!</value>
   </data>
   <data name="ButtonAssembly_FlowDirection" xml:space="preserve">
     <value>LeftToRight</value>
