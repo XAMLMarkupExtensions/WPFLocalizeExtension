@@ -87,6 +87,7 @@
     <Compile Include="Engine\LocBinding.cs" />
     <Compile Include="Engine\LocalizeDictionary.cs" />
     <Compile Include="Engine\ObjectDependencyManager.cs" />
+    <Compile Include="Engine\ParentChangedNotifier.cs" />
     <Compile Include="Extensions\BitmapSourceTypeConverter.cs" />
     <Compile Include="Extensions\Compatibility.cs" />
     <Compile Include="Extensions\LocExtension.cs" />

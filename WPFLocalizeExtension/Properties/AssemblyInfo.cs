@@ -5,11 +5,16 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
+#if SILVERLIGHT
+[assembly: AssemblyTitle("SLLocalizeExtension")]
+[assembly: AssemblyProduct("SLLocalizeExtension")]
+#else
 [assembly: AssemblyTitle("WPFLocalizeExtension")]
+[assembly: AssemblyProduct("WPFLocalizeExtension")]
+#endif
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Root-Project")]
-[assembly: AssemblyProduct("WPFLocalizeExtension")]
 [assembly: AssemblyCopyright("Copyright ©  2008 - 2010")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

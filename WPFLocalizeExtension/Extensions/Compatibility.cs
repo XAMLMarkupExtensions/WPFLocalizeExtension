@@ -1,4 +1,8 @@
-﻿namespace WPFLocalizeExtension.Extensions
+﻿#if SILVERLIGHT
+namespace SLLocalizeExtension.Extensions
+#else
+namespace WPFLocalizeExtension.Extensions
+#endif
 {
     #region Uses
     using System;
@@ -6,12 +10,19 @@
     using System.Linq;
     using System.Text;
     using System.Windows.Markup;
+#if SILVERLIGHT
+    using SLLocalizeExtension.Engine;
+#else
     using WPFLocalizeExtension.Engine;
+#endif
     using XAMLMarkupExtensions.Base;
     #endregion
 
     [Obsolete("Please use the new base class LocExtension instead!")]
+#if SILVERLIGHT
+#else
     [MarkupExtensionReturnType(typeof(System.Windows.Media.Brush))]
+#endif
     public class LocBrushExtension : LocExtension
     {
         public LocBrushExtension() : base() { }
@@ -19,7 +30,10 @@
     }
 
     [Obsolete("Please use the new base class LocExtension instead!")]
+#if SILVERLIGHT
+#else
     [MarkupExtensionReturnType(typeof(double))]
+#endif
     public class LocDoubleExtension : LocExtension
     {
         public LocDoubleExtension() : base() { }
@@ -27,7 +41,10 @@
     }
 
     [Obsolete("Please use the new base class LocExtension instead!")]
+#if SILVERLIGHT
+#else
     [MarkupExtensionReturnType(typeof(System.Windows.FlowDirection))]
+#endif
     public class LocFlowDirectionExtension : LocExtension
     {
         public LocFlowDirectionExtension() : base() { }
@@ -35,7 +52,10 @@
     }
 
     [Obsolete("Please use the new base class LocExtension instead!")]
+#if SILVERLIGHT
+#else
     [MarkupExtensionReturnType(typeof(System.Windows.Media.Imaging.BitmapSource))]
+#endif
     public class LocImageExtension : LocExtension
     {
         public LocImageExtension() : base() { }
@@ -43,7 +63,10 @@
     }
 
     [Obsolete("Please use the new base class LocExtension instead!")]
+#if SILVERLIGHT
+#else
     [MarkupExtensionReturnType(typeof(string))]
+#endif
     public class LocTextExtension : LocExtension
     {
         #region Constructors
@@ -239,7 +262,11 @@
             {
                 // add some format segments, in case that the main text contains format place holders like {0}
                 textMain = string.Format(
+                    #if SILVERLIGHT
+                    LocalizeDictionary.Instance.Culture,
+#else
                     LocalizeDictionary.Instance.SpecificCulture,
+#endif
                     textMain,
                     this.formatSegments[0] ?? string.Empty,
                     this.formatSegments[1] ?? string.Empty,
@@ -268,7 +295,10 @@
     }
 
     [Obsolete("Please use the new base class LocExtension instead!")]
+#if SILVERLIGHT
+#else
     [MarkupExtensionReturnType(typeof(string))]
+#endif
     public class LocTextLowerExtension : LocTextExtension
     {
         #region Constructors
@@ -293,7 +323,10 @@
     }
 
     [Obsolete("Please use the new base class LocExtension instead!")]
+#if SILVERLIGHT
+#else
     [MarkupExtensionReturnType(typeof(string))]
+#endif
     public class LocTextUpperExtension : LocTextExtension
     {
         #region Constructors
@@ -318,7 +351,10 @@
     }
 
     [Obsolete("Please use the new base class LocExtension instead!")]
+#if SILVERLIGHT
+#else
     [MarkupExtensionReturnType(typeof(System.Windows.Thickness))]
+#endif
     public class LocThicknessExtension : LocExtension
     {
         public LocThicknessExtension() : base() { }

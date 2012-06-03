@@ -1,0 +1,34 @@
+﻿<UserControl x:Class="SLTest.MainPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:Engine="clr-namespace:SLLocalizeExtension.Engine;assembly=SLLocalizeExtension"
+             xmlns:lex="clr-namespace:SLLocalizeExtension.Extensions;assembly=SLLocalizeExtension"
+             Engine:LocalizeDictionary.DesignCulture="de"
+             Engine:LocalizeDictionary.DefaultAssembly="SLTest"
+             Engine:LocalizeDictionary.DefaultDictionary="Strings">
+    <Grid x:Name="LayoutRoot" Background="White">
+        <Grid.Resources>
+            <ResourceDictionary>
+            </ResourceDictionary>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="100" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackPanel Name="TestPanel" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
+            <Button Content="{lex:Loc Key=ButtonDE}" Height="23" Width="75" Click="ButtonDE_Click" />
+            <Button Content="{lex:Loc Key=ButtonEN}" Height="23" Width="75" Click="ButtonEN_Click" />
+        </StackPanel>
+        <!--<Button Grid.Row="2" HorizontalAlignment="Center" Name="ButtonAssembly" Click="ButtonAssembly_Click" Content="{lex:LocText FormatSegment1=A}" Width="{lex:Loc}" Margin="{lex:Loc}" Background="{lex:Loc}" FlowDirection="{lex:Loc}" />-->
+        <Button Grid.Row="2" HorizontalAlignment="Center" Name="ButtonAssembly" Click="ButtonAssembly_Click" Content="{lex:LocText}" />
+        <!--<ListBox Grid.Row="4" ItemTemplate="{DynamicResource TestTemplate}" Engine:LocalizeDictionary.DefaultAssembly="AssemblyTest" Engine:LocalizeDictionary.DefaultDictionary="CountryRes">
+            <Local:Countries Country="Austria" CountryDE="Österreich" Area="83855" />
+            <Local:Countries Country="France" CountryDE="Frankreich" Area="543965" />
+            <Local:Countries Country="Germany" CountryDE="Deutschland" Area="357039" />
+            <Local:Countries Country="United Kingdom" CountryDE="Großbrittanien" Area="244103" />
+        </ListBox>-->
+    </Grid>
+</UserControl>
