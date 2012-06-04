@@ -1,12 +1,12 @@
 # LocalizationExtension #
-### is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObjects ###
+### Is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObjects ###
 
 ### Features:###
 
 * First of all: ITS FREE (and will stay free - refer to license section below)
 * Obtain stable results in
 	* WPF applications using .NET 3.5 and higher
-	* *New:* Silverlight 5.0 applications
+	* **New:** Silverlight 5.0 applications
 * Supports binding-like write style like "Text = {lex:LocText ResAssembly:ResFile:ResKey}"
 	* Define a default assembly and / or resource file to reduce the key to ResAssembly::ResKey, ResFile:ResKey or even ResKey
 	* If no key is specified, the Name and Property Name of the target are used (e.g. MyButton_Content)
