@@ -61,7 +61,7 @@ namespace SLTest {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Aqua.
+        ///   Looks up a localized string similar to Red.
         /// </summary>
         public static string ButtonAssembly_Background {
             get {

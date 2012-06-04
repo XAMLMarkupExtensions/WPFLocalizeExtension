@@ -74,6 +74,11 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CountryRes.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CountryRes.resx</DependentUpon>
+    </Compile>
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -88,6 +93,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings2.resx</DependentUpon>
     </Compile>
+    <Compile Include="TestDataClass.cs" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -110,6 +116,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="CountryRes.en.resx" />
+    <EmbeddedResource Include="CountryRes.de.resx">
+      <LastGenOutput>CountryRes.de.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CountryRes.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>CountryRes.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Strings2.en.resx" />
     <EmbeddedResource Include="Strings.en.resx" />
     <EmbeddedResource Include="Strings.de.resx" />
@@ -131,18 +145,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Germany.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Test.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Test1.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Test11.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Test12.bmp" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\United_Kingdom.png" />

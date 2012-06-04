@@ -47,7 +47,7 @@ namespace WPFLocalizeExtension.Extensions
 
                 OnParentChangedList[element].Add(onParentChanged);
             }
-
+            
             Binding b = new Binding("Parent");
             b.RelativeSource = new RelativeSource();
             b.RelativeSource.Mode = RelativeSourceMode.FindAncestor;

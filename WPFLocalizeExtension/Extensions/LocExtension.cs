@@ -18,8 +18,10 @@ namespace WPFLocalizeExtension.Extensions
     using System.Windows.Data;
 #if SILVERLIGHT
     using SLLocalizeExtension.Engine;
+    using SLLocalizeExtension.TypeConverters;
 #else
     using WPFLocalizeExtension.Engine;
+    using WPFLocalizeExtension.TypeConverters;
 #endif
     using XAMLMarkupExtensions.Base;
     using System.Collections;
@@ -562,19 +564,37 @@ namespace WPFLocalizeExtension.Extensions
             // Is the type already known?
             if (!TypeConverters.ContainsKey(targetType))
             {
-                var attributes = targetType.GetCustomAttributes(typeof(TypeConverterAttribute), false);
+                if (typeof(Enum).IsAssignableFrom(targetType))
+                {
+                    TypeConverters.Add(targetType, new EnumConverter(targetType));
+                }
+                else
+                {
+                    Type converterType = null;
+                    var attributes = targetType.GetCustomAttributes(typeof(TypeConverterAttribute), false);
 
-                if (attributes.Length != 1)
-                    return new TypeConverter();
+                    if (attributes.Length == 1)
+                    {
+                        var converterAttribute = (TypeConverterAttribute)attributes[0];
+                        converterType = Type.GetType(converterAttribute.ConverterTypeName);
+                    }
 
-                var converterAttribute = (TypeConverterAttribute)attributes[0];
-                var converterType = Type.GetType(converterAttribute.ConverterTypeName);
+                    if (converterType == null)
+                    {
+                        // Find a suitable "common" converter.
+                        if (targetType == typeof(double))
+                            converterType = typeof(DoubleConverter);
+                        else if (targetType == typeof(Thickness))
+                            converterType = typeof(ThicknessConverter);
+                        else if (targetType == typeof(Brush))
+                            converterType = typeof(BrushConverter);
+                        else
+                            return input;
+                    }
 
-                if (converterType == null)
-                    return new TypeConverter();
-
-                // Get the type converter and store it in the dictionary (even if it is NULL).
-                TypeConverters.Add(targetType, Activator.CreateInstance(converterType) as TypeConverter);
+                    // Get the type converter and store it in the dictionary (even if it is NULL).
+                    TypeConverters.Add(targetType, Activator.CreateInstance(converterType) as TypeConverter);
+                }
             }
 #else
             // Register missing type converters - this class will do this only once per appdomain.
@@ -733,5 +753,10 @@ namespace WPFLocalizeExtension.Extensions
             return true;
         }
         #endregion
+
+        public override string ToString()
+        {
+            return "Loc:" + key;
+        }
     }
 }

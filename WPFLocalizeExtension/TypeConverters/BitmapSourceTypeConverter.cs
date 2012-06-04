@@ -1,4 +1,4 @@
-﻿namespace WPFLocalizeExtension.Extensions
+﻿namespace WPFLocalizeExtension.TypeConverters
 {
     #region Uses
     using System;

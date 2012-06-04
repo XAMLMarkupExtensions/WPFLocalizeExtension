@@ -79,8 +79,7 @@
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
     <Reference Include="XAMLMarkupExtensions, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Tests\packages\XAMLMarkupExtensions.1.0.2\lib\net35\XAMLMarkupExtensions.dll</HintPath>
+      <HintPath>..\packages\XAMLMarkupExtensions.1.0.2\lib\net35\XAMLMarkupExtensions.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -88,10 +87,10 @@
     <Compile Include="Engine\LocalizeDictionary.cs" />
     <Compile Include="Engine\ObjectDependencyManager.cs" />
     <Compile Include="Engine\ParentChangedNotifier.cs" />
-    <Compile Include="Extensions\BitmapSourceTypeConverter.cs" />
+    <Compile Include="TypeConverters\BitmapSourceTypeConverter.cs" />
     <Compile Include="Extensions\Compatibility.cs" />
     <Compile Include="Extensions\LocExtension.cs" />
-    <Compile Include="Extensions\RegisterMissingTypeConverters.cs" />
+    <Compile Include="TypeConverters\RegisterMissingTypeConverters.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

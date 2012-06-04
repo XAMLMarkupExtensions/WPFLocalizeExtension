@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace AssemblyTest {
+namespace SLTest {
     using System;
     
     
@@ -22,7 +22,7 @@ namespace AssemblyTest {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class CountryRes {
+    public class CountryRes {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,10 +36,10 @@ namespace AssemblyTest {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AssemblyTest.CountryRes", typeof(CountryRes).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SLTest.CountryRes", typeof(CountryRes).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -51,7 +51,7 @@ namespace AssemblyTest {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,23 +63,16 @@ namespace AssemblyTest {
         /// <summary>
         ///   Looks up a localized string similar to Area.
         /// </summary>
-        internal static string Area {
+        public static string Area {
             get {
                 return ResourceManager.GetString("Area", resourceCulture);
-            }
-        }
-        
-        internal static System.Drawing.Bitmap Austria {
-            get {
-                object obj = ResourceManager.GetObject("Austria", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Country.
         /// </summary>
-        internal static string Country {
+        public static string Country {
             get {
                 return ResourceManager.GetString("Country", resourceCulture);
             }
@@ -88,39 +81,18 @@ namespace AssemblyTest {
         /// <summary>
         ///   Looks up a localized string similar to Country.
         /// </summary>
-        internal static string CountryKey {
+        public static string CountryKey {
             get {
                 return ResourceManager.GetString("CountryKey", resourceCulture);
-            }
-        }
-        
-        internal static System.Drawing.Bitmap France {
-            get {
-                object obj = ResourceManager.GetObject("France", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap Germany {
-            get {
-                object obj = ResourceManager.GetObject("Germany", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to The area of {0} amounts {1} sqkm..
         /// </summary>
-        internal static string TestFormat {
+        public static string TestFormat {
             get {
                 return ResourceManager.GetString("TestFormat", resourceCulture);
-            }
-        }
-        
-        internal static System.Drawing.Bitmap United_Kingdom {
-            get {
-                object obj = ResourceManager.GetObject("United_Kingdom", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

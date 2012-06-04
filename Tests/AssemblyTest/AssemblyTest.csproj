@@ -111,6 +111,7 @@
     <EmbeddedResource Include="CountryRes.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>CountryRes.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Strings2.de.resx">
       <DependentUpon>Strings2.resx</DependentUpon>
