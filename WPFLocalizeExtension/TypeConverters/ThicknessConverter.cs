@@ -1,4 +1,8 @@
-﻿namespace SLLocalizeExtension.TypeConverters
+﻿#if SILVERLIGHT
+namespace SLLocalizeExtension.TypeConverters
+#else
+namespace WPFLocalizeExtension.TypeConverters
+#endif
 {
     using System.ComponentModel;
     using System.Globalization;

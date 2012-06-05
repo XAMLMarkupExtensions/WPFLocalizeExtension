@@ -88,7 +88,7 @@ namespace WPFLocalizeExtension.Extensions
         /// <summary>
         /// A dictionary for notification classes for changes of the individual target Parent changes.
         /// </summary>
-        private Dictionary<DependencyObject, ParentChangedNotifier> parentNotifiers = new Dictionary<DependencyObject,ParentChangedNotifier>();
+        private Dictionary<DependencyObject, ParentChangedNotifier> parentNotifiers = new Dictionary<DependencyObject, ParentChangedNotifier>();
         #endregion
 
         #region Properties
@@ -177,6 +177,7 @@ namespace WPFLocalizeExtension.Extensions
         /// Initializes a new instance of the <see cref="LocExtension"/> class.
         /// </summary>
         public LocExtension()
+            : base()
         {
             // Register this extension as an event listener on the first target.
             base.OnFirstTarget = () =>
@@ -603,8 +604,13 @@ namespace WPFLocalizeExtension.Extensions
             // Is the type already known?
             if (!TypeConverters.ContainsKey(targetType))
             {
+                var c = TypeDescriptor.GetConverter(targetType);
+
+                if (targetType == typeof(Thickness))
+                    c = new WPFLocalizeExtension.TypeConverters.ThicknessConverter();
+
                 // Get the type converter and store it in the dictionary (even if it is NULL).
-                TypeConverters.Add(targetType, TypeDescriptor.GetConverter(targetType));
+                TypeConverters.Add(targetType, c);
             }
 #endif
 

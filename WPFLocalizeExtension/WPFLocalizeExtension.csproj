@@ -78,20 +78,20 @@
     <Reference Include="WindowsBase">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="XAMLMarkupExtensions, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\XAMLMarkupExtensions.1.0.2\lib\net35\XAMLMarkupExtensions.dll</HintPath>
+    <Reference Include="XAMLMarkupExtensions">
+      <HintPath>..\Tests\packages\XAMLMarkupExtensions.1.1.1\lib\net35\XAMLMarkupExtensions.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Engine\LocBinding.cs" />
     <Compile Include="Engine\LocalizeDictionary.cs" />
     <Compile Include="Engine\ObjectDependencyManager.cs" />
-    <Compile Include="Engine\ParentChangedNotifier.cs" />
     <Compile Include="TypeConverters\BitmapSourceTypeConverter.cs" />
     <Compile Include="Extensions\Compatibility.cs" />
     <Compile Include="Extensions\LocExtension.cs" />
     <Compile Include="TypeConverters\RegisterMissingTypeConverters.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TypeConverters\ThicknessConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

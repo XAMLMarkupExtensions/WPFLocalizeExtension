@@ -14,7 +14,7 @@
 	* Default assembly and dictionary inherit along the visual tree and can be redefined at each node
 * It is available at designtime (MS Expression Blend 3.0, MS Expression Blend 4.0, MS VisualStudio 2008 (Normal and SP1), MS VisualStudio 2010
     * not for dynamic loaded assemblies which only can be found at runtime and as long the resource (.resx) is built at designtime
-	* not in Silverlight at designtime (generally not supported by Ms)
+	* Even for Silverlight!
 	* Offers a DesignValue Property to support custom values during design mode
 * Full support of various application scenarios
 	* Works with normal dependency properties

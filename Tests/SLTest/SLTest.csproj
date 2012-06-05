@@ -66,8 +66,9 @@
     <Reference Include="System.Net" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Windows.Browser" />
-    <Reference Include="XAMLMarkupExtensions">
-      <HintPath>..\packages\XAMLMarkupExtensions.1.0.2\lib\sl50\XAMLMarkupExtensions.dll</HintPath>
+    <Reference Include="XAMLMarkupExtensions, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\XAMLMarkupExtensions.1.1.1\lib\sl50\XAMLMarkupExtensions.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -110,12 +111,6 @@
     <None Include="Properties\AppManifest.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\WPFLocalizeExtension\SLLocalizeExtension.csproj">
-      <Project>{7422AF3D-69D5-4862-90CF-62A8C5B23FBC}</Project>
-      <Name>SLLocalizeExtension</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="CountryRes.en.resx" />
     <EmbeddedResource Include="CountryRes.de.resx">
       <LastGenOutput>CountryRes.de.Designer.cs</LastGenOutput>
@@ -148,6 +143,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\United_Kingdom.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\WPFLocalizeExtension\SLLocalizeExtension.csproj">
+      <Project>{7422AF3D-69D5-4862-90CF-62A8C5B23FBC}</Project>
+      <Name>SLLocalizeExtension</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
