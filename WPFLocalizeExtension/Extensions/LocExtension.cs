@@ -1,4 +1,8 @@
-﻿namespace WPFLocalizeExtension.Extensions
+﻿#if SILVERLIGHT
+namespace SLLocalizeExtension.Extensions
+#else
+namespace WPFLocalizeExtension.Extensions
+#endif
 {
     #region Uses
     using System;
@@ -9,11 +13,17 @@
     using System.Linq;
     using System.Windows.Media;
     using System.Windows.Media.Imaging;
-    using XAMLMarkupExtensions.Base;
     using System.Globalization;
     using System.Collections.Generic;
     using System.Windows.Data;
+#if SILVERLIGHT
+    using SLLocalizeExtension.Engine;
+    using SLLocalizeExtension.TypeConverters;
+#else
     using WPFLocalizeExtension.Engine;
+    using WPFLocalizeExtension.TypeConverters;
+#endif
+    using XAMLMarkupExtensions.Base;
     using System.Collections;
     #endregion
 
@@ -22,7 +32,7 @@
     /// Based on <see cref="https://github.com/MrCircuit/WPFLocalizationExtension"/>
     /// </summary>
     [ContentProperty("ResourceIdentifierKey")]
-    public class LocExtension : NestedMarkupExtension, IWeakEventListener, INotifyPropertyChanged
+    public class LocExtension : NestedMarkupExtension, INotifyPropertyChanged
     {
         #region PropertyChanged Logic
         /// <summary>
@@ -74,6 +84,11 @@
         /// A parameter that can be supplied along with the converter object.
         /// </summary>
         private object converterParameter = null;
+        
+        /// <summary>
+        /// A dictionary for notification classes for changes of the individual target Parent changes.
+        /// </summary>
+        private Dictionary<DependencyObject, ParentChangedNotifier> parentNotifiers = new Dictionary<DependencyObject, ParentChangedNotifier>();
         #endregion
 
         #region Properties
@@ -140,7 +155,10 @@
         /// </summary>
         /// <value>The initialize value.</value>
         [EditorBrowsable(EditorBrowsableState.Never)]
+#if SILVERLIGHT
+#else
         [ConstructorArgument("key")]
+#endif
         public string InitializeValue { get; set; }
 
         /// <summary>
@@ -159,11 +177,12 @@
         /// Initializes a new instance of the <see cref="LocExtension"/> class.
         /// </summary>
         public LocExtension()
+            : base()
         {
             // Register this extension as an event listener on the first target.
             base.OnFirstTarget = () =>
             {
-                LocalizeDictionary.Instance.AddEventListener(this);
+                LocalizeDictionary.CultureChangedEvent.AddListener(this);
             };
         }
 
@@ -180,32 +199,35 @@
         #endregion
 
         #region IWeakEventListener implementation
-        /// <summary>
-        /// This method will be called through the interface, passed to the
-        /// <see cref="LocalizeDictionary"/>.<see cref="LocalizeDictionary.WeakLocChangedEventManager"/> to get notified on culture changed
-        /// </summary>
-        /// <param name="managerType">The manager Type.</param>
-        /// <param name="sender">The sender.</param>
-        /// <param name="e">The event argument.</param>
-        /// <returns>
-        /// True if the listener handled the event. It is considered an error by the <see cref="T:System.Windows.WeakEventManager"/> handling in WPF to register a listener for an event that the listener does not handle. Regardless, the method should return false if it receives an event that it does not recognize or handle.
-        /// </returns>
-        bool IWeakEventListener.ReceiveWeakEvent(Type managerType, object sender, EventArgs e)
+        internal void ResourceChanged(DependencyObject sender, EventArgs e)
         {
-            // if the passed handler is type of LocalizeDictionary.WeakLocChangedEventManager, handle it
-            if (managerType == typeof(LocalizeDictionary.WeakLocChangedEventManager))
+            if (sender == null)
             {
-                // Update, if this object is in our endpoint list.
-                if ((sender == null) || IsEndpointObject(sender))
-                    UpdateNewValue();
-
-                // return true, to notify the event was processed
-                return true;
+                UpdateNewValue();
+                return;
             }
 
-            // return false, to notify the event was not processed
-            return false;
-        } 
+            // Update, if this object is in our endpoint list.
+            var targetDPs = (from p in GetTargetPropertyPaths()
+                             select p.EndPoint.TargetObject as DependencyObject);
+
+            foreach (var dp in targetDPs)
+            {
+                var dpParent = dp;
+                while (dpParent != null)
+                {
+                    if (sender == dpParent)
+                    {
+                        UpdateNewValue();
+                        break;
+                    }
+                    dpParent = VisualTreeHelper.GetParent(dpParent);
+                }
+            }
+
+            //if ((sender == null) || IsEndpointObject(sender))
+            //    UpdateNewValue();
+        }
         #endregion
 
         #region Forced culture handling
@@ -229,7 +251,8 @@
                 try
                 {
                     // try to create a specific culture from the forced one
-                    cultureInfo = CultureInfo.CreateSpecificCulture(this.ForceCulture);
+                    // cultureInfo = CultureInfo.CreateSpecificCulture(this.ForceCulture);
+                    cultureInfo = new CultureInfo(this.ForceCulture);
                 }
                 catch (ArgumentException ex)
                 {
@@ -237,7 +260,11 @@
                     if (LocalizeDictionary.Instance.GetIsInDesignMode())
                     {
                         // cultureInfo will be set to the current specific culture
+#if SILVERLIGHT
+                        cultureInfo = LocalizeDictionary.Instance.Culture;
+#else
                         cultureInfo = LocalizeDictionary.Instance.SpecificCulture;
+#endif
                     }
                     else
                     {
@@ -249,7 +276,11 @@
             else
             {
                 // take the current specific culture
+#if SILVERLIGHT
+                cultureInfo = LocalizeDictionary.Instance.Culture;
+#else
                 cultureInfo = LocalizeDictionary.Instance.SpecificCulture;
+#endif
             }
 
             // return the evaluated culture info
@@ -270,7 +301,31 @@
             if (assembly != null)
                 ret = assembly;
             else if ((endPoint != null) && endPoint.IsDependencyObject)
-                ret = LocalizeDictionary.GetDefaultAssembly((DependencyObject)endPoint.TargetObject);
+            {
+                var dpEP = (DependencyObject)endPoint.TargetObject;
+                var dp = dpEP;
+
+                while (ret == null)
+                {
+                    ret = LocalizeDictionary.GetDefaultAssembly(dp);
+                    var dp2 = VisualTreeHelper.GetParent(dp);
+
+                    if (ret == null && dp2 == null)
+                    {
+                        // Try to establish a notification on changes of the Parent property of dp.
+                        if (dp is FrameworkElement && !parentNotifiers.ContainsKey(dpEP))
+                        {
+                            parentNotifiers.Add(dpEP, new ParentChangedNotifier((FrameworkElement)dp, () =>
+                            {
+                                UpdateNewValue();
+                            }));
+                        }
+                        break;
+                    }
+
+                    dp = dp2;
+                }
+            }
 
             return ret;
         }
@@ -287,7 +342,31 @@
             if (dict != null)
                 ret = dict;
             else if ((endPoint != null) && endPoint.IsDependencyObject)
-                ret = LocalizeDictionary.GetDefaultDictionary((DependencyObject)endPoint.TargetObject);
+            {
+                var dpEP = (DependencyObject)endPoint.TargetObject;
+                var dp = dpEP;
+
+                while (ret == null)
+                {
+                    ret = LocalizeDictionary.GetDefaultDictionary(dp);
+                    var dp2 = VisualTreeHelper.GetParent(dp);
+
+                    if (ret == null && dp2 == null)
+                    {
+                        // Try to establish a notification on changes of the Parent property of dp.
+                        if (dp is FrameworkElement && !parentNotifiers.ContainsKey(dpEP))
+                        {
+                            parentNotifiers.Add(dpEP, new ParentChangedNotifier((FrameworkElement)dp, () =>
+                            {
+                                UpdateNewValue();
+                            }));
+                        }
+                        break;
+                    }
+
+                    dp = dp2;
+                }
+            }
 
             return ret;
         }
@@ -309,7 +388,7 @@
             // its a assembly/dict/key pair
             if (!string.IsNullOrEmpty(inKey))
             {
-                string[] split = inKey.Trim().Split(":".ToCharArray(), 3);
+                string[] split = inKey.Trim().Split(":".ToCharArray());
 
                 // assembly:dict:key
                 if (split.Length == 3)
@@ -381,13 +460,21 @@
 
             if (endPoint.TargetObject is FrameworkElement)
                 epName = (string)((FrameworkElement)endPoint.TargetObject).GetValue(FrameworkElement.NameProperty);
+#if SILVERLIGHT
+#else
             else if (endPoint.TargetObject is FrameworkContentElement)
                 epName = (string)((FrameworkContentElement)endPoint.TargetObject).GetValue(FrameworkContentElement.NameProperty);
+#endif
 
             if (endPoint.TargetProperty is PropertyInfo)
                 epProp = ((PropertyInfo)endPoint.TargetProperty).Name;
+#if SILVERLIGHT
+            else if (endPoint.TargetProperty is DependencyProperty)
+                epProp = ((DependencyProperty)endPoint.TargetProperty).ToString();
+#else
             else if (endPoint.TargetProperty is DependencyProperty)
                 epProp = ((DependencyProperty)endPoint.TargetProperty).Name;
+#endif
 
             // TODO: What are these names during design time good for? Any suggestions?
             if (epProp.Contains("FrameworkElementWidth5"))
@@ -474,15 +561,58 @@
             if (converter != null)
                 return converter.Convert(input, targetType, converterParameter, ci);
 
+#if SILVERLIGHT
+            // Is the type already known?
+            if (!TypeConverters.ContainsKey(targetType))
+            {
+                if (typeof(Enum).IsAssignableFrom(targetType))
+                {
+                    TypeConverters.Add(targetType, new EnumConverter(targetType));
+                }
+                else
+                {
+                    Type converterType = null;
+                    var attributes = targetType.GetCustomAttributes(typeof(TypeConverterAttribute), false);
+
+                    if (attributes.Length == 1)
+                    {
+                        var converterAttribute = (TypeConverterAttribute)attributes[0];
+                        converterType = Type.GetType(converterAttribute.ConverterTypeName);
+                    }
+
+                    if (converterType == null)
+                    {
+                        // Find a suitable "common" converter.
+                        if (targetType == typeof(double))
+                            converterType = typeof(DoubleConverter);
+                        else if (targetType == typeof(Thickness))
+                            converterType = typeof(ThicknessConverter);
+                        else if (targetType == typeof(Brush))
+                            converterType = typeof(BrushConverter);
+                        else
+                            return input;
+                    }
+
+                    // Get the type converter and store it in the dictionary (even if it is NULL).
+                    TypeConverters.Add(targetType, Activator.CreateInstance(converterType) as TypeConverter);
+                }
+            }
+#else
             // Register missing type converters - this class will do this only once per appdomain.
             RegisterMissingTypeConverters.Register();
 
             // Is the type already known?
             if (!TypeConverters.ContainsKey(targetType))
             {
+                var c = TypeDescriptor.GetConverter(targetType);
+
+                if (targetType == typeof(Thickness))
+                    c = new WPFLocalizeExtension.TypeConverters.ThicknessConverter();
+
                 // Get the type converter and store it in the dictionary (even if it is NULL).
-                TypeConverters.Add(targetType, TypeDescriptor.GetConverter(targetType));
+                TypeConverters.Add(targetType, c);
             }
+#endif
 
             // Get the converter.
             TypeConverter conv = TypeConverters[targetType];
@@ -613,7 +743,12 @@
             Type targetPropertyType = null;
 
             if (targetProperty is DependencyProperty)
+#if SILVERLIGHT
+                // Dirty reflection hack - get the property type (property not included in the SL DependencyProperty class) from the internal declared field.
+                targetPropertyType = typeof(DependencyProperty).GetField("_propertyType", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(targetProperty) as Type;
+#else
                 targetPropertyType = ((DependencyProperty)targetProperty).PropertyType;
+#endif
             else if (targetProperty is PropertyInfo)
                 targetPropertyType = ((PropertyInfo)targetProperty).PropertyType;
 
@@ -624,5 +759,10 @@
             return true;
         }
         #endregion
+
+        public override string ToString()
+        {
+            return "Loc:" + key;
+        }
     }
 }

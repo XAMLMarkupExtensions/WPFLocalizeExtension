@@ -1,4 +1,8 @@
-﻿namespace WPFLocalizeExtension.Engine
+﻿#if SILVERLIGHT
+namespace SLLocalizeExtension.Engine
+#else
+namespace WPFLocalizeExtension.Engine
+#endif
 {
     #region Uses
     using System;
@@ -12,6 +16,11 @@
     using System.Windows;
     using System.Windows.Markup;
     using XAMLMarkupExtensions.Base;
+#if SILVERLIGHT
+    using SLLocalizeExtension.Extensions;
+#else
+    using WPFLocalizeExtension.Extensions;
+#endif
     #endregion
 
     /// <summary>
@@ -28,7 +37,11 @@
                 "DefaultDictionary",
                 typeof(string),
                 typeof(LocalizeDictionary),
-                new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.Inherits, SetDictionaryFromDependencyProperty));
+#if SILVERLIGHT
+                new PropertyMetadata(null, SetDictionaryFromDependencyProperty));
+#else
+                new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.None, SetDictionaryFromDependencyProperty));
+#endif
 
         /// <summary>
         /// <see cref="DependencyProperty"/> DefaultAssembly to set the fallback assembly.
@@ -38,13 +51,20 @@
                 "DefaultAssembly",
                 typeof(string),
                 typeof(LocalizeDictionary),
-                new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.Inherits, SetAssemblyFromDependencyProperty));
+#if SILVERLIGHT
+                new PropertyMetadata(null, SetAssemblyFromDependencyProperty));
+#else
+                new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.None, SetAssemblyFromDependencyProperty));
+#endif
 
         /// <summary>
         /// <see cref="DependencyProperty"/> DesignCulture to set the Culture.
         /// Only supported at DesignTime.
         /// </summary>
+#if SILVERLIGHT
+#else
         [DesignOnly(true)]
+#endif
         public static readonly DependencyProperty DesignCultureProperty =
             DependencyProperty.RegisterAttached(
                 "DesignCulture",
@@ -60,7 +80,11 @@
                 "Separation",
                 typeof(string),
                 typeof(LocalizeDictionary),
+#if SILVERLIGHT
+                new PropertyMetadata(null, SetSeparationFromDependencyProperty));
+#else
                 new FrameworkPropertyMetadata(LocalizeDictionary.DefaultSeparation, SetSeparationFromDependencyProperty));
+#endif
         #endregion
 
         #region Dependency Property Callbacks
@@ -70,7 +94,10 @@
         /// </summary>
         /// <param name="obj">The dependency object.</param>
         /// <param name="args">The event argument.</param>
+#if SILVERLIGHT
+#else
         [DesignOnly(true)]
+#endif
         private static void SetCultureFromDependencyProperty(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
             if (!Instance.GetIsInDesignMode())
@@ -80,7 +107,7 @@
 
             try
             {
-                culture = CultureInfo.GetCultureInfo((string)args.NewValue);
+                culture = new CultureInfo((string)args.NewValue);
             }
             catch
             {
@@ -101,8 +128,9 @@
         /// <param name="args">The event argument.</param>
         private static void SetDictionaryFromDependencyProperty(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-            if (Instance.OnLocChanged != null)
-                Instance.OnLocChanged(obj);
+            LocalizeDictionary.CultureChangedEvent.Invoke(obj, EventArgs.Empty);
+            //if (Instance.OnLocChanged != null)
+            //    Instance.OnLocChanged(obj);
         }
 
         /// <summary>
@@ -112,8 +140,9 @@
         /// <param name="args">The event argument.</param>
         private static void SetAssemblyFromDependencyProperty(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-            if (Instance.OnLocChanged != null)
-                Instance.OnLocChanged(obj);
+            LocalizeDictionary.CultureChangedEvent.Invoke(obj, EventArgs.Empty);
+            //if (Instance.OnLocChanged != null)
+            //    Instance.OnLocChanged(obj);
         }
 
         /// <summary>
@@ -168,7 +197,10 @@
         /// </summary>
         /// <param name="obj">The dependency object to get the design culture from.</param>
         /// <returns>The design culture at design time or the current culture at runtime.</returns>
+#if SILVERLIGHT
+#else
         [DesignOnly(true)]
+#endif
         public static string GetDesignCulture(DependencyObject obj)
         {
             if (Instance.GetIsInDesignMode())
@@ -209,7 +241,10 @@
         /// </summary>
         /// <param name="obj">The dependency object to set the culture to.</param>
         /// <param name="value">The odds format.</param>
+#if SILVERLIGHT
+#else
         [DesignOnly(true)]
+#endif
         public static void SetDesignCulture(DependencyObject obj, string value)
         {
             if (Instance.GetIsInDesignMode())
@@ -274,10 +309,10 @@
         #endregion
 
         #region Events and Actions
-        /// <summary>
-        /// Get raised if the <see cref="LocalizeDictionary"/>.Culture is changed.
-        /// </summary>
-        internal event Action<DependencyObject> OnLocChanged; 
+        ///// <summary>
+        ///// Get raised if the <see cref="LocalizeDictionary"/>.Culture is changed.
+        ///// </summary>
+        //internal event Action<DependencyObject> OnLocChanged; 
         #endregion
 
         #region Static Properties
@@ -358,8 +393,9 @@
                 this.culture = value;
 
                 // Raise the OnLocChanged event
-                if (this.OnLocChanged != null)
-                    this.OnLocChanged(null);
+                LocalizeDictionary.CultureChangedEvent.Invoke(null, EventArgs.Empty);
+                //if (this.OnLocChanged != null)
+                //    this.OnLocChanged(null);
             }
         }
 
@@ -387,8 +423,9 @@
                 this.separation = value;
 
                 // Raise the OnLocChanged event
-                if (this.OnLocChanged != null)
-                    this.OnLocChanged(null);
+                LocalizeDictionary.CultureChangedEvent.Invoke(null, EventArgs.Empty);
+                //if (this.OnLocChanged != null)
+                //    this.OnLocChanged(null);
             }
         }
 
@@ -397,6 +434,8 @@
         /// </summary>
         public Dictionary<string, ResourceManager> ResourceManagerList { get; private set; }
 
+#if SILVERLIGHT
+#else
         /// <summary>
         /// Gets the specific <see cref="CultureInfo"/> of the current culture.
         /// This can be used for format manners.
@@ -405,30 +444,34 @@
         /// </summary>
         public CultureInfo SpecificCulture
         {
-            get { return CultureInfo.CreateSpecificCulture(this.Culture.ToString()); }
+            get
+            {
+                return CultureInfo.CreateSpecificCulture(this.Culture.ToString());
+            }
         } 
+#endif
         #endregion
 
         #region WeakEventListener Management
-        /// <summary>
-        /// Attach an WeakEventListener to the <see cref="LocalizeDictionary"/>
-        /// </summary>
-        /// <param name="listener">The listener to attach</param>
-        public void AddEventListener(IWeakEventListener listener)
-        {
-            // calls AddListener from the inline WeakCultureChangedEventManager
-            WeakLocChangedEventManager.AddListener(listener);
-        }
+        ///// <summary>
+        ///// Attach an WeakEventListener to the <see cref="LocalizeDictionary"/>
+        ///// </summary>
+        ///// <param name="listener">The listener to attach</param>
+        //public void AddEventListener(IWeakEventListener listener)
+        //{
+        //    // calls AddListener from the inline WeakCultureChangedEventManager
+        //    WeakLocChangedEventManager.AddListener(listener);
+        //}
 
-        /// <summary>
-        /// Detach an WeakEventListener to the <see cref="LocalizeDictionary"/>
-        /// </summary>
-        /// <param name="listener">The listener to detach</param>
-        public void RemoveEventListener(IWeakEventListener listener)
-        {
-            // calls RemoveListener from the inline WeakCultureChangedEventManager
-            WeakLocChangedEventManager.RemoveListener(listener);
-        }
+        ///// <summary>
+        ///// Detach an WeakEventListener to the <see cref="LocalizeDictionary"/>
+        ///// </summary>
+        ///// <param name="listener">The listener to detach</param>
+        //public void RemoveEventListener(IWeakEventListener listener)
+        //{
+        //    // calls RemoveListener from the inline WeakCultureChangedEventManager
+        //    WeakLocChangedEventManager.RemoveListener(listener);
+        //}
         #endregion
 
         #region ResourceManager Management
@@ -448,15 +491,12 @@
         /// </exception>
         private ResourceManager GetResourceManager(string resourceAssembly, string resourceDictionary)
         {
+            // Check validity of the assembly and dictionary.
             if (resourceAssembly == null)
-            {
                 resourceAssembly = this.GetAssemblyName(Assembly.GetExecutingAssembly());
-            }
 
             if (resourceDictionary == null)
-            {
                 resourceDictionary = ResourcesName;
-            }
 
             PropertyInfo propInfo;
             MethodInfo methodInfo;
@@ -500,7 +540,12 @@
                     if (assembly == null)
                     {
                         // assign the loaded assembly
+#if SILVERLIGHT
+                        var name = new AssemblyName(resourceAssembly);
+                        assembly = Assembly.Load(name.FullName);
+#else
                         assembly = Assembly.Load(new AssemblyName(resourceAssembly));
+#endif
                     }
                 }
                 catch (Exception ex)
@@ -550,7 +595,11 @@
                     // in this case try to manipulate the resource identifier.
                     if (resourceManagerType == null)
                     {
+#if SILVERLIGHT
+                        var assemblyName = resourceAssembly;
+#else
                         var assemblyName = assembly.GetName().Name;
+#endif
                         resourceManagerType = assembly.GetType(foundResource.Replace(assemblyName, assemblyName + ".My.Resources"));
                     }
 
@@ -663,148 +712,227 @@
         }
         #endregion
 
-        #region WeakLocChangedEventManager
-        /// <summary>
-        /// This in line class is used to handle weak events to avoid memory leaks
-        /// </summary>
-        internal sealed class WeakLocChangedEventManager : WeakEventManager
+        #region CultureChangedEvent
+        internal static class CultureChangedEvent
         {
             /// <summary>
-            /// Indicates, if the current instance is listening on the source event
+            /// The list of listeners
             /// </summary>
-            private bool isListening;
+            private static List<WeakReference> listeners = new List<WeakReference>();
 
             /// <summary>
-            /// Holds the inner list of listeners
+            /// Fire the event.
             /// </summary>
-            private ListenerList listeners;
-
-            /// <summary>
-            /// Prevents a default instance of the <see cref="WeakLocChangedEventManager"/> class from being created. 
-            /// Creates a new instance of WeakCultureChangedEventManager
-            /// </summary>
-            private WeakLocChangedEventManager()
+            /// <param name="sender">The sender of the event.</param>
+            /// <param name="args">The event arguments.</param>
+            internal static void Invoke(DependencyObject sender, EventArgs args)
             {
-                // creates a new list and assign it to listeners
-                this.listeners = new ListenerList();
+                List<WeakReference> purgeList = new List<WeakReference>();
+
+                for (int i = 0; i < listeners.Count; i++)
+                {
+                    WeakReference wr = listeners[i];
+
+                    if (wr.IsAlive)
+                        ((LocExtension)wr.Target).ResourceChanged(sender, args);
+                    else
+                        purgeList.Add(wr);
+                }
+
+                foreach (WeakReference wr in purgeList)
+                    listeners.Remove(wr);
+
+                purgeList.Clear();
             }
 
             /// <summary>
-            /// Gets the singleton instance of <see cref="WeakLocChangedEventManager"/>
+            /// Adds a listener to the inner list of listeners.
             /// </summary>
-            private static WeakLocChangedEventManager CurrentManager
+            /// <param name="listener">The listener to add.</param>
+            internal static void AddListener(LocExtension listener)
             {
-                get
+                if (listener == null)
+                    return;
+
+                listeners.Add(new WeakReference(listener));
+            }
+
+            /// <summary>
+            /// Removes a listener from the inner list of listeners.
+            /// </summary>
+            /// <param name="listener">The listener to remove.</param>
+            internal static void RemoveListener(LocExtension listener)
+            {
+                if (listener == null)
+                    return;
+
+                List<WeakReference> purgeList = new List<WeakReference>();
+
+                foreach (WeakReference wr in listeners)
                 {
-                    // store the type of this WeakEventManager
-                    Type managerType = typeof(WeakLocChangedEventManager);
-
-                    // try to retrieve an existing instance of the stored type
-                    WeakLocChangedEventManager manager = (WeakLocChangedEventManager)GetCurrentManager(managerType);
-
-                    // if the manager does not exists
-                    if (manager == null)
-                    {
-                        // create a new instance of WeakCultureChangedEventManager
-                        manager = new WeakLocChangedEventManager();
-
-                        // add the new instance to the WeakEventManager manager-store
-                        SetCurrentManager(managerType, manager);
-                    }
-
-                    // return the new / existing WeakCultureChangedEventManager instance
-                    return manager;
+                    if (!wr.IsAlive)
+                        purgeList.Add(wr);
+                    else if ((LocExtension)wr.Target == listener)
+                        purgeList.Add(wr);
                 }
             }
 
             /// <summary>
-            /// Adds an listener to the inner list of listeners
+            /// Remove a list of weak references from the list.
             /// </summary>
-            /// <param name="listener">The listener to add</param>
-            internal static void AddListener(IWeakEventListener listener)
+            /// <param name="purgeList">The list of references to remove.</param>
+            private static void Purge(List<WeakReference> purgeList)
             {
-                // add the listener to the inner list of listeners
-                CurrentManager.listeners.Add(listener);
+                foreach (WeakReference wr in purgeList)
+                    listeners.Remove(wr);
 
-                // start / stop the listening process
-                CurrentManager.StartStopListening();
+                purgeList.Clear();
             }
+        }
+        #endregion
 
-            /// <summary>
-            /// Removes an listener from the inner list of listeners
-            /// </summary>
-            /// <param name="listener">The listener to remove</param>
-            internal static void RemoveListener(IWeakEventListener listener)
-            {
-                // removes the listener from the inner list of listeners
-                CurrentManager.listeners.Remove(listener);
+        #region WeakLocChangedEventManager
+        ///// <summary>
+        ///// This in line class is used to handle weak events to avoid memory leaks
+        ///// </summary>
+        //internal sealed class WeakLocChangedEventManager : WeakEventManager
+        //{
+        //    /// <summary>
+        //    /// Indicates, if the current instance is listening on the source event
+        //    /// </summary>
+        //    private bool isListening;
 
-                // start / stop the listening process
-                CurrentManager.StartStopListening();
-            }
+        //    /// <summary>
+        //    /// Holds the inner list of listeners
+        //    /// </summary>
+        //    private ListenerList listeners;
 
-            /// <summary>
-            /// This method starts the listening process by attaching on the source event
-            /// </summary>
-            /// <param name="source">The source.</param>
-            [MethodImpl(MethodImplOptions.Synchronized)]
-            protected override void StartListening(object source)
-            {
-                if (!this.isListening)
-                {
-                    Instance.OnLocChanged += this.OnLocChanged;
-                    this.isListening = true;
-                }
-            }
+        //    /// <summary>
+        //    /// Prevents a default instance of the <see cref="WeakLocChangedEventManager"/> class from being created. 
+        //    /// Creates a new instance of WeakCultureChangedEventManager
+        //    /// </summary>
+        //    private WeakLocChangedEventManager()
+        //    {
+        //        // creates a new list and assign it to listeners
+        //        this.listeners = new ListenerList();
+        //    }
 
-            /// <summary>
-            /// This method stops the listening process by detaching on the source event
-            /// </summary>
-            /// <param name="source">The source to stop listening on.</param>
-            [MethodImpl(MethodImplOptions.Synchronized)]
-            protected override void StopListening(object source)
-            {
-                if (this.isListening)
-                {
-                    Instance.OnLocChanged -= this.OnLocChanged;
-                    this.isListening = false;
-                }
-            }
+        //    /// <summary>
+        //    /// Gets the singleton instance of <see cref="WeakLocChangedEventManager"/>
+        //    /// </summary>
+        //    private static WeakLocChangedEventManager CurrentManager
+        //    {
+        //        get
+        //        {
+        //            // store the type of this WeakEventManager
+        //            Type managerType = typeof(WeakLocChangedEventManager);
 
-            /// <summary>
-            /// This method is called if the <see cref="LocalizeDictionary"/>.OnCultureChanged
-            /// is called and the listening process is enabled
-            /// </summary>
-            private void OnLocChanged(DependencyObject obj)
-            {
-                // tells every listener in the list that the event is occurred
-                this.DeliverEventToList(obj, EventArgs.Empty, this.listeners);
-            }
+        //            // try to retrieve an existing instance of the stored type
+        //            WeakLocChangedEventManager manager = (WeakLocChangedEventManager)GetCurrentManager(managerType);
 
-            /// <summary>
-            /// This method starts and stops the listening process by attaching/detaching on the source event
-            /// </summary>
-            [MethodImpl(MethodImplOptions.Synchronized)]
-            private void StartStopListening()
-            {
-                // check if listeners are available and the listening process is stopped, start it.
-                // otherwise if no listeners are available and the listening process is started, stop it
-                if (this.listeners.Count != 0)
-                {
-                    if (!this.isListening)
-                    {
-                        this.StartListening(null);
-                    }
-                }
-                else
-                {
-                    if (this.isListening)
-                    {
-                        this.StopListening(null);
-                    }
-                }
-            }
-        } 
+        //            // if the manager does not exists
+        //            if (manager == null)
+        //            {
+        //                // create a new instance of WeakCultureChangedEventManager
+        //                manager = new WeakLocChangedEventManager();
+
+        //                // add the new instance to the WeakEventManager manager-store
+        //                SetCurrentManager(managerType, manager);
+        //            }
+
+        //            // return the new / existing WeakCultureChangedEventManager instance
+        //            return manager;
+        //        }
+        //    }
+
+        //    /// <summary>
+        //    /// Adds an listener to the inner list of listeners
+        //    /// </summary>
+        //    /// <param name="listener">The listener to add</param>
+        //    internal static void AddListener(IWeakEventListener listener)
+        //    {
+        //        // add the listener to the inner list of listeners
+        //        CurrentManager.listeners.Add(listener);
+
+        //        // start / stop the listening process
+        //        CurrentManager.StartStopListening();
+        //    }
+
+        //    /// <summary>
+        //    /// Removes an listener from the inner list of listeners
+        //    /// </summary>
+        //    /// <param name="listener">The listener to remove</param>
+        //    internal static void RemoveListener(IWeakEventListener listener)
+        //    {
+        //        // removes the listener from the inner list of listeners
+        //        CurrentManager.listeners.Remove(listener);
+
+        //        // start / stop the listening process
+        //        CurrentManager.StartStopListening();
+        //    }
+
+        //    /// <summary>
+        //    /// This method starts the listening process by attaching on the source event
+        //    /// </summary>
+        //    /// <param name="source">The source.</param>
+        //    [MethodImpl(MethodImplOptions.Synchronized)]
+        //    protected override void StartListening(object source)
+        //    {
+        //        if (!this.isListening)
+        //        {
+        //            Instance.OnLocChanged += this.OnLocChanged;
+        //            this.isListening = true;
+        //        }
+        //    }
+
+        //    /// <summary>
+        //    /// This method stops the listening process by detaching on the source event
+        //    /// </summary>
+        //    /// <param name="source">The source to stop listening on.</param>
+        //    [MethodImpl(MethodImplOptions.Synchronized)]
+        //    protected override void StopListening(object source)
+        //    {
+        //        if (this.isListening)
+        //        {
+        //            Instance.OnLocChanged -= this.OnLocChanged;
+        //            this.isListening = false;
+        //        }
+        //    }
+
+        //    /// <summary>
+        //    /// This method is called if the <see cref="LocalizeDictionary"/>.OnCultureChanged
+        //    /// is called and the listening process is enabled
+        //    /// </summary>
+        //    private void OnLocChanged(DependencyObject obj)
+        //    {
+        //        // tells every listener in the list that the event is occurred
+        //        this.DeliverEventToList(obj, EventArgs.Empty, this.listeners);
+        //    }
+
+        //    /// <summary>
+        //    /// This method starts and stops the listening process by attaching/detaching on the source event
+        //    /// </summary>
+        //    [MethodImpl(MethodImplOptions.Synchronized)]
+        //    private void StartStopListening()
+        //    {
+        //        // check if listeners are available and the listening process is stopped, start it.
+        //        // otherwise if no listeners are available and the listening process is started, stop it
+        //        if (this.listeners.Count != 0)
+        //        {
+        //            if (!this.isListening)
+        //            {
+        //                this.StartListening(null);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            if (this.isListening)
+        //            {
+        //                this.StopListening(null);
+        //            }
+        //        }
+        //    }
+        //} 
         #endregion
     }
 }

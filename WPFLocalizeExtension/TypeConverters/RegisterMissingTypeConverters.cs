@@ -1,4 +1,4 @@
-﻿namespace WPFLocalizeExtension.Extensions
+﻿namespace WPFLocalizeExtension.TypeConverters
 {
     #region Uses
     using System;
@@ -21,7 +21,7 @@
         {
             if (registered)
                 return;
-
+            
             TypeDescriptor.AddAttributes(typeof(BitmapSource), new Attribute[] { new TypeConverterAttribute(typeof(BitmapSourceTypeConverter)) });
 
             registered = true;
