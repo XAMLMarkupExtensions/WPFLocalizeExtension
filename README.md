@@ -12,9 +12,10 @@
 	* If no key is specified, the Name and Property Name of the target are used (e.g. MyButton_Content)
 	* Default assembly, dictionary and culture can be changed dynamically
 	* Default assembly and dictionary inherit along the visual tree and can be redefined at each node
-* It is available at designtime (MS Expression Blend 3.0, MS Expression Blend 4.0, MS VisualStudio 2008 (Normal and SP1), MS VisualStudio 2010
+* It is available at designtime (MS Expression Blend 3.0 & 4.0, MS VisualStudio 2008 & 2010
     * not for dynamic loaded assemblies which only can be found at runtime and as long the resource (.resx) is built at designtime
 	* Even for Silverlight!
+	* No extra preview application needed
 	* Offers a DesignValue Property to support custom values during design mode
 * Full support of various application scenarios
 	* Works with normal dependency properties
@@ -42,6 +43,7 @@
 * Last, but not least
 	* Does not create any memory leaks
 	* Leaves the UID property untouched
+	* Does not need an additional build task
 	* Is in use in various productive systems
 
 ### License: ###

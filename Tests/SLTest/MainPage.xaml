@@ -4,29 +4,31 @@
              xmlns:Engine="clr-namespace:SLLocalizeExtension.Engine;assembly=SLLocalizeExtension"
              xmlns:lex="clr-namespace:SLLocalizeExtension.Extensions;assembly=SLLocalizeExtension"
              xmlns:Local="clr-namespace:SLTest"
-             Engine:LocalizeDictionary.DesignCulture="de"
+             Engine:LocalizeDictionary.DesignCulture="en"
              Engine:LocalizeDictionary.DefaultAssembly="SLTest"
              Engine:LocalizeDictionary.DefaultDictionary="Strings">
     <Grid x:Name="LayoutRoot" Background="White">
         <Grid.Resources>
             <ResourceDictionary>
                 <DataTemplate x:Key="TestTemplate">
-                    <Grid Margin="5">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="100" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
-                        <Image Grid.RowSpan="3" Grid.Column="0" Height="50" Source="{Binding Path=FlagSource, StringFormat='/SLTest;component/Resources/{0}.png'}" />
-                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{lex:Loc Key=Country}" />
-                        <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding Country}" />
-                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{lex:Loc Key=Area}" />
-                        <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding Area}" />
-                    </Grid>
+                    <Border>
+                        <Grid Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Image Grid.RowSpan="3" Grid.Column="0" Height="50" Source="{Binding Path=FlagSource, StringFormat='/SLTest;component/Resources/{0}.png'}" />
+                            <TextBlock Grid.Row="0" Grid.Column="1" Margin="2" Text="{lex:Loc Key=Country}" />
+                            <TextBlock Grid.Row="0" Grid.Column="2" Margin="2" Text="{Binding Country}" />
+                            <TextBlock Grid.Row="1" Grid.Column="1" Margin="2" Text="{lex:Loc Key=Area}" />
+                            <TextBlock Grid.Row="1" Grid.Column="2" Margin="2" Text="{Binding Area}" />
+                        </Grid>
+                    </Border>
                 </DataTemplate>
             </ResourceDictionary>
         </Grid.Resources>
@@ -38,7 +40,6 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <StackPanel Name="TestPanel" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
-            <!--<Button Content="Test" Height="23" Width="75" Click="ButtonDE_Click" />-->
             <Button Content="{lex:Loc Key=ButtonDE}" Height="23" Width="75" Click="ButtonDE_Click" />
             <Button Content="{lex:Loc Key=ButtonEN}" Height="23" Width="75" Click="ButtonEN_Click" />
         </StackPanel>
