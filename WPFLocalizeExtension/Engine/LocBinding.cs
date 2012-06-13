@@ -1,4 +1,8 @@
-﻿namespace WPFLocalizeExtension.Engine
+﻿#if SILVERLIGHT
+namespace SLLocalizeExtension.Engine
+#else
+namespace WPFLocalizeExtension.Engine
+#endif
 {
     #region Uses
     using System;
@@ -6,8 +10,12 @@
     using System.Linq;
     using System.Text;
     using System.Windows;
-    using System.Windows.Data;
+    using System.Windows.Data;    
+#if SILVERLIGHT
+    using SLLocalizeExtension.Extensions;
+#else
     using WPFLocalizeExtension.Extensions;
+#endif
     #endregion
 
     /// <summary>
@@ -17,14 +25,22 @@
     public class LocBinding : FrameworkElement
     {
         #region Source DP
-        //We don't know what will be the Source/target type so we keep 'object'.
+        /// <summary>
+        /// We don't know what will be the Source/target type so we keep 'object'.
+        /// </summary>
+#if SILVERLIGHT
         public static readonly DependencyProperty SourceProperty =
             DependencyProperty.Register("Source", typeof(object), typeof(LocBinding),
-            new FrameworkPropertyMetadata()
+            new PropertyMetadata(null, OnPropertyChanged));
+#else
+        public static readonly DependencyProperty SourceProperty =
+            DependencyProperty.Register("Source", typeof(object), typeof(LocBinding),
+            new FrameworkPropertyMetadata(OnPropertyChanged)
             {
                 BindsTwoWayByDefault = true,
                 DefaultUpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
             });
+#endif
 
         public Object Source
         {
@@ -48,13 +64,14 @@
         #endregion
 
         #region OnPropertyChanged
-        protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
+        private static void OnPropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-            base.OnPropertyChanged(e);
-            if (e.Property.Name == LocBinding.SourceProperty.Name)
+            var locBinding = obj as LocBinding;
+
+            if (locBinding != null && args.Property == LocBinding.SourceProperty)
             {
-                if (!object.ReferenceEquals(this.Source, target) && (target != null))
-                    target.Key = this.Source.ToString();
+                if (!object.ReferenceEquals(locBinding.Source, locBinding.target) && (locBinding.target != null))
+                    locBinding.target.Key = locBinding.Source.ToString();
             }
         }
         #endregion

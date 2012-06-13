@@ -1,4 +1,8 @@
-﻿namespace WPFLocalizeExtension.Engine
+﻿#if SILVERLIGHT
+namespace SLLocalizeExtension.Engine
+#else
+namespace WPFLocalizeExtension.Engine
+#endif
 {
     #region Uses
     using System;

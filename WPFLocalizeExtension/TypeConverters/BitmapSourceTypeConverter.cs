@@ -1,4 +1,4 @@
-﻿namespace WPFLocalizeExtension.Extensions
+﻿namespace WPFLocalizeExtension.TypeConverters
 {
     #region Uses
     using System;
@@ -6,8 +6,8 @@
     using System.Text;
     using System.ComponentModel;
     using System.Windows;
-    using System.Drawing;
     using System.Windows.Media.Imaging;
+    using System.Drawing;
     using System.Drawing.Imaging;
     #endregion
 
