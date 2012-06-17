@@ -20,6 +20,8 @@ namespace WPFLocalizeExtension.Engine
     using SLLocalizeExtension.Extensions;
 #else
     using WPFLocalizeExtension.Extensions;
+    using System.IO;
+    using System.Diagnostics;
 #endif
     #endregion
 
@@ -360,7 +362,57 @@ namespace WPFLocalizeExtension.Engine
                 // return the existing/new instance
                 return instance;
             }
-        } 
+        }
+
+        #region GetAllSupportedCultures
+#if SILVERLIGHT
+#else
+        static private List<CultureInfo> installedCultures;
+        /// <summary>
+        /// Get a list of installed cultures.
+        /// Please note that is just a coarse check. It may be irritated by files named *.resources.dll in directories that are named like culture codes.
+        /// </summary>
+        static public List<CultureInfo> InstalledCultures
+        {
+            get
+            {
+                if (installedCultures == null)
+                {
+                    installedCultures = new List<CultureInfo>();
+                    installedCultures.Add(CultureInfo.InvariantCulture);
+
+                    var startupPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                    
+                    // Get all directories named like a specific culture.
+                    var dirs = Directory.GetDirectories(startupPath, "??-??").ToList();
+                    // Get all directories named like a culture.
+                    dirs.AddRange(Directory.GetDirectories(startupPath, "??"));
+
+                    // Get the list of all cultures.
+                    var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures).ToList();
+
+                    foreach (string dir in dirs)
+                    {
+                        // Try to correlate a culture with the directory name.
+                        var info = new DirectoryInfo(dir);
+
+                        foreach (var c in cultures)
+                        {
+                            if (c.Name != info.Name)
+                                continue;
+
+                            // Finally check if there are any resource files within it.
+                            if (info.GetFiles("*.resources.dll").Length > 0)
+                                installedCultures.Add(c);
+                        }
+                    }
+                }
+
+                return installedCultures;
+            }
+        }
+#endif
+        #endregion
         #endregion
 
         #region Properties
@@ -394,8 +446,6 @@ namespace WPFLocalizeExtension.Engine
 
                 // Raise the OnLocChanged event
                 LocalizeDictionary.CultureChangedEvent.Invoke(null, EventArgs.Empty);
-                //if (this.OnLocChanged != null)
-                //    this.OnLocChanged(null);
             }
         }
 
@@ -424,8 +474,6 @@ namespace WPFLocalizeExtension.Engine
 
                 // Raise the OnLocChanged event
                 LocalizeDictionary.CultureChangedEvent.Invoke(null, EventArgs.Empty);
-                //if (this.OnLocChanged != null)
-                //    this.OnLocChanged(null);
             }
         }
 
@@ -558,14 +606,33 @@ namespace WPFLocalizeExtension.Engine
                 availableResources = assembly.GetManifestResourceNames();
 
                 // search for the best fitting resourcefile. pattern: ".{NAME}.resources"
+                #region Old approach - does not work, if the default namespace differs from the assembly name (#7128)
+                //for (int i = 0; i < availableResources.Length; i++)
+                //{
+                //    if (availableResources[i].StartsWith(resourceAssembly + ".") &&
+                //        availableResources[i].EndsWith(resManagerNameToSearch))
+                //    {
+                //        // take the first occurrence and break
+                //        foundResource = availableResources[i];
+                //        break;
+                //    }
+                //} 
+                #endregion
+
+                // The proposed approach of Andras (http://wpflocalizeextension.codeplex.com/discussions/66098?ProjectName=wpflocalizeextension)
+                var possiblePrefixes = new List<string>(assembly.GetTypes().Select((t) => t.Namespace).Distinct());
+
                 for (int i = 0; i < availableResources.Length; i++)
                 {
-                    if (availableResources[i].StartsWith(resourceAssembly + ".") &&
-                        availableResources[i].EndsWith(resManagerNameToSearch))
+                    if (availableResources[i].EndsWith(resManagerNameToSearch))
                     {
-                        // take the first occurrence and break
-                        foundResource = availableResources[i];
-                        break;
+                        var matches = possiblePrefixes.Where((p) => availableResources[i].StartsWith(p + "."));
+                        if (matches.Count() != 0)
+                        {
+                            // take the first occurrence and break
+                            foundResource = availableResources[i];
+                            break;
+                        }
                     }
                 }
 
@@ -708,6 +775,18 @@ namespace WPFLocalizeExtension.Engine
         /// <returns>TRUE if in design mode, else FALSE</returns>
         public bool GetIsInDesignMode()
         {
+#if SILVERLIGHT
+#else
+            if (!this.Dispatcher.Thread.IsAlive)
+            {
+                return false;
+            }
+
+            if (!this.Dispatcher.CheckAccess())
+            {
+                return (bool)this.Dispatcher.Invoke(new Func<bool>(this.GetIsInDesignMode));
+            }
+#endif
             return DesignerProperties.GetIsInDesignMode(this);
         }
         #endregion

@@ -83,6 +83,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Engine\ILocalizationProvider.cs" />
     <Compile Include="Engine\LocBinding.cs" />
     <Compile Include="Engine\LocalizeDictionary.cs" />
     <Compile Include="Engine\ObjectDependencyManager.cs" />

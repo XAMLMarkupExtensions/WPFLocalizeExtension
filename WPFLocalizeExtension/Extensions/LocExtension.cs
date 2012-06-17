@@ -550,6 +550,9 @@ namespace WPFLocalizeExtension.Extensions
         /// <returns></returns>
         private object ConvertAndBufferResult(object input, Type targetType, CultureInfo ci, string resKey)
         {
+            if (input == null)
+                return null;
+
             object result = null;
             Type resourceType = input.GetType();
 
@@ -684,6 +687,10 @@ namespace WPFLocalizeExtension.Extensions
             else
             {
                 object localizedObject = LocalizeDictionary.Instance.GetLocalizedObject(this.Assembly, this.Dict, this.Key, targetCulture);
+
+                if (localizedObject == null)
+                    return false;
+
                 object result = ConvertAndBufferResult(localizedObject, typeof(TValue), targetCulture, resKey);
                 if (result is TValue)
                     resolvedValue = (TValue)result;
@@ -692,7 +699,7 @@ namespace WPFLocalizeExtension.Extensions
             if (resolvedValue != null)
                 return true;
 
-            // return false: resulve was not successfully.
+            // return false: resolve was not successfully.
             return false;
         }
         #endregion

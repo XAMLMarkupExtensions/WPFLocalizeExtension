@@ -17,28 +17,30 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" Height="393" Width="329">
     <Window.Resources>
         <DataTemplate x:Key="TestTemplate">
-            <Grid Margin="5">
-                <Grid.Resources>
-                    <ResourceDictionary>
-                        <lex:LocExtension x:Key="LocalizedImage" x:Name="LocalizedImage" />
-                    </ResourceDictionary>
-                </Grid.Resources>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="100" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-                <Engine:LocBinding Source="{Binding FlagSource}" Target="{x:Reference LocalizedImage}" />
-                <Image Grid.RowSpan="3" Grid.Column="0" Height="50" Source="{x:Reference LocalizedImage}" />
-                <Label Grid.Row="0" Grid.Column="1" Content="{lex:Loc Country}" />
-                <Label Grid.Row="0" Grid.Column="2" Content="{Binding Country}" />
-                <Label Grid.Row="1" Grid.Column="1" Content="{lex:Loc Area}" />
-                <Label Grid.Row="1" Grid.Column="2" Content="{Binding Area}" />
-            </Grid>
+            <Border>
+                <Grid Margin="5">
+                    <Grid.Resources>
+                        <ResourceDictionary>
+                            <lex:LocExtension x:Key="LocalizedImage" x:Name="LocalizedImage" />
+                        </ResourceDictionary>
+                    </Grid.Resources>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Engine:LocBinding Source="{Binding FlagSource}" Target="{x:Reference LocalizedImage}" />
+                    <Image Grid.RowSpan="3" Grid.Column="0" Height="50" Source="{x:Reference LocalizedImage}" />
+                    <Label Grid.Row="0" Grid.Column="1" Content="{lex:Loc Country}" />
+                    <Label Grid.Row="0" Grid.Column="2" Content="{Binding Country}" />
+                    <Label Grid.Row="1" Grid.Column="1" Content="{lex:Loc Area}" />
+                    <Label Grid.Row="1" Grid.Column="2" Content="{Binding Area}" />
+                </Grid>
+            </Border>
         </DataTemplate>
     </Window.Resources>
     <Grid>
@@ -58,14 +60,17 @@
             <Button Content="{lex:Loc ButtonEN}" Height="23" Width="75" Click="ButtonEN_Click"/>
         </StackPanel>
         <Button Grid.Row="2" HorizontalAlignment="Center" Name="ButtonAssembly" Click="ButtonAssembly_Click" Content="{lex:LocText FormatSegment1=A}" Width="{lex:Loc}" Margin="{lex:Loc}" Background="{lex:Loc}" FlowDirection="{lex:Loc}" />
-        <TextBox>
+        <ComboBox ItemsSource="{Binding Source={x:Static Engine:LocalizeDictionary.Instance}, Path=InstalledCultures}"
+                  SelectedItem="{Binding Source={x:Static Engine:LocalizeDictionary.Instance}, Path=Culture}"
+                  Margin="2"/>
+        <!--<TextBox>
             <TextBox.Text>
                 <Ext:CatExtension Format="{}{0} - {1}">
                     <lex:LocExtension Key="ButtonAssembly_Width" />
                     <lex:LocExtension Key="ButtonAssembly_Margin" />
                 </Ext:CatExtension>
             </TextBox.Text>
-        </TextBox>
+        </TextBox>-->
         <Image Grid.Row="3" Source="{lex:Loc TestImage}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         <ListBox Grid.Row="4" ItemTemplate="{DynamicResource TestTemplate}" Engine:LocalizeDictionary.DefaultAssembly="AssemblyTest" Engine:LocalizeDictionary.DefaultDictionary="CountryRes">
             <Local:Countries Country="Austria" CountryDE="Österreich" Area="83855" />
