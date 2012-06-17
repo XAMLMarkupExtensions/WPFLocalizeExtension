@@ -8,7 +8,7 @@
     <ProjectGuid>{F8ED06E5-39CA-458B-8B84-E043C335BDE2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AssemblyTestResourceLib</RootNamespace>
+    <RootNamespace>AssemblyTestResourceLib2</RootNamespace>
     <AssemblyName>AssemblyTestResourceLib</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
