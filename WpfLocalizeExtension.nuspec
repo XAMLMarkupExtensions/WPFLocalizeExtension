@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
-    <version>1.0.4</version>
+    <version>1.1.1</version>
     <authors>Bernhard Millauer</authors>
     <owners>Bernhard Millauer</owners>
     <licenseUrl>http://wpflocalizeextension.codeplex.com/license</licenseUrl>
@@ -18,15 +18,16 @@
     <id>WpfLocalizeExtension</id>
     <title>WPF Localization Extension</title>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
-    <description>LocalizationExtension is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObects</description>
-    <summary>LocalizationExtension is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObects</summary>
+    <description>LocalizationExtension is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObjects</description>
+    <summary>LocalizationExtension is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObjects</summary>
     <releaseNotes />
     <copyright>Bernhard Millauer</copyright>
     <language>en-US</language>
     <tags>wpf localization extension globalization resx resource language</tags>
   </metadata>
   <files>
-    <file src="WPFLocalizeExtension\bin\Release\WPFLocalizeExtension.dll" target="lib\WPFLocalizeExtension.dll" />
-    <file src="WPFLocalizeExtension\bin\Release\WPFLocalizeExtension.xml" target="lib\WPFLocalizeExtension.xml" />
+    <file src="WPFLocalizeExtension\bin\Release\WPFLocalizeExtension.dll" target="lib\net35\WPFLocalizeExtension.dll" />
+    <file src="WPFLocalizeExtension\bin\Release\WPFLocalizeExtension.xml" target="lib\net35\WPFLocalizeExtension.xml" />
+    <file src="WPFLocalizeExtension\bin\Release\SLLocalizeExtension.dll" target="lib\sl50\SLLocalizeExtension.dll" />
   </files>
 </package>
