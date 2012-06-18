@@ -49,9 +49,7 @@ namespace WPFLocalizeExtension.Extensions
         internal void OnNotifyPropertyChanged(string property)
         {
             if (this.PropertyChanged != null)
-            {
                 this.PropertyChanged(this, new PropertyChangedEventArgs(property));
-            }
         }
         #endregion
 
@@ -84,11 +82,6 @@ namespace WPFLocalizeExtension.Extensions
         /// A parameter that can be supplied along with the converter object.
         /// </summary>
         private object converterParameter = null;
-        
-        /// <summary>
-        /// A dictionary for notification classes for changes of the individual target Parent changes.
-        /// </summary>
-        private Dictionary<DependencyObject, ParentChangedNotifier> parentNotifiers = new Dictionary<DependencyObject, ParentChangedNotifier>();
         #endregion
 
         #region Properties
@@ -97,7 +90,18 @@ namespace WPFLocalizeExtension.Extensions
         /// </summary>
         public string Key
         {
-            get { return this.key; }
+            get
+            {
+                var resourceKey = key;
+
+                // This is just for backward compatibility!
+                if (!string.IsNullOrEmpty(dict) || !string.IsNullOrEmpty(assembly))
+                    resourceKey = (dict ?? "") + ":" + resourceKey;
+                if (!string.IsNullOrEmpty(assembly))
+                    resourceKey = assembly + ":" + resourceKey;
+                
+                return resourceKey;
+            }
             set
             {
                 string oldKey = this.key;
@@ -111,6 +115,7 @@ namespace WPFLocalizeExtension.Extensions
         /// <summary>
         /// Gets or sets the name of the Assembly where the .resx is located.
         /// </summary>
+        [Obsolete("This property is obsolete and will be removed from the extension in the future.\r\nUse the attached properties of the ResxLocalizationProvider instead.")]
         public string Assembly
         {
             get { return this.assembly; }
@@ -120,6 +125,7 @@ namespace WPFLocalizeExtension.Extensions
         /// <summary>
         /// Gets or sets the name of the Dict where the .resx is located.
         /// </summary>
+        [Obsolete("This property is obsolete and will be removed from the extension in the future.\r\nUse the attached properties of the ResxLocalizationProvider instead.")]
         public string Dict
         {
             get { return this.dict; }
@@ -167,8 +173,8 @@ namespace WPFLocalizeExtension.Extensions
         [EditorBrowsable(EditorBrowsableState.Never)]
         public string ResourceIdentifierKey
         {
-            get { return string.Format("{0}:{1}:{2}", this.Assembly, this.Dict, this.Key ?? "(null)"); }
-            set { ParseKey(value, out this.assembly, out this.dict, out this.key); }
+            get { return string.Format("{0}:{1}:{2}", assembly, dict, key ?? "(null)"); }
+            set { key = value; }
         }
         #endregion
 
@@ -193,8 +199,7 @@ namespace WPFLocalizeExtension.Extensions
         public LocExtension(string key)
             : this()
         {
-            // parse the key value and split it up if necessary
-            ParseKey(key, out this.assembly, out this.dict, out this.key);
+            this.Key = key;
         } 
         #endregion
 
@@ -224,9 +229,6 @@ namespace WPFLocalizeExtension.Extensions
                     dpParent = VisualTreeHelper.GetParent(dpParent);
                 }
             }
-
-            //if ((sender == null) || IsEndpointObject(sender))
-            //    UpdateNewValue();
         }
         #endregion
 
@@ -288,143 +290,6 @@ namespace WPFLocalizeExtension.Extensions
         } 
         #endregion
 
-        #region Assembly/Dictionary/Key
-        /// <summary>
-        /// Returns the resource assembly name that may be subject to the information stored in the endpoint.
-        /// </summary>
-        /// <param name="endPoint">Information about the endpoint.</param>
-        /// <returns>The name of the resource assembly.</returns>
-        public string GetAssembly(TargetInfo endPoint)
-        {
-            string ret = null;
-
-            if (assembly != null)
-                ret = assembly;
-            else if ((endPoint != null) && endPoint.IsDependencyObject)
-            {
-                var dpEP = (DependencyObject)endPoint.TargetObject;
-                var dp = dpEP;
-
-                while (ret == null)
-                {
-                    ret = LocalizeDictionary.GetDefaultAssembly(dp);
-                    var dp2 = VisualTreeHelper.GetParent(dp);
-
-                    if (ret == null && dp2 == null)
-                    {
-                        // Try to establish a notification on changes of the Parent property of dp.
-                        if (dp is FrameworkElement && !parentNotifiers.ContainsKey(dpEP))
-                        {
-                            parentNotifiers.Add(dpEP, new ParentChangedNotifier((FrameworkElement)dp, () =>
-                            {
-                                UpdateNewValue();
-                            }));
-                        }
-                        break;
-                    }
-
-                    dp = dp2;
-                }
-            }
-
-            return ret;
-        }
-
-        /// <summary>
-        /// Returns the resource dictionary name that may be subject to the information stored in the endpoint.
-        /// </summary>
-        /// <param name="endPoint">Information about the endpoint.</param>
-        /// <returns>The name of the resource dictionary.</returns>
-        public string GetDict(TargetInfo endPoint)
-        {
-            string ret = null;
-
-            if (dict != null)
-                ret = dict;
-            else if ((endPoint != null) && endPoint.IsDependencyObject)
-            {
-                var dpEP = (DependencyObject)endPoint.TargetObject;
-                var dp = dpEP;
-
-                while (ret == null)
-                {
-                    ret = LocalizeDictionary.GetDefaultDictionary(dp);
-                    var dp2 = VisualTreeHelper.GetParent(dp);
-
-                    if (ret == null && dp2 == null)
-                    {
-                        // Try to establish a notification on changes of the Parent property of dp.
-                        if (dp is FrameworkElement && !parentNotifiers.ContainsKey(dpEP))
-                        {
-                            parentNotifiers.Add(dpEP, new ParentChangedNotifier((FrameworkElement)dp, () =>
-                            {
-                                UpdateNewValue();
-                            }));
-                        }
-                        break;
-                    }
-
-                    dp = dp2;
-                }
-            }
-
-            return ret;
-        }
-
-        /// <summary>
-        /// Parses a key ([[Assembly:]Dict:]Key and return the parts of it.
-        /// </summary>
-        /// <param name="inKey">The key to parse.</param>
-        /// <param name="outAssembly">The found or default assembly.</param>
-        /// <param name="outDict">The found or default dictionary.</param>
-        /// <param name="outKey">The found or default key.</param>
-        private void ParseKey(string inKey, out string outAssembly, out string outDict, out string outKey)
-        {
-            // reset the vars to null
-            outAssembly = null;
-            outDict = null;
-            outKey = null;
-
-            // its a assembly/dict/key pair
-            if (!string.IsNullOrEmpty(inKey))
-            {
-                string[] split = inKey.Trim().Split(":".ToCharArray());
-
-                // assembly:dict:key
-                if (split.Length == 3)
-                {
-                    outAssembly = !string.IsNullOrEmpty(split[0]) ? split[0] : null;
-                    outDict = !string.IsNullOrEmpty(split[1]) ? split[1] : null;
-                    outKey = split[2];
-                }
-
-                // dict:key
-                // assembly = ExecutingAssembly
-                if (split.Length == 2)
-                {
-                    outDict = !string.IsNullOrEmpty(split[0]) ? split[0] : null;
-                    outKey = split[1];
-                }
-
-                // key
-                // assembly = ExecutingAssembly
-                // dict = standard resourcedictionary
-                if (split.Length == 1)
-                {
-                    outKey = split[0];
-                }
-            }
-            else
-            {
-                // if the passed value is null pr empty, throw an exception if in runtime
-                if (!LocalizeDictionary.Instance.GetIsInDesignMode())
-                {
-                    throw new ArgumentNullException("inKey");
-                }
-            }
-        }
-        #endregion
-
         #region TargetMarkupExtension implementation
         /// <summary>
         /// This function returns the properly prepared output of the markup extension.
@@ -449,9 +314,8 @@ namespace WPFLocalizeExtension.Extensions
                 targetType = info.TargetPropertyType.GetGenericArguments()[0];
             
             // Try to get the localized input from the resource.
-            string resourceAssembly = GetAssembly(endPoint);
-            string resourceDictionary = GetDict(endPoint);
             string resourceKey = this.Key;
+            
             CultureInfo ci = GetForcedCultureOrDefault();
 
             // Extract the names of the endpoint object and property
@@ -484,7 +348,7 @@ namespace WPFLocalizeExtension.Extensions
             else if (epProp.Contains("FrameworkElementMargin12"))
                 epProp = "Margin";
 
-            string resKeyBase = ci.Name + ":" + targetType.Name + ":" + resourceAssembly + ":" + resourceDictionary + ":";
+            string resKeyBase = ci.Name + ":" + targetType.Name + ":";
             string resKeyNameProp = epName + LocalizeDictionary.Instance.Separation + epProp;
             string resKeyName = epName;
             
@@ -497,17 +361,17 @@ namespace WPFLocalizeExtension.Extensions
                 result = ResourceBuffer[resKeyBase + resKeyName];
             else
             {
-                object input = LocalizeDictionary.Instance.GetLocalizedObject(resourceAssembly, resourceDictionary, resourceKey, ci);
-
+                object input = LocalizeDictionary.Instance.GetLocalizedObject(resourceKey, endPoint.TargetObject as DependencyObject, ci);
+                
                 if (input == null)
                 {
                     // Try get the key + Name of the DependencyObject [Separator] Property name
-                    input = LocalizeDictionary.Instance.GetLocalizedObject(resourceAssembly, resourceDictionary, resKeyNameProp, ci);
+                    input = LocalizeDictionary.Instance.GetLocalizedObject(resKeyNameProp, endPoint.TargetObject as DependencyObject, ci);
 
                     if (input == null)
                     {
                         // Try get the key + just the Name of the DependencyObject
-                        input = LocalizeDictionary.Instance.GetLocalizedObject(resourceAssembly, resourceDictionary, resKeyName, ci);
+                        input = LocalizeDictionary.Instance.GetLocalizedObject(resKeyName, endPoint.TargetObject as DependencyObject, ci);
 
                         if (input == null)
                             return null;
@@ -678,7 +542,7 @@ namespace WPFLocalizeExtension.Extensions
             resolvedValue = default(TValue);
 
             // get the localized object from the dictionary
-            string resKey = targetCulture.Name + ":" + typeof(TValue).Name + ":" + this.Assembly + ":" + this.Dict + ":" + this.Key;
+            string resKey = targetCulture.Name + ":" + typeof(TValue).Name + ":" + this.Key;
 
             if (ResourceBuffer.ContainsKey(resKey))
             {
@@ -686,7 +550,7 @@ namespace WPFLocalizeExtension.Extensions
             }
             else
             {
-                object localizedObject = LocalizeDictionary.Instance.GetLocalizedObject(this.Assembly, this.Dict, this.Key, targetCulture);
+                object localizedObject = LocalizeDictionary.Instance.GetLocalizedObject(this.Key, null, targetCulture);
 
                 if (localizedObject == null)
                     return false;

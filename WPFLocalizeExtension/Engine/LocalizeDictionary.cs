@@ -6,6 +6,8 @@ namespace WPFLocalizeExtension.Engine
 {
     #region Uses
     using System;
+    using System.IO;
+    using System.Diagnostics;
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Globalization;
@@ -15,13 +17,15 @@ namespace WPFLocalizeExtension.Engine
     using System.Runtime.CompilerServices;
     using System.Windows;
     using System.Windows.Markup;
+    using System.Collections.ObjectModel;
+    using System.Collections.Specialized;
     using XAMLMarkupExtensions.Base;
 #if SILVERLIGHT
     using SLLocalizeExtension.Extensions;
+    using SLLocalizeExtension.Providers;
 #else
     using WPFLocalizeExtension.Extensions;
-    using System.IO;
-    using System.Diagnostics;
+    using WPFLocalizeExtension.Providers;
 #endif
     #endregion
 
@@ -32,32 +36,14 @@ namespace WPFLocalizeExtension.Engine
     {
         #region Dependency Properties
         /// <summary>
-        /// <see cref="DependencyProperty"/> DefaultDictionary to set the fallback resource dictionary.
+        /// <see cref="DependencyProperty"/> DefaultProvider to set the ILocalizationProvider.
         /// </summary>
-        public static readonly DependencyProperty DefaultDictionaryProperty =
-                DependencyProperty.RegisterAttached(
-                "DefaultDictionary",
-                typeof(string),
-                typeof(LocalizeDictionary),
-#if SILVERLIGHT
-                new PropertyMetadata(null, SetDictionaryFromDependencyProperty));
-#else
-                new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.None, SetDictionaryFromDependencyProperty));
-#endif
-
-        /// <summary>
-        /// <see cref="DependencyProperty"/> DefaultAssembly to set the fallback assembly.
-        /// </summary>
-        public static readonly DependencyProperty DefaultAssemblyProperty =
+        public static readonly DependencyProperty DefaultProviderProperty =
             DependencyProperty.RegisterAttached(
-                "DefaultAssembly",
-                typeof(string),
+                "DefaultProvider",
+                typeof(ILocalizationProvider),
                 typeof(LocalizeDictionary),
-#if SILVERLIGHT
-                new PropertyMetadata(null, SetAssemblyFromDependencyProperty));
-#else
-                new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.None, SetAssemblyFromDependencyProperty));
-#endif
+                new PropertyMetadata(null, SetProviderFromDependencyProperty));
 
         /// <summary>
         /// <see cref="DependencyProperty"/> DesignCulture to set the Culture.
@@ -82,11 +68,17 @@ namespace WPFLocalizeExtension.Engine
                 "Separation",
                 typeof(string),
                 typeof(LocalizeDictionary),
-#if SILVERLIGHT
-                new PropertyMetadata(null, SetSeparationFromDependencyProperty));
-#else
-                new FrameworkPropertyMetadata(LocalizeDictionary.DefaultSeparation, SetSeparationFromDependencyProperty));
-#endif
+                new PropertyMetadata(LocalizeDictionary.DefaultSeparation, SetSeparationFromDependencyProperty));
+
+        /// <summary>
+        /// <see cref="DependencyProperty"/> Separation to set the separation character/string for resource name patterns.
+        /// </summary>
+        public static readonly DependencyProperty IncludeInvariantCultureProperty =
+            DependencyProperty.RegisterAttached(
+                "IncludeInvariantCulture",
+                typeof(bool),
+                typeof(LocalizeDictionary),
+                new PropertyMetadata(true, SetIncludeInvariantCultureFromDependencyProperty));
         #endregion
 
         #region Dependency Property Callbacks
@@ -124,27 +116,21 @@ namespace WPFLocalizeExtension.Engine
         }
 
         /// <summary>
-        /// Callback function. Used to set the <see cref="LocalizeDictionary"/>.DefaultDictionary if set in Xaml.
+        /// Callback function. Used to set the <see cref="LocalizeDictionary"/>.DefaultProvider if set in Xaml.
         /// </summary>
         /// <param name="obj">The dependency object.</param>
         /// <param name="args">The event argument.</param>
-        private static void SetDictionaryFromDependencyProperty(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+        private static void SetProviderFromDependencyProperty(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
             LocalizeDictionary.CultureChangedEvent.Invoke(obj, EventArgs.Empty);
-            //if (Instance.OnLocChanged != null)
-            //    Instance.OnLocChanged(obj);
-        }
 
-        /// <summary>
-        /// Callback function. Used to set the <see cref="LocalizeDictionary"/>.DefaultAssembly if set in Xaml.
-        /// </summary>
-        /// <param name="obj">The dependency object.</param>
-        /// <param name="args">The event argument.</param>
-        private static void SetAssemblyFromDependencyProperty(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-        {
-            LocalizeDictionary.CultureChangedEvent.Invoke(obj, EventArgs.Empty);
-            //if (Instance.OnLocChanged != null)
-            //    Instance.OnLocChanged(obj);
+            var provider = args.NewValue as ILocalizationProvider;
+
+            if (provider != null)
+            {
+                provider.ProviderChanged += (s, e) => { LocalizeDictionary.CultureChangedEvent.Invoke(e.Object, EventArgs.Empty); };
+                provider.AvailableCultures.CollectionChanged += new NotifyCollectionChangedEventHandler(Instance.AvailableCulturesCollectionChanged);
+            }
         }
 
         /// <summary>
@@ -168,28 +154,40 @@ namespace WPFLocalizeExtension.Engine
             if (sep != null)
                 Instance.Separation = sep;
         }
+
+        /// <summary>
+        /// Callback function. Used to set the <see cref="LocalizeDictionary"/>.IncludeInvariantCulture if set in Xaml.
+        /// </summary>
+        /// <param name="obj">The dependency object.</param>
+        /// <param name="args">The event argument.</param>
+        private static void SetIncludeInvariantCultureFromDependencyProperty(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+        {
+            bool flag;
+
+            try
+            {
+                flag = (bool)args.NewValue;
+            }
+            catch
+            {
+                throw;
+            }
+
+            if (flag != null)
+                Instance.IncludeInvariantCulture = flag;
+        }
         #endregion
 
         #region Dependency Property Management
         #region Get
         /// <summary>
-        /// Getter of <see cref="DependencyProperty"/> default dictionary.
+        /// Getter of <see cref="DependencyProperty"/> default provider.
         /// </summary>
-        /// <param name="obj">The dependency object to get the default dictionary from.</param>
-        /// <returns>The default dictionary.</returns>
-        public static string GetDefaultDictionary(DependencyObject obj)
+        /// <param name="obj">The dependency object to get the default provider from.</param>
+        /// <returns>The default provider.</returns>
+        public static ILocalizationProvider GetDefaultProvider(DependencyObject obj)
         {
-            return (obj != null) ? (string)obj.GetValue(DefaultDictionaryProperty) : null;
-        }
-
-        /// <summary>
-        /// Getter of <see cref="DependencyProperty"/> default assembly.
-        /// </summary>
-        /// <param name="obj">The dependency object to get the default assembly from.</param>
-        /// <returns>The default assembly.</returns>
-        public static string GetDefaultAssembly(DependencyObject obj)
-        {
-            return (obj != null) ? (string)obj.GetValue(DefaultAssemblyProperty) : null;
+            return (obj != null) ? (ILocalizationProvider)obj.GetValue(DefaultProviderProperty) : null;
         }
 
         /// <summary>
@@ -218,23 +216,13 @@ namespace WPFLocalizeExtension.Engine
 
         #region Set
         /// <summary>
-        /// Setter of <see cref="DependencyProperty"/> default dictionary.
+        /// Setter of <see cref="DependencyProperty"/> default provider.
         /// </summary>
-        /// <param name="obj">The dependency object to set the default dictionary to.</param>
-        /// <param name="value">The dictionary.</param>
-        public static void SetDefaultDictionary(DependencyObject obj, string value)
+        /// <param name="obj">The dependency object to set the default provider to.</param>
+        /// <param name="value">The provider.</param>
+        public static void SetDefaultProvider(DependencyObject obj, ILocalizationProvider value)
         {
-            obj.SetValue(DefaultDictionaryProperty, value);
-        }
-
-        /// <summary>
-        /// Setter of <see cref="DependencyProperty"/> default assembly.
-        /// </summary>
-        /// <param name="obj">The dependency object to set the default assembly to.</param>
-        /// <param name="value">The assembly.</param>
-        public static void SetDefaultAssembly(DependencyObject obj, string value)
-        {
-            obj.SetValue(DefaultAssemblyProperty, value);
+            obj.SetValue(DefaultProviderProperty, value);
         }
 
         /// <summary>
@@ -259,26 +247,6 @@ namespace WPFLocalizeExtension.Engine
 
         #region Variables
         /// <summary>
-        /// Holds the default <see cref="ResourceDictionary"/> name
-        /// </summary>
-        public const string ResourcesName = "Resources";
-
-        /// <summary>
-        /// Holds the name of the Resource Manager.
-        /// </summary>
-        private const string ResourceManagerName = "ResourceManager";
-
-        /// <summary>
-        /// Holds the extension of the resource files.
-        /// </summary>
-        private const string ResourceFileExtension = ".resources";
-
-        /// <summary>
-        /// Holds the binding flags for the reflection to find the resource files.
-        /// </summary>
-        private const BindingFlags ResourceBindingFlags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static;
-
-        /// <summary>
         /// Holds a SyncRoot to be thread safe
         /// </summary>
         private static readonly object SyncRoot = new object();
@@ -297,6 +265,11 @@ namespace WPFLocalizeExtension.Engine
         /// Holds the separation char/string.
         /// </summary>
         private string separation = LocalizeDictionary.DefaultSeparation;
+
+        /// <summary>
+        /// Determines, if the <see cref="LocalizeDictionary.MergedAvailableCultures"/> contains the invariant culture.
+        /// </summary>
+        private bool includeInvariantCulture = true;
         #endregion
 
         #region Constructor
@@ -306,7 +279,38 @@ namespace WPFLocalizeExtension.Engine
         /// </summary>
         private LocalizeDictionary()
         {
-            this.ResourceManagerList = new Dictionary<string, ResourceManager>();
+            // Apply for messages of the ResxLocalizationProvider and pass them through to own events.
+            ResxLocalizationProvider.Instance.ProviderChanged += (s, e) =>
+            {
+                LocalizeDictionary.CultureChangedEvent.Invoke(e.Object, EventArgs.Empty);
+            };
+
+            ResxLocalizationProvider.Instance.AvailableCultures.CollectionChanged += new NotifyCollectionChangedEventHandler(AvailableCulturesCollectionChanged);
+
+        }
+
+        private void AvailableCulturesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            this.Dispatcher.BeginInvoke(new Action<NotifyCollectionChangedEventArgs>((args) =>
+            {
+                if (args.NewItems != null)
+                {
+                    foreach (CultureInfo c in args.NewItems)
+                    {
+                        if (!this.MergedAvailableCultures.Contains(c))
+                            this.MergedAvailableCultures.Add(c);
+                    }
+                }
+
+                if (args.OldItems != null)
+                {
+                    foreach (CultureInfo c in args.OldItems)
+                    {
+                        if (this.MergedAvailableCultures.Contains(c))
+                            this.MergedAvailableCultures.Remove(c);
+                    }
+                }
+            }), e);
         } 
         #endregion
 
@@ -363,62 +367,12 @@ namespace WPFLocalizeExtension.Engine
                 return instance;
             }
         }
-
-        #region GetAllSupportedCultures
-#if SILVERLIGHT
-#else
-        static private List<CultureInfo> installedCultures;
-        /// <summary>
-        /// Get a list of installed cultures.
-        /// Please note that is just a coarse check. It may be irritated by files named *.resources.dll in directories that are named like culture codes.
-        /// </summary>
-        static public List<CultureInfo> InstalledCultures
-        {
-            get
-            {
-                if (installedCultures == null)
-                {
-                    installedCultures = new List<CultureInfo>();
-                    installedCultures.Add(CultureInfo.InvariantCulture);
-
-                    var startupPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                    
-                    // Get all directories named like a specific culture.
-                    var dirs = Directory.GetDirectories(startupPath, "??-??").ToList();
-                    // Get all directories named like a culture.
-                    dirs.AddRange(Directory.GetDirectories(startupPath, "??"));
-
-                    // Get the list of all cultures.
-                    var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures).ToList();
-
-                    foreach (string dir in dirs)
-                    {
-                        // Try to correlate a culture with the directory name.
-                        var info = new DirectoryInfo(dir);
-
-                        foreach (var c in cultures)
-                        {
-                            if (c.Name != info.Name)
-                                continue;
-
-                            // Finally check if there are any resource files within it.
-                            if (info.GetFiles("*.resources.dll").Length > 0)
-                                installedCultures.Add(c);
-                        }
-                    }
-                }
-
-                return installedCultures;
-            }
-        }
-#endif
-        #endregion
         #endregion
 
         #region Properties
         /// <summary>
         /// Gets or sets the <see cref="CultureInfo"/> for localization.
-        /// On set, <see cref="OnLocChanged"/> is raised.
+        /// On set, <see cref="LocalizeDictionary.CultureChangedEvent"/> is raised.
         /// </summary>
         /// <exception cref="System.InvalidOperationException">
         /// You have to set <see cref="LocalizeDictionary"/>.Culture first or 
@@ -451,7 +405,7 @@ namespace WPFLocalizeExtension.Engine
 
         /// <summary>
         /// Gets or sets the separation char/string for resource name patterns.
-        /// On set, <see cref="OnLocChanged"/> is raised.
+        /// On set, <see cref="LocalizeDictionary.CultureChangedEvent"/> is raised.
         /// </summary>
         public string Separation
         {
@@ -478,9 +432,45 @@ namespace WPFLocalizeExtension.Engine
         }
 
         /// <summary>
-        /// Gets the used ResourceManagers with their corresponding <c>namespaces</c>.
+        /// Gets or sets the flag indicating if the invariant culture is included in the <see cref="LocalizeDictionary.MergedAvailableCultures"/> list.
         /// </summary>
-        public Dictionary<string, ResourceManager> ResourceManagerList { get; private set; }
+        public bool IncludeInvariantCulture
+        {
+            get { return includeInvariantCulture; }
+            set
+            {
+                if (includeInvariantCulture != value)
+                {
+                    includeInvariantCulture = value;
+
+                    if (includeInvariantCulture)
+                        this.MergedAvailableCultures.Insert(0, CultureInfo.InvariantCulture);
+                    else
+                    {
+                        var index = this.MergedAvailableCultures.IndexOf(CultureInfo.InvariantCulture);
+                        this.MergedAvailableCultures.RemoveAt(index);
+                    }
+                }
+            }
+        }
+
+        private ObservableCollection<CultureInfo> mergedAvailableCultures = null;
+        /// <summary>
+        /// Gets the merged list of all available cultures.
+        /// </summary>
+        public ObservableCollection<CultureInfo> MergedAvailableCultures
+        {
+            get
+            {
+                if (mergedAvailableCultures == null)
+                {
+                    mergedAvailableCultures = new ObservableCollection<CultureInfo>();
+                    mergedAvailableCultures.Add(CultureInfo.InvariantCulture);
+                }
+
+                return mergedAvailableCultures;
+            }
+        }
 
 #if SILVERLIGHT
 #else
@@ -500,275 +490,39 @@ namespace WPFLocalizeExtension.Engine
 #endif
         #endregion
 
-        #region WeakEventListener Management
-        ///// <summary>
-        ///// Attach an WeakEventListener to the <see cref="LocalizeDictionary"/>
-        ///// </summary>
-        ///// <param name="listener">The listener to attach</param>
-        //public void AddEventListener(IWeakEventListener listener)
-        //{
-        //    // calls AddListener from the inline WeakCultureChangedEventManager
-        //    WeakLocChangedEventManager.AddListener(listener);
-        //}
-
-        ///// <summary>
-        ///// Detach an WeakEventListener to the <see cref="LocalizeDictionary"/>
-        ///// </summary>
-        ///// <param name="listener">The listener to detach</param>
-        //public void RemoveEventListener(IWeakEventListener listener)
-        //{
-        //    // calls RemoveListener from the inline WeakCultureChangedEventManager
-        //    WeakLocChangedEventManager.RemoveListener(listener);
-        //}
-        #endregion
-
-        #region ResourceManager Management
-        /// <summary>
-        /// Looks up in the cached <see cref="ResourceManager"/> list for the searched <see cref="ResourceManager"/>.
-        /// </summary>
-        /// <param name="resourceAssembly">The resource assembly (e.g.: <c>BaseLocalizeExtension</c>). NULL = Name of the executing assembly</param>
-        /// <param name="resourceDictionary">The dictionary to look up (e.g.: ResHelp, Resources, ...). NULL = Name of the default resource file (Resources)</param>
-        /// <returns>
-        /// The found <see cref="ResourceManager"/>
-        /// </returns>
-        /// <exception cref="System.InvalidOperationException">
-        /// If the ResourceManagers cannot be looked up
-        /// </exception>
-        /// <exception cref="System.ArgumentException">
-        /// If the searched <see cref="ResourceManager"/> wasn't found
-        /// </exception>
-        private ResourceManager GetResourceManager(string resourceAssembly, string resourceDictionary)
-        {
-            // Check validity of the assembly and dictionary.
-            if (resourceAssembly == null)
-                resourceAssembly = this.GetAssemblyName(Assembly.GetExecutingAssembly());
-
-            if (resourceDictionary == null)
-                resourceDictionary = ResourcesName;
-
-            PropertyInfo propInfo;
-            MethodInfo methodInfo;
-            Assembly assembly = null;
-            ResourceManager resManager;
-            string foundResource = null;
-            string resManagerNameToSearch = "." + resourceDictionary + ResourceFileExtension;
-            string[] availableResources;
-
-            if (this.ResourceManagerList.ContainsKey(resourceAssembly + resManagerNameToSearch))
-            {
-                resManager = this.ResourceManagerList[resourceAssembly + resManagerNameToSearch];
-            }
-            else
-            {
-                // if the assembly cannot be loaded, throw an exception
-                try
-                {
-                    // go through every assembly loaded in the app domain
-                    foreach (Assembly assemblyInAppDomain in AppDomain.CurrentDomain.GetAssemblies())
-                    {
-                        // check if the name pf the assembly is not null
-                        if (assemblyInAppDomain.FullName != null)
-                        {
-                            // get the assembly name object
-                            AssemblyName assemblyName = new AssemblyName(assemblyInAppDomain.FullName);
-
-                            // check if the name of the assembly is the seached one
-                            if (assemblyName.Name == resourceAssembly)
-                            {
-                                // assigne the assembly
-                                assembly = assemblyInAppDomain;
-
-                                // stop the search here
-                                break;
-                            }
-                        }
-                    }
-
-                    // check if the assembly is still null
-                    if (assembly == null)
-                    {
-                        // assign the loaded assembly
-#if SILVERLIGHT
-                        var name = new AssemblyName(resourceAssembly);
-                        assembly = Assembly.Load(name.FullName);
-#else
-                        assembly = Assembly.Load(new AssemblyName(resourceAssembly));
-#endif
-                    }
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception(string.Format("The Assembly '{0}' cannot be loaded.", resourceAssembly), ex);
-                }
-
-                // get all available resourcenames
-                // availableResources = Assembly.GetExecutingAssembly().GetManifestResourceNames();
-                availableResources = assembly.GetManifestResourceNames();
-
-                // search for the best fitting resourcefile. pattern: ".{NAME}.resources"
-                #region Old approach - does not work, if the default namespace differs from the assembly name (#7128)
-                //for (int i = 0; i < availableResources.Length; i++)
-                //{
-                //    if (availableResources[i].StartsWith(resourceAssembly + ".") &&
-                //        availableResources[i].EndsWith(resManagerNameToSearch))
-                //    {
-                //        // take the first occurrence and break
-                //        foundResource = availableResources[i];
-                //        break;
-                //    }
-                //} 
-                #endregion
-
-                // The proposed approach of Andras (http://wpflocalizeextension.codeplex.com/discussions/66098?ProjectName=wpflocalizeextension)
-                var possiblePrefixes = new List<string>(assembly.GetTypes().Select((t) => t.Namespace).Distinct());
-
-                for (int i = 0; i < availableResources.Length; i++)
-                {
-                    if (availableResources[i].EndsWith(resManagerNameToSearch))
-                    {
-                        var matches = possiblePrefixes.Where((p) => availableResources[i].StartsWith(p + "."));
-                        if (matches.Count() != 0)
-                        {
-                            // take the first occurrence and break
-                            foundResource = availableResources[i];
-                            break;
-                        }
-                    }
-                }
-
-                // if no one was found, exception
-                if (foundResource == null)
-                {
-                    throw new ArgumentException(
-                        string.Format(
-                            "No resource manager for dictionary '{0}' in assembly '{1}' found! ({1}.{0})",
-                            resourceDictionary,
-                            resourceAssembly));
-                }
-
-                // remove ".resources" from the end
-                foundResource = foundResource.Substring(0, foundResource.Length - ResourceFileExtension.Length);
-
-                //// Resources.{foundResource}.ResourceManager.GetObject()
-                //// ^^ prop-info      ^^ method get
-
-                try
-                {
-                    // get the propertyinfo from resManager over the type from foundResource
-                    var resourceManagerType = assembly.GetType(foundResource);
-
-                    // check if the resource manager was found.
-                    // if not, assume that the assembly was build with VisualBasic.
-                    // in this case try to manipulate the resource identifier.
-                    if (resourceManagerType == null)
-                    {
-#if SILVERLIGHT
-                        var assemblyName = resourceAssembly;
-#else
-                        var assemblyName = assembly.GetName().Name;
-#endif
-                        resourceManagerType = assembly.GetType(foundResource.Replace(assemblyName, assemblyName + ".My.Resources"));
-                    }
-
-                    propInfo = resourceManagerType.GetProperty(ResourceManagerName, ResourceBindingFlags);
-
-                    // get the GET-method from the methodinfo
-                    methodInfo = propInfo.GetGetMethod(true);
-
-                    // get the static ResourceManager property
-                    object resManObject = methodInfo.Invoke(null, null);
-
-                    // cast it to a ResourceManager for better working with
-                    resManager = (ResourceManager)resManObject;
-                }
-                catch (Exception ex)
-                {
-                    // this error has to get thrown because this has to work
-                    throw new InvalidOperationException("Cannot resolve the ResourceManager!", ex);
-                }
-
-                // Add the ResourceManager to the cachelist
-                this.ResourceManagerList.Add(resourceAssembly + resManagerNameToSearch, resManager);
-            }
-
-            // return the found ResourceManager
-            return resManager;
-        }
-        #endregion
-
         #region Localization Core
         /// <summary>
-        /// Returns an object from the passed dictionary with the given name.
+        /// Get the localized object using the built-in ResxLocalizationProvider.
         /// </summary>
-        /// <param name="resourceAssembly">The Assembly where the Resource is located at</param>
-        /// <param name="resourceDictionary">Name of the resource directory</param>
-        /// <param name="resourceKey">The key for the resource</param>
-        /// <param name="cultureToUse">The culture to use.</param>
-        /// <returns>
-        /// The found object or NULL if not found.
-        /// </returns>
-        public object GetLocalizedObject(
-            string resourceAssembly,
-            string resourceDictionary,
-            string resourceKey,
-            CultureInfo cultureToUse)
+        /// <param name="source">The source of the dictionary.</param>
+        /// <param name="dictionary">The dictionary with key/value pairs.</param>
+        /// <param name="key">The key to the value.</param>
+        /// <param name="culture">The culture to use.</param>
+        /// <returns>The value corresponding to the source/dictionary/key path for the given culture (otherwise NULL).</returns>
+        public object GetLocalizedObject(string source, string dictionary, string key, CultureInfo culture)
         {
-            // Validation
-            if (String.IsNullOrEmpty(resourceAssembly))
-                return null;
+            return GetLocalizedObject(source + ":" + dictionary + ":" + key, null, culture);
+        }
+        
+        /// <summary>
+        /// Get the localized object.
+        /// </summary>
+        /// <param name="key">The key to the value.</param>
+        /// <param name="target">The target <see cref="DependencyObject"/>.</param>
+        /// <param name="culture">The culture to use.</param>
+        /// <returns>The value corresponding to the source/dictionary/key path for the given culture (otherwise NULL).</returns>
+        public object GetLocalizedObject(string key, DependencyObject target, CultureInfo culture)
+        {
+            var provider = target != null ? GetDefaultProvider(target) : null;
 
-            if (String.IsNullOrEmpty(resourceDictionary))
-                return null;
+            if (provider == null)
+                provider = ResxLocalizationProvider.Instance;
 
-            if (String.IsNullOrEmpty(resourceKey))
-                return null;
-
-            // declaring local resource manager
-            ResourceManager resManager;
-
-            // try to get the resouce manager
-            try
-            {
-                resManager = this.GetResourceManager(resourceAssembly, resourceDictionary);
-            }
-            catch
-            {
-                return null;
-            }
-
-            // gets the resourceobject with the choosen localization
-            object retVal = resManager.GetObject(resourceKey, cultureToUse);
-
-            // if the retVal is null, return null
-            if (retVal == null && !this.GetIsInDesignMode())
-                return null;
-
-            // finally, return the searched object as type of the generic type
-            return retVal;
+            return provider.GetLocalizedObject(key, target, culture);
         }
         #endregion
 
         #region Helper Functions
-        /// <summary>
-        /// Returns the <see cref="AssemblyName"/> of the passed assembly instance
-        /// </summary>
-        /// <param name="assembly">The Assembly where to get the name from</param>
-        /// <returns>The Assembly name</returns>
-        public string GetAssemblyName(Assembly assembly)
-        {
-            if (assembly == null)
-            {
-                throw new ArgumentNullException("assembly");
-            }
-
-            if (assembly.FullName == null)
-            {
-                throw new NullReferenceException("assembly.FullName is null");
-            }
-
-            return assembly.FullName.Split(',')[0];
-        }
-
         /// <summary>
         /// Gets the status of the design mode
         /// </summary>
@@ -868,150 +622,6 @@ namespace WPFLocalizeExtension.Engine
                 purgeList.Clear();
             }
         }
-        #endregion
-
-        #region WeakLocChangedEventManager
-        ///// <summary>
-        ///// This in line class is used to handle weak events to avoid memory leaks
-        ///// </summary>
-        //internal sealed class WeakLocChangedEventManager : WeakEventManager
-        //{
-        //    /// <summary>
-        //    /// Indicates, if the current instance is listening on the source event
-        //    /// </summary>
-        //    private bool isListening;
-
-        //    /// <summary>
-        //    /// Holds the inner list of listeners
-        //    /// </summary>
-        //    private ListenerList listeners;
-
-        //    /// <summary>
-        //    /// Prevents a default instance of the <see cref="WeakLocChangedEventManager"/> class from being created. 
-        //    /// Creates a new instance of WeakCultureChangedEventManager
-        //    /// </summary>
-        //    private WeakLocChangedEventManager()
-        //    {
-        //        // creates a new list and assign it to listeners
-        //        this.listeners = new ListenerList();
-        //    }
-
-        //    /// <summary>
-        //    /// Gets the singleton instance of <see cref="WeakLocChangedEventManager"/>
-        //    /// </summary>
-        //    private static WeakLocChangedEventManager CurrentManager
-        //    {
-        //        get
-        //        {
-        //            // store the type of this WeakEventManager
-        //            Type managerType = typeof(WeakLocChangedEventManager);
-
-        //            // try to retrieve an existing instance of the stored type
-        //            WeakLocChangedEventManager manager = (WeakLocChangedEventManager)GetCurrentManager(managerType);
-
-        //            // if the manager does not exists
-        //            if (manager == null)
-        //            {
-        //                // create a new instance of WeakCultureChangedEventManager
-        //                manager = new WeakLocChangedEventManager();
-
-        //                // add the new instance to the WeakEventManager manager-store
-        //                SetCurrentManager(managerType, manager);
-        //            }
-
-        //            // return the new / existing WeakCultureChangedEventManager instance
-        //            return manager;
-        //        }
-        //    }
-
-        //    /// <summary>
-        //    /// Adds an listener to the inner list of listeners
-        //    /// </summary>
-        //    /// <param name="listener">The listener to add</param>
-        //    internal static void AddListener(IWeakEventListener listener)
-        //    {
-        //        // add the listener to the inner list of listeners
-        //        CurrentManager.listeners.Add(listener);
-
-        //        // start / stop the listening process
-        //        CurrentManager.StartStopListening();
-        //    }
-
-        //    /// <summary>
-        //    /// Removes an listener from the inner list of listeners
-        //    /// </summary>
-        //    /// <param name="listener">The listener to remove</param>
-        //    internal static void RemoveListener(IWeakEventListener listener)
-        //    {
-        //        // removes the listener from the inner list of listeners
-        //        CurrentManager.listeners.Remove(listener);
-
-        //        // start / stop the listening process
-        //        CurrentManager.StartStopListening();
-        //    }
-
-        //    /// <summary>
-        //    /// This method starts the listening process by attaching on the source event
-        //    /// </summary>
-        //    /// <param name="source">The source.</param>
-        //    [MethodImpl(MethodImplOptions.Synchronized)]
-        //    protected override void StartListening(object source)
-        //    {
-        //        if (!this.isListening)
-        //        {
-        //            Instance.OnLocChanged += this.OnLocChanged;
-        //            this.isListening = true;
-        //        }
-        //    }
-
-        //    /// <summary>
-        //    /// This method stops the listening process by detaching on the source event
-        //    /// </summary>
-        //    /// <param name="source">The source to stop listening on.</param>
-        //    [MethodImpl(MethodImplOptions.Synchronized)]
-        //    protected override void StopListening(object source)
-        //    {
-        //        if (this.isListening)
-        //        {
-        //            Instance.OnLocChanged -= this.OnLocChanged;
-        //            this.isListening = false;
-        //        }
-        //    }
-
-        //    /// <summary>
-        //    /// This method is called if the <see cref="LocalizeDictionary"/>.OnCultureChanged
-        //    /// is called and the listening process is enabled
-        //    /// </summary>
-        //    private void OnLocChanged(DependencyObject obj)
-        //    {
-        //        // tells every listener in the list that the event is occurred
-        //        this.DeliverEventToList(obj, EventArgs.Empty, this.listeners);
-        //    }
-
-        //    /// <summary>
-        //    /// This method starts and stops the listening process by attaching/detaching on the source event
-        //    /// </summary>
-        //    [MethodImpl(MethodImplOptions.Synchronized)]
-        //    private void StartStopListening()
-        //    {
-        //        // check if listeners are available and the listening process is stopped, start it.
-        //        // otherwise if no listeners are available and the listening process is started, stop it
-        //        if (this.listeners.Count != 0)
-        //        {
-        //            if (!this.isListening)
-        //            {
-        //                this.StartListening(null);
-        //            }
-        //        }
-        //        else
-        //        {
-        //            if (this.isListening)
-        //            {
-        //                this.StopListening(null);
-        //            }
-        //        }
-        //    }
-        //} 
         #endregion
     }
 }

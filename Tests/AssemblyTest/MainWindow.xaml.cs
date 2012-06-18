@@ -13,6 +13,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Globalization;
 using WPFLocalizeExtension.Engine;
+using WPFLocalizeExtension.Providers;
 
 namespace AssemblyTest
 {
@@ -38,7 +39,7 @@ namespace AssemblyTest
 
         private void ButtonAssembly_Click(object sender, RoutedEventArgs e)
         {
-            this.SetValue(LocalizeDictionary.DefaultAssemblyProperty, "AssemblyTest");
+            this.SetValue(ResxLocalizationProvider.DefaultAssemblyProperty, "AssemblyTest");
         }
     }
 }

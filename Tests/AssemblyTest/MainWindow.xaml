@@ -3,14 +3,15 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:Engine="clr-namespace:WPFLocalizeExtension.Engine;assembly=WPFLocalizeExtension"
         xmlns:lex="clr-namespace:WPFLocalizeExtension.Extensions;assembly=WPFLocalizeExtension"
+        xmlns:Providers="clr-namespace:WPFLocalizeExtension.Providers;assembly=WPFLocalizeExtension"
         xmlns:Ext="clr-namespace:XAMLMarkupExtensions.Strings;assembly=XAMLMarkupExtensions"
         xmlns:Local="clr-namespace:AssemblyTest"
         xmlns:c="clr-namespace:System.Collections.Generic;assembly=mscorlib"
         xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         Engine:LocalizeDictionary.DesignCulture="en"
-        Engine:LocalizeDictionary.DefaultAssembly="AssemblyTestResourceLib"
-        Engine:LocalizeDictionary.DefaultDictionary="Strings"
+        Providers:ResxLocalizationProvider.DefaultAssembly="AssemblyTestResourceLib"
+        Providers:ResxLocalizationProvider.DefaultDictionary="Strings"
         Title="MainWindow"
         mc:Ignorable="d"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -54,29 +55,31 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="100" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="25" />
         </Grid.RowDefinitions>
-        <StackPanel Name="TestPanel" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Engine:LocalizeDictionary.DefaultDictionary="Strings2">
-            <Button Content="{lex:Loc ButtonDE}" Height="23" Width="75" Click="ButtonDE_Click" Engine:LocalizeDictionary.DefaultAssembly="AssemblyTestResourceLib" />
+        <ComboBox ItemsSource="{Binding Source={x:Static Engine:LocalizeDictionary.Instance}, Path=MergedAvailableCultures}"
+                  SelectedItem="{Binding Source={x:Static Engine:LocalizeDictionary.Instance}, Path=Culture}"
+                  DisplayMemberPath="NativeName"
+                  Margin="2"/>
+        <StackPanel Name="TestPanel" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Providers:ResxLocalizationProvider.DefaultDictionary="Strings2">
+            <Button Content="{lex:Loc ButtonDE}" Height="23" Width="75" Click="ButtonDE_Click" Providers:ResxLocalizationProvider.DefaultAssembly="AssemblyTestResourceLib" />
             <Button Content="{lex:Loc ButtonEN}" Height="23" Width="75" Click="ButtonEN_Click"/>
         </StackPanel>
         <Button Grid.Row="2" HorizontalAlignment="Center" Name="ButtonAssembly" Click="ButtonAssembly_Click" Content="{lex:LocText FormatSegment1=A}" Width="{lex:Loc}" Margin="{lex:Loc}" Background="{lex:Loc}" FlowDirection="{lex:Loc}" />
-        <ComboBox ItemsSource="{Binding Source={x:Static Engine:LocalizeDictionary.Instance}, Path=InstalledCultures}"
-                  SelectedItem="{Binding Source={x:Static Engine:LocalizeDictionary.Instance}, Path=Culture}"
-                  Margin="2"/>
-        <!--<TextBox>
-            <TextBox.Text>
-                <Ext:CatExtension Format="{}{0} - {1}">
-                    <lex:LocExtension Key="ButtonAssembly_Width" />
-                    <lex:LocExtension Key="ButtonAssembly_Margin" />
-                </Ext:CatExtension>
-            </TextBox.Text>
-        </TextBox>-->
         <Image Grid.Row="3" Source="{lex:Loc TestImage}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-        <ListBox Grid.Row="4" ItemTemplate="{DynamicResource TestTemplate}" Engine:LocalizeDictionary.DefaultAssembly="AssemblyTest" Engine:LocalizeDictionary.DefaultDictionary="CountryRes">
+        <ListBox Grid.Row="4" ItemTemplate="{DynamicResource TestTemplate}" Providers:ResxLocalizationProvider.DefaultAssembly="AssemblyTest" Providers:ResxLocalizationProvider.DefaultDictionary="CountryRes">
             <Local:Countries Country="Austria" CountryDE="Österreich" Area="83855" />
             <Local:Countries Country="France" CountryDE="Frankreich" Area="543965" />
             <Local:Countries Country="Germany" CountryDE="Deutschland" Area="357039" />
             <Local:Countries Country="United Kingdom" CountryDE="Großbrittanien" Area="244103" />
         </ListBox>
+        <TextBox Grid.Row="5" Providers:ResxLocalizationProvider.DefaultAssembly="AssemblyTest" Providers:ResxLocalizationProvider.DefaultDictionary="CountryRes">
+            <TextBox.Text>
+                <Ext:CatExtension Format="Nested list test: {0} - {1}">
+                    <lex:LocExtension Key="Country" />
+                    <lex:LocExtension Key="Area" />
+                </Ext:CatExtension>
+            </TextBox.Text>
+        </TextBox>
     </Grid>
 </Window>
