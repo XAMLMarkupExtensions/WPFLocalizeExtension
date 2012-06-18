@@ -11,6 +11,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using SLLocalizeExtension.Engine;
 using System.Globalization;
+using SLLocalizeExtension.Providers;
 
 namespace SLTest
 {
@@ -33,11 +34,11 @@ namespace SLTest
 
         private void ButtonAssembly_Click(object sender, RoutedEventArgs e)
         {
-            var dict = (string)this.GetValue(LocalizeDictionary.DefaultDictionaryProperty);
+            var dict = (string)this.GetValue(ResxLocalizationProvider.DefaultDictionaryProperty);
             if (dict == "Strings")
-                this.SetValue(LocalizeDictionary.DefaultDictionaryProperty, "Strings2");
+                this.SetValue(ResxLocalizationProvider.DefaultDictionaryProperty, "Strings2");
             else
-                this.SetValue(LocalizeDictionary.DefaultDictionaryProperty, "Strings");
+                this.SetValue(ResxLocalizationProvider.DefaultDictionaryProperty, "Strings");
         }
     }
 }
