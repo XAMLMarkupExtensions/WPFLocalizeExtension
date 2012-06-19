@@ -1,4 +1,12 @@
-﻿#if SILVERLIGHT
+﻿#region Copyright information
+// <copyright file="ResxLocalizationProvider.cs">
+//     Licensed under Microsoft Public License (Ms-PL)
+//     http://wpflocalizeextension.codeplex.com/license
+// </copyright>
+// <author>Uwe Mayer</author>
+#endregion
+
+#if SILVERLIGHT
 namespace SLLocalizeExtension.Providers
 #else
 namespace WPFLocalizeExtension.Providers
@@ -29,33 +37,6 @@ namespace WPFLocalizeExtension.Providers
     /// </summary>
     public class ResxLocalizationProvider : DependencyObject, ILocalizationProvider
     {
-        #region Silverlight culture list
-#if SILVERLIGHT
-        private string[] CultureNames = { "", "af", "af-ZA", "sq", "sq-AL", "ar", "ar-DZ", "ar-BHar-EG", "ar-IQ", "ar-JO",
-                                          "ar-KW", "ar-LB", "ar-LY", "ar-MA", "ar-OM", "ar-QA", "ar-SA", "ar-SY",
-                                          "ar-TN", "ar-AE", "ar-YE", "hy", "hy-AM", "az", "az-Cyrl-AZ", "az-Latn-AZ",
-                                          "eu", "eu-ES", "be", "be-BY", "bg", "bg-BG", "ca", "ca-ES", "zh-HK", "zh-MO",
-                                          "zh-CN", "zh-Hans", "zh-SG", "zh-TW", "zh-Hant", "hr", "hr-BA", "hr-HR", "cs",
-                                          "cs-CZ", "da", "da-DK", "dv", "dv-MV", "nl", "nl-BE", "nl-NL", "en", "en-AU",
-                                          "en-BZ", "en-CA", "en-029", "en-IE", "en-JM", "en-NZ", "en-", "en-ZA", "en-TT",
-                                          "en-GB", "en-US", "en-ZW", "et", "et-EE", "fo", "fo-FO", "fa", "fa-IR", "fi",
-                                          "fi-FI", "fr", "fr-BE", "fr-CA", "fr-FR", "fr-LU", "fr-MC", "fr-CH", "gl",
-                                          "gl-ES", "ka", "ka-GE", "de", "de-AT", "de-DE", "de-DE_phoneb", "de-LI",
-                                          "de-LU", "de-", "el", "el-GR", "gu", "gu-IN", "he", "he-IL", "hi", "hi-IN",
-                                          "hu", "hu-HU", "is", "is-IS", "id", "id-ID", "it", "it-IT", "it-CH", "ja",
-                                          "ja-JP", "kn", "kn-IN", "kk", "kk-KZ", "kok", "kok-IN", "ko", "ko-KR", "ky",
-                                          "ky-KG", "lv", "lv-LV", "lt", "lt-LT", "mk", "mk-MK", "ms", "ms-BN", "ms-MY",
-                                          "mr", "mr-IN", "mn", "mn-MN", "no", "nb-NO", "nn-NO", "pl", "pl-PL", "pt",
-                                          "pt-BR", "pt-PT", "pa", "pa-IN", "ro", "ro-RO", "ru", "ru-RU", "sa", "sa-IN",
-                                          "sr-Cyrl-CS", "sr-Latn-CS", "sk", "sk-SK", "sl", "sl-SI", "es", "es-AR",
-                                          "es-BO", "es-CL", "es-CO", "es-CR", "es-DO", "es-EC", "es-SV", "es-GT", "es-HN",
-                                          "es-MX", "es-NI", "es-PA", "es-PY", "es-PE", "es-PR", "es-ES", "es-ES_tradnl",
-                                          "es-UY", "es-VE", "sw", "sw-KE", "sv", "sv-FI", "sv-SE", "syr", "syr-SY",
-                                          "ta", "ta-IN", "tt", "tt-RU", "te", "te-IN", "th", "th-TH", "tr", "tr-TR", "uk",
-                                          "uk-UA", "ur", "ur-PK", "uz", "uz-Cyrl-UZ", "uz-Latn-UZ", "vi", "vi-VN" };
-#endif 
-	    #endregion
-
         #region Dependency Properties
         /// <summary>
         /// <see cref="DependencyProperty"/> DefaultDictionary to set the fallback resource dictionary.
@@ -394,12 +375,12 @@ namespace WPFLocalizeExtension.Providers
                 var dirs = Directory.EnumerateDirectories(assemblyLocation, "??-??").ToList();
                 // Get all directories named like a culture.
                 dirs.AddRange(Directory.EnumerateDirectories(assemblyLocation, "??"));
-                
-                foreach (var name in CultureNames)
-                {
-                    var c = new CultureInfo(name);
 
-                    var dir = Path.Combine(assemblyLocation, name);
+                var cultures = CultureInfoHelper.GetCultures();
+
+                foreach (var c in cultures)
+                {
+                    var dir = Path.Combine(assemblyLocation, c.Name);
                     if (Directory.Exists(dir) &&
                         Directory.EnumerateFiles(dir, "*.resources.dll").ToList().Count > 0)
                         AddCulture(c);
@@ -411,7 +392,7 @@ namespace WPFLocalizeExtension.Providers
                     dirs.AddRange(Directory.GetDirectories(assemblyLocation, "??"));
 
                     // Get the list of all cultures.
-                    var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures).ToList();
+                    var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
 
                     foreach (var c in cultures)
                     {
@@ -441,7 +422,7 @@ namespace WPFLocalizeExtension.Providers
         /// <param name="outAssembly">The found or default assembly.</param>
         /// <param name="outDict">The found or default dictionary.</param>
         /// <param name="outKey">The found or default key.</param>
-        private void ParseKey(string inKey, out string outAssembly, out string outDict, out string outKey)
+        public static void ParseKey(string inKey, out string outAssembly, out string outDict, out string outKey)
         {
             // Reset everything to null.
             outAssembly = null;
@@ -476,59 +457,38 @@ namespace WPFLocalizeExtension.Providers
         }
         #endregion
 
-        #region Assembly & Dictionary lookup
-        /// <summary>
-        /// Gets the particular default value stored in the LocalizeDictionary somewhere in the visual tree.
-        /// If it is not available, register a ParentChangedNotifier.
-        /// </summary>
-        /// <param name="target">The target <see cref="DependencyObject"/>.</param>
-        /// <param name="GetDefault">A function that gets the particular default value from a given DependencyObject.</param>
-        /// <returns>The particular value or null if it is not available yet.</returns>
-        private string GetDefaultOrRegisterParentNotifier(DependencyObject target, Func<DependencyObject, string> GetDefault)
-        {
-            string ret = null;
-
-            if (target != null)
-            {
-                var dp = target;
-
-                while (ret == null)
-                {
-                    ret = GetDefault(dp);
-
-                    // Try to get the parent using the visual tree helper.
-                    var dp2 = VisualTreeHelper.GetParent(dp);
-                    // If this failed, try again using the Parent property (sometimes this is not covered by the VisualTreeHelper class :-P.
-                    if (dp2 == null && dp is FrameworkElement)
-                        dp2 = ((FrameworkElement)dp).Parent;
-
-                    if (ret == null && dp2 == null)
-                    {
-                        // Try to establish a notification on changes of the Parent property of dp.
-                        if (dp is FrameworkElement && !parentNotifiers.ContainsKey(target))
-                        {
-                            parentNotifiers.Add(target, new ParentChangedNotifier((FrameworkElement)dp, () =>
-                            {
-                                if (ProviderChanged != null)
-                                    ProviderChanged(this, new ProviderChangedEventArgs(target));
-                            }));
-                        }
-                        break;
-                    }
-
-                    dp = dp2;
-                }
-            }
-
-            return ret;
-        }
-        #endregion
-
         #region ILocalizationProvider implementation
         /// <summary>
         /// Gets fired when the provider changed.
         /// </summary>
         public event ProviderChangedEventHandler ProviderChanged;
+
+        /// <summary>
+        /// An event when an error occurred.
+        /// </summary>
+        public event ProviderErrorEventHandler ProviderError;
+
+        /// <summary>
+        /// An action that will be called by the <see cref="ParentChangedNotifier"/>.
+        /// </summary>
+        /// <param name="obj">The target <see cref="DependencyObject"/>.</param>
+        private void ParentChangedAction(DependencyObject obj)
+        {
+            if (ProviderChanged != null)
+                ProviderChanged(this, new ProviderChangedEventArgs(obj));
+        }
+
+        /// <summary>
+        /// Calls the <see cref="ILocalizationProvider.ProviderError"/> event.
+        /// </summary>
+        /// <param name="target">The target object.</param>
+        /// <param name="key">The key.</param>
+        /// <param name="message">The error message.</param>
+        private void OnProviderError(DependencyObject target, string key, string message)
+        {
+            if (ProviderError != null)
+                ProviderError(this, new ProviderErrorEventArgs(target, key, message));
+        }
 
         /// <summary>
         /// Get the localized object.
@@ -549,20 +509,29 @@ namespace WPFLocalizeExtension.Providers
             if (target != null)
             {
                 if (String.IsNullOrEmpty(assembly))
-                    assembly = GetDefaultOrRegisterParentNotifier(target, ResxLocalizationProvider.GetDefaultAssembly);
+                    assembly = target.GetValueOrRegisterParentNotifier<string>(ResxLocalizationProvider.DefaultAssemblyProperty, ParentChangedAction, parentNotifiers);
                 if (String.IsNullOrEmpty(dictionary))
-                    dictionary = GetDefaultOrRegisterParentNotifier(target, ResxLocalizationProvider.GetDefaultDictionary);
+                    dictionary = target.GetValueOrRegisterParentNotifier<string>(ResxLocalizationProvider.DefaultDictionaryProperty, ParentChangedAction, parentNotifiers);
             }
 
             // Final validation of the values.
             if (String.IsNullOrEmpty(assembly))
+            {
+                OnProviderError(target, key, "No assembly provided.");
                 return null;
+            }
 
             if (String.IsNullOrEmpty(dictionary))
+            {
+                OnProviderError(target, key, "No dictionary provided.");
                 return null;
+            }
 
             if (String.IsNullOrEmpty(key))
+            {
+                OnProviderError(target, key, "No key provided.");
                 return null;
+            }
 
             // declaring local resource manager
             ResourceManager resManager;
@@ -572,8 +541,9 @@ namespace WPFLocalizeExtension.Providers
             {
                 resManager = GetResourceManager(assembly, dictionary);
             }
-            catch
+            catch (Exception e)
             {
+                OnProviderError(target, key, "Error retrieving the resource manager\r\n" + e.Message);
                 return null;
             }
 

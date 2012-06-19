@@ -1,0 +1,13 @@
+﻿Key;Value
+ButtonAssembly_Background;Yellow
+ButtonAssembly_Content;Assembly ändern!
+ButtonAssembly_FlowDirection;RightToLeft
+ButtonAssembly_Margin;5
+ButtonAssembly_Width;100
+ButtonDE;de
+ButtonEN;en
+TestText;Dies ist ein Test.
+Area;Fläche
+Country;Land
+CountryKey;CountryDE
+TestFormat;Die Fläche von {0} beträgt {1} km².

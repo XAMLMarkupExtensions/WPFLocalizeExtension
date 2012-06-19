@@ -1,4 +1,12 @@
-﻿namespace WPFLocalizeExtension.TypeConverters
+﻿#region Copyright information
+// <copyright file="RegisterMissingTypeConverters.cs">
+//     Licensed under Microsoft Public License (Ms-PL)
+//     http://wpflocalizeextension.codeplex.com/license
+// </copyright>
+// <author>Uwe Mayer</author>
+#endregion
+
+namespace WPFLocalizeExtension.TypeConverters
 {
     #region Uses
     using System;
@@ -11,12 +19,17 @@
 
     /// <summary>
     /// Register missing type converters here.
-    /// Based on <see cref="https://github.com/MrCircuit/WPFLocalizationExtension"/>
     /// </summary>
     public static class RegisterMissingTypeConverters
     {
+        /// <summary>
+        /// A flag indication if the registration was successful.
+        /// </summary>
         private static bool registered = false;
-
+        
+        /// <summary>
+        /// Registers the missing type converters.
+        /// </summary>
         public static void Register()
         {
             if (registered)

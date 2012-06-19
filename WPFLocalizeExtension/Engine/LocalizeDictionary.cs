@@ -1,4 +1,13 @@
-﻿#if SILVERLIGHT
+﻿#region Copyright information
+// <copyright file="LocalizeDictionary.cs">
+//     Licensed under Microsoft Public License (Ms-PL)
+//     http://wpflocalizeextension.codeplex.com/license
+// </copyright>
+// <author>Bernhard Millauer</author>
+// <author>Uwe Mayer</author>
+#endregion
+
+#if SILVERLIGHT
 namespace SLLocalizeExtension.Engine
 #else
 namespace WPFLocalizeExtension.Engine
@@ -36,11 +45,21 @@ namespace WPFLocalizeExtension.Engine
     {
         #region Dependency Properties
         /// <summary>
-        /// <see cref="DependencyProperty"/> DefaultProvider to set the ILocalizationProvider.
+        /// <see cref="DependencyProperty"/> DefaultProvider to set the default ILocalizationProvider.
         /// </summary>
         public static readonly DependencyProperty DefaultProviderProperty =
             DependencyProperty.RegisterAttached(
                 "DefaultProvider",
+                typeof(ILocalizationProvider),
+                typeof(LocalizeDictionary),
+                new PropertyMetadata(null, SetDefaultProviderFromDependencyProperty));
+
+        /// <summary>
+        /// <see cref="DependencyProperty"/> Provider to set the ILocalizationProvider.
+        /// </summary>
+        public static readonly DependencyProperty ProviderProperty =
+            DependencyProperty.RegisterAttached(
+                "Provider",
                 typeof(ILocalizationProvider),
                 typeof(LocalizeDictionary),
                 new PropertyMetadata(null, SetProviderFromDependencyProperty));
@@ -116,7 +135,7 @@ namespace WPFLocalizeExtension.Engine
         }
 
         /// <summary>
-        /// Callback function. Used to set the <see cref="LocalizeDictionary"/>.DefaultProvider if set in Xaml.
+        /// Callback function. Used to set the <see cref="LocalizeDictionary"/>.Provider if set in Xaml.
         /// </summary>
         /// <param name="obj">The dependency object.</param>
         /// <param name="args">The event argument.</param>
@@ -130,7 +149,22 @@ namespace WPFLocalizeExtension.Engine
             {
                 provider.ProviderChanged += (s, e) => { LocalizeDictionary.CultureChangedEvent.Invoke(e.Object, EventArgs.Empty); };
                 provider.AvailableCultures.CollectionChanged += new NotifyCollectionChangedEventHandler(Instance.AvailableCulturesCollectionChanged);
+
+                foreach (var c in provider.AvailableCultures)
+                    if (!Instance.MergedAvailableCultures.Contains(c))
+                        Instance.MergedAvailableCultures.Add(c);
             }
+        }
+
+        /// <summary>
+        /// Callback function. Used to set the <see cref="LocalizeDictionary"/>.DefaultProvider if set in Xaml.
+        /// </summary>
+        /// <param name="obj">The dependency object.</param>
+        /// <param name="args">The event argument.</param>
+        private static void SetDefaultProviderFromDependencyProperty(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+        {
+            if (args.NewValue is ILocalizationProvider)
+                Instance.DefaultProvider = (ILocalizationProvider)args.NewValue;
         }
 
         /// <summary>
@@ -140,16 +174,10 @@ namespace WPFLocalizeExtension.Engine
         /// <param name="args">The event argument.</param>
         private static void SetSeparationFromDependencyProperty(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-            string sep;
+            string sep = null;
 
-            try
-            {
+            if (args.NewValue is string)
                 sep = (string)args.NewValue;
-            }
-            catch
-            {
-                throw;
-            }
 
             if (sep != null)
                 Instance.Separation = sep;
@@ -162,32 +190,21 @@ namespace WPFLocalizeExtension.Engine
         /// <param name="args">The event argument.</param>
         private static void SetIncludeInvariantCultureFromDependencyProperty(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-            bool flag;
-
-            try
-            {
-                flag = (bool)args.NewValue;
-            }
-            catch
-            {
-                throw;
-            }
-
-            if (flag != null)
-                Instance.IncludeInvariantCulture = flag;
+            if (args.NewValue is bool)
+                Instance.IncludeInvariantCulture = (bool)args.NewValue;
         }
         #endregion
 
         #region Dependency Property Management
         #region Get
         /// <summary>
-        /// Getter of <see cref="DependencyProperty"/> default provider.
+        /// Getter of <see cref="DependencyProperty"/> provider.
         /// </summary>
-        /// <param name="obj">The dependency object to get the default provider from.</param>
-        /// <returns>The default provider.</returns>
-        public static ILocalizationProvider GetDefaultProvider(DependencyObject obj)
+        /// <param name="obj">The dependency object to get the provider from.</param>
+        /// <returns>The provider.</returns>
+        public static ILocalizationProvider GetProvider(DependencyObject obj)
         {
-            return (obj != null) ? (ILocalizationProvider)obj.GetValue(DefaultProviderProperty) : null;
+            return (obj != null) ? (ILocalizationProvider)obj.GetValue(ProviderProperty) : null;
         }
 
         /// <summary>
@@ -216,13 +233,13 @@ namespace WPFLocalizeExtension.Engine
 
         #region Set
         /// <summary>
-        /// Setter of <see cref="DependencyProperty"/> default provider.
+        /// Setter of <see cref="DependencyProperty"/> provider.
         /// </summary>
-        /// <param name="obj">The dependency object to set the default provider to.</param>
+        /// <param name="obj">The dependency object to set the provider to.</param>
         /// <param name="value">The provider.</param>
-        public static void SetDefaultProvider(DependencyObject obj, ILocalizationProvider value)
+        public static void SetProvider(DependencyObject obj, ILocalizationProvider value)
         {
-            obj.SetValue(DefaultProviderProperty, value);
+            obj.SetValue(ProviderProperty, value);
         }
 
         /// <summary>
@@ -270,6 +287,16 @@ namespace WPFLocalizeExtension.Engine
         /// Determines, if the <see cref="LocalizeDictionary.MergedAvailableCultures"/> contains the invariant culture.
         /// </summary>
         private bool includeInvariantCulture = true;
+
+        /// <summary>
+        /// A default provider.
+        /// </summary>
+        private ILocalizationProvider defaultProvider;
+
+        /// <summary>
+        /// A dictionary for notification classes for changes of the individual target Parent changes.
+        /// </summary>
+        private Dictionary<DependencyObject, ParentChangedNotifier> parentNotifiers = new Dictionary<DependencyObject, ParentChangedNotifier>();
         #endregion
 
         #region Constructor
@@ -279,14 +306,7 @@ namespace WPFLocalizeExtension.Engine
         /// </summary>
         private LocalizeDictionary()
         {
-            // Apply for messages of the ResxLocalizationProvider and pass them through to own events.
-            ResxLocalizationProvider.Instance.ProviderChanged += (s, e) =>
-            {
-                LocalizeDictionary.CultureChangedEvent.Invoke(e.Object, EventArgs.Empty);
-            };
-
-            ResxLocalizationProvider.Instance.AvailableCultures.CollectionChanged += new NotifyCollectionChangedEventHandler(AvailableCulturesCollectionChanged);
-
+            this.DefaultProvider = ResxLocalizationProvider.Instance;
         }
 
         private void AvailableCulturesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -443,12 +463,39 @@ namespace WPFLocalizeExtension.Engine
                 {
                     includeInvariantCulture = value;
 
-                    if (includeInvariantCulture)
-                        this.MergedAvailableCultures.Insert(0, CultureInfo.InvariantCulture);
-                    else
+                    var c = CultureInfo.InvariantCulture;
+                    var existing = this.MergedAvailableCultures.Contains(c);
+                    
+                    if (includeInvariantCulture && !existing)
+                        this.MergedAvailableCultures.Insert(0, c);
+                    else if (!includeInvariantCulture && existing)
+                        this.MergedAvailableCultures.Remove(c);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the default <see cref="ILocalizationProvider"/>.
+        /// </summary>
+        public ILocalizationProvider DefaultProvider
+        {
+            get { return defaultProvider; }
+            set
+            {
+                if (defaultProvider != value)
+                {
+                    if (defaultProvider != null)
                     {
-                        var index = this.MergedAvailableCultures.IndexOf(CultureInfo.InvariantCulture);
-                        this.MergedAvailableCultures.RemoveAt(index);
+                        defaultProvider.ProviderChanged -= (s, e) => { LocalizeDictionary.CultureChangedEvent.Invoke(e.Object, EventArgs.Empty); };
+                        defaultProvider.AvailableCultures.CollectionChanged -= new NotifyCollectionChangedEventHandler(AvailableCulturesCollectionChanged);
+                    }
+
+                    defaultProvider = value;
+
+                    if (defaultProvider != null)
+                    {
+                        defaultProvider.ProviderChanged += (s, e) => { LocalizeDictionary.CultureChangedEvent.Invoke(e.Object, EventArgs.Empty); };
+                        defaultProvider.AvailableCultures.CollectionChanged += new NotifyCollectionChangedEventHandler(AvailableCulturesCollectionChanged);
                     }
                 }
             }
@@ -501,11 +548,11 @@ namespace WPFLocalizeExtension.Engine
         /// <returns>The value corresponding to the source/dictionary/key path for the given culture (otherwise NULL).</returns>
         public object GetLocalizedObject(string source, string dictionary, string key, CultureInfo culture)
         {
-            return GetLocalizedObject(source + ":" + dictionary + ":" + key, null, culture);
+            return GetLocalizedObject(source + ":" + dictionary + ":" + key, null, culture, this.DefaultProvider);
         }
         
         /// <summary>
-        /// Get the localized object.
+        /// Get the localized object using the given target for context information.
         /// </summary>
         /// <param name="key">The key to the value.</param>
         /// <param name="target">The target <see cref="DependencyObject"/>.</param>
@@ -513,10 +560,26 @@ namespace WPFLocalizeExtension.Engine
         /// <returns>The value corresponding to the source/dictionary/key path for the given culture (otherwise NULL).</returns>
         public object GetLocalizedObject(string key, DependencyObject target, CultureInfo culture)
         {
-            var provider = target != null ? GetDefaultProvider(target) : null;
+            var provider = target != null ? target.GetValueOrRegisterParentNotifier(GetProvider, (obj) => { LocalizeDictionary.CultureChangedEvent.Invoke(obj, EventArgs.Empty); }, parentNotifiers) : null;
 
             if (provider == null)
-                provider = ResxLocalizationProvider.Instance;
+                provider = this.DefaultProvider;
+
+            return GetLocalizedObject(key, target, culture, provider);
+        }
+
+        /// <summary>
+        /// Get the localized object using the given target and provider.
+        /// </summary>
+        /// <param name="key">The key to the value.</param>
+        /// <param name="target">The target <see cref="DependencyObject"/>.</param>
+        /// <param name="culture">The culture to use.</param>
+        /// <param name="provider">The provider to use.</param>
+        /// <returns>The value corresponding to the source/dictionary/key path for the given culture (otherwise NULL).</returns>
+        public object GetLocalizedObject(string key, DependencyObject target, CultureInfo culture, ILocalizationProvider provider)
+        {
+            if (provider == null)
+                throw new InvalidOperationException("No provider found and no default provider given.");
 
             return provider.GetLocalizedObject(key, target, culture);
         }

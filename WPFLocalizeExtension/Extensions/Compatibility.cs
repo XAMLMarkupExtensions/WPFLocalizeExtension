@@ -1,9 +1,20 @@
-﻿#if SILVERLIGHT
+﻿#region Copyright information
+// <copyright file="Compatibility.cs">
+//     Licensed under Microsoft Public License (Ms-PL)
+//     http://wpflocalizeextension.codeplex.com/license
+// </copyright>
+// <author>Bernhard Millauer</author>
+// <author>Uwe Mayer</author>
+#endregion
+
+#if SILVERLIGHT
 namespace SLLocalizeExtension.Extensions
 #else
 namespace WPFLocalizeExtension.Extensions
 #endif
 {
+#pragma warning disable 1591
+
     #region Uses
     using System;
     using System.Collections.Generic;
@@ -360,4 +371,6 @@ namespace WPFLocalizeExtension.Extensions
         public LocThicknessExtension() : base() { }
         public LocThicknessExtension(string key) : base(key) { }
     }
+
+#pragma warning restore 1591
 }

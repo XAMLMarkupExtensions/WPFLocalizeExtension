@@ -4,6 +4,7 @@
         xmlns:Engine="clr-namespace:WPFLocalizeExtension.Engine;assembly=WPFLocalizeExtension"
         xmlns:lex="clr-namespace:WPFLocalizeExtension.Extensions;assembly=WPFLocalizeExtension"
         xmlns:Providers="clr-namespace:WPFLocalizeExtension.Providers;assembly=WPFLocalizeExtension"
+        xmlns:Example="clr-namespace:ProviderExample;assembly=ProviderExample"
         xmlns:Ext="clr-namespace:XAMLMarkupExtensions.Strings;assembly=XAMLMarkupExtensions"
         xmlns:Local="clr-namespace:AssemblyTest"
         xmlns:c="clr-namespace:System.Collections.Generic;assembly=mscorlib"
@@ -16,6 +17,9 @@
         mc:Ignorable="d"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" Height="393" Width="329">
+    <!--<Engine:LocalizeDictionary.Provider>
+        <Example:CSVLocalizationProvider FileName="Example" HasHeader="True" />
+    </Engine:LocalizeDictionary.Provider>-->
     <Window.Resources>
         <DataTemplate x:Key="TestTemplate">
             <Border>
