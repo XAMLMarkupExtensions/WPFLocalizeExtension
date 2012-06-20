@@ -1,4 +1,13 @@
-﻿#if SILVERLIGHT
+﻿#region Copyright information
+// <copyright file="LocExtension.cs">
+//     Licensed under Microsoft Public License (Ms-PL)
+//     http://wpflocalizeextension.codeplex.com/license
+// </copyright>
+// <author>Bernhard Millauer</author>
+// <author>Uwe Mayer</author>
+#endregion
+
+#if SILVERLIGHT
 namespace SLLocalizeExtension.Extensions
 #else
 namespace WPFLocalizeExtension.Extensions
@@ -19,9 +28,11 @@ namespace WPFLocalizeExtension.Extensions
 #if SILVERLIGHT
     using SLLocalizeExtension.Engine;
     using SLLocalizeExtension.TypeConverters;
+    using SLLocalizeExtension.Providers;
 #else
     using WPFLocalizeExtension.Engine;
     using WPFLocalizeExtension.TypeConverters;
+    using WPFLocalizeExtension.Providers;
 #endif
     using XAMLMarkupExtensions.Base;
     using System.Collections;
@@ -29,7 +40,6 @@ namespace WPFLocalizeExtension.Extensions
 
     /// <summary>
     /// A generic localization extension.
-    /// Based on <see cref="https://github.com/MrCircuit/WPFLocalizationExtension"/>
     /// </summary>
     [ContentProperty("ResourceIdentifierKey")]
     public class LocExtension : NestedMarkupExtension, INotifyPropertyChanged
@@ -174,7 +184,7 @@ namespace WPFLocalizeExtension.Extensions
         public string ResourceIdentifierKey
         {
             get { return string.Format("{0}:{1}:{2}", assembly, dict, key ?? "(null)"); }
-            set { key = value; }
+            set { ResxLocalizationProvider.ParseKey(value, out assembly, out dict, out key); }
         }
         #endregion
 
@@ -340,7 +350,7 @@ namespace WPFLocalizeExtension.Extensions
                 epProp = ((DependencyProperty)endPoint.TargetProperty).Name;
 #endif
 
-            // TODO: What are these names during design time good for? Any suggestions?
+            // What are these names during design time good for? Any suggestions?
             if (epProp.Contains("FrameworkElementWidth5"))
                 epProp = "Height";
             else if (epProp.Contains("FrameworkElementWidth6"))
@@ -505,8 +515,6 @@ namespace WPFLocalizeExtension.Extensions
         #endregion
 
         #region Resolve functions
-        // TODO: Add resolve functions that support retrieval of assembly and dictionary from a given target
-
         /// <summary>
         /// Resolves the localized value of the current Assembly, Dict, Key pair.
         /// </summary>
@@ -521,7 +529,25 @@ namespace WPFLocalizeExtension.Extensions
         public bool ResolveLocalizedValue<TValue>(out TValue resolvedValue)
         {
             // return the resolved localized value with the current or forced culture.
-            return this.ResolveLocalizedValue(out resolvedValue, this.GetForcedCultureOrDefault());
+            return this.ResolveLocalizedValue(out resolvedValue, this.GetForcedCultureOrDefault(), null);
+        }
+
+        /// <summary>
+        /// Resolves the localized value of the current Assembly, Dict, Key pair and the given target.
+        /// </summary>
+        /// <param name="resolvedValue">The resolved value.</param>
+        /// <typeparam name="TValue">The type of the return value.</typeparam>
+        /// <param name="target">The target object.</param>
+        /// <returns>
+        /// True if the resolve was success, otherwise false.
+        /// </returns>
+        /// <exception>
+        /// If the Assembly, Dict, Key pair was not found.
+        /// </exception>
+        public bool ResolveLocalizedValue<TValue>(out TValue resolvedValue, DependencyObject target)
+        {
+            // return the resolved localized value with the current or forced culture.
+            return this.ResolveLocalizedValue(out resolvedValue, this.GetForcedCultureOrDefault(), target);
         }
 
         /// <summary>
@@ -538,6 +564,24 @@ namespace WPFLocalizeExtension.Extensions
         /// </exception>
         public bool ResolveLocalizedValue<TValue>(out TValue resolvedValue, CultureInfo targetCulture)
         {
+            return ResolveLocalizedValue(out resolvedValue, targetCulture, null);
+        }
+
+        /// <summary>
+        /// Resolves the localized value of the current Assembly, Dict, Key pair and the given target.
+        /// </summary>
+        /// <param name="resolvedValue">The resolved value.</param>
+        /// <param name="targetCulture">The target culture.</param>
+        /// <param name="target">The target object.</param>
+        /// <typeparam name="TValue">The type of the return value.</typeparam>
+        /// <returns>
+        /// True if the resolve was success, otherwise false.
+        /// </returns>
+        /// <exception>
+        /// If the Assembly, Dict, Key pair was not found.
+        /// </exception>
+        public bool ResolveLocalizedValue<TValue>(out TValue resolvedValue, CultureInfo targetCulture, DependencyObject target)
+        {
             // define the default value of the resolved value
             resolvedValue = default(TValue);
 
@@ -550,7 +594,7 @@ namespace WPFLocalizeExtension.Extensions
             }
             else
             {
-                object localizedObject = LocalizeDictionary.Instance.GetLocalizedObject(this.Key, null, targetCulture);
+                object localizedObject = LocalizeDictionary.Instance.GetLocalizedObject(this.Key, target, targetCulture);
 
                 if (localizedObject == null)
                     return false;
@@ -563,7 +607,6 @@ namespace WPFLocalizeExtension.Extensions
             if (resolvedValue != null)
                 return true;
 
-            // return false: resolve was not successfully.
             return false;
         }
         #endregion
@@ -631,6 +674,10 @@ namespace WPFLocalizeExtension.Extensions
         }
         #endregion
 
+        /// <summary>
+        /// Overridden, to return the key of this instance.
+        /// </summary>
+        /// <returns>Loc: + key</returns>
         public override string ToString()
         {
             return "Loc:" + key;
