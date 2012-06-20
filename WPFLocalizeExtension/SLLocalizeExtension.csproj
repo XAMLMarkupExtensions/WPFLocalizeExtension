@@ -44,6 +44,8 @@
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>Bin\Release\SLLocalizeExtension.XML</DocumentationFile>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
@@ -64,8 +66,10 @@
     <Compile Include="Extensions\Compatibility.cs" />
     <Compile Include="Extensions\LocExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Providers\CultureHelper.cs" />
     <Compile Include="Providers\ILocalizationProvider.cs" />
-    <Compile Include="Providers\ProviderChangedEventArgs.cs" />
+    <Compile Include="Providers\ParentChangedNotifierHelper.cs" />
+    <Compile Include="Providers\ProviderEventArgs.cs" />
     <Compile Include="Providers\ResxLocalizationProvider.cs" />
     <Compile Include="TypeConverters\BrushConverter.cs" />
     <Compile Include="TypeConverters\EnumConverter.cs" />

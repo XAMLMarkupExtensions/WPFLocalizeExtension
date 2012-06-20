@@ -132,6 +132,12 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="Example.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Example.de.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -147,6 +153,10 @@
     <ProjectReference Include="..\AssemblyTestResourceLib\AssemblyTestResourceLib.csproj">
       <Project>{F8ED06E5-39CA-458B-8B84-E043C335BDE2}</Project>
       <Name>AssemblyTestResourceLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ProviderExample\ProviderExample.csproj">
+      <Project>{AEECE3FE-7731-47E4-9E0D-D84F18837168}</Project>
+      <Name>ProviderExample</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

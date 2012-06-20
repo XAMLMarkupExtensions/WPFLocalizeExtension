@@ -1,4 +1,12 @@
-﻿#if SILVERLIGHT
+﻿#region Copyright information
+// <copyright file="ILocalizationProvider.cs">
+//     Licensed under Microsoft Public License (Ms-PL)
+//     http://wpflocalizeextension.codeplex.com/license
+// </copyright>
+// <author>Uwe Mayer</author>
+#endregion
+
+#if SILVERLIGHT
 namespace SLLocalizeExtension.Providers
 #else
 namespace WPFLocalizeExtension.Providers
@@ -33,5 +41,10 @@ namespace WPFLocalizeExtension.Providers
         /// An event when the provider changed.
         /// </summary>
         event ProviderChangedEventHandler ProviderChanged;
+
+        /// <summary>
+        /// An event when an error occurred.
+        /// </summary>
+        event ProviderErrorEventHandler ProviderError;
     }
 }

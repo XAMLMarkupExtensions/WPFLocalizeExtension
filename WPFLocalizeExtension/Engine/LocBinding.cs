@@ -1,4 +1,12 @@
-﻿#if SILVERLIGHT
+﻿#region Copyright information
+// <copyright file="LocBinding.cs">
+//     Licensed under Microsoft Public License (Ms-PL)
+//     http://wpflocalizeextension.codeplex.com/license
+// </copyright>
+// <author>Uwe Mayer</author>
+#endregion
+
+#if SILVERLIGHT
 namespace SLLocalizeExtension.Engine
 #else
 namespace WPFLocalizeExtension.Engine
@@ -20,7 +28,7 @@ namespace WPFLocalizeExtension.Engine
 
     /// <summary>
     /// A binding proxy class that accepts bindings and forwards them to the LocExtension.
-    /// Based on: <see cref="http://www.codeproject.com/Articles/71348/Binding-on-a-Property-which-is-not-a-DependencyPro"/>
+    /// Based on: http://www.codeproject.com/Articles/71348/Binding-on-a-Property-which-is-not-a-DependencyPro
     /// </summary>
     public class LocBinding : FrameworkElement
     {
@@ -42,6 +50,9 @@ namespace WPFLocalizeExtension.Engine
             });
 #endif
 
+        /// <summary>
+        /// The source.
+        /// </summary>
         public Object Source
         {
             get { return GetValue(LocBinding.SourceProperty); }
@@ -51,6 +62,9 @@ namespace WPFLocalizeExtension.Engine
 
         #region Target LocExtension
         private LocExtension target = null;
+        /// <summary>
+        /// The target extension.
+        /// </summary>
         public LocExtension Target
         {
             get { return target; }

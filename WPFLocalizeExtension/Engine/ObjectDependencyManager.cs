@@ -1,4 +1,12 @@
-﻿#if SILVERLIGHT
+﻿#region Copyright information
+// <copyright file="ObjectDependencyManager.cs">
+//     Licensed under Microsoft Public License (Ms-PL)
+//     http://wpflocalizeextension.codeplex.com/license
+// </copyright>
+// <author>Bernhard Millauer</author>
+#endregion
+
+#if SILVERLIGHT
 namespace SLLocalizeExtension.Engine
 #else
 namespace WPFLocalizeExtension.Engine
