@@ -32,7 +32,7 @@ namespace SLTest
             LocalizeDictionary.Instance.Culture = new CultureInfo("en");
         }
 
-        private void ButtonAssembly_Click(object sender, RoutedEventArgs e)
+        private void ButtonTest_Click(object sender, RoutedEventArgs e)
         {
             var dict = (string)this.GetValue(ResxLocalizationProvider.DefaultDictionaryProperty);
             if (dict == "Strings")

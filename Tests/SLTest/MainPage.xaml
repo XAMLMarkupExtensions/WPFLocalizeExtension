@@ -44,7 +44,7 @@
             <Button Content="{lex:Loc Key=ButtonDE}" Height="23" Width="75" Click="ButtonDE_Click" />
             <Button Content="{lex:Loc Key=ButtonEN}" Height="23" Width="75" Click="ButtonEN_Click" />
         </StackPanel>
-        <Button Grid.Row="2" HorizontalAlignment="Center" Name="ButtonAssembly" Click="ButtonAssembly_Click" Content="{lex:LocText FormatSegment1=A}" Width="{lex:Loc}" Margin="{lex:Loc}" Background="{lex:Loc}" FlowDirection="{lex:Loc}" />
+        <Button Grid.Row="2" HorizontalAlignment="Center" Name="ButtonAssembly" Click="ButtonTest_Click" Content="{lex:LocText FormatSegment1=A}" Width="{lex:Loc}" Margin="{lex:Loc}" Background="{lex:Loc}" FlowDirection="{lex:Loc}" />
         <ListBox Grid.Row="4" ItemTemplate="{StaticResource TestTemplate}" Providers:ResxLocalizationProvider.DefaultAssembly="SLTest" Providers:ResxLocalizationProvider.DefaultDictionary="CountryRes">
             <Local:Countries Country="Austria" CountryDE="Österreich" Area="83855" />
             <Local:Countries Country="France" CountryDE="Frankreich" Area="543965" />

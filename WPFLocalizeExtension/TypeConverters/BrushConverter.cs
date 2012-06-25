@@ -6,7 +6,11 @@
 // <author>Uwe Mayer</author>
 #endregion
 
+#if WINDOWS_PHONE
+namespace WP7LocalizeExtension.TypeConverters
+#else
 namespace SLLocalizeExtension.TypeConverters
+#endif
 {
     using System.ComponentModel;
     using System.Globalization;

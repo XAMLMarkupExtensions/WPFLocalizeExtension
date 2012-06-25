@@ -67,6 +67,7 @@
             <RowDefinition Height="100" />
             <RowDefinition Height="*" />
             <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         <ComboBox ItemsSource="{Binding Source={x:Static Engine:LocalizeDictionary.Instance}, Path=MergedAvailableCultures}"
                   SelectedItem="{Binding Source={x:Static Engine:LocalizeDictionary.Instance}, Path=Culture}"
@@ -92,5 +93,15 @@
                 </Ext:CatExtension>
             </TextBox.Text>
         </TextBox>
+        <!--<TextBox Grid.Row="6" Providers:ResxLocalizationProvider.DefaultAssembly="AssemblyTest" Providers:ResxLocalizationProvider.DefaultDictionary="CountryRes">
+            <TextBox.Text>
+                <MultiBinding StringFormat="Nested list test: {0} - {1}">
+                    <MultiBinding.Bindings>
+                        <lex:BindingLocExtension Key="Country" />
+                        <lex:BindingLocExtension Key="Area" />
+                    </MultiBinding.Bindings>
+                </MultiBinding>
+            </TextBox.Text>
+        </TextBox>-->
     </Grid>
 </Window>

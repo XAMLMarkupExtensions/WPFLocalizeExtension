@@ -7,7 +7,9 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-#if SILVERLIGHT
+#if WINDOWS_PHONE
+namespace WP7LocalizeExtension.Engine
+#elif SILVERLIGHT
 namespace SLLocalizeExtension.Engine
 #else
 namespace WPFLocalizeExtension.Engine
@@ -26,15 +28,18 @@ namespace WPFLocalizeExtension.Engine
     using System.Runtime.CompilerServices;
     using System.Windows;
     using System.Windows.Markup;
+    using System.Windows.Input;
     using System.Collections.ObjectModel;
     using System.Collections.Specialized;
+#if WINDOWS_PHONE
+    using WP7LocalizeExtension.Providers;
+#else
     using XAMLMarkupExtensions.Base;
 #if SILVERLIGHT
-    using SLLocalizeExtension.Extensions;
     using SLLocalizeExtension.Providers;
 #else
-    using WPFLocalizeExtension.Extensions;
     using WPFLocalizeExtension.Providers;
+#endif
 #endif
     #endregion
 
@@ -141,19 +146,24 @@ namespace WPFLocalizeExtension.Engine
         /// <param name="args">The event argument.</param>
         private static void SetProviderFromDependencyProperty(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-            LocalizeDictionary.CultureChangedEvent.Invoke(obj, EventArgs.Empty);
+            LocalizeDictionary.DictionaryEvent.Invoke(obj, new DictionaryEventArgs(DictionaryEventType.ProviderChanged, args.NewValue));
 
             var provider = args.NewValue as ILocalizationProvider;
 
             if (provider != null)
             {
-                provider.ProviderChanged += (s, e) => { LocalizeDictionary.CultureChangedEvent.Invoke(e.Object, EventArgs.Empty); };
+                provider.ProviderChanged += new ProviderChangedEventHandler(ProviderUpdated);
                 provider.AvailableCultures.CollectionChanged += new NotifyCollectionChangedEventHandler(Instance.AvailableCulturesCollectionChanged);
 
                 foreach (var c in provider.AvailableCultures)
                     if (!Instance.MergedAvailableCultures.Contains(c))
                         Instance.MergedAvailableCultures.Add(c);
             }
+        }
+
+        private static void ProviderUpdated(object sender, ProviderChangedEventArgs args)
+        {
+            LocalizeDictionary.DictionaryEvent.Invoke(args.Object, new DictionaryEventArgs(DictionaryEventType.ProviderUpdated, sender));
         }
 
         /// <summary>
@@ -174,13 +184,7 @@ namespace WPFLocalizeExtension.Engine
         /// <param name="args">The event argument.</param>
         private static void SetSeparationFromDependencyProperty(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-            string sep = null;
-
-            if (args.NewValue is string)
-                sep = (string)args.NewValue;
-
-            if (sep != null)
-                Instance.Separation = sep;
+            LocalizeDictionary.DictionaryEvent.Invoke(obj, new DictionaryEventArgs(DictionaryEventType.SeparationChanged, args.NewValue));
         }
 
         /// <summary>
@@ -198,13 +202,30 @@ namespace WPFLocalizeExtension.Engine
         #region Dependency Property Management
         #region Get
         /// <summary>
-        /// Getter of <see cref="DependencyProperty"/> provider.
+        /// Getter of <see cref="DependencyProperty"/> Provider.
         /// </summary>
         /// <param name="obj">The dependency object to get the provider from.</param>
         /// <returns>The provider.</returns>
         public static ILocalizationProvider GetProvider(DependencyObject obj)
         {
             return (obj != null) ? (ILocalizationProvider)obj.GetValue(ProviderProperty) : null;
+        }
+
+        /// <summary>
+        /// Tries to get the separation from the given target object or of one of its parents.
+        /// </summary>
+        /// <param name="target">The target object for context.</param>
+        /// <returns>The separation of the given context or the default.</returns>
+        public static string GetSeparation(DependencyObject target)
+        {
+            if (target == null)
+                return LocalizeDictionary.DefaultSeparation;
+#if WINDOWS_PHONE
+            var sep = (string)target.GetValue(SeparationProperty);
+#else
+            var sep = target.GetValueOrRegisterParentNotifier<string>(SeparationProperty, (obj) => { LocalizeDictionary.DictionaryEvent.Invoke(obj, new DictionaryEventArgs(DictionaryEventType.SeparationChanged, null)); }, Instance.parentNotifiers);
+#endif
+            return sep ?? LocalizeDictionary.DefaultSeparation;
         }
 
         /// <summary>
@@ -233,13 +254,23 @@ namespace WPFLocalizeExtension.Engine
 
         #region Set
         /// <summary>
-        /// Setter of <see cref="DependencyProperty"/> provider.
+        /// Setter of <see cref="DependencyProperty"/> Provider.
         /// </summary>
         /// <param name="obj">The dependency object to set the provider to.</param>
         /// <param name="value">The provider.</param>
         public static void SetProvider(DependencyObject obj, ILocalizationProvider value)
         {
             obj.SetValue(ProviderProperty, value);
+        }
+
+        /// <summary>
+        /// Setter of <see cref="DependencyProperty"/> Separation.
+        /// </summary>
+        /// <param name="obj">The dependency object to set the separation to.</param>
+        /// <param name="value">The separation.</param>
+        public static void SetSeparation(DependencyObject obj, string value)
+        {
+            obj.SetValue(SeparationProperty, value);
         }
 
         /// <summary>
@@ -293,10 +324,12 @@ namespace WPFLocalizeExtension.Engine
         /// </summary>
         private ILocalizationProvider defaultProvider;
 
+#if !WINDOWS_PHONE
         /// <summary>
         /// A dictionary for notification classes for changes of the individual target Parent changes.
         /// </summary>
         private Dictionary<DependencyObject, ParentChangedNotifier> parentNotifiers = new Dictionary<DependencyObject, ParentChangedNotifier>();
+#endif
         #endregion
 
         #region Constructor
@@ -307,6 +340,7 @@ namespace WPFLocalizeExtension.Engine
         private LocalizeDictionary()
         {
             this.DefaultProvider = ResxLocalizationProvider.Instance;
+            this.SetCultureCommand = new CultureInfoDelegateCommand(SetCulture);
         }
 
         private void AvailableCulturesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -332,13 +366,6 @@ namespace WPFLocalizeExtension.Engine
                 }
             }), e);
         } 
-        #endregion
-
-        #region Events and Actions
-        ///// <summary>
-        ///// Get raised if the <see cref="LocalizeDictionary"/>.Culture is changed.
-        ///// </summary>
-        //internal event Action<DependencyObject> OnLocChanged; 
         #endregion
 
         #region Static Properties
@@ -392,7 +419,7 @@ namespace WPFLocalizeExtension.Engine
         #region Properties
         /// <summary>
         /// Gets or sets the <see cref="CultureInfo"/> for localization.
-        /// On set, <see cref="LocalizeDictionary.CultureChangedEvent"/> is raised.
+        /// On set, <see cref="LocalizeDictionary.DictionaryEvent"/> is raised.
         /// </summary>
         /// <exception cref="System.InvalidOperationException">
         /// You have to set <see cref="LocalizeDictionary"/>.Culture first or 
@@ -419,35 +446,7 @@ namespace WPFLocalizeExtension.Engine
                 this.culture = value;
 
                 // Raise the OnLocChanged event
-                LocalizeDictionary.CultureChangedEvent.Invoke(null, EventArgs.Empty);
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the separation char/string for resource name patterns.
-        /// On set, <see cref="LocalizeDictionary.CultureChangedEvent"/> is raised.
-        /// </summary>
-        public string Separation
-        {
-            get
-            {
-                if (separation == null)
-                    separation = DefaultSeparation;
-
-                return separation;
-            }
-
-            set
-            {
-                // the separation cannot contain a null reference
-                if (value == null)
-                    throw new ArgumentNullException("value");
-
-                // Set the separation
-                this.separation = value;
-
-                // Raise the OnLocChanged event
-                LocalizeDictionary.CultureChangedEvent.Invoke(null, EventArgs.Empty);
+                LocalizeDictionary.DictionaryEvent.Invoke(null, new DictionaryEventArgs(DictionaryEventType.CultureChanged, value));
             }
         }
 
@@ -486,7 +485,7 @@ namespace WPFLocalizeExtension.Engine
                 {
                     if (defaultProvider != null)
                     {
-                        defaultProvider.ProviderChanged -= (s, e) => { LocalizeDictionary.CultureChangedEvent.Invoke(e.Object, EventArgs.Empty); };
+                        defaultProvider.ProviderChanged -= new ProviderChangedEventHandler(ProviderUpdated);
                         defaultProvider.AvailableCultures.CollectionChanged -= new NotifyCollectionChangedEventHandler(AvailableCulturesCollectionChanged);
                     }
 
@@ -494,7 +493,7 @@ namespace WPFLocalizeExtension.Engine
 
                     if (defaultProvider != null)
                     {
-                        defaultProvider.ProviderChanged += (s, e) => { LocalizeDictionary.CultureChangedEvent.Invoke(e.Object, EventArgs.Empty); };
+                        defaultProvider.ProviderChanged += new ProviderChangedEventHandler(ProviderUpdated);
                         defaultProvider.AvailableCultures.CollectionChanged += new NotifyCollectionChangedEventHandler(AvailableCulturesCollectionChanged);
                     }
                 }
@@ -518,6 +517,11 @@ namespace WPFLocalizeExtension.Engine
                 return mergedAvailableCultures;
             }
         }
+
+        /// <summary>
+        /// A command for culture changes.
+        /// </summary>
+        public ICommand SetCultureCommand { get; private set; }
 
 #if SILVERLIGHT
 #else
@@ -560,10 +564,14 @@ namespace WPFLocalizeExtension.Engine
         /// <returns>The value corresponding to the source/dictionary/key path for the given culture (otherwise NULL).</returns>
         public object GetLocalizedObject(string key, DependencyObject target, CultureInfo culture)
         {
-            var provider = target != null ? target.GetValueOrRegisterParentNotifier(GetProvider, (obj) => { LocalizeDictionary.CultureChangedEvent.Invoke(obj, EventArgs.Empty); }, parentNotifiers) : null;
+#if WINDOWS_PHONE
+            var provider = this.DefaultProvider;
+#else
+            var provider = target != null ? target.GetValueOrRegisterParentNotifier(GetProvider, (obj) => { LocalizeDictionary.DictionaryEvent.Invoke(obj, new DictionaryEventArgs(DictionaryEventType.ProviderChanged, null)); }, parentNotifiers) : null;
 
             if (provider == null)
                 provider = this.DefaultProvider;
+#endif
 
             return GetLocalizedObject(key, target, culture, provider);
         }
@@ -609,7 +617,7 @@ namespace WPFLocalizeExtension.Engine
         #endregion
 
         #region CultureChangedEvent
-        internal static class CultureChangedEvent
+        internal static class DictionaryEvent
         {
             /// <summary>
             /// The list of listeners
@@ -621,7 +629,7 @@ namespace WPFLocalizeExtension.Engine
             /// </summary>
             /// <param name="sender">The sender of the event.</param>
             /// <param name="args">The event arguments.</param>
-            internal static void Invoke(DependencyObject sender, EventArgs args)
+            internal static void Invoke(DependencyObject sender, DictionaryEventArgs args)
             {
                 List<WeakReference> purgeList = new List<WeakReference>();
 
@@ -630,7 +638,7 @@ namespace WPFLocalizeExtension.Engine
                     WeakReference wr = listeners[i];
 
                     if (wr.IsAlive)
-                        ((LocExtension)wr.Target).ResourceChanged(sender, args);
+                        ((IDictionaryEventListener)wr.Target).ResourceChanged(sender, args);
                     else
                         purgeList.Add(wr);
                 }
@@ -645,7 +653,7 @@ namespace WPFLocalizeExtension.Engine
             /// Adds a listener to the inner list of listeners.
             /// </summary>
             /// <param name="listener">The listener to add.</param>
-            internal static void AddListener(LocExtension listener)
+            internal static void AddListener(IDictionaryEventListener listener)
             {
                 if (listener == null)
                     return;
@@ -657,7 +665,7 @@ namespace WPFLocalizeExtension.Engine
             /// Removes a listener from the inner list of listeners.
             /// </summary>
             /// <param name="listener">The listener to remove.</param>
-            internal static void RemoveListener(LocExtension listener)
+            internal static void RemoveListener(IDictionaryEventListener listener)
             {
                 if (listener == null)
                     return;
@@ -668,7 +676,7 @@ namespace WPFLocalizeExtension.Engine
                 {
                     if (!wr.IsAlive)
                         purgeList.Add(wr);
-                    else if ((LocExtension)wr.Target == listener)
+                    else if ((IDictionaryEventListener)wr.Target == listener)
                         purgeList.Add(wr);
                 }
             }
@@ -685,6 +693,107 @@ namespace WPFLocalizeExtension.Engine
                 purgeList.Clear();
             }
         }
+        #endregion
+
+        #region CultureInfoDelegateCommand
+        private void SetCulture(CultureInfo c)
+        {
+            this.Culture = c;
+        }
+
+        /// <summary>
+        /// A class for culture commands.
+        /// </summary>
+        internal class CultureInfoDelegateCommand : ICommand
+        {
+            #region Functions for execution and evaluation
+            /// <summary>
+            /// Predicate that determines if an object can execute
+            /// </summary>
+            private readonly Predicate<CultureInfo> canExecute;
+
+            /// <summary>
+            /// The action to execute when the command is invoked
+            /// </summary>
+            private readonly Action<CultureInfo> execute;
+            #endregion
+
+            #region Constructor
+            /// <summary>
+            /// Initializes a new instance of the <see cref="RelayCommand"/> class. 
+            /// Creates a new command that can always execute.
+            /// </summary>
+            /// <param name="execute">
+            /// The execution logic.
+            /// </param>
+            public CultureInfoDelegateCommand(Action<CultureInfo> execute)
+                : this(execute, null)
+            {
+            }
+
+            /// <summary>
+            /// Initializes a new instance of the <see cref="RelayCommand"/> class. 
+            /// Creates a new command.
+            /// </summary>
+            /// <param name="execute">
+            /// The execution logic.
+            /// </param>
+            /// <param name="canExecute">
+            /// The execution status logic.
+            /// </param>
+            public CultureInfoDelegateCommand(Action<CultureInfo> execute, Predicate<CultureInfo> canExecute)
+            {
+                if (execute == null)
+                {
+                    throw new ArgumentNullException("execute");
+                }
+
+                this.execute = execute;
+                this.canExecute = canExecute;
+            }
+            #endregion
+
+            #region ICommand interface
+            /// <summary>
+            /// Occurs when changes occur that affect whether or not the command should execute. 
+            /// </summary>
+#if SILVERLIGHT
+            public event EventHandler CanExecuteChanged;
+#else
+            public event EventHandler CanExecuteChanged
+            {
+                add
+                {
+                    CommandManager.RequerySuggested += value;
+                }
+                remove
+                {
+                    CommandManager.RequerySuggested -= value;
+                }
+            }
+#endif
+
+            /// <summary>
+            /// Determines whether the command can execute in its current state.
+            /// </summary>
+            /// <param name="parameter">Data used by the command. If the command does not require data to be passed, this object can be set to null.</param>
+            /// <returns>true if this command can be executed; otherwise, false.</returns>
+            public bool CanExecute(object parameter)
+            {
+                return this.canExecute == null || this.canExecute((CultureInfo)parameter);
+            }
+
+            /// <summary>
+            /// Is called when the command is invoked.
+            /// </summary>
+            /// <param name="parameter">Data used by the command. If the command does not require data to be passed, this object can be set to null./param>
+            public void Execute(object parameter)
+            {
+                var c = new CultureInfo((string)parameter);
+                this.execute(c);
+            }
+            #endregion
+        } 
         #endregion
     }
 }

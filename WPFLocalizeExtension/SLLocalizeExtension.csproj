@@ -60,6 +60,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Engine\IDictionaryEventListener.cs" />
     <Compile Include="Engine\LocalizeDictionary.cs" />
     <Compile Include="Engine\LocBinding.cs" />
     <Compile Include="Engine\ObjectDependencyManager.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="Providers\ProviderEventArgs.cs" />
     <Compile Include="Providers\ResxLocalizationProvider.cs" />
     <Compile Include="TypeConverters\BrushConverter.cs" />
+    <Compile Include="TypeConverters\DefaultConverter.cs" />
     <Compile Include="TypeConverters\EnumConverter.cs" />
     <Compile Include="TypeConverters\DoubleConverter.cs" />
     <Compile Include="TypeConverters\ThicknessConverter.cs" />

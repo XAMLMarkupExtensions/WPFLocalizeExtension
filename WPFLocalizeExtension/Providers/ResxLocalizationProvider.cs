@@ -6,7 +6,9 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-#if SILVERLIGHT
+#if WINDOWS_PHONE
+namespace WP7LocalizeExtension.Providers
+#elif SILVERLIGHT
 namespace SLLocalizeExtension.Providers
 #else
 namespace WPFLocalizeExtension.Providers
@@ -24,11 +26,13 @@ namespace WPFLocalizeExtension.Providers
     using System.IO;
     using System.Collections.ObjectModel;
     using System.Windows.Media;
-    using XAMLMarkupExtensions.Base; 
+#if !WINDOWS_PHONE
+    using XAMLMarkupExtensions.Base;
 #if SILVERLIGHT
     using SLLocalizeExtension.Engine;
 #else
     using WPFLocalizeExtension.Engine;
+#endif
 #endif
     #endregion
 
@@ -61,7 +65,7 @@ namespace WPFLocalizeExtension.Providers
 
         #region Dependency Property Callback
         /// <summary>
-        /// Callback function. Used to set the <see cref="LocalizeDictionary"/>.DefaultDictionary if set in Xaml.
+        /// Indicates, that one of the attached properties changed.
         /// </summary>
         /// <param name="obj">The dependency object.</param>
         /// <param name="args">The event argument.</param>
@@ -96,6 +100,11 @@ namespace WPFLocalizeExtension.Providers
         #endregion
 
         #region Set
+#if WINDOWS_PHONE
+        private static string defaultAssembly = "";
+        private static string defaultDictionary = "";
+#endif
+
         /// <summary>
         /// Setter of <see cref="DependencyProperty"/> default dictionary.
         /// </summary>
@@ -104,6 +113,9 @@ namespace WPFLocalizeExtension.Providers
         public static void SetDefaultDictionary(DependencyObject obj, string value)
         {
             obj.SetValue(DefaultDictionaryProperty, value);
+#if WINDOWS_PHONE
+            defaultDictionary = value;
+#endif
         }
 
         /// <summary>
@@ -114,6 +126,9 @@ namespace WPFLocalizeExtension.Providers
         public static void SetDefaultAssembly(DependencyObject obj, string value)
         {
             obj.SetValue(DefaultAssemblyProperty, value);
+#if WINDOWS_PHONE
+            defaultAssembly = value;
+#endif
         }
         #endregion
         #endregion
@@ -154,10 +169,12 @@ namespace WPFLocalizeExtension.Providers
         /// </summary>
         private object AvailableCultureListLock = new object();
 
+#if !WINDOWS_PHONE
         /// <summary>
         /// A dictionary for notification classes for changes of the individual target Parent changes.
         /// </summary>
         private Dictionary<DependencyObject, ParentChangedNotifier> parentNotifiers = new Dictionary<DependencyObject, ParentChangedNotifier>();
+#endif
         #endregion
 
         #region Helper functions
@@ -366,6 +383,7 @@ namespace WPFLocalizeExtension.Providers
                 // Add the ResourceManager to the cachelist
                 Add(keyManKey, resManager);
 
+#if !WINDOWS_PHONE
                 try
                 {
                     var assemblyLocation = Path.GetDirectoryName(assembly.Location);
@@ -407,6 +425,7 @@ namespace WPFLocalizeExtension.Providers
                 {
                     // This may lead to problems with Silverlight
                 }
+#endif
             }
 
             // return the found ResourceManager
@@ -469,7 +488,7 @@ namespace WPFLocalizeExtension.Providers
         public event ProviderErrorEventHandler ProviderError;
 
         /// <summary>
-        /// An action that will be called by the <see cref="ParentChangedNotifier"/>.
+        /// An action that will be called when a parent of one of the observed target objects changed.
         /// </summary>
         /// <param name="obj">The target <see cref="DependencyObject"/>.</param>
         private void ParentChangedAction(DependencyObject obj)
@@ -506,6 +525,12 @@ namespace WPFLocalizeExtension.Providers
             ParseKey(key, out assembly, out dictionary, out key);
 
             // Now try to read out the default assembly and/or dictionary.
+#if WINDOWS_PHONE
+            if (String.IsNullOrEmpty(assembly))
+                assembly = defaultAssembly;
+            if (String.IsNullOrEmpty(dictionary))
+                dictionary = defaultDictionary;
+#else
             if (target != null)
             {
                 if (String.IsNullOrEmpty(assembly))
@@ -513,6 +538,7 @@ namespace WPFLocalizeExtension.Providers
                 if (String.IsNullOrEmpty(dictionary))
                     dictionary = target.GetValueOrRegisterParentNotifier<string>(ResxLocalizationProvider.DefaultDictionaryProperty, ParentChangedAction, parentNotifiers);
             }
+#endif
 
             // Final validation of the values.
             if (String.IsNullOrEmpty(assembly))
