@@ -6,7 +6,9 @@
 // <author>Bernhard Millauer</author>
 #endregion
 
-#if SILVERLIGHT
+#if WINDOWS_PHONE
+namespace WP7LocalizeExtension.Engine
+#elif SILVERLIGHT
 namespace SLLocalizeExtension.Engine
 #else
 namespace WPFLocalizeExtension.Engine

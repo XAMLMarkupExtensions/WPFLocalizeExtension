@@ -19,20 +19,11 @@ namespace SLTest
     {
         public MainPage()
         {
+            this.DataContext = LocalizeDictionary.Instance;
             InitializeComponent();
         }
 
-        private void ButtonDE_Click(object sender, RoutedEventArgs e)
-        {
-            LocalizeDictionary.Instance.Culture = new CultureInfo("de");
-        }
-
-        private void ButtonEN_Click(object sender, RoutedEventArgs e)
-        {
-            LocalizeDictionary.Instance.Culture = new CultureInfo("en");
-        }
-
-        private void ButtonAssembly_Click(object sender, RoutedEventArgs e)
+        private void ButtonTest_Click(object sender, RoutedEventArgs e)
         {
             var dict = (string)this.GetValue(ResxLocalizationProvider.DefaultDictionaryProperty);
             if (dict == "Strings")

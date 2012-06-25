@@ -46,8 +46,10 @@ namespace WPFLocalizeExtension.Providers
                     // Try to get the value using the provided GetFunction.
                     ret = GetFunction(depObj);
 
-                    // Try to get the parent using the visual tree helper.
-                    var depObjParent = VisualTreeHelper.GetParent(depObj);
+                    // Try to get the parent using the visual tree helper. This may fail on some occations.
+                    DependencyObject depObjParent = null;
+                    try { depObjParent = VisualTreeHelper.GetParent(depObj); }
+                    catch { }
                     // If this failed, try again using the Parent property (sometimes this is not covered by the VisualTreeHelper class :-P.
                     if (depObjParent == null && depObj is FrameworkElement)
                         depObjParent = ((FrameworkElement)depObj).Parent;

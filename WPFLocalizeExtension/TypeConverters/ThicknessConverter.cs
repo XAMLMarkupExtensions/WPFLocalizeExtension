@@ -6,7 +6,9 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-#if SILVERLIGHT
+#if WINDOWS_PHONE
+namespace WP7LocalizeExtension.TypeConverters
+#elif SILVERLIGHT
 namespace SLLocalizeExtension.TypeConverters
 #else
 namespace WPFLocalizeExtension.TypeConverters

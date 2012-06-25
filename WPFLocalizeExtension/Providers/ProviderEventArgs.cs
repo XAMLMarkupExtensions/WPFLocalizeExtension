@@ -6,7 +6,9 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-#if SILVERLIGHT
+#if WINDOWS_PHONE
+namespace WP7LocalizeExtension.Providers
+#elif SILVERLIGHT
 namespace SLLocalizeExtension.Providers
 #else
 namespace WPFLocalizeExtension.Providers
@@ -83,5 +85,44 @@ namespace WPFLocalizeExtension.Providers
     /// <param name="args">The event arguments.</param>
     public delegate void ProviderErrorEventHandler(object sender, ProviderErrorEventArgs args);
 
+    /// <summary>
+    /// Events arguments for a ValueChangedEventHandler.
+    /// </summary>
+    public class ValueChangedEventArgs : EventArgs
+    {
+        /// <summary>
+        /// A custom tag.
+        /// </summary>
+        public object Tag { get; private set; }
 
+        /// <summary>
+        /// The new value.
+        /// </summary>
+        public object Value { get; private set; }
+
+        /// <summary>
+        /// The key.
+        /// </summary>
+        public string Key { get; private set; }
+
+        /// <summary>
+        /// Creates a new <see cref="ValueChangedEventArgs"/> instance.
+        /// </summary>
+        /// <param name="key">The key where the value was changed.</param>
+        /// <param name="value">The new value.</param>
+        /// <param name="tag">A custom tag.</param>
+        public ValueChangedEventArgs(string key, object value, object tag)
+        {
+            this.Key = key;
+            this.Value = value;
+            this.Tag = tag;
+        }
+    }
+
+    /// <summary>
+    /// An event handler for notification of changes of localized values.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="args">The event arguments.</param>
+    public delegate void ValueChangedEventHandler(object sender, ValueChangedEventArgs args);
 }

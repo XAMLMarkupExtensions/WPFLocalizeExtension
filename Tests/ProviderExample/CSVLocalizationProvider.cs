@@ -201,8 +201,13 @@ namespace ProviderExample
         public event ProviderChangedEventHandler ProviderChanged;
 
         /// <summary>
-        /// An event when an error occurred.
+        /// An event that is fired when an error occurred.
         /// </summary>
         public event ProviderErrorEventHandler ProviderError;
+
+        /// <summary>
+        /// An event that is fired when a value changed.
+        /// </summary>
+        public event ValueChangedEventHandler ValueChanged;
     }
 }

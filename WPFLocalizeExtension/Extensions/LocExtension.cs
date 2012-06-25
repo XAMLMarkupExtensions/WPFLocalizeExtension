@@ -42,7 +42,7 @@ namespace WPFLocalizeExtension.Extensions
     /// A generic localization extension.
     /// </summary>
     [ContentProperty("ResourceIdentifierKey")]
-    public class LocExtension : NestedMarkupExtension, INotifyPropertyChanged
+    public class LocExtension : NestedMarkupExtension, INotifyPropertyChanged, IDictionaryEventListener
     {
         #region PropertyChanged Logic
         /// <summary>
@@ -147,7 +147,13 @@ namespace WPFLocalizeExtension.Extensions
         /// </summary>
         public IValueConverter Converter
         {
-            get { return converter; }
+            get
+            {
+                if (converter == null)
+                    converter = new DefaultConverter();
+
+                return converter;
+            }
             set { converter = value; }
         }
 
@@ -198,7 +204,7 @@ namespace WPFLocalizeExtension.Extensions
             // Register this extension as an event listener on the first target.
             base.OnFirstTarget = () =>
             {
-                LocalizeDictionary.CultureChangedEvent.AddListener(this);
+                LocalizeDictionary.DictionaryEvent.AddListener(this);
             };
         }
 
@@ -213,8 +219,13 @@ namespace WPFLocalizeExtension.Extensions
         } 
         #endregion
 
-        #region IWeakEventListener implementation
-        internal void ResourceChanged(DependencyObject sender, EventArgs e)
+        #region IDictionaryEventListener implementation
+        /// <summary>
+        /// This method is called when the resource somehow changed.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The event arguments.</param>
+        public void ResourceChanged(DependencyObject sender, DictionaryEventArgs e)
         {
             if (sender == null)
             {
@@ -223,20 +234,26 @@ namespace WPFLocalizeExtension.Extensions
             }
 
             // Update, if this object is in our endpoint list.
-            var targetDPs = (from p in GetTargetPropertyPaths()
+            var targetDOs = (from p in GetTargetPropertyPaths()
                              select p.EndPoint.TargetObject as DependencyObject);
 
-            foreach (var dp in targetDPs)
+            foreach (var dObj in targetDOs)
             {
-                var dpParent = dp;
-                while (dpParent != null)
+                var doParent = dObj;
+                while (doParent != null)
                 {
-                    if (sender == dpParent)
+                    if (sender == doParent)
                     {
                         UpdateNewValue();
                         break;
                     }
-                    dpParent = VisualTreeHelper.GetParent(dpParent);
+                    try
+                    {
+                        doParent = VisualTreeHelper.GetParent(doParent);
+                    }
+                    catch (Exception ex)
+                    {
+                    }
                 }
             }
         }
@@ -313,6 +330,8 @@ namespace WPFLocalizeExtension.Extensions
             if (endPoint == null)
                 return null;
 
+            var targetObject = endPoint.TargetObject as DependencyObject;
+
             // Get target type. Change ImageSource to BitmapSource in order to use our own converter.
             Type targetType = info.TargetPropertyType;
 
@@ -359,7 +378,7 @@ namespace WPFLocalizeExtension.Extensions
                 epProp = "Margin";
 
             string resKeyBase = ci.Name + ":" + targetType.Name + ":";
-            string resKeyNameProp = epName + LocalizeDictionary.Instance.Separation + epProp;
+            string resKeyNameProp = epName + LocalizeDictionary.GetSeparation(targetObject) + epProp;
             string resKeyName = epName;
             
             // Check, if the key is already in our resource buffer.
@@ -371,17 +390,17 @@ namespace WPFLocalizeExtension.Extensions
                 result = ResourceBuffer[resKeyBase + resKeyName];
             else
             {
-                object input = LocalizeDictionary.Instance.GetLocalizedObject(resourceKey, endPoint.TargetObject as DependencyObject, ci);
+                object input = LocalizeDictionary.Instance.GetLocalizedObject(resourceKey, targetObject, ci);
                 
                 if (input == null)
                 {
-                    // Try get the key + Name of the DependencyObject [Separator] Property name
-                    input = LocalizeDictionary.Instance.GetLocalizedObject(resKeyNameProp, endPoint.TargetObject as DependencyObject, ci);
+                    // Try get the Name of the DependencyObject [Separator] Property name
+                    input = LocalizeDictionary.Instance.GetLocalizedObject(resKeyNameProp, targetObject, ci);
 
                     if (input == null)
                     {
-                        // Try get the key + just the Name of the DependencyObject
-                        input = LocalizeDictionary.Instance.GetLocalizedObject(resKeyName, endPoint.TargetObject as DependencyObject, ci);
+                        // Try get the Name of the DependencyObject
+                        input = LocalizeDictionary.Instance.GetLocalizedObject(resKeyName, targetObject, ci);
 
                         if (input == null)
                             return null;
@@ -394,7 +413,10 @@ namespace WPFLocalizeExtension.Extensions
                 else
                     resKeyBase += resourceKey;
 
-                result = ConvertAndBufferResult(input, targetType, ci, resKeyBase);
+                result = this.Converter.Convert(input, targetType, this.ConverterParameter, ci);
+                
+                if (result != null)
+                    ResourceBuffer.Add(resKeyBase, result);
             }
 
             return result;
@@ -411,107 +433,6 @@ namespace WPFLocalizeExtension.Extensions
             // This extension must be updated, when an endpoint is reached.
             return true;
         }
-        #endregion
-
-        #region Value conversion and buffering
-        /// <summary>
-        /// Converts the input according to the given target type and stores it in the resource buffer under the given resKey.
-        /// </summary>
-        /// <param name="input">The input object.</param>
-        /// <param name="targetType">The target type of the conversion.</param>
-        /// <param name="ci">The culture info, if used with a TypeConverter.</param>
-        /// <param name="resKey">The key for the resource buffer.</param>
-        /// <returns></returns>
-        private object ConvertAndBufferResult(object input, Type targetType, CultureInfo ci, string resKey)
-        {
-            if (input == null)
-                return null;
-
-            object result = null;
-            Type resourceType = input.GetType();
-
-            // Simplest cases: The target type is object or same as the input.
-            if (targetType.Equals(typeof(System.Object)) || resourceType.Equals(targetType))
-                return input;
-
-            // Check, if a converter was supplied by the user.
-            if (converter != null)
-                return converter.Convert(input, targetType, converterParameter, ci);
-
-#if SILVERLIGHT
-            // Is the type already known?
-            if (!TypeConverters.ContainsKey(targetType))
-            {
-                if (typeof(Enum).IsAssignableFrom(targetType))
-                {
-                    TypeConverters.Add(targetType, new EnumConverter(targetType));
-                }
-                else
-                {
-                    Type converterType = null;
-                    var attributes = targetType.GetCustomAttributes(typeof(TypeConverterAttribute), false);
-
-                    if (attributes.Length == 1)
-                    {
-                        var converterAttribute = (TypeConverterAttribute)attributes[0];
-                        converterType = Type.GetType(converterAttribute.ConverterTypeName);
-                    }
-
-                    if (converterType == null)
-                    {
-                        // Find a suitable "common" converter.
-                        if (targetType == typeof(double))
-                            converterType = typeof(DoubleConverter);
-                        else if (targetType == typeof(Thickness))
-                            converterType = typeof(ThicknessConverter);
-                        else if (targetType == typeof(Brush))
-                            converterType = typeof(BrushConverter);
-                        else
-                            return input;
-                    }
-
-                    // Get the type converter and store it in the dictionary (even if it is NULL).
-                    TypeConverters.Add(targetType, Activator.CreateInstance(converterType) as TypeConverter);
-                }
-            }
-#else
-            // Register missing type converters - this class will do this only once per appdomain.
-            RegisterMissingTypeConverters.Register();
-
-            // Is the type already known?
-            if (!TypeConverters.ContainsKey(targetType))
-            {
-                var c = TypeDescriptor.GetConverter(targetType);
-
-                if (targetType == typeof(Thickness))
-                    c = new WPFLocalizeExtension.TypeConverters.ThicknessConverter();
-
-                // Get the type converter and store it in the dictionary (even if it is NULL).
-                TypeConverters.Add(targetType, c);
-            }
-#endif
-
-            // Get the converter.
-            TypeConverter conv = TypeConverters[targetType];
-
-            // No converter or not convertable?
-            if ((conv == null) || !conv.CanConvertFrom(resourceType))
-                return null;
-
-            // Finally, try to convert the value.
-            try
-            {
-                result = conv.ConvertFrom(input);
-            }
-            catch
-            {
-                result = Activator.CreateInstance(targetType);
-            }
-
-            ResourceBuffer.Add(resKey, result);
-
-            return result;
-        } 
         #endregion
 
         #region Resolve functions
@@ -599,9 +520,13 @@ namespace WPFLocalizeExtension.Extensions
                 if (localizedObject == null)
                     return false;
 
-                object result = ConvertAndBufferResult(localizedObject, typeof(TValue), targetCulture, resKey);
+                object result = this.Converter.Convert(localizedObject, typeof(TValue), this.ConverterParameter, targetCulture);
+                
                 if (result is TValue)
+                {
                     resolvedValue = (TValue)result;
+                    ResourceBuffer.Add(resKey, resolvedValue);
+                }
             }
 
             if (resolvedValue != null)
