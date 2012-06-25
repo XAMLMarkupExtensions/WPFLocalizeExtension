@@ -27,16 +27,6 @@ namespace AssemblyTest
             InitializeComponent();
         }
 
-        private void ButtonDE_Click(object sender, RoutedEventArgs e)
-        {
-           LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("de");
-        }
-
-        private void ButtonEN_Click(object sender, RoutedEventArgs e)
-        {
-            LocalizeDictionary.Instance.Culture = CultureInfo.GetCultureInfo("en");
-        }
-
         private void ButtonAssembly_Click(object sender, RoutedEventArgs e)
         {
             this.SetValue(ResxLocalizationProvider.DefaultAssemblyProperty, "AssemblyTest");

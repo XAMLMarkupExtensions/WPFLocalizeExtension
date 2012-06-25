@@ -67,14 +67,15 @@
             <RowDefinition Height="100" />
             <RowDefinition Height="*" />
             <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         <ComboBox ItemsSource="{Binding Source={x:Static Engine:LocalizeDictionary.Instance}, Path=MergedAvailableCultures}"
                   SelectedItem="{Binding Source={x:Static Engine:LocalizeDictionary.Instance}, Path=Culture}"
                   DisplayMemberPath="NativeName"
                   Margin="2"/>
         <StackPanel Name="TestPanel" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Providers:ResxLocalizationProvider.DefaultDictionary="Strings2">
-            <Button Content="{lex:Loc ButtonDE}" Height="23" Width="75" Click="ButtonDE_Click" Providers:ResxLocalizationProvider.DefaultAssembly="AssemblyTestResourceLib" />
-            <Button Content="{lex:Loc ButtonEN}" Height="23" Width="75" Click="ButtonEN_Click"/>
+            <Button Content="{lex:Loc ButtonDE}" Height="23" Width="75" CommandParameter="de" Command="{Binding Source={x:Static Engine:LocalizeDictionary.Instance}, Path=SetCultureCommand}" Providers:ResxLocalizationProvider.DefaultAssembly="AssemblyTestResourceLib" />
+            <Button Content="{lex:Loc ButtonEN}" Height="23" Width="75" CommandParameter="en" Command="{Binding Source={x:Static Engine:LocalizeDictionary.Instance}, Path=SetCultureCommand}" />
         </StackPanel>
         <Button Grid.Row="2" HorizontalAlignment="Center" Name="ButtonAssembly" Click="ButtonAssembly_Click" Content="{lex:LocText FormatSegment1=A}" Width="{lex:Loc}" Margin="{lex:Loc}" Background="{lex:Loc}" FlowDirection="{lex:Loc}" />
         <Image Grid.Row="3" Source="{lex:Loc TestImage}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
@@ -90,6 +91,16 @@
                     <lex:LocExtension Key="Country" />
                     <lex:LocExtension Key="Area" />
                 </Ext:CatExtension>
+            </TextBox.Text>
+        </TextBox>
+        <TextBox Grid.Row="6" Providers:ResxLocalizationProvider.DefaultAssembly="AssemblyTest" Providers:ResxLocalizationProvider.DefaultDictionary="CountryRes">
+            <TextBox.Text>
+                <MultiBinding StringFormat="Binding test (no design time!): {0} - {1}">
+                    <MultiBinding.Bindings>
+                        <lex:BLoc Key="AssemblyTest:CountryRes:Country" />
+                        <lex:BLoc Key="AssemblyTest:CountryRes:Area" />
+                    </MultiBinding.Bindings>
+                </MultiBinding>
             </TextBox.Text>
         </TextBox>
     </Grid>

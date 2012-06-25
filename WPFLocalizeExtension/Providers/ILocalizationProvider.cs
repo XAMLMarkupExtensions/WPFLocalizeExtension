@@ -6,7 +6,9 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-#if SILVERLIGHT
+#if WINDOWS_PHONE
+namespace WP7LocalizeExtension.Providers
+#elif SILVERLIGHT
 namespace SLLocalizeExtension.Providers
 #else
 namespace WPFLocalizeExtension.Providers
@@ -38,13 +40,18 @@ namespace WPFLocalizeExtension.Providers
         ObservableCollection<CultureInfo> AvailableCultures { get; }
 
         /// <summary>
-        /// An event when the provider changed.
+        /// An event that is fired when the provider changed.
         /// </summary>
         event ProviderChangedEventHandler ProviderChanged;
 
         /// <summary>
-        /// An event when an error occurred.
+        /// An event that is fired when an error occurred.
         /// </summary>
         event ProviderErrorEventHandler ProviderError;
+
+        /// <summary>
+        /// An event that is fired when a value changed.
+        /// </summary>
+        event ValueChangedEventHandler ValueChanged;
     }
 }
