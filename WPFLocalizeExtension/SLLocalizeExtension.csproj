@@ -64,6 +64,7 @@
     <Compile Include="Engine\LocalizeDictionary.cs" />
     <Compile Include="Engine\LocBinding.cs" />
     <Compile Include="Engine\ObjectDependencyManager.cs" />
+    <Compile Include="Extensions\BLoc.cs" />
     <Compile Include="Extensions\Compatibility.cs" />
     <Compile Include="Extensions\LocExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="Providers\ProviderEventArgs.cs" />
     <Compile Include="Providers\ResxLocalizationProvider.cs" />
     <Compile Include="TypeConverters\BrushConverter.cs" />
+    <Compile Include="TypeConverters\ColorHelper.cs" />
     <Compile Include="TypeConverters\DefaultConverter.cs" />
     <Compile Include="TypeConverters\EnumConverter.cs" />
     <Compile Include="TypeConverters\DoubleConverter.cs" />

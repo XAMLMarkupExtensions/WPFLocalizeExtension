@@ -35,10 +35,26 @@ namespace WPFLocalizeExtension.Engine
     /// </summary>
     public enum DictionaryEventType
     {
+        /// <summary>
+        /// The separation changed.
+        /// </summary>
         SeparationChanged,
+        /// <summary>
+        /// The provider changed.
+        /// </summary>
         ProviderChanged,
+        /// <summary>
+        /// A provider reports an update.
+        /// </summary>
         ProviderUpdated,
+        /// <summary>
+        /// The culture changed.
+        /// </summary>
         CultureChanged,
+        /// <summary>
+        /// A certain value changed.
+        /// </summary>
+        ValueChanged,
     }
 
     /// <summary>

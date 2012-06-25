@@ -84,7 +84,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Engine\IDictionaryEventListener.cs" />
-    <Compile Include="Extensions\BindingLocExtension.cs" />
+    <Compile Include="Extensions\BLoc.cs" />
     <Compile Include="Providers\ILocalizationProvider.cs" />
     <Compile Include="Engine\LocBinding.cs" />
     <Compile Include="Engine\LocalizeDictionary.cs" />

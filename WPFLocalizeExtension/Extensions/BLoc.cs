@@ -1,21 +1,44 @@
-﻿namespace WP7LocalizeExtension.Extensions
+﻿#region Copyright information
+// <copyright file="LocExtension.cs">
+//     Licensed under Microsoft Public License (Ms-PL)
+//     http://wpflocalizeextension.codeplex.com/license
+// </copyright>
+// <author>Bernhard Millauer</author>
+// <author>Uwe Mayer</author>
+#endregion
+
+#if WINDOWS_PHONE
+namespace WP7LocalizeExtension.Extensions
+#elif SILVERLIGHT
+namespace SLLocalizeExtension.Extensions
+#else
+namespace WPFLocalizeExtension.Extensions
+#endif
 {
     using System;
     using System.Windows.Data;
     using System.ComponentModel;
     using System.Collections.Generic;
     using System.Windows;
-    using WP7LocalizeExtension.TypeConverters;
     using System.Globalization;
-    using WP7LocalizeExtension.Engine;
     using System.Reflection;
     using System.Windows.Media.Imaging;
     using System.Collections;
+#if WINDOWS_PHONE
+    using WP7LocalizeExtension.TypeConverters;
+    using WP7LocalizeExtension.Engine;
+#elif SILVERLIGHT
+    using SLLocalizeExtension.TypeConverters;
+    using SLLocalizeExtension.Engine;
+#else
+    using WPFLocalizeExtension.TypeConverters;
+    using WPFLocalizeExtension.Engine;
+#endif
 
     /// <summary>
     /// A localization extension based on <see cref="Binding"/>.
     /// </summary>
-    public class Loc : Binding, INotifyPropertyChanged, IDictionaryEventListener
+    public class BLoc : Binding, INotifyPropertyChanged, IDictionaryEventListener
     {
         #region PropertyChanged Logic
         /// <summary>
@@ -83,9 +106,9 @@
 
         #region Constructors
         /// <summary>
-        /// Initializes a new instance of the <see cref="Loc"/> class.
+        /// Initializes a new instance of the <see cref="BLoc"/> class.
         /// </summary>
-        public Loc()
+        public BLoc()
             : base()
         {
             LocalizeDictionary.DictionaryEvent.AddListener(this);
@@ -94,10 +117,10 @@
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Loc"/> class.
+        /// Initializes a new instance of the <see cref="BLoc"/> class.
         /// </summary>
         /// <param name="key">The resource identifier.</param>
-        public Loc(string key)
+        public BLoc(string key)
             : this()
         {
             this.Key = key;

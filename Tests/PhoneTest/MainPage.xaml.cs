@@ -19,17 +19,8 @@ namespace PhoneTest
         // Constructor
         public MainPage()
         {
+            this.DataContext = LocalizeDictionary.Instance;
             InitializeComponent();
-        }
-
-        private void ButtonDE_Click(object sender, RoutedEventArgs e)
-        {
-            LocalizeDictionary.Instance.Culture = new System.Globalization.CultureInfo("de");
-        }
-
-        private void ButtonEN_Click(object sender, RoutedEventArgs e)
-        {
-            LocalizeDictionary.Instance.Culture = new System.Globalization.CultureInfo("en");
         }
     }
 }

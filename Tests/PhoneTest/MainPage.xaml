@@ -28,12 +28,12 @@
 
         <!--TitlePanel contains the name of the application and page title-->
         <StackPanel x:Name="TitlePanel" Grid.Row="0" Margin="12,17,0,28">
-            <TextBlock x:Name="ApplicationTitle" Text="{l:Loc Key=AppName}" Style="{StaticResource PhoneTextNormalStyle}"/>
-            <TextBlock x:Name="PageTitle" Text="{l:Loc Key=PageName}" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
+            <TextBlock x:Name="ApplicationTitle" Text="{l:BLoc Key=AppName}" Style="{StaticResource PhoneTextNormalStyle}"/>
+            <TextBlock x:Name="PageTitle" Text="{l:BLoc Key=PageName}" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
         </StackPanel>
 
         <!--ContentPanel - place additional content here-->
-        <Grid x:Name="ContentPanel" Grid.Row="1" Margin="{l:Loc Key=Margin}">
+        <Grid x:Name="ContentPanel" Grid.Row="1" Margin="{l:BLoc Key=Margin}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
@@ -41,25 +41,18 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition />
             </Grid.RowDefinitions>
-            <Button Grid.Row="0" Grid.Column="0" Content="{l:Loc Key=ButtonDE}" Name="ButtonDE" Click="ButtonDE_Click" />
-            <Button Grid.Row="0" Grid.Column="1" Content="{l:Loc Key=ButtonEN}" Name="ButtonEN" Click="ButtonEN_Click" />
-            <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="{l:Loc Key=TestText}" />
-            <Border Grid.Row="2" Grid.ColumnSpan="2" Background="{l:Loc Key=Brush}"/>
+            <ComboBox Name="Test"
+                  ItemsSource="{Binding Path=MergedAvailableCultures}"
+                  SelectedItem="{Binding Path=Culture, Mode=TwoWay}"
+                  DisplayMemberPath="NativeName"
+                  Margin="2"/>
+            <Button Grid.Row="1" Grid.Column="0" Content="{l:BLoc Key=ButtonDE}" Name="ButtonDE" CommandParameter="de" Command="{Binding Path=SetCultureCommand}" />
+            <Button Grid.Row="1" Grid.Column="1" Content="{l:BLoc Key=ButtonEN}" Name="ButtonEN" CommandParameter="en" Command="{Binding Path=SetCultureCommand}" />
+            <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="{l:BLoc Key=TestText}" Margin="5" />
+            <Border Grid.Row="3" Grid.ColumnSpan="2" Background="{l:BLoc Key=Brush}"/>
         </Grid>
     </Grid>
- 
-    <!--Sample code showing usage of ApplicationBar-->
-    <!--<phone:PhoneApplicationPage.ApplicationBar>
-        <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True">
-            <shell:ApplicationBarIconButton IconUri="/Images/appbar_button1.png" Text="Button 1"/>
-            <shell:ApplicationBarIconButton IconUri="/Images/appbar_button2.png" Text="Button 2"/>
-            <shell:ApplicationBar.MenuItems>
-                <shell:ApplicationBarMenuItem Text="MenuItem 1"/>
-                <shell:ApplicationBarMenuItem Text="MenuItem 2"/>
-            </shell:ApplicationBar.MenuItems>
-        </shell:ApplicationBar>
-    </phone:PhoneApplicationPage.ApplicationBar>-->
-
 </phone:PhoneApplicationPage>

@@ -148,11 +148,21 @@ namespace WPFLocalizeExtension.Engine
         {
             LocalizeDictionary.DictionaryEvent.Invoke(obj, new DictionaryEventArgs(DictionaryEventType.ProviderChanged, args.NewValue));
 
+            var oldProvider = args.OldValue as ILocalizationProvider;
+
+            if (oldProvider != null)
+            {
+                oldProvider.ProviderChanged -= new ProviderChangedEventHandler(ProviderUpdated);
+                oldProvider.ValueChanged -= new ValueChangedEventHandler(ValueChanged);
+                oldProvider.AvailableCultures.CollectionChanged -= new NotifyCollectionChangedEventHandler(Instance.AvailableCulturesCollectionChanged);
+            }
+
             var provider = args.NewValue as ILocalizationProvider;
 
             if (provider != null)
             {
                 provider.ProviderChanged += new ProviderChangedEventHandler(ProviderUpdated);
+                provider.ValueChanged += new ValueChangedEventHandler(ValueChanged);
                 provider.AvailableCultures.CollectionChanged += new NotifyCollectionChangedEventHandler(Instance.AvailableCulturesCollectionChanged);
 
                 foreach (var c in provider.AvailableCultures)
@@ -164,6 +174,11 @@ namespace WPFLocalizeExtension.Engine
         private static void ProviderUpdated(object sender, ProviderChangedEventArgs args)
         {
             LocalizeDictionary.DictionaryEvent.Invoke(args.Object, new DictionaryEventArgs(DictionaryEventType.ProviderUpdated, sender));
+        }
+
+        private static void ValueChanged(object sender, ValueChangedEventArgs args)
+        {
+            LocalizeDictionary.DictionaryEvent.Invoke(null, new DictionaryEventArgs(DictionaryEventType.ValueChanged, args));
         }
 
         /// <summary>
@@ -486,6 +501,7 @@ namespace WPFLocalizeExtension.Engine
                     if (defaultProvider != null)
                     {
                         defaultProvider.ProviderChanged -= new ProviderChangedEventHandler(ProviderUpdated);
+                        defaultProvider.ValueChanged += new ValueChangedEventHandler(ValueChanged);
                         defaultProvider.AvailableCultures.CollectionChanged -= new NotifyCollectionChangedEventHandler(AvailableCulturesCollectionChanged);
                     }
 
@@ -494,6 +510,7 @@ namespace WPFLocalizeExtension.Engine
                     if (defaultProvider != null)
                     {
                         defaultProvider.ProviderChanged += new ProviderChangedEventHandler(ProviderUpdated);
+                        defaultProvider.ValueChanged += new ValueChangedEventHandler(ValueChanged);
                         defaultProvider.AvailableCultures.CollectionChanged += new NotifyCollectionChangedEventHandler(AvailableCulturesCollectionChanged);
                     }
                 }
@@ -590,6 +607,54 @@ namespace WPFLocalizeExtension.Engine
                 throw new InvalidOperationException("No provider found and no default provider given.");
 
             return provider.GetLocalizedObject(key, target, culture);
+        }
+
+        /// <summary>
+        /// Looks up the ResourceManagers for the searched <paramref name="resourceKey"/> 
+        /// in the <paramref name="resourceDictionary"/> in the <paramref name="resourceAssembly"/>
+        /// with an Invariant Culture.
+        /// </summary>
+        /// <param name="resourceAssembly">The resource assembly</param>
+        /// <param name="resourceDictionary">The dictionary to look up</param>
+        /// <param name="resourceKey">The key of the searched entry</param>
+        /// <returns>
+        /// TRUE if the searched one is found, otherwise FALSE
+        /// </returns>
+        public bool ResourceKeyExists(string resourceAssembly, string resourceDictionary, string resourceKey)
+        {
+            return ResourceKeyExists(resourceAssembly, resourceDictionary, resourceKey, CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// Looks up the ResourceManagers for the searched <paramref name="resourceKey"/>
+        /// in the <paramref name="resourceDictionary"/> in the <paramref name="resourceAssembly"/>
+        /// with the passed culture. If the searched one does not exists with the passed culture, is will searched
+        /// until the invariant culture is used.
+        /// </summary>
+        /// <param name="resourceAssembly">The resource assembly</param>
+        /// <param name="resourceDictionary">The dictionary to look up</param>
+        /// <param name="resourceKey">The key of the searched entry</param>
+        /// <returns>
+        /// TRUE if the searched one is found, otherwise FALSE
+        /// </returns>
+        public bool ResourceKeyExists(string resourceAssembly, string resourceDictionary, string resourceKey, CultureInfo cultureToUse)
+        {
+            return ResourceKeyExists(resourceAssembly + ":" + resourceDictionary + ":" + resourceKey, cultureToUse, ResxLocalizationProvider.Instance);
+        }
+
+        /// <summary>
+        /// Looks up the ResourceManagers for the searched <paramref name="resourceKey"/>
+        /// in the <paramref name="resourceDictionary"/> in the <paramref name="resourceAssembly"/>
+        /// with the passed culture. If the searched one does not exists with the passed culture, is will searched
+        /// until the invariant culture is used.
+        /// </summary>
+        /// <param name="key">The key of the searched entry</param>
+        /// <returns>
+        /// TRUE if the searched one is found, otherwise FALSE
+        /// </returns>
+        public bool ResourceKeyExists(string key, CultureInfo cultureToUse, ILocalizationProvider provider)
+        {
+            return provider.GetLocalizedObject(key, null, cultureToUse) != null;
         }
         #endregion
 

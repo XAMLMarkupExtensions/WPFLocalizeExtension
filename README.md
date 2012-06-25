@@ -1,4 +1,4 @@
-# LocalizationExtension v2.0.0#
+# LocalizationExtension v2.1.0#
 ### Is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObjects ###
 
 ### Features:###
@@ -7,14 +7,17 @@
 * Obtain stable results in
 	* WPF applications using .NET 3.5 and higher
 	* **New:** Silverlight 5.0 applications
+	* **New:** Windows Phone applications
 * **New:** Localization source/provider can be changed freely at arbitrary nodes
 	* Use the Provider property in LocalizeDictionary to change the provider for the particular sub tree
 	* Use the DefaultProvider property to set the provider for the whole application
 	* Built-in RESX provider for resource file lookup (Default) - **fully backward compatible to older versions of this extension**
 	* Interface for custom providers
 	* Notification about provider changes and errors
+	* Notification about resource changes
 	* Get the list of all available cultures from a provider - or just take the bindable merged list from LocalizeDictionary
 	* CSV provider project in the Tests folder as an example for custom providers
+* BLoc Extension that derives from Binding to support binding scenarios
 * Supports binding-like write style like "Text = {lex:LocText ResAssembly:ResFile:ResKey}"
 	* Define a default assembly and / or resource file to reduce the key to ResAssembly::ResKey, ResFile:ResKey or even ResKey
 	* Automatic key lookup: If no key is specified, the Name and Property Name of the target are used (e.g. MyButton_Content)
@@ -30,6 +33,8 @@
 	* Works with normal properties (e.g. Ribbon)
 	* Works with control/data templates
 * Various culture setup features
+	* List of available cultures
+	* Culture swapping by Commands (SetCultureCommand)
 	* Works with the .resx-fallback mechanism (e.g. en-us -> en -> invariant culture)
 	* Supports culture forcing (e.g. "this object has to be in english all the time")
 	* Buffering allows fast switching of the language at runtime

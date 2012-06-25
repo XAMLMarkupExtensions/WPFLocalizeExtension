@@ -383,27 +383,25 @@ namespace WPFLocalizeExtension.Providers
                 // Add the ResourceManager to the cachelist
                 Add(keyManKey, resManager);
 
-#if !WINDOWS_PHONE
                 try
                 {
+#if SILVERLIGHT
+                    var cultures = CultureInfoHelper.GetCultures();
+
+                    foreach (var c in cultures)
+                    {
+                        var dir = c.Name + "/";
+
+                        foreach (var p in Deployment.Current.Parts)
+                            if (p.Source.StartsWith(dir))
+                            {
+                                AddCulture(c);
+                                break;
+                            }
+                    }
+#else
                     var assemblyLocation = Path.GetDirectoryName(assembly.Location);
 
-#if SILVERLIGHT
-                // Get all directories named like a specific culture.
-                var dirs = Directory.EnumerateDirectories(assemblyLocation, "??-??").ToList();
-                // Get all directories named like a culture.
-                dirs.AddRange(Directory.EnumerateDirectories(assemblyLocation, "??"));
-
-                var cultures = CultureInfoHelper.GetCultures();
-
-                foreach (var c in cultures)
-                {
-                    var dir = Path.Combine(assemblyLocation, c.Name);
-                    if (Directory.Exists(dir) &&
-                        Directory.EnumerateFiles(dir, "*.resources.dll").ToList().Count > 0)
-                        AddCulture(c);
-                }
-#else
                     // Get all directories named like a specific culture.
                     var dirs = Directory.GetDirectories(assemblyLocation, "??-??").ToList();
                     // Get all directories named like a culture.
@@ -425,7 +423,6 @@ namespace WPFLocalizeExtension.Providers
                 {
                     // This may lead to problems with Silverlight
                 }
-#endif
             }
 
             // return the found ResourceManager
@@ -483,9 +480,14 @@ namespace WPFLocalizeExtension.Providers
         public event ProviderChangedEventHandler ProviderChanged;
 
         /// <summary>
-        /// An event when an error occurred.
+        /// An event that is fired when an error occurred.
         /// </summary>
         public event ProviderErrorEventHandler ProviderError;
+
+        /// <summary>
+        /// An event that is fired when a value changed.
+        /// </summary>
+        public event ValueChangedEventHandler ValueChanged;
 
         /// <summary>
         /// An action that will be called when a parent of one of the observed target objects changed.

@@ -234,20 +234,26 @@ namespace WPFLocalizeExtension.Extensions
             }
 
             // Update, if this object is in our endpoint list.
-            var targetDPs = (from p in GetTargetPropertyPaths()
+            var targetDOs = (from p in GetTargetPropertyPaths()
                              select p.EndPoint.TargetObject as DependencyObject);
 
-            foreach (var dp in targetDPs)
+            foreach (var dObj in targetDOs)
             {
-                var dpParent = dp;
-                while (dpParent != null)
+                var doParent = dObj;
+                while (doParent != null)
                 {
-                    if (sender == dpParent)
+                    if (sender == doParent)
                     {
                         UpdateNewValue();
                         break;
                     }
-                    dpParent = VisualTreeHelper.GetParent(dpParent);
+                    try
+                    {
+                        doParent = VisualTreeHelper.GetParent(doParent);
+                    }
+                    catch (Exception ex)
+                    {
+                    }
                 }
             }
         }

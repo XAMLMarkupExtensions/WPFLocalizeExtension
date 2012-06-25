@@ -71,11 +71,15 @@ namespace SLLocalizeExtension.TypeConverters
                 }
                 else
                 {
+#if SILVERLIGHT
+                    result = new SolidColorBrush(ColorHelper.FromName(s));
+#else
                     foreach (var p in typeof(Colors).GetProperties())
                     {
                         if (p.Name == s)
                             result = new SolidColorBrush((Color)p.GetValue(null, null));
                     }
+#endif
                 }
             }
 
