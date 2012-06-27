@@ -46,8 +46,27 @@ namespace WPFLocalizeExtension.Engine
     /// <summary>
     /// Represents the culture interface for localization
     /// </summary>
-    public sealed class LocalizeDictionary : DependencyObject
+    public sealed class LocalizeDictionary : DependencyObject, INotifyPropertyChanged
     {
+        #region PropertyChanged Logic
+        /// <summary>
+        /// Informiert über sich ändernde Eigenschaften.
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Notify that a property has changed
+        /// </summary>
+        /// <param name="property">
+        /// The property that changed
+        /// </param>
+        internal void RaisePropertyChanged(string property)
+        {
+            if (this.PropertyChanged != null)
+                this.PropertyChanged(this, new PropertyChangedEventArgs(property));
+        }
+        #endregion
+
         #region Dependency Properties
         /// <summary>
         /// <see cref="DependencyProperty"/> DefaultProvider to set the default ILocalizationProvider.
@@ -199,7 +218,7 @@ namespace WPFLocalizeExtension.Engine
         /// <param name="args">The event argument.</param>
         private static void SetSeparationFromDependencyProperty(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-            LocalizeDictionary.DictionaryEvent.Invoke(obj, new DictionaryEventArgs(DictionaryEventType.SeparationChanged, args.NewValue));
+            
         }
 
         /// <summary>
@@ -227,20 +246,23 @@ namespace WPFLocalizeExtension.Engine
         }
 
         /// <summary>
+        /// Getter of <see cref="DependencyProperty"/> DefaultProvider.
+        /// </summary>
+        /// <param name="obj">The dependency object to get the default provider from.</param>
+        /// <returns>The default provider.</returns>
+        public static ILocalizationProvider GetDefaultProvider(DependencyObject obj)
+        {
+            return Instance.DefaultProvider;
+        }
+
+        /// <summary>
         /// Tries to get the separation from the given target object or of one of its parents.
         /// </summary>
         /// <param name="target">The target object for context.</param>
         /// <returns>The separation of the given context or the default.</returns>
         public static string GetSeparation(DependencyObject target)
         {
-            if (target == null)
-                return LocalizeDictionary.DefaultSeparation;
-#if WINDOWS_PHONE
-            var sep = (string)target.GetValue(SeparationProperty);
-#else
-            var sep = target.GetValueOrRegisterParentNotifier<string>(SeparationProperty, (obj) => { LocalizeDictionary.DictionaryEvent.Invoke(obj, new DictionaryEventArgs(DictionaryEventType.SeparationChanged, null)); }, Instance.parentNotifiers);
-#endif
-            return sep ?? LocalizeDictionary.DefaultSeparation;
+            return Instance.Separation;
         }
 
         /// <summary>
@@ -279,13 +301,23 @@ namespace WPFLocalizeExtension.Engine
         }
 
         /// <summary>
+        /// Setter of <see cref="DependencyProperty"/> DefaultProvider.
+        /// </summary>
+        /// <param name="obj">The dependency object to set the default provider to.</param>
+        /// <param name="value">The default provider.</param>
+        public static void SetDefaultProvider(DependencyObject obj, ILocalizationProvider value)
+        {
+            Instance.DefaultProvider = value;
+        }
+
+        /// <summary>
         /// Setter of <see cref="DependencyProperty"/> Separation.
         /// </summary>
         /// <param name="obj">The dependency object to set the separation to.</param>
         /// <param name="value">The separation.</param>
         public static void SetSeparation(DependencyObject obj, string value)
         {
-            obj.SetValue(SeparationProperty, value);
+            Instance.Separation = value as string;
         }
 
         /// <summary>
@@ -354,7 +386,11 @@ namespace WPFLocalizeExtension.Engine
         /// </summary>
         private LocalizeDictionary()
         {
+#if WINDOWS_PHONE
+            this.DefaultProvider = StaticResxLocalizationProvider.Instance;
+#else
             this.DefaultProvider = ResxLocalizationProvider.Instance;
+#endif
             this.SetCultureCommand = new CultureInfoDelegateCommand(SetCulture);
         }
 
@@ -457,11 +493,21 @@ namespace WPFLocalizeExtension.Engine
                 if (value == null)
                     throw new ArgumentNullException("value");
 
+                // Let's see if we already got this culture
+                foreach (var culture in this.MergedAvailableCultures)
+                    if (culture.Name == value.Name)
+                    {
+                        value = culture;
+                        break;
+                    }
+                
                 // Set the CultureInfo
                 this.culture = value;
 
                 // Raise the OnLocChanged event
                 LocalizeDictionary.DictionaryEvent.Invoke(null, new DictionaryEventArgs(DictionaryEventType.CultureChanged, value));
+                
+                RaisePropertyChanged("Culture");
             }
         }
 
@@ -485,6 +531,19 @@ namespace WPFLocalizeExtension.Engine
                     else if (!includeInvariantCulture && existing)
                         this.MergedAvailableCultures.Remove(c);
                 }
+            }
+        }
+
+        /// <summary>
+        /// The separation char for automatic key retrieval.
+        /// </summary>
+        public string Separation
+        {
+            get { return separation; }
+            set
+            {
+                separation = value;
+                LocalizeDictionary.DictionaryEvent.Invoke(null, new DictionaryEventArgs(DictionaryEventType.SeparationChanged, value));
             }
         }
 
@@ -584,6 +643,11 @@ namespace WPFLocalizeExtension.Engine
 #if WINDOWS_PHONE
             var provider = this.DefaultProvider;
 #else
+#if !SILVERLIGHT
+            if (this.DefaultProvider is InheritingResxLocalizationProvider)
+                return GetLocalizedObject(key, target, culture, this.DefaultProvider);
+#endif
+                
             var provider = target != null ? target.GetValueOrRegisterParentNotifier(GetProvider, (obj) => { LocalizeDictionary.DictionaryEvent.Invoke(obj, new DictionaryEventArgs(DictionaryEventType.ProviderChanged, null)); }, parentNotifiers) : null;
 
             if (provider == null)
@@ -634,21 +698,29 @@ namespace WPFLocalizeExtension.Engine
         /// <param name="resourceAssembly">The resource assembly</param>
         /// <param name="resourceDictionary">The dictionary to look up</param>
         /// <param name="resourceKey">The key of the searched entry</param>
+        /// <param name="cultureToUse">The culture to use.</param>
         /// <returns>
         /// TRUE if the searched one is found, otherwise FALSE
         /// </returns>
         public bool ResourceKeyExists(string resourceAssembly, string resourceDictionary, string resourceKey, CultureInfo cultureToUse)
         {
-            return ResourceKeyExists(resourceAssembly + ":" + resourceDictionary + ":" + resourceKey, cultureToUse, ResxLocalizationProvider.Instance);
+#if WINDOWS_PHONE
+            var provider = StaticResxLocalizationProvider.Instance;
+#else
+            var provider = ResxLocalizationProvider.Instance;
+#endif
+
+            return ResourceKeyExists(resourceAssembly + ":" + resourceDictionary + ":" + resourceKey, cultureToUse, provider);
         }
 
         /// <summary>
-        /// Looks up the ResourceManagers for the searched <paramref name="resourceKey"/>
-        /// in the <paramref name="resourceDictionary"/> in the <paramref name="resourceAssembly"/>
+        /// Looks up the ResourceManagers for the searched <paramref name="key"/>
         /// with the passed culture. If the searched one does not exists with the passed culture, is will searched
         /// until the invariant culture is used.
         /// </summary>
         /// <param name="key">The key of the searched entry</param>
+        /// <param name="cultureToUse">The culture to use.</param>
+        /// <param name="provider">The localization provider.</param>
         /// <returns>
         /// TRUE if the searched one is found, otherwise FALSE
         /// </returns>
@@ -785,7 +857,7 @@ namespace WPFLocalizeExtension.Engine
 
             #region Constructor
             /// <summary>
-            /// Initializes a new instance of the <see cref="RelayCommand"/> class. 
+            /// Initializes a new instance of the <see cref="CultureInfoDelegateCommand"/> class. 
             /// Creates a new command that can always execute.
             /// </summary>
             /// <param name="execute">
@@ -797,7 +869,7 @@ namespace WPFLocalizeExtension.Engine
             }
 
             /// <summary>
-            /// Initializes a new instance of the <see cref="RelayCommand"/> class. 
+            /// Initializes a new instance of the <see cref="CultureInfoDelegateCommand"/> class. 
             /// Creates a new command.
             /// </summary>
             /// <param name="execute">
@@ -851,7 +923,7 @@ namespace WPFLocalizeExtension.Engine
             /// <summary>
             /// Is called when the command is invoked.
             /// </summary>
-            /// <param name="parameter">Data used by the command. If the command does not require data to be passed, this object can be set to null./param>
+            /// <param name="parameter">Data used by the command. If the command does not require data to be passed, this object can be set to null.</param>
             public void Execute(object parameter)
             {
                 var c = new CultureInfo((string)parameter);

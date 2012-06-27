@@ -11,8 +11,9 @@
         xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         Engine:LocalizeDictionary.DesignCulture="en"
-        Providers:ResxLocalizationProvider.DefaultAssembly="AssemblyTestResourceLib"
-        Providers:ResxLocalizationProvider.DefaultDictionary="Strings"
+        Engine:LocalizeDictionary.DefaultProvider="{x:Static Providers:InheritingResxLocalizationProvider.Instance}"
+        Providers:InheritingResxLocalizationProvider.DefaultAssembly="AssemblyTestResourceLib"
+        Providers:InheritingResxLocalizationProvider.DefaultDictionary="Strings"
         Title="MainWindow"
         mc:Ignorable="d"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -73,19 +74,19 @@
                   SelectedItem="{Binding Source={x:Static Engine:LocalizeDictionary.Instance}, Path=Culture}"
                   DisplayMemberPath="NativeName"
                   Margin="2"/>
-        <StackPanel Name="TestPanel" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Providers:ResxLocalizationProvider.DefaultDictionary="Strings2">
-            <Button Content="{lex:Loc ButtonDE}" Height="23" Width="75" CommandParameter="de" Command="{Binding Source={x:Static Engine:LocalizeDictionary.Instance}, Path=SetCultureCommand}" Providers:ResxLocalizationProvider.DefaultAssembly="AssemblyTestResourceLib" />
-            <Button Content="{lex:Loc ButtonEN}" Height="23" Width="75" CommandParameter="en" Command="{Binding Source={x:Static Engine:LocalizeDictionary.Instance}, Path=SetCultureCommand}" />
+        <StackPanel Name="TestPanel" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Providers:InheritingResxLocalizationProvider.DefaultDictionary="Strings2">
+            <Button Content="{lex:Loc ButtonDE}" Height="23" Width="75" CommandParameter="de" Command="{Binding Source={x:Static Engine:LocalizeDictionary.Instance}, Path=SetCultureCommand}" Providers:InheritingResxLocalizationProvider.DefaultAssembly="AssemblyTestResourceLib" />
+            <Button Content="{lex:Loc ButtonEN}" Height="23" Width="75" CommandParameter="" Command="{Binding Source={x:Static Engine:LocalizeDictionary.Instance}, Path=SetCultureCommand}" />
         </StackPanel>
         <Button Grid.Row="2" HorizontalAlignment="Center" Name="ButtonAssembly" Click="ButtonAssembly_Click" Content="{lex:LocText FormatSegment1=A}" Width="{lex:Loc}" Margin="{lex:Loc}" Background="{lex:Loc}" FlowDirection="{lex:Loc}" />
         <Image Grid.Row="3" Source="{lex:Loc TestImage}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-        <ListBox Grid.Row="4" ItemTemplate="{DynamicResource TestTemplate}" Providers:ResxLocalizationProvider.DefaultAssembly="AssemblyTest" Providers:ResxLocalizationProvider.DefaultDictionary="CountryRes">
+        <ListBox Grid.Row="4" ItemTemplate="{DynamicResource TestTemplate}" Providers:InheritingResxLocalizationProvider.DefaultAssembly="AssemblyTest" Providers:InheritingResxLocalizationProvider.DefaultDictionary="CountryRes">
             <Local:Countries Country="Austria" CountryDE="Österreich" Area="83855" />
             <Local:Countries Country="France" CountryDE="Frankreich" Area="543965" />
             <Local:Countries Country="Germany" CountryDE="Deutschland" Area="357039" />
             <Local:Countries Country="United Kingdom" CountryDE="Großbrittanien" Area="244103" />
         </ListBox>
-        <TextBox Grid.Row="5" Providers:ResxLocalizationProvider.DefaultAssembly="AssemblyTest" Providers:ResxLocalizationProvider.DefaultDictionary="CountryRes">
+        <TextBox Grid.Row="5" Providers:InheritingResxLocalizationProvider.DefaultAssembly="AssemblyTest" Providers:InheritingResxLocalizationProvider.DefaultDictionary="CountryRes">
             <TextBox.Text>
                 <Ext:CatExtension Format="Nested list test: {0} - {1}">
                     <lex:LocExtension Key="Country" />
@@ -93,7 +94,7 @@
                 </Ext:CatExtension>
             </TextBox.Text>
         </TextBox>
-        <TextBox Grid.Row="6" Providers:ResxLocalizationProvider.DefaultAssembly="AssemblyTest" Providers:ResxLocalizationProvider.DefaultDictionary="CountryRes">
+        <TextBox Grid.Row="6" Providers:InheritingResxLocalizationProvider.DefaultAssembly="AssemblyTest" Providers:InheritingResxLocalizationProvider.DefaultDictionary="CountryRes">
             <TextBox.Text>
                 <MultiBinding StringFormat="Binding test (no design time!): {0} - {1}">
                     <MultiBinding.Bindings>
