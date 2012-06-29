@@ -8,6 +8,7 @@
     xmlns:Providers="clr-namespace:WP7LocalizeExtension.Providers;assembly=WP7LocalizeExtension"
     xmlns:l="clr-namespace:WP7LocalizeExtension.Extensions;assembly=WP7LocalizeExtension"
     Engine:LocalizeDictionary.DesignCulture="de"
+    Engine:LocalizeDictionary.IncludeInvariantCulture="False"
     Providers:StaticResxLocalizationProvider.DefaultAssembly="PhoneTest"
     Providers:StaticResxLocalizationProvider.DefaultDictionary="Strings"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"

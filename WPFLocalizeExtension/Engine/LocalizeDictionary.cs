@@ -266,6 +266,16 @@ namespace WPFLocalizeExtension.Engine
         }
 
         /// <summary>
+        /// Tries to get the flag from the given target object or of one of its parents.
+        /// </summary>
+        /// <param name="target">The target object for context.</param>
+        /// <returns>The flag.</returns>
+        public static bool GetIncludeInvariantCulture(DependencyObject target)
+        {
+            return Instance.IncludeInvariantCulture;
+        }
+
+        /// <summary>
         /// Getter of <see cref="DependencyProperty"/> Culture.
         /// Only supported at DesignTime.
         /// If its in Runtime, <see cref="LocalizeDictionary"/>.Culture will be returned.
@@ -317,7 +327,17 @@ namespace WPFLocalizeExtension.Engine
         /// <param name="value">The separation.</param>
         public static void SetSeparation(DependencyObject obj, string value)
         {
-            Instance.Separation = value as string;
+            Instance.Separation = value;
+        }
+
+        /// <summary>
+        /// Setter of <see cref="DependencyProperty"/> IncludeInvariantCulture.
+        /// </summary>
+        /// <param name="obj">The dependency object to set the separation to.</param>
+        /// <param name="value">The flag.</param>
+        public static void SetIncludeInvariantCulture(DependencyObject obj, bool value)
+        {
+            Instance.IncludeInvariantCulture = value;
         }
 
         /// <summary>
@@ -392,6 +412,7 @@ namespace WPFLocalizeExtension.Engine
             this.DefaultProvider = ResxLocalizationProvider.Instance;
 #endif
             this.SetCultureCommand = new CultureInfoDelegateCommand(SetCulture);
+            this.Culture = System.Threading.Thread.CurrentThread.CurrentUICulture;
         }
 
         private void AvailableCulturesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -425,7 +446,7 @@ namespace WPFLocalizeExtension.Engine
         /// </summary>
         public static CultureInfo DefaultCultureInfo
         {
-            get { return CultureInfo.InvariantCulture; }
+            get { return System.Threading.Thread.CurrentThread.CurrentUICulture; }
         }
 
         /// <summary>
@@ -491,23 +512,32 @@ namespace WPFLocalizeExtension.Engine
             {
                 // the cultureinfo cannot contain a null reference
                 if (value == null)
-                    throw new ArgumentNullException("value");
+                    value = System.Threading.Thread.CurrentThread.CurrentUICulture;
 
                 // Let's see if we already got this culture
-                foreach (var culture in this.MergedAvailableCultures)
-                    if (culture.Name == value.Name)
+                var newCulture = value;
+
+                foreach (var c in this.MergedAvailableCultures)
+                    if (c.Name == value.Name)
                     {
-                        value = culture;
+                        newCulture = c;
                         break;
                     }
-                
-                // Set the CultureInfo
-                this.culture = value;
+                    else if (c.Parent.Name == value.Name || value.Parent.Name == c.Name)
+                    {
+                        // We found a parent culture, but continue - maybe there is a specific one available too.
+                        newCulture = c;
+                    }
 
-                // Raise the OnLocChanged event
-                LocalizeDictionary.DictionaryEvent.Invoke(null, new DictionaryEventArgs(DictionaryEventType.CultureChanged, value));
-                
-                RaisePropertyChanged("Culture");
+                if (culture != newCulture)
+                {
+                    culture = newCulture;
+
+                    // Raise the OnLocChanged event
+                    LocalizeDictionary.DictionaryEvent.Invoke(null, new DictionaryEventArgs(DictionaryEventType.CultureChanged, value));
+
+                    RaisePropertyChanged("Culture");
+                }
             }
         }
 
@@ -588,6 +618,7 @@ namespace WPFLocalizeExtension.Engine
                 {
                     mergedAvailableCultures = new ObservableCollection<CultureInfo>();
                     mergedAvailableCultures.Add(CultureInfo.InvariantCulture);
+                    mergedAvailableCultures.CollectionChanged += (s, e) => { this.Culture = this.Culture; };
                 }
 
                 return mergedAvailableCultures;
