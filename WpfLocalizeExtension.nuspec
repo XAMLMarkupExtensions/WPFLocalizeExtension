@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
   <metadata>
-    <version>2.1.0-beta</version>
+    <version>2.1.0</version>
     <authors>Bernhard Millauer,Uwe Mayer</authors>
     <owners>Bernhard Millauer,Uwe Mayer</owners>
     <licenseUrl>http://wpflocalizeextension.codeplex.com/license</licenseUrl>
@@ -20,15 +20,19 @@
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>LocalizationExtension is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObjects</description>
     <summary>LocalizationExtension is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObjects</summary>
-    <releaseNotes>v2.1.0 beta prerelease
+    <releaseNotes>v2.1.0 beta 2 prerelease
 * Binding based extension (BLoc)
 * Added ResourceKeyExists again
 * Added ValueChanged event to ILocalizationProvider
-* Windows Phone support
+* Added ResxLocalizationProviderBase abstract base class for different variants (inhering, non-inhering, static)
+* Windows Phone support with special StaticResxLocalizationProvider
+* Added InheritingResxLocalizationProvider to solve seldom cases of missing parent links
 * Extended named color list for SolidColorBrush under SL and WP
 * Fixes issue #9257 on DataGrid
+* Fixes deadlock situation on DataGrid
 * Added SetCultureCommand to LocalizeDictionary
 * Available cultures in RESX provider now also under SL and WP
+* Improved linking of cultures selected by commands and the MergedAvailableCultures list
 * More detailed LocalizeDictionary event</releaseNotes>
     <copyright>Bernhard Millauer, Uwe Mayer</copyright>
     <language>en-US</language>

@@ -73,6 +73,7 @@
     <Compile Include="Providers\ParentChangedNotifierHelper.cs" />
     <Compile Include="Providers\ProviderEventArgs.cs" />
     <Compile Include="Providers\ResxLocalizationProvider.cs" />
+    <Compile Include="Providers\ResxLocalizationProviderBase.cs" />
     <Compile Include="TypeConverters\BrushConverter.cs" />
     <Compile Include="TypeConverters\ColorHelper.cs" />
     <Compile Include="TypeConverters\DefaultConverter.cs" />

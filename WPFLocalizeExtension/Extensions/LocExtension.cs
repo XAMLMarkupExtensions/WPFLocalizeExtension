@@ -239,6 +239,14 @@ namespace WPFLocalizeExtension.Extensions
 
             foreach (var dObj in targetDOs)
             {
+#if !SILVERLIGHT
+                if (LocalizeDictionary.Instance.DefaultProvider is InheritingResxLocalizationProvider)
+                {
+                    UpdateNewValue();
+                    break;
+                }
+#endif
+
                 var doParent = dObj;
                 while (doParent != null)
                 {
@@ -249,10 +257,16 @@ namespace WPFLocalizeExtension.Extensions
                     }
                     try
                     {
-                        doParent = VisualTreeHelper.GetParent(doParent);
+                        var doParent2 = VisualTreeHelper.GetParent(doParent);
+                        if (doParent2 == null && doParent is FrameworkElement)
+                            doParent2 = ((FrameworkElement)doParent).Parent;
+
+                        doParent = doParent2;
                     }
-                    catch (Exception ex)
+                    catch
                     {
+                        UpdateNewValue();
+                        break;
                     }
                 }
             }

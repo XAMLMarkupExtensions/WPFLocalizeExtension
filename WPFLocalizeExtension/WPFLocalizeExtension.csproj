@@ -85,6 +85,9 @@
   <ItemGroup>
     <Compile Include="Engine\IDictionaryEventListener.cs" />
     <Compile Include="Extensions\BLoc.cs" />
+    <Compile Include="Extensions\FELoc.cs" />
+    <Compile Include="Providers\InheritingResxLocalizationProvider.cs" />
+    <Compile Include="Providers\ResxLocalizationProviderBase.cs" />
     <Compile Include="Providers\ILocalizationProvider.cs" />
     <Compile Include="Engine\LocBinding.cs" />
     <Compile Include="Engine\LocalizeDictionary.cs" />
