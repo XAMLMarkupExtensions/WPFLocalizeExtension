@@ -1,16 +1,12 @@
 ﻿#region Copyright information
-// <copyright file="ResxLocalizationProvider.cs">
+// <copyright file="InheritingResxLocalizationProvider.cs">
 //     Licensed under Microsoft Public License (Ms-PL)
 //     http://wpflocalizeextension.codeplex.com/license
 // </copyright>
 // <author>Uwe Mayer</author>
 #endregion
 
-#if SILVERLIGHT
-namespace SLLocalizeExtension.Providers
-#else
 namespace WPFLocalizeExtension.Providers
-#endif
 {
     #region Uses
     using System;
@@ -28,9 +24,9 @@ namespace WPFLocalizeExtension.Providers
     #endregion
 
     /// <summary>
-    /// A singleton RESX provider that uses attached properties and the Parent property to iterate through the visual tree.
+    /// A singleton RESX provider that uses inheriting attached properties.
     /// </summary>
-    public class ResxLocalizationProvider : ResxLocalizationProviderBase
+    public class InheritingResxLocalizationProvider : ResxLocalizationProviderBase
     {
         #region Dependency Properties
         /// <summary>
@@ -40,8 +36,8 @@ namespace WPFLocalizeExtension.Providers
                 DependencyProperty.RegisterAttached(
                 "DefaultDictionary",
                 typeof(string),
-                typeof(ResxLocalizationProvider),
-                new PropertyMetadata(null, AttachedPropertyChanged));
+                typeof(InheritingResxLocalizationProvider),
+                new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.Inherits, AttachedPropertyChanged));
 
         /// <summary>
         /// <see cref="DependencyProperty"/> DefaulAssembly to set the fallback assembly.
@@ -50,8 +46,8 @@ namespace WPFLocalizeExtension.Providers
             DependencyProperty.RegisterAttached(
                 "DefaulAssembly",
                 typeof(string),
-                typeof(ResxLocalizationProvider),
-                new PropertyMetadata(null, AttachedPropertyChanged));
+                typeof(InheritingResxLocalizationProvider),
+                new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.Inherits, AttachedPropertyChanged));
         #endregion
 
         #region Dependency Property Callback
@@ -112,18 +108,11 @@ namespace WPFLocalizeExtension.Providers
         #endregion
         #endregion
 
-        #region Variables
-        /// <summary>
-        /// A dictionary for notification classes for changes of the individual target Parent changes.
-        /// </summary>
-        private Dictionary<DependencyObject, ParentChangedNotifier> parentNotifiers = new Dictionary<DependencyObject, ParentChangedNotifier>();
-        #endregion
-
         #region Singleton Variables, Properties & Constructor
         /// <summary>
         /// The instance of the singleton.
         /// </summary>
-        private static ResxLocalizationProvider instance;
+        private static InheritingResxLocalizationProvider instance;
 
         /// <summary>
         /// Lock object for the creation of the singleton instance.
@@ -133,7 +122,7 @@ namespace WPFLocalizeExtension.Providers
         /// <summary>
         /// Gets the <see cref="ResxLocalizationProvider"/> singleton.
         /// </summary>
-        public static ResxLocalizationProvider Instance
+        public static InheritingResxLocalizationProvider Instance
         {
             get
             {
@@ -142,7 +131,7 @@ namespace WPFLocalizeExtension.Providers
                     lock (InstanceLock)
                     {
                         if (instance == null)
-                            instance = new ResxLocalizationProvider();
+                            instance = new InheritingResxLocalizationProvider();
                     }
                 }
 
@@ -154,7 +143,7 @@ namespace WPFLocalizeExtension.Providers
         /// <summary>
         /// The singleton constructor.
         /// </summary>
-        private ResxLocalizationProvider()
+        private InheritingResxLocalizationProvider()
         {
             ResourceManagerList = new Dictionary<string, ResourceManager>();
             AvailableCultures = new ObservableCollection<CultureInfo>();
@@ -163,15 +152,6 @@ namespace WPFLocalizeExtension.Providers
         #endregion
 
         #region Abstract assembly & dictionary lookup
-        /// <summary>
-        /// An action that will be called when a parent of one of the observed target objects changed.
-        /// </summary>
-        /// <param name="obj">The target <see cref="DependencyObject"/>.</param>
-        private void ParentChangedAction(DependencyObject obj)
-        {
-            OnProviderChanged(obj);
-        }
-
         /// <summary>
         /// Get the assembly from the context, if possible.
         /// </summary>
@@ -182,7 +162,7 @@ namespace WPFLocalizeExtension.Providers
             if (target == null)
                 return null;
 
-            return target.GetValueOrRegisterParentNotifier<string>(ResxLocalizationProvider.DefaultAssemblyProperty, ParentChangedAction, parentNotifiers); 
+            return target.GetValue(InheritingResxLocalizationProvider.DefaultAssemblyProperty) as string; 
         }
 
         /// <summary>
@@ -195,7 +175,7 @@ namespace WPFLocalizeExtension.Providers
             if (target == null)
                 return null;
 
-            return target.GetValueOrRegisterParentNotifier<string>(ResxLocalizationProvider.DefaultDictionaryProperty, ParentChangedAction, parentNotifiers);
+            return target.GetValue(InheritingResxLocalizationProvider.DefaultDictionaryProperty) as string;
         }
         #endregion
     }

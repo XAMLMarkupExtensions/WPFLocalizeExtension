@@ -1,16 +1,12 @@
 ﻿#region Copyright information
-// <copyright file="ResxLocalizationProvider.cs">
+// <copyright file="StaticResxLocalizationProviderBase.cs">
 //     Licensed under Microsoft Public License (Ms-PL)
 //     http://wpflocalizeextension.codeplex.com/license
 // </copyright>
 // <author>Uwe Mayer</author>
 #endregion
 
-#if SILVERLIGHT
-namespace SLLocalizeExtension.Providers
-#else
-namespace WPFLocalizeExtension.Providers
-#endif
+namespace WP7LocalizeExtension.Providers
 {
     #region Uses
     using System;
@@ -24,13 +20,13 @@ namespace WPFLocalizeExtension.Providers
     using System.IO;
     using System.Collections.ObjectModel;
     using System.Windows.Media;
-    using XAMLMarkupExtensions.Base;
     #endregion
 
     /// <summary>
-    /// A singleton RESX provider that uses attached properties and the Parent property to iterate through the visual tree.
+    /// A singleton RESX provider that uses attached properties that are stored in static variables.
+    /// Needed for Windows Phone support.
     /// </summary>
-    public class ResxLocalizationProvider : ResxLocalizationProviderBase
+    public class StaticResxLocalizationProvider : ResxLocalizationProviderBase
     {
         #region Dependency Properties
         /// <summary>
@@ -40,7 +36,7 @@ namespace WPFLocalizeExtension.Providers
                 DependencyProperty.RegisterAttached(
                 "DefaultDictionary",
                 typeof(string),
-                typeof(ResxLocalizationProvider),
+                typeof(StaticResxLocalizationProvider),
                 new PropertyMetadata(null, AttachedPropertyChanged));
 
         /// <summary>
@@ -50,7 +46,7 @@ namespace WPFLocalizeExtension.Providers
             DependencyProperty.RegisterAttached(
                 "DefaulAssembly",
                 typeof(string),
-                typeof(ResxLocalizationProvider),
+                typeof(StaticResxLocalizationProvider),
                 new PropertyMetadata(null, AttachedPropertyChanged));
         #endregion
 
@@ -62,7 +58,7 @@ namespace WPFLocalizeExtension.Providers
         /// <param name="args">The event argument.</param>
         private static void AttachedPropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-            Instance.OnProviderChanged(obj);
+            Instance.OnProviderChanged(null);
         }
         #endregion
 
@@ -75,7 +71,7 @@ namespace WPFLocalizeExtension.Providers
         /// <returns>The default dictionary.</returns>
         public static string GetDefaultDictionary(DependencyObject obj)
         {
-            return (obj != null) ? (string)obj.GetValue(DefaultDictionaryProperty) : null;
+            return defaultDictionary;
         }
 
         /// <summary>
@@ -85,7 +81,7 @@ namespace WPFLocalizeExtension.Providers
         /// <returns>The default assembly.</returns>
         public static string GetDefaultAssembly(DependencyObject obj)
         {
-            return (obj != null) ? (string)obj.GetValue(DefaultAssemblyProperty) : null;
+            return defaultAssembly;
         }
         #endregion
 
@@ -97,7 +93,7 @@ namespace WPFLocalizeExtension.Providers
         /// <param name="value">The dictionary.</param>
         public static void SetDefaultDictionary(DependencyObject obj, string value)
         {
-            obj.SetValue(DefaultDictionaryProperty, value);
+            defaultDictionary = value;
         }
 
         /// <summary>
@@ -107,23 +103,21 @@ namespace WPFLocalizeExtension.Providers
         /// <param name="value">The assembly.</param>
         public static void SetDefaultAssembly(DependencyObject obj, string value)
         {
-            obj.SetValue(DefaultAssemblyProperty, value);
+            defaultAssembly = value;
         }
         #endregion
         #endregion
 
         #region Variables
-        /// <summary>
-        /// A dictionary for notification classes for changes of the individual target Parent changes.
-        /// </summary>
-        private Dictionary<DependencyObject, ParentChangedNotifier> parentNotifiers = new Dictionary<DependencyObject, ParentChangedNotifier>();
+        private static string defaultAssembly = "";
+        private static string defaultDictionary = "";
         #endregion
 
         #region Singleton Variables, Properties & Constructor
         /// <summary>
         /// The instance of the singleton.
         /// </summary>
-        private static ResxLocalizationProvider instance;
+        private static StaticResxLocalizationProvider instance;
 
         /// <summary>
         /// Lock object for the creation of the singleton instance.
@@ -131,9 +125,9 @@ namespace WPFLocalizeExtension.Providers
         private static readonly object InstanceLock = new object();
 
         /// <summary>
-        /// Gets the <see cref="ResxLocalizationProvider"/> singleton.
+        /// Gets the <see cref="StaticResxLocalizationProvider"/> singleton.
         /// </summary>
-        public static ResxLocalizationProvider Instance
+        public static StaticResxLocalizationProvider Instance
         {
             get
             {
@@ -142,7 +136,7 @@ namespace WPFLocalizeExtension.Providers
                     lock (InstanceLock)
                     {
                         if (instance == null)
-                            instance = new ResxLocalizationProvider();
+                            instance = new StaticResxLocalizationProvider();
                     }
                 }
 
@@ -154,7 +148,7 @@ namespace WPFLocalizeExtension.Providers
         /// <summary>
         /// The singleton constructor.
         /// </summary>
-        private ResxLocalizationProvider()
+        private StaticResxLocalizationProvider()
         {
             ResourceManagerList = new Dictionary<string, ResourceManager>();
             AvailableCultures = new ObservableCollection<CultureInfo>();
@@ -164,25 +158,13 @@ namespace WPFLocalizeExtension.Providers
 
         #region Abstract assembly & dictionary lookup
         /// <summary>
-        /// An action that will be called when a parent of one of the observed target objects changed.
-        /// </summary>
-        /// <param name="obj">The target <see cref="DependencyObject"/>.</param>
-        private void ParentChangedAction(DependencyObject obj)
-        {
-            OnProviderChanged(obj);
-        }
-
-        /// <summary>
         /// Get the assembly from the context, if possible.
         /// </summary>
         /// <param name="target">The target object.</param>
         /// <returns>The assembly name, if available.</returns>
         protected override string GetAssembly(DependencyObject target)
         {
-            if (target == null)
-                return null;
-
-            return target.GetValueOrRegisterParentNotifier<string>(ResxLocalizationProvider.DefaultAssemblyProperty, ParentChangedAction, parentNotifiers); 
+            return defaultAssembly; 
         }
 
         /// <summary>
@@ -192,10 +174,7 @@ namespace WPFLocalizeExtension.Providers
         /// <returns>The dictionary name, if available.</returns>
         protected override string GetDictionary(DependencyObject target)
         {
-            if (target == null)
-                return null;
-
-            return target.GetValueOrRegisterParentNotifier<string>(ResxLocalizationProvider.DefaultDictionaryProperty, ParentChangedAction, parentNotifiers);
+            return defaultDictionary;
         }
         #endregion
     }

@@ -17,6 +17,12 @@
         mc:Ignorable="d"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" Height="393" Width="329">
+
+        <!--Use this syntax to set the inheriting provider-->
+        <!--Engine:LocalizeDictionary.DefaultProvider="{x:Static Providers:InheritingResxLocalizationProvider.Instance}"
+        Providers:InheritingResxLocalizationProvider.DefaultAssembly="AssemblyTestResourceLib"
+        Providers:InheritingResxLocalizationProvider.DefaultDictionary="Strings"-->
+    
     <!-- **********************************************************************
     Uncomment the block below to test the CSV provider for the entire window
     or copy it to an arbitrary location to affect just the particular sub tree.
@@ -74,8 +80,10 @@
                   DisplayMemberPath="NativeName"
                   Margin="2"/>
         <StackPanel Name="TestPanel" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Providers:ResxLocalizationProvider.DefaultDictionary="Strings2">
-            <Button Content="{lex:Loc ButtonDE}" Height="23" Width="75" CommandParameter="de" Command="{Binding Source={x:Static Engine:LocalizeDictionary.Instance}, Path=SetCultureCommand}" Providers:ResxLocalizationProvider.DefaultAssembly="AssemblyTestResourceLib" />
-            <Button Content="{lex:Loc ButtonEN}" Height="23" Width="75" CommandParameter="en" Command="{Binding Source={x:Static Engine:LocalizeDictionary.Instance}, Path=SetCultureCommand}" />
+            <Button Name="ButtonDE" Height="23" Width="75" CommandParameter="de" Command="{Binding Source={x:Static Engine:LocalizeDictionary.Instance}, Path=SetCultureCommand}" Providers:ResxLocalizationProvider.DefaultAssembly="AssemblyTestResourceLib">
+                <lex:FELoc />
+            </Button>
+            <Button Content="{lex:Loc ButtonEN}" Height="23" Width="75" CommandParameter="" Command="{Binding Source={x:Static Engine:LocalizeDictionary.Instance}, Path=SetCultureCommand}" />
         </StackPanel>
         <Button Grid.Row="2" HorizontalAlignment="Center" Name="ButtonAssembly" Click="ButtonAssembly_Click" Content="{lex:LocText FormatSegment1=A}" Width="{lex:Loc}" Margin="{lex:Loc}" Background="{lex:Loc}" FlowDirection="{lex:Loc}" />
         <Image Grid.Row="3" Source="{lex:Loc TestImage}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />

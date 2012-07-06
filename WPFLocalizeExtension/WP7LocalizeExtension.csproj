@@ -57,12 +57,11 @@
     <Compile Include="Engine\ObjectDependencyManager.cs" />
     <Compile Include="Extensions\BLoc.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Providers\StaticResxLocalizationProvider.cs" />
     <Compile Include="Providers\CultureHelper.cs" />
     <Compile Include="Providers\ILocalizationProvider.cs" />
     <Compile Include="Providers\ProviderEventArgs.cs" />
-    <Compile Include="Providers\ResxLocalizationProvider.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="Providers\ResxLocalizationProviderBase.cs" />
     <Compile Include="TypeConverters\BrushConverter.cs">
       <SubType>Code</SubType>
     </Compile>
