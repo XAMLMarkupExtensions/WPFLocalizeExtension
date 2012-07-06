@@ -412,7 +412,6 @@ namespace WPFLocalizeExtension.Engine
             this.DefaultProvider = ResxLocalizationProvider.Instance;
 #endif
             this.SetCultureCommand = new CultureInfoDelegateCommand(SetCulture);
-            this.Culture = System.Threading.Thread.CurrentThread.CurrentUICulture;
         }
 
         private void AvailableCulturesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -446,7 +445,7 @@ namespace WPFLocalizeExtension.Engine
         /// </summary>
         public static CultureInfo DefaultCultureInfo
         {
-            get { return System.Threading.Thread.CurrentThread.CurrentUICulture; }
+            get { return CultureInfo.InvariantCulture; }
         }
 
         /// <summary>
@@ -512,25 +511,31 @@ namespace WPFLocalizeExtension.Engine
             {
                 // the cultureinfo cannot contain a null reference
                 if (value == null)
-                    value = System.Threading.Thread.CurrentThread.CurrentUICulture;
+                    value = DefaultCultureInfo;
 
                 // Let's see if we already got this culture
                 var newCulture = value;
 
-                foreach (var c in this.MergedAvailableCultures)
-                    if (c.Name == value.Name)
-                    {
-                        newCulture = c;
-                        break;
-                    }
-                    else if (c.Parent.Name == value.Name || value.Parent.Name == c.Name)
-                    {
-                        // We found a parent culture, but continue - maybe there is a specific one available too.
-                        newCulture = c;
-                    }
+                if (!GetIsInDesignMode())
+                {
+                    foreach (var c in this.MergedAvailableCultures)
+                        if (c.Name == value.Name)
+                        {
+                            newCulture = c;
+                            break;
+                        }
+                        else if (c.Parent.Name == value.Name || value.Parent.Name == c.Name)
+                        {
+                            // We found a parent culture, but continue - maybe there is a specific one available too.
+                            newCulture = c;
+                        }
+                }
 
                 if (culture != newCulture)
                 {
+                    if (GetIsInDesignMode() && newCulture != null && !this.MergedAvailableCultures.Contains(newCulture))
+                        this.MergedAvailableCultures.Add(newCulture);
+
                     culture = newCulture;
 
                     // Raise the OnLocChanged event
