@@ -396,41 +396,52 @@ namespace WPFLocalizeExtension.Extensions
             string resKeyName = epName;
             
             // Check, if the key is already in our resource buffer.
-            if (ResourceBuffer.ContainsKey(resKeyBase + resourceKey))
-                result = ResourceBuffer[resKeyBase + resourceKey];
-            else if (ResourceBuffer.ContainsKey(resKeyBase + resKeyNameProp))
-                result = ResourceBuffer[resKeyBase + resKeyNameProp];
-            else if (ResourceBuffer.ContainsKey(resKeyBase + resKeyName))
-                result = ResourceBuffer[resKeyBase + resKeyName];
+            object input = null;
+
+            if (!String.IsNullOrEmpty(resourceKey))
+            {
+                // We've got a resource key. Try to look it up or get it from the dictionary.
+                if (ResourceBuffer.ContainsKey(resKeyBase + resourceKey))
+                    result = ResourceBuffer[resKeyBase + resourceKey];
+                else
+                {
+                    input = LocalizeDictionary.Instance.GetLocalizedObject(resourceKey, targetObject, ci);
+                    resKeyBase += resourceKey;
+                }
+            }
             else
             {
-                object input = LocalizeDictionary.Instance.GetLocalizedObject(resourceKey, targetObject, ci);
-                
-                if (input == null)
+                // Try the automatic lookup function.
+                // First, look for a resource entry named: [FrameworkElement name][Separator][Property name]
+                if (ResourceBuffer.ContainsKey(resKeyBase + resKeyNameProp))
+                    result = ResourceBuffer[resKeyBase + resKeyNameProp];
+                else
                 {
-                    // Try get the Name of the DependencyObject [Separator] Property name
+                    // It was not stored in the buffer - try to retrieve it from the dictionary.
                     input = LocalizeDictionary.Instance.GetLocalizedObject(resKeyNameProp, targetObject, ci);
 
                     if (input == null)
                     {
-                        // Try get the Name of the DependencyObject
-                        input = LocalizeDictionary.Instance.GetLocalizedObject(resKeyName, targetObject, ci);
-
-                        if (input == null)
-                            return null;
-                        
-                        resKeyBase += resKeyName;
+                        // Now, try to look for a resource entry named: [FrameworkElement name]
+                        // Note - this has to be nested here, as it would take precedence over the first step in the buffer lookup step.
+                        if (ResourceBuffer.ContainsKey(resKeyBase + resKeyName))
+                            result = ResourceBuffer[resKeyBase + resKeyName];
+                        else
+                        {
+                            input = LocalizeDictionary.Instance.GetLocalizedObject(resKeyName, targetObject, ci);
+                            resKeyBase += resKeyName;
+                        }
                     }
                     else
                         resKeyBase += resKeyNameProp;
                 }
-                else
-                    resKeyBase += resourceKey;
+            }
 
+            // If no result was found, convert the input and add it to the buffer.
+            if (result == null && input != null)
+            {
                 result = this.Converter.Convert(input, targetType, this.ConverterParameter, ci);
-                
-                if (result != null)
-                    ResourceBuffer.Add(resKeyBase, result);
+                ResourceBuffer.Add(resKeyBase, result);
             }
 
             return result;
@@ -556,7 +567,7 @@ namespace WPFLocalizeExtension.Extensions
         /// or <see cref="PropertyInfo"/> and the <c>LocExtension</c>.
         /// </summary>
         /// <param name="targetObject">The target dependency object</param>
-        /// <param name="targetProperty">The target dependency property</param>
+        /// <param name="targetProperty">The target property</param>
         /// <returns>
         /// TRUE if the binding was setup successfully, otherwise FALSE (Binding already exists).
         /// </returns>
@@ -566,7 +577,25 @@ namespace WPFLocalizeExtension.Extensions
         /// </exception>
         public bool SetBinding(DependencyObject targetObject, object targetProperty)
         {
-            return SetBinding(targetObject, targetProperty, -1);
+            return SetBinding((object)targetObject, targetProperty, -1);
+        }
+
+        /// <summary>
+        /// Sets a binding between a <see cref="DependencyObject"/> with its <see cref="DependencyProperty"/>
+        /// or <see cref="PropertyInfo"/> and the <c>LocExtension</c>.
+        /// </summary>
+        /// <param name="targetObject">The target object</param>
+        /// <param name="targetProperty">The target property</param>
+        /// <returns>
+        /// TRUE if the binding was setup successfully, otherwise FALSE (Binding already exists).
+        /// </returns>
+        /// <exception cref="ArgumentException">
+        /// If the <paramref name="targetProperty"/> is
+        /// not a <see cref="DependencyProperty"/> or <see cref="PropertyInfo"/>.
+        /// </exception>
+        public bool SetBinding(object targetObject, object targetProperty)
+        {
+            return SetBinding((object)targetObject, targetProperty, -1);
         }
 
         /// <summary>
@@ -574,7 +603,7 @@ namespace WPFLocalizeExtension.Extensions
         /// or <see cref="PropertyInfo"/> and the <c>LocExtension</c>.
         /// </summary>
         /// <param name="targetObject">The target dependency object</param>
-        /// <param name="targetProperty">The target dependency property</param>
+        /// <param name="targetProperty">The target property</param>
         /// <param name="targetPropertyIndex">The index of the target property. (only used for Lists)</param>
         /// <returns>
         /// TRUE if the binding was setup successfully, otherwise FALSE (Binding already exists).
@@ -584,6 +613,25 @@ namespace WPFLocalizeExtension.Extensions
         /// not a <see cref="DependencyProperty"/> or <see cref="PropertyInfo"/>.
         /// </exception>
         public bool SetBinding(DependencyObject targetObject, object targetProperty, int targetPropertyIndex)
+        {
+            return SetBinding((object)targetObject, targetProperty, targetPropertyIndex);
+        }
+
+        /// <summary>
+        /// Sets a binding between a <see cref="DependencyObject"/> with its <see cref="DependencyProperty"/>
+        /// or <see cref="PropertyInfo"/> and the <c>LocExtension</c>.
+        /// </summary>
+        /// <param name="targetObject">The target object</param>
+        /// <param name="targetProperty">The target property</param>
+        /// <param name="targetPropertyIndex">The index of the target property. (only used for Lists)</param>
+        /// <returns>
+        /// TRUE if the binding was setup successfully, otherwise FALSE (Binding already exists).
+        /// </returns>
+        /// <exception cref="ArgumentException">
+        /// If the <paramref name="targetProperty"/> is
+        /// not a <see cref="DependencyProperty"/> or <see cref="PropertyInfo"/>.
+        /// </exception>
+        public bool SetBinding(object targetObject, object targetProperty, int targetPropertyIndex)
         {
             var existingBinding = (from info in GetTargetPropertyPaths()
                                    where (info.EndPoint.TargetObject == targetObject) && (info.EndPoint.TargetProperty == targetProperty)
