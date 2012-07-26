@@ -65,6 +65,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>CountryRes.resx</DependentUpon>
     </Compile>
+    <Compile Include="MyViewModel.cs" />
     <Compile Include="Strings2.Designer.cs">
       <DependentUpon>Strings2.resx</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -76,6 +77,7 @@
       <AutoGen>True</AutoGen>
     </Compile>
     <Compile Include="TestDataClass.cs" />
+    <Compile Include="ViewModelBase.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

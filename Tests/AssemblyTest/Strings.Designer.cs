@@ -123,6 +123,33 @@ namespace AssemblyTest {
             }
         }
         
+        /// <summary>
+        ///   Looks up a localized string similar to Foo.
+        /// </summary>
+        internal static string Tab1 {
+            get {
+                return ResourceManager.GetString("Tab1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bar.
+        /// </summary>
+        internal static string Tab2 {
+            get {
+                return ResourceManager.GetString("Tab2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Baz.
+        /// </summary>
+        internal static string Tab3 {
+            get {
+                return ResourceManager.GetString("Tab3", resourceCulture);
+            }
+        }
+        
         internal static System.Drawing.Bitmap TestImage {
             get {
                 object obj = ResourceManager.GetObject("TestImage", resourceCulture);

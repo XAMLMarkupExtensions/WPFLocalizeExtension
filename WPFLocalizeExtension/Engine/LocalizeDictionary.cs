@@ -7,6 +7,29 @@
 // <author>Uwe Mayer</author>
 #endregion
 
+using System.Windows.Markup;
+
+// Register this namespace one with prefix
+#if WINDOWS_PHONE
+[assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "WP7LocalizeExtension.Engine")]
+[assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "WP7LocalizeExtension.Extensions")]
+[assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "WP7LocalizeExtension.Providers")]
+[assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "WP7LocalizeExtension.TypeConverters")]
+#elif SILVERLIGHT
+[assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "SLLocalizeExtension.Engine")]
+[assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "SLLocalizeExtension.Extensions")]
+[assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "SLLocalizeExtension.Providers")]
+[assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "SLLocalizeExtension.TypeConverters")]
+#else
+[assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "WPFLocalizeExtension.Engine")]
+[assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "WPFLocalizeExtension.Extensions")]
+[assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "WPFLocalizeExtension.Providers")]
+[assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "WPFLocalizeExtension.TypeConverters")]
+#endif
+
+// Assign a default namespace prefix for the schema
+[assembly: XmlnsPrefix("http://wpflocalizeextension.codeplex.com", "lex")]
+
 #if WINDOWS_PHONE
 namespace WP7LocalizeExtension.Engine
 #elif SILVERLIGHT
@@ -62,8 +85,8 @@ namespace WPFLocalizeExtension.Engine
         /// </param>
         internal void RaisePropertyChanged(string property)
         {
-            if (this.PropertyChanged != null)
-                this.PropertyChanged(this, new PropertyChangedEventArgs(property));
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(property));
         }
         #endregion
 
@@ -435,6 +458,9 @@ namespace WPFLocalizeExtension.Engine
                             this.MergedAvailableCultures.Remove(c);
                     }
                 }
+
+                if (!includeInvariantCulture && this.MergedAvailableCultures.Count > 1 && this.MergedAvailableCultures.Contains(CultureInfo.InvariantCulture))
+                    this.MergedAvailableCultures.Remove(CultureInfo.InvariantCulture);
             }), e);
         } 
         #endregion
@@ -519,7 +545,9 @@ namespace WPFLocalizeExtension.Engine
                 if (!GetIsInDesignMode())
                 {
                     foreach (var c in this.MergedAvailableCultures)
-                        if (c.Name == value.Name)
+                        if (c == CultureInfo.InvariantCulture && !this.IncludeInvariantCulture)
+                            continue;
+                        else if (c.Name == value.Name)
                         {
                             newCulture = c;
                             break;
@@ -533,7 +561,7 @@ namespace WPFLocalizeExtension.Engine
 
                 if (culture != newCulture)
                 {
-                    if (GetIsInDesignMode() && newCulture != null && !this.MergedAvailableCultures.Contains(newCulture))
+                    if (newCulture != null && !this.MergedAvailableCultures.Contains(newCulture))
                         this.MergedAvailableCultures.Add(newCulture);
 
                     culture = newCulture;
@@ -563,7 +591,7 @@ namespace WPFLocalizeExtension.Engine
                     
                     if (includeInvariantCulture && !existing)
                         this.MergedAvailableCultures.Insert(0, c);
-                    else if (!includeInvariantCulture && existing)
+                    else if (!includeInvariantCulture && existing && this.MergedAvailableCultures.Count > 1)
                         this.MergedAvailableCultures.Remove(c);
                 }
             }
@@ -606,6 +634,12 @@ namespace WPFLocalizeExtension.Engine
                         defaultProvider.ProviderChanged += new ProviderChangedEventHandler(ProviderUpdated);
                         defaultProvider.ValueChanged += new ValueChangedEventHandler(ValueChanged);
                         defaultProvider.AvailableCultures.CollectionChanged += new NotifyCollectionChangedEventHandler(AvailableCulturesCollectionChanged);
+
+                        foreach (CultureInfo c in defaultProvider.AvailableCultures)
+                        {
+                            if (!this.MergedAvailableCultures.Contains(c))
+                                this.MergedAvailableCultures.Add(c);
+                        }
                     }
                 }
             }

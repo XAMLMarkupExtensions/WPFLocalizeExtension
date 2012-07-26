@@ -116,7 +116,7 @@ namespace WPFLocalizeExtension.TypeConverters
             }
             catch
             {
-                result = Activator.CreateInstance(targetType);
+                result = null;
             }
 
             return result;

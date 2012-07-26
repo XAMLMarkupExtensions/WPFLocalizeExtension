@@ -24,6 +24,7 @@ namespace AssemblyTest
     {
         public MainWindow()
         {
+            this.DataContext = new MyViewModel();
             InitializeComponent();
         }
 
