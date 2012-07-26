@@ -394,6 +394,18 @@ namespace WPFLocalizeExtension.Providers
         /// <param name="target">The target object.</param>
         protected virtual void OnProviderChanged(DependencyObject target)
         {
+            try
+            {
+                var assembly = GetAssembly(target);
+                var dictionary = GetDictionary(target);
+
+                if (!String.IsNullOrEmpty(assembly) && !String.IsNullOrEmpty(dictionary))
+                    GetResourceManager(assembly, dictionary);
+            }
+            catch
+            {
+            }
+
             if (ProviderChanged != null)
                 ProviderChanged(this, new ProviderChangedEventArgs(target));
         }

@@ -29,10 +29,10 @@ namespace SLLocalizeExtension.TypeConverters
         {
             Color c = new Color();
 
-            c.A = (byte)(0x00000000 & (code >> 24));
-            c.R = (byte)(0x00000000 & (code >> 16));
-            c.G = (byte)(0x00000000 & (code >> 8));
-            c.B = (byte)(0x00000000 & code);
+            c.A = (byte)(0x000000FF & (code >> 24));
+            c.R = (byte)(0x000000FF & (code >> 16));
+            c.G = (byte)(0x000000FF & (code >> 8));
+            c.B = (byte)(0x000000FF & code);
 
             return c;
         }

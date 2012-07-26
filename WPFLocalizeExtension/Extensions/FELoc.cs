@@ -399,41 +399,52 @@ namespace WPFLocalizeExtension.Extensions
             string resKeyName = epName;
 
             // Check, if the key is already in our resource buffer.
-            if (ResourceBuffer.ContainsKey(resKeyBase + resourceKey))
-                result = ResourceBuffer[resKeyBase + resourceKey];
-            else if (ResourceBuffer.ContainsKey(resKeyBase + resKeyNameProp))
-                result = ResourceBuffer[resKeyBase + resKeyNameProp];
-            else if (ResourceBuffer.ContainsKey(resKeyBase + resKeyName))
-                result = ResourceBuffer[resKeyBase + resKeyName];
+            object input = null;
+
+            if (!String.IsNullOrEmpty(resourceKey))
+            {
+                // We've got a resource key. Try to look it up or get it from the dictionary.
+                if (ResourceBuffer.ContainsKey(resKeyBase + resourceKey))
+                    result = ResourceBuffer[resKeyBase + resourceKey];
+                else
+                {
+                    input = LocalizeDictionary.Instance.GetLocalizedObject(resourceKey, targetObject, ci);
+                    resKeyBase += resourceKey;
+                }
+            }
             else
             {
-                object input = LocalizeDictionary.Instance.GetLocalizedObject(resourceKey, targetObject, ci);
-
-                if (input == null)
+                // Try the automatic lookup function.
+                // First, look for a resource entry named: [FrameworkElement name][Separator][Property name]
+                if (ResourceBuffer.ContainsKey(resKeyBase + resKeyNameProp))
+                    result = ResourceBuffer[resKeyBase + resKeyNameProp];
+                else
                 {
-                    // Try get the Name of the DependencyObject [Separator] Property name
+                    // It was not stored in the buffer - try to retrieve it from the dictionary.
                     input = LocalizeDictionary.Instance.GetLocalizedObject(resKeyNameProp, targetObject, ci);
 
                     if (input == null)
                     {
-                        // Try get the Name of the DependencyObject
-                        input = LocalizeDictionary.Instance.GetLocalizedObject(resKeyName, targetObject, ci);
-
-                        if (input == null)
-                            return null;
-
-                        resKeyBase += resKeyName;
+                        // Now, try to look for a resource entry named: [FrameworkElement name]
+                        // Note - this has to be nested here, as it would take precedence over the first step in the buffer lookup step.
+                        if (ResourceBuffer.ContainsKey(resKeyBase + resKeyName))
+                            result = ResourceBuffer[resKeyBase + resKeyName];
+                        else
+                        {
+                            input = LocalizeDictionary.Instance.GetLocalizedObject(resKeyName, targetObject, ci);
+                            resKeyBase += resKeyName;
+                        }
                     }
                     else
                         resKeyBase += resKeyNameProp;
                 }
-                else
-                    resKeyBase += resourceKey;
+            }
 
+            // If no result was found, convert the input and add it to the buffer.
+            if (result == null && input != null)
+            {
                 result = this.Converter.Convert(input, targetType, this.ConverterParameter, ci);
-
-                if (result != null)
-                    ResourceBuffer.Add(resKeyBase, result);
+                ResourceBuffer.Add(resKeyBase, result);
             }
 
             return result;

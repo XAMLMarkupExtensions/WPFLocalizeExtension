@@ -16,8 +16,9 @@
         Title="MainWindow"
         mc:Ignorable="d"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" Height="393" Width="329">
-
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" Height="393" Width="329"
+        d:DataContext="{d:DesignInstance Type={x:Type Local:MyViewModel}, IsDesignTimeCreatable=True}">
+    
         <!--Use this syntax to set the inheriting provider-->
         <!--Engine:LocalizeDictionary.DefaultProvider="{x:Static Providers:InheritingResxLocalizationProvider.Instance}"
         Providers:InheritingResxLocalizationProvider.DefaultAssembly="AssemblyTestResourceLib"
@@ -74,6 +75,7 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="25" />
             <RowDefinition Height="25" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <ComboBox ItemsSource="{Binding Source={x:Static Engine:LocalizeDictionary.Instance}, Path=MergedAvailableCultures}"
                   SelectedItem="{Binding Source={x:Static Engine:LocalizeDictionary.Instance}, Path=Culture}"
@@ -111,5 +113,18 @@
                 </MultiBinding>
             </TextBox.Text>
         </TextBox>
+        <TabControl Grid.Row="7" ItemsSource="{Binding Items}">
+            <TabControl.ItemTemplate>
+                <DataTemplate DataType="{x:Type TabItem}">
+                    <StackPanel Orientation="Horizontal">
+                        <StackPanel.Resources>
+                            <lex:LocExtension x:Key="LocalizedHeader" x:Name="LocalizedHeader" />
+                        </StackPanel.Resources>
+                        <Engine:LocBinding Source="{Binding TranslationKey}" Target="{x:Reference LocalizedHeader}" />
+                        <TextBlock Text="{x:Reference LocalizedHeader}" />
+                    </StackPanel>
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+        </TabControl>
     </Grid>
 </Window>
