@@ -46,8 +46,8 @@
             set { countryDE = value; OnNotifyPropertyChanged("CountryDE"); }
         }
         
-        private int area = 0;
-        public int Area
+        private double area = 0;
+        public double Area
         {
             get { return area; }
             set { area = value; OnNotifyPropertyChanged("Area"); }

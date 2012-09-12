@@ -84,7 +84,7 @@ namespace WPFLocalizeExtension.Engine
 
             if (locBinding != null && args.Property == LocBinding.SourceProperty)
             {
-                if (!object.ReferenceEquals(locBinding.Source, locBinding.target) && (locBinding.target != null))
+                if (!object.ReferenceEquals(locBinding.Source, locBinding.target) && (locBinding.target != null) && (locBinding.Source != null))
                     locBinding.target.Key = locBinding.Source.ToString();
             }
         }

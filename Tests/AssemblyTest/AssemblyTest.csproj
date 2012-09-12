@@ -66,6 +66,7 @@
       <DependentUpon>CountryRes.resx</DependentUpon>
     </Compile>
     <Compile Include="MyViewModel.cs" />
+    <Compile Include="StringFormatProxy.cs" />
     <Compile Include="Strings2.Designer.cs">
       <DependentUpon>Strings2.resx</DependentUpon>
       <AutoGen>True</AutoGen>

@@ -137,7 +137,7 @@
     <value>resources\germany.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="TestFormat" xml:space="preserve">
-    <value>The area of {0} amounts {1} sqkm.</value>
+    <value>{0} sqkm</value>
   </data>
   <data name="United_Kingdom" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>resources\united_kingdom.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
