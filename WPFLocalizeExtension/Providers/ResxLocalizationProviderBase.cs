@@ -184,10 +184,21 @@ namespace WPFLocalizeExtension.Providers
         }
 
         /// <summary>
+        /// Updates the list of available cultures using the given resource location.
+        /// </summary>
+        /// <param name="resourceAssembly">The resource assembly.</param>
+        /// <param name="resourceDictionary">The dictionary to look up.</param>
+        /// <returns>True, if the update was successful.</returns>
+        public bool UpdateCultureList(string resourceAssembly, string resourceDictionary)
+        {
+            return GetResourceManager(resourceAssembly, resourceDictionary) != null;
+        }
+
+        /// <summary>
         /// Looks up in the cached <see cref="ResourceManager"/> list for the searched <see cref="ResourceManager"/>.
         /// </summary>
-        /// <param name="resourceAssembly">The resource assembly (e.g.: <c>BaseLocalizeExtension</c>). NULL = Name of the executing assembly</param>
-        /// <param name="resourceDictionary">The dictionary to look up (e.g.: ResHelp, Resources, ...). NULL = Name of the default resource file (Resources)</param>
+        /// <param name="resourceAssembly">The resource assembly.</param>
+        /// <param name="resourceDictionary">The dictionary to look up.</param>
         /// <returns>
         /// The found <see cref="ResourceManager"/>
         /// </returns>
@@ -206,9 +217,9 @@ namespace WPFLocalizeExtension.Providers
             string foundResource = null;
             string resManagerNameToSearch = "." + resourceDictionary + ResourceFileExtension;
             string[] availableResources;
-            var keyManKey = resourceAssembly + resManagerNameToSearch;
+            var resManKey = resourceAssembly + resManagerNameToSearch;
 
-            if (!TryGetValue(keyManKey, out resManager))
+            if (!TryGetValue(resManKey, out resManager))
             {
                 // if the assembly cannot be loaded, throw an exception
                 try
@@ -323,7 +334,7 @@ namespace WPFLocalizeExtension.Providers
                 }
 
                 // Add the ResourceManager to the cachelist
-                Add(keyManKey, resManager);
+                Add(resManKey, resManager);
 
                 try
                 {
@@ -454,7 +465,7 @@ namespace WPFLocalizeExtension.Providers
                 assembly = GetAssembly(target);
             if (String.IsNullOrEmpty(dictionary))
                 dictionary = GetDictionary(target);
-
+            
             // Final validation of the values.
             if (String.IsNullOrEmpty(assembly))
             {

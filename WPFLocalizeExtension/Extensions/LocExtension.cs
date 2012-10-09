@@ -114,11 +114,13 @@ namespace WPFLocalizeExtension.Extensions
             }
             set
             {
-                string oldKey = this.key;
-                this.key = value;
-
-                if (oldKey != this.key)
+                if (key != value)
+                {
+                    key = value;
                     UpdateNewValue();
+
+                    OnNotifyPropertyChanged("Key");
+                }
             }
         }
 
