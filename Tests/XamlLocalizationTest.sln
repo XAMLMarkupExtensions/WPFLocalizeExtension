@@ -1,13 +1,13 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencies", "{7141B014-FF60-4105-B88C-9812838D6D0D}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XamlLocalizationTest", "XamlLocalizationTest\XamlLocalizationTest.csproj", "{F2E7E31D-6EDD-4A3D-92E5-2577BF76D003}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResourceAssembly", "ResourceAssembly\ResourceAssembly.csproj", "{B76576C2-D09F-417A-AEE3-47F31210DF14}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPFLocalizeExtension", "..\WPFLocalizeExtension\WPFLocalizeExtension.csproj", "{E8C5B094-2CB4-4C26-87F0-351B03612179}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencies", "{7141B014-FF60-4105-B88C-9812838D6D0D}"
 EndProject
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "VbWpfApplication", "VbWpfApplication\VbWpfApplication.vbproj", "{1F6BCD30-6F08-448F-B3FF-D47C27B32025}"
 EndProject
