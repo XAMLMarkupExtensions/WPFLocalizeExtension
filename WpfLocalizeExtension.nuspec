@@ -7,7 +7,7 @@
     <licenseUrl>http://wpflocalizeextension.codeplex.com/license</licenseUrl>
     <projectUrl>http://wpflocalizeextension.codeplex.com/</projectUrl>
     <dependencies>
-      <dependency id="XAMLMarkupExtensions" version="1.1.3" />
+      <dependency id="XAMLMarkupExtensions" version="1.1.4" />
     </dependencies>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="WindowsBase" targetFramework="" />
@@ -21,6 +21,7 @@
     <description>LocalizationExtension is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObjects</description>
     <summary>LocalizationExtension is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObjects</summary>
     <releaseNotes>v2.1.1
+* Switched to XAMLMarkupExtensions v1.1.4 for problems when changing a key at design time
 * Fixes Issue #9261
 * Fixes Issue #9258
 * Added static CurrentCulture property that relays to the instance</releaseNotes>

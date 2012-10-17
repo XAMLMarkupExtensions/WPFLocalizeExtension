@@ -23,7 +23,7 @@
         lex:InheritingResxLocalizationProvider.DefaultDictionary="Strings"-->
     
     <!-- **********************************************************************
-    Uncomment the block below to test the CSV provider for the entire window
+    Uncomment the block below to test the CSV providesr for the entire window
     or copy it to an arbitrary location to affect just the particular sub tree.
     Note: Values can only be resolved at design-time if the project is set as
     StartUp project in Visual Studio.
@@ -102,7 +102,7 @@
                 </Ext:CatExtension>
             </TextBox.Text>
         </TextBox>
-        <!--<TextBox Grid.Row="6" lex:ResxLocalizationProvider.DefaultAssembly="AssemblyTest" lex:ResxLocalizationProvider.DefaultDictionary="CountryRes">
+        <TextBox Grid.Row="6" lex:ResxLocalizationProvider.DefaultAssembly="AssemblyTest" lex:ResxLocalizationProvider.DefaultDictionary="CountryRes">
             <TextBox.Text>
                 <MultiBinding StringFormat="Binding test (no design time!): {0} - {1}">
                     <MultiBinding.Bindings>
@@ -111,7 +111,7 @@
                     </MultiBinding.Bindings>
                 </MultiBinding>
             </TextBox.Text>
-        </TextBox>-->
+        </TextBox>
         <TabControl Grid.Row="7" ItemsSource="{Binding Items}">
             <TabControl.ItemTemplate>
                 <DataTemplate DataType="{x:Type TabItem}">
