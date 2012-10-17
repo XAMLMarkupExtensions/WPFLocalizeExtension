@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
+using WPFLocalizeExtension.Providers;
 
 namespace AssemblyTest
 {
@@ -24,6 +25,11 @@ namespace AssemblyTest
                 }
                 return _items;
             }
+        }
+
+        public MyViewModel()
+        {
+            ResxLocalizationProvider.Instance.UpdateCultureList("AssemblyTest", "Strings");
         }
     }
 

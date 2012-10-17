@@ -511,6 +511,14 @@ namespace WPFLocalizeExtension.Engine
                 return instance;
             }
         }
+
+        /// <summary>
+        /// Gets the culture of the singleton instance.
+        /// </summary>
+        public static CultureInfo CurrentCulture
+        {
+            get { return Instance.Culture; }
+        }
         #endregion
 
         #region Properties
@@ -809,7 +817,7 @@ namespace WPFLocalizeExtension.Engine
         {
 #if SILVERLIGHT
 #else
-            if (!this.Dispatcher.Thread.IsAlive)
+            if (this.Dispatcher == null || this.Dispatcher.Thread == null || !this.Dispatcher.Thread.IsAlive)
             {
                 return false;
             }

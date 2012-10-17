@@ -127,6 +127,6 @@
     <value>CountryDE</value>
   </data>
   <data name="TestFormat" xml:space="preserve">
-    <value>Die Fläche von {0} beträgt {1} km².</value>
+    <value>{0} km²</value>
   </data>
 </root>

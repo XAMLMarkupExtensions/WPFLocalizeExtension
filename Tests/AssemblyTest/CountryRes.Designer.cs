@@ -109,7 +109,7 @@ namespace AssemblyTest {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The area of {0} amounts {1} sqkm..
+        ///   Looks up a localized string similar to {0} sqkm.
         /// </summary>
         internal static string TestFormat {
             get {
