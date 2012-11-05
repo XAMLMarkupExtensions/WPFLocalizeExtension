@@ -726,7 +726,7 @@ namespace WPFLocalizeExtension.Engine
                 return GetLocalizedObject(key, target, culture, this.DefaultProvider);
 #endif
                 
-            var provider = target != null ? target.GetValueOrRegisterParentNotifier(GetProvider, (obj) => { LocalizeDictionary.DictionaryEvent.Invoke(obj, new DictionaryEventArgs(DictionaryEventType.ProviderChanged, null)); }, parentNotifiers) : null;
+            var provider = target != null ? target.GetValue(GetProvider) : null;
 
             if (provider == null)
                 provider = this.DefaultProvider;
