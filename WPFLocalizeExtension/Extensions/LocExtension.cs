@@ -36,6 +36,7 @@ namespace WPFLocalizeExtension.Extensions
 #endif
     using XAMLMarkupExtensions.Base;
     using System.Collections;
+    using System.Windows.Media.Media3D;
     #endregion
 
     /// <summary>
@@ -257,6 +258,13 @@ namespace WPFLocalizeExtension.Extensions
                         UpdateNewValue();
                         break;
                     }
+#if !SILVERLIGHT
+                    if (!(doParent is Visual) && !(doParent is Visual3D))
+                    {
+                        UpdateNewValue();
+                        break;
+                    }
+#endif
                     try
                     {
                         var doParent2 = VisualTreeHelper.GetParent(doParent);

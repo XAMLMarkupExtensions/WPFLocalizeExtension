@@ -40,11 +40,11 @@ namespace WP7LocalizeExtension.Providers
                 new PropertyMetadata(null, AttachedPropertyChanged));
 
         /// <summary>
-        /// <see cref="DependencyProperty"/> DefaulAssembly to set the fallback assembly.
+        /// <see cref="DependencyProperty"/> DefaultAssembly to set the fallback assembly.
         /// </summary>
         public static readonly DependencyProperty DefaultAssemblyProperty =
             DependencyProperty.RegisterAttached(
-                "DefaulAssembly",
+                "DefaultAssembly",
                 typeof(string),
                 typeof(StaticResxLocalizationProvider),
                 new PropertyMetadata(null, AttachedPropertyChanged));
