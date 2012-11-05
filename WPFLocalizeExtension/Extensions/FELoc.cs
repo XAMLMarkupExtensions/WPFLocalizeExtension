@@ -221,6 +221,8 @@ namespace WPFLocalizeExtension.Extensions
         {
             parentChangedNotifier = new ParentChangedNotifier(this, () =>
             {
+                //parentChangedNotifier.Dispose();
+                //parentChangedNotifier = null;
                 var targetObject = this.Parent;
                 if (targetObject != null)
                 {

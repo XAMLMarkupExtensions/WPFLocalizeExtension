@@ -17,6 +17,7 @@ namespace WPFLocalizeExtension.Providers
     using System.Windows.Media;
     using System.Collections.Generic;
     using XAMLMarkupExtensions.Base;
+    using System.Windows.Media.Media3D;
 
     /// <summary>
     /// Extension methods for <see cref="DependencyObject"/> in conjunction with the <see cref="ParentChangedNotifier"/>.
@@ -25,7 +26,7 @@ namespace WPFLocalizeExtension.Providers
     {
         /// <summary>
         /// Tries to get a value that is stored somewhere in the visual tree above this <see cref="DependencyObject"/>.
-        /// If this is not available, it will register a <see cref="ParentChangedNotifier"/> on the last element.
+        /// <para>If this is not available, it will register a <see cref="ParentChangedNotifier"/> on the last element.</para>
         /// </summary>
         /// <typeparam name="T">The return type.</typeparam>
         /// <param name="target">The <see cref="DependencyObject"/>.</param>
@@ -46,7 +47,18 @@ namespace WPFLocalizeExtension.Providers
                     // Try to get the value using the provided GetFunction.
                     ret = GetFunction(depObj);
 
+                    if (ret != null && parentNotifiers.ContainsKey(target))
+                    {
+                        var notifier = parentNotifiers[target];
+                        notifier.Dispose();
+                        parentNotifiers.Remove(target);
+                    }
+
                     // Try to get the parent using the visual tree helper. This may fail on some occations.
+#if !SILVERLIGHT
+                    if (!(depObj is Visual) && !(depObj is Visual3D))
+                        break;
+#endif
                     DependencyObject depObjParent = null;
                     try { depObjParent = VisualTreeHelper.GetParent(depObj); }
                     catch { break; }
@@ -61,11 +73,62 @@ namespace WPFLocalizeExtension.Providers
                         {
                             parentNotifiers.Add(target, new ParentChangedNotifier((FrameworkElement)depObj, () =>
                             {
+                                // Call the action...
                                 ParentChangedAction(target);
+                                // ...and remove the notifier - it will probably not be used again.
+                                if (parentNotifiers.ContainsKey(target))
+                                {
+                                    var notifier = parentNotifiers[target];
+                                    notifier.Dispose();
+                                    parentNotifiers.Remove(target);
+                                }
                             }));
                         }
                         break;
                     }
+
+                    // Assign the parent to the current DependencyObject and start the next iteration.
+                    depObj = depObjParent;
+                }
+            }
+
+            return ret;
+        }
+
+        /// <summary>
+        /// Tries to get a value that is stored somewhere in the visual tree above this <see cref="DependencyObject"/>.
+        /// </summary>
+        /// <typeparam name="T">The return type.</typeparam>
+        /// <param name="target">The <see cref="DependencyObject"/>.</param>
+        /// <param name="GetFunction">The function that gets the value from a <see cref="DependencyObject"/>.</param>
+        /// <returns>The value, if possible.</returns>
+        public static T GetValue<T>(this DependencyObject target, Func<DependencyObject, T> GetFunction)
+        {
+            var ret = default(T);
+
+            if (target != null)
+            {
+                var depObj = target;
+
+                while (ret == null)
+                {
+                    // Try to get the value using the provided GetFunction.
+                    ret = GetFunction(depObj);
+
+                    // Try to get the parent using the visual tree helper. This may fail on some occations.
+#if !SILVERLIGHT
+                    if (!(depObj is Visual) && !(depObj is Visual3D))
+                        break;
+#endif
+                    DependencyObject depObjParent = null;
+                    try { depObjParent = VisualTreeHelper.GetParent(depObj); }
+                    catch { break; }
+                    // If this failed, try again using the Parent property (sometimes this is not covered by the VisualTreeHelper class :-P.
+                    if (depObjParent == null && depObj is FrameworkElement)
+                        depObjParent = ((FrameworkElement)depObj).Parent;
+
+                    if (ret == null && depObjParent == null)
+                        break;
 
                     // Assign the parent to the current DependencyObject and start the next iteration.
                     depObj = depObjParent;
