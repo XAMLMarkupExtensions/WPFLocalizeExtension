@@ -40,28 +40,25 @@ namespace WPFLocalizeExtension.Engine
 {
     #region Uses
     using System;
-    using System.IO;
-    using System.Diagnostics;
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Globalization;
-    using System.Linq;
-    using System.Reflection;
-    using System.Resources;
-    using System.Runtime.CompilerServices;
     using System.Windows;
-    using System.Windows.Markup;
     using System.Windows.Input;
     using System.Collections.ObjectModel;
     using System.Collections.Specialized;
+    using System.Threading;
 #if WINDOWS_PHONE
     using WP7LocalizeExtension.Providers;
+    using WP7LocalizeExtension.Extensions;
 #else
     using XAMLMarkupExtensions.Base;
 #if SILVERLIGHT
     using SLLocalizeExtension.Providers;
+    using SLLocalizeExtension.Extensions;
 #else
     using WPFLocalizeExtension.Providers;
+    using WPFLocalizeExtension.Extensions;
 #endif
 #endif
     #endregion
@@ -71,7 +68,7 @@ namespace WPFLocalizeExtension.Engine
     /// </summary>
     public sealed class LocalizeDictionary : DependencyObject, INotifyPropertyChanged
     {
-        #region PropertyChanged Logic
+        #region INotifyPropertyChanged Implementation
         /// <summary>
         /// Informiert über sich ändernde Eigenschaften.
         /// </summary>
@@ -414,6 +411,11 @@ namespace WPFLocalizeExtension.Engine
         /// </summary>
         private ILocalizationProvider defaultProvider;
 
+        /// <summary>
+        /// Determines, if the CurrentThread culture is set along with the Culture property.
+        /// </summary>
+        private bool setCurrentThreadCulture = true;
+
 #if !WINDOWS_PHONE
         /// <summary>
         /// A dictionary for notification classes for changes of the individual target Parent changes.
@@ -462,7 +464,18 @@ namespace WPFLocalizeExtension.Engine
                 if (!includeInvariantCulture && this.MergedAvailableCultures.Count > 1 && this.MergedAvailableCultures.Contains(CultureInfo.InvariantCulture))
                     this.MergedAvailableCultures.Remove(CultureInfo.InvariantCulture);
             }), e);
-        } 
+        }
+
+        ~LocalizeDictionary()
+        {
+#if !WINDOWS_PHONE
+            LocExtension.ClearResourceBuffer();
+#endif
+#if !SILVERLIGHT
+            FELoc.ClearResourceBuffer();
+#endif
+            BLoc.ClearResourceBuffer();
+        }
         #endregion
 
         #region Static Properties
@@ -560,10 +573,15 @@ namespace WPFLocalizeExtension.Engine
                             newCulture = c;
                             break;
                         }
-                        else if (c.Parent.Name == value.Name || value.Parent.Name == c.Name)
+                        else if (c.Parent.Name == value.Name)
                         {
                             // We found a parent culture, but continue - maybe there is a specific one available too.
                             newCulture = c;
+                        }
+                        else if (value.Parent.Name == c.Name)
+                        {
+                            // We found a parent culture, but continue - maybe there is a specific one available too.
+                            newCulture = value;
                         }
                 }
 
@@ -574,6 +592,13 @@ namespace WPFLocalizeExtension.Engine
 
                     culture = newCulture;
 
+                    // Change the CurrentThread culture if needed.
+                    if (setCurrentThreadCulture)
+                    {
+                        Thread.CurrentThread.CurrentCulture = culture;
+                        Thread.CurrentThread.CurrentUICulture = culture;
+                    }
+                    
                     // Raise the OnLocChanged event
                     LocalizeDictionary.DictionaryEvent.Invoke(null, new DictionaryEventArgs(DictionaryEventType.CultureChanged, value));
 
@@ -582,6 +607,22 @@ namespace WPFLocalizeExtension.Engine
             }
         }
 
+        /// <summary>
+        /// Gets or sets a flag that determines, if the CurrentThread culture should be changed along with the Culture property.
+        /// </summary>
+        public bool SetCurrentThreadCulture
+        {
+            get { return setCurrentThreadCulture; }
+            set
+            {
+                if (setCurrentThreadCulture != value)
+                {
+                    setCurrentThreadCulture = value;
+                    RaisePropertyChanged("SetCurrentThreadCulture");
+                }
+            }
+        }
+        
         /// <summary>
         /// Gets or sets the flag indicating if the invariant culture is included in the <see cref="LocalizeDictionary.MergedAvailableCultures"/> list.
         /// </summary>
@@ -873,6 +914,20 @@ namespace WPFLocalizeExtension.Engine
                 if (listener == null)
                     return;
 
+                // Check, if this listener already was added.
+                List<WeakReference> purgeList = new List<WeakReference>();
+
+                foreach (var wr in listeners)
+                {
+                    if (!wr.IsAlive)
+                        purgeList.Add(wr);
+                    else if (wr.Target == listener)
+                        return;
+                }
+
+                Purge(purgeList);
+
+                // Add it now.
                 listeners.Add(new WeakReference(listener));
             }
 
@@ -894,6 +949,8 @@ namespace WPFLocalizeExtension.Engine
                     else if ((IDictionaryEventListener)wr.Target == listener)
                         purgeList.Add(wr);
                 }
+
+                Purge(purgeList);
             }
 
             /// <summary>

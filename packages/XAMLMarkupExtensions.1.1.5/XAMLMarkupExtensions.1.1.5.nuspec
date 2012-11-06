@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>XAMLMarkupExtensions</id>
+    <version>1.1.5</version>
+    <title>XAML Markup Extensions</title>
+    <authors>Uwe Mayer, Konrad Mattheis</authors>
+    <owners>Uwe Mayer, Konrad Mattheis</owners>
+    <licenseUrl>http://xamlmarkupextensions.codeplex.com/license</licenseUrl>
+    <projectUrl>http://xamlmarkupextensions.codeplex.com/</projectUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>A base class for nested markup extensions and a collection of useful extensions for WPF 3.5, 4.0 and SL 5.0.</description>
+    <summary>GitHub Commit:
+SHA 1ad0aeeb49f5ead4e15bff6e22a032b648d7a2d6 
+https://github.com/MrCircuit/XAMLMarkupExtensions</summary>
+    <releaseNotes>* Fix for memory leak in ParentChangedNotifier - call Dispose() when using this class after it has done its work :-).</releaseNotes>
+    <tags>WPF SL markup extension nesting</tags>
+  </metadata>
+</package>

@@ -65,7 +65,6 @@ namespace WPFLocalizeExtension.Extensions
         #endregion
 
         #region Variables
-        private static Dictionary<Type, TypeConverter> TypeConverters = new Dictionary<Type, TypeConverter>();
         private static Dictionary<string, object> ResourceBuffer = new Dictionary<string, object>();
 
         /// <summary>
@@ -94,6 +93,16 @@ namespace WPFLocalizeExtension.Extensions
         /// </summary>
         private object converterParameter = null;
         #endregion
+
+        /// <summary>
+        /// Clears the common resource buffer.
+        /// </summary>
+        internal static void ClearResourceBuffer()
+        {
+            if (ResourceBuffer != null)
+                ResourceBuffer.Clear();
+            ResourceBuffer = null;
+        }
 
         #region Properties
         /// <summary>
@@ -219,7 +228,7 @@ namespace WPFLocalizeExtension.Extensions
             : this()
         {
             this.Key = key;
-        } 
+        }
         #endregion
 
         #region IDictionaryEventListener implementation

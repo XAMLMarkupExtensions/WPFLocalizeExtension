@@ -14,6 +14,8 @@ using System.Windows.Shapes;
 using System.Globalization;
 using WPFLocalizeExtension.Engine;
 using WPFLocalizeExtension.Providers;
+using ProviderExample;
+using WPFLocalizeExtension.Extensions;
 
 namespace AssemblyTest
 {
@@ -26,6 +28,20 @@ namespace AssemblyTest
         {
             this.DataContext = new MyViewModel();
             InitializeComponent();
+
+            //string localisedValue = string.Empty;
+
+            //ILocalizationProvider cvsProvider = new CSVLocalizationProvider() { FileName = "Example", HasHeader = true };
+            //LocalizeDictionary.Instance.DefaultProvider = cvsProvider;
+
+            //LocExtension locExtension = new LocExtension();
+            //locExtension.Key = "TestText";
+
+            //locExtension.ResolveLocalizedValue<string>(out localisedValue, new CultureInfo("de"));
+
+            //localisedValue = (string)LocalizeDictionary.Instance.GetLocalizedObject("TestText", null, new CultureInfo("de"), cvsProvider);
+
+            //Console.WriteLine(localisedValue);
         }
 
         private void ButtonAssembly_Click(object sender, RoutedEventArgs e)

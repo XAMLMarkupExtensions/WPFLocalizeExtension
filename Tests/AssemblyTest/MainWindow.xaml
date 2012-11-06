@@ -13,9 +13,9 @@
         lex:ResxLocalizationProvider.DefaultDictionary="Strings"
         Title="MainWindow"
         mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type={x:Type Local:MyViewModel}, IsDesignTimeCreatable=True}"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" Height="393" Width="329"
-        d:DataContext="{d:DesignInstance Type={x:Type Local:MyViewModel}, IsDesignTimeCreatable=True}">
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" Height="393" Width="329">
     
         <!--Use this syntax to set the inheriting provider-->
         <!--lex:LocalizeDictionary.DefaultProvider="{x:Static lex:InheritingResxLocalizationProvider.Instance}"
@@ -63,8 +63,7 @@
     </Window.Resources>
     <Grid>
         <Grid.Resources>
-            <ResourceDictionary>
-            </ResourceDictionary>
+            <Local:CaseConverter x:Key="CaseConverter" />
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="25" />
@@ -84,7 +83,7 @@
             <Button Name="ButtonDE" Height="23" Width="75" CommandParameter="de" Command="{Binding Source={x:Static lex:LocalizeDictionary.Instance}, Path=SetCultureCommand}" lex:ResxLocalizationProvider.DefaultAssembly="AssemblyTestResourceLib">
                 <lex:FELoc />
             </Button>
-            <Button Content="{lex:Loc ButtonEN}" Height="23" Width="75" CommandParameter="" Command="{Binding Source={x:Static lex:LocalizeDictionary.Instance}, Path=SetCultureCommand}" />
+            <Button Content="{lex:Loc ButtonEN, Converter={StaticResource CaseConverter}, ConverterParameter=Lower}" Height="23" Width="75" CommandParameter="" Command="{Binding Source={x:Static lex:LocalizeDictionary.Instance}, Path=SetCultureCommand}" />
         </StackPanel>
         <Button Grid.Row="2" HorizontalAlignment="Center" Name="ButtonAssembly" Click="ButtonAssembly_Click" Content="{lex:LocText FormatSegment1=A}" Width="{lex:Loc}" Margin="{lex:Loc}" Background="{lex:Loc}" FlowDirection="{lex:Loc}" />
         <Image Grid.Row="3" Source="{lex:Loc TestImage}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
@@ -102,7 +101,7 @@
                 </Ext:CatExtension>
             </TextBox.Text>
         </TextBox>
-        <TextBox Grid.Row="6" lex:ResxLocalizationProvider.DefaultAssembly="AssemblyTest" lex:ResxLocalizationProvider.DefaultDictionary="CountryRes">
+        <!--<TextBox Grid.Row="6" lex:ResxLocalizationProvider.DefaultAssembly="AssemblyTest" lex:ResxLocalizationProvider.DefaultDictionary="CountryRes">
             <TextBox.Text>
                 <MultiBinding StringFormat="Binding test (no design time!): {0} - {1}">
                     <MultiBinding.Bindings>
@@ -111,7 +110,7 @@
                     </MultiBinding.Bindings>
                 </MultiBinding>
             </TextBox.Text>
-        </TextBox>
+        </TextBox>-->
         <TabControl Grid.Row="7" ItemsSource="{Binding Items}">
             <TabControl.ItemTemplate>
                 <DataTemplate DataType="{x:Type TabItem}">

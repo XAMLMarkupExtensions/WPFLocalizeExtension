@@ -52,6 +52,16 @@ namespace WPFLocalizeExtension.Extensions
         private TargetInfo targetInfo = null;
         #endregion
 
+        /// <summary>
+        /// Clears the common resource buffer.
+        /// </summary>
+        internal static void ClearResourceBuffer()
+        {
+            if (ResourceBuffer != null)
+                ResourceBuffer.Clear();
+            ResourceBuffer = null;
+        }
+
         #region DependencyProperty: Key
         /// <summary>
         /// <see cref="DependencyProperty"/> Key to set the resource key.
@@ -221,8 +231,8 @@ namespace WPFLocalizeExtension.Extensions
         {
             parentChangedNotifier = new ParentChangedNotifier(this, () =>
             {
-                //parentChangedNotifier.Dispose();
-                //parentChangedNotifier = null;
+                parentChangedNotifier.Dispose();
+                parentChangedNotifier = null;
                 var targetObject = this.Parent;
                 if (targetObject != null)
                 {
