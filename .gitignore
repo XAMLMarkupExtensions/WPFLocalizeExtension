@@ -30,3 +30,4 @@ Sandbox
 *Sandbox*
 *.ncrunchsolution
 *.xap
+ClientBin/*
