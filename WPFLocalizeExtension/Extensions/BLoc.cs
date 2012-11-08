@@ -60,6 +60,16 @@ namespace WPFLocalizeExtension.Extensions
         #endregion
 
         private static Dictionary<string, object> ResourceBuffer = new Dictionary<string, object>();
+
+        /// <summary>
+        /// Clears the common resource buffer.
+        /// </summary>
+        internal static void ClearResourceBuffer()
+        {
+            if (ResourceBuffer != null)
+                ResourceBuffer.Clear();
+            ResourceBuffer = null;
+        }
         
         private object value = null;
         /// <summary>
