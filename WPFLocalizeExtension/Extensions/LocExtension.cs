@@ -43,7 +43,7 @@ namespace WPFLocalizeExtension.Extensions
     /// A generic localization extension.
     /// </summary>
     [ContentProperty("ResourceIdentifierKey")]
-    public class LocExtension : NestedMarkupExtension, INotifyPropertyChanged, IDictionaryEventListener
+    public class LocExtension : NestedMarkupExtension, INotifyPropertyChanged, IDictionaryEventListener, IDisposable
     {
         #region PropertyChanged Logic
         /// <summary>
@@ -206,7 +206,7 @@ namespace WPFLocalizeExtension.Extensions
         }
         #endregion
 
-        #region Constructors
+        #region Constructors & Dispose
         /// <summary>
         /// Initializes a new instance of the <see cref="LocExtension"/> class.
         /// </summary>
@@ -228,6 +228,24 @@ namespace WPFLocalizeExtension.Extensions
             : this()
         {
             this.Key = key;
+        }
+
+        /// <summary>
+        /// Removes the listener from the dictionary.
+        /// <para>The "new" keyword is just a temporary hack in order to keep XAMLMarkupExtensions on the current version.</para>
+        /// </summary>
+        public new void Dispose()
+        {
+            base.Dispose();
+            LocalizeDictionary.DictionaryEvent.RemoveListener(this);
+        }
+
+        /// <summary>
+        /// The finalizer.
+        /// </summary>
+        ~LocExtension()
+        {
+            Dispose();
         }
         #endregion
 

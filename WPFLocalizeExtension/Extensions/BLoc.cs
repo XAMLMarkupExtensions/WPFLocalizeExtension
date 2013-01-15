@@ -38,7 +38,7 @@ namespace WPFLocalizeExtension.Extensions
     /// <summary>
     /// A localization extension based on <see cref="Binding"/>.
     /// </summary>
-    public class BLoc : Binding, INotifyPropertyChanged, IDictionaryEventListener
+    public class BLoc : Binding, INotifyPropertyChanged, IDictionaryEventListener, IDisposable
     {
         #region PropertyChanged Logic
         /// <summary>
@@ -114,7 +114,7 @@ namespace WPFLocalizeExtension.Extensions
         /// </summary>
         public string ForceCulture { get; set; }
 
-        #region Constructors
+        #region Constructors & Dispose
         /// <summary>
         /// Initializes a new instance of the <see cref="BLoc"/> class.
         /// </summary>
@@ -134,6 +134,22 @@ namespace WPFLocalizeExtension.Extensions
             : this()
         {
             this.Key = key;
+        }
+
+        /// <summary>
+        /// Removes the listener from the dictionary.
+        /// </summary>
+        public void Dispose()
+        {
+            LocalizeDictionary.DictionaryEvent.RemoveListener(this);
+        }
+
+        /// <summary>
+        /// The finalizer.
+        /// </summary>
+        ~BLoc()
+        {
+            Dispose();
         }
         #endregion
 

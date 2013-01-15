@@ -25,7 +25,7 @@ namespace WPFLocalizeExtension.Extensions
     /// <summary>
     /// A localization utility based on <see cref="FrameworkElement"/>.
     /// </summary>
-    public class FELoc : FrameworkElement, IDictionaryEventListener, INotifyPropertyChanged
+    public class FELoc : FrameworkElement, IDictionaryEventListener, INotifyPropertyChanged, IDisposable
     {
         #region PropertyChanged Logic
         /// <summary>
@@ -257,7 +257,7 @@ namespace WPFLocalizeExtension.Extensions
         } 
         #endregion
 
-        #region Constructors
+        #region Constructors & Dispose
         /// <summary>
         /// Initializes a new instance of the <see cref="BLoc"/> class.
         /// </summary>
@@ -276,6 +276,22 @@ namespace WPFLocalizeExtension.Extensions
             : this()
         {
             this.Key = key;
+        }
+
+        /// <summary>
+        /// Removes the listener from the dictionary.
+        /// </summary>
+        public void Dispose()
+        {
+            LocalizeDictionary.DictionaryEvent.RemoveListener(this);
+        }
+
+        /// <summary>
+        /// The finalizer.
+        /// </summary>
+        ~FELoc()
+        {
+            Dispose();
         }
         #endregion
 
