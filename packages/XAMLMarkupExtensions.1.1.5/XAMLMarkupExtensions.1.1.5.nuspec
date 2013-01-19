@@ -15,5 +15,8 @@ SHA 1ad0aeeb49f5ead4e15bff6e22a032b648d7a2d6
 https://github.com/MrCircuit/XAMLMarkupExtensions</summary>
     <releaseNotes>* Fix for memory leak in ParentChangedNotifier - call Dispose() when using this class after it has done its work :-).</releaseNotes>
     <tags>WPF SL markup extension nesting</tags>
+    <references>
+      <reference file="XAMLMarkupExtensions.dll" />
+    </references>
   </metadata>
 </package>

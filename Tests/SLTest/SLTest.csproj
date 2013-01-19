@@ -67,6 +67,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Windows.Browser" />
     <Reference Include="XAMLMarkupExtensions, Version=1.1.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\XAMLMarkupExtensions.1.1.5\lib\sl50\XAMLMarkupExtensions.dll</HintPath>
     </Reference>
   </ItemGroup>

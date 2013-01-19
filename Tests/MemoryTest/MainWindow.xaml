@@ -8,7 +8,7 @@
         SizeToContent="WidthAndHeight"
         Title="MainWindow">
     <StackPanel>
-        <Label Content="{lex:Loc TestText}" />
+        <!--<Label Content="{lex:Loc TestText}" />-->
         <Button Name="OpenWindow" Click="OpenWindow_Click" Content="Open New Window" Margin="5" />
         <Button Name="OpenWindowUnlocalized" Click="OpenWindowUnlocalized_Click" Content="Open New Unlocalized Window" Margin="5" />
         <Button Name="CloseWindows" Click="CloseWindows_Click" Content="Close Windows" Margin="5" />

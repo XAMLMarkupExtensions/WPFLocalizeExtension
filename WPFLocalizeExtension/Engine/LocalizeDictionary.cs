@@ -916,19 +916,21 @@ namespace WPFLocalizeExtension.Engine
 
                 // Check, if this listener already was added.
                 List<WeakReference> purgeList = new List<WeakReference>();
+                bool listenerExists = false;
 
                 foreach (var wr in listeners)
                 {
                     if (!wr.IsAlive)
                         purgeList.Add(wr);
                     else if (wr.Target == listener)
-                        return;
+                        listenerExists = true;
                 }
 
                 Purge(purgeList);
 
                 // Add it now.
-                listeners.Add(new WeakReference(listener));
+                if (!listenerExists)
+                    listeners.Add(new WeakReference(listener));
             }
 
             /// <summary>

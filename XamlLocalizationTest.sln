@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XamlLocalizationTest", "Tests\XamlLocalizationTest\XamlLocalizationTest.csproj", "{F2E7E31D-6EDD-4A3D-92E5-2577BF76D003}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResourceAssembly", "Tests\ResourceAssembly\ResourceAssembly.csproj", "{B76576C2-D09F-417A-AEE3-47F31210DF14}"

@@ -45,7 +45,7 @@
                   DisplayMemberPath="NativeName"
                   Margin="2"/>
         <StackPanel Name="TestPanel" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button Content="{lex:Loc Key=ButtonDE}" Height="23" Width="75" CommandParameter="de" Command="{Binding Path=SetCultureCommand}" />
+            <Button Content="{lex:Loc Key=ButtonDE}" ToolTipService.ToolTip="{lex:Loc Key=ButtonDE}" Height="23" Width="75" CommandParameter="de" Command="{Binding Path=SetCultureCommand}" />
             <Button Content="{lex:Loc Key=ButtonEN}" Height="23" Width="75" CommandParameter="en" Command="{Binding Path=SetCultureCommand}" />
         </StackPanel>
         <Button Grid.Row="2" HorizontalAlignment="Center" Name="ButtonAssembly" Click="ButtonTest_Click" Content="{lex:LocText FormatSegment1=A}" Width="{lex:Loc}" Margin="{lex:Loc}" Background="{lex:Loc}" FlowDirection="{lex:Loc}" />

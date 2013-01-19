@@ -84,6 +84,7 @@
                 <lex:FELoc />
             </Button>
             <Button Content="{lex:Loc ButtonEN, Converter={StaticResource CaseConverter}, ConverterParameter=Lower}" Height="23" Width="75" CommandParameter="" Command="{Binding Source={x:Static lex:LocalizeDictionary.Instance}, Path=SetCultureCommand}" />
+            <Button Content="{lex:Loc ButtonEN}" Height="23" Width="75" CommandParameter="" Command="{Binding Source={x:Static lex:LocalizeDictionary.Instance}, Path=SetCultureCommand}" />
         </StackPanel>
         <Button Grid.Row="2" HorizontalAlignment="Center" Name="ButtonAssembly" Click="ButtonAssembly_Click" Content="{lex:LocText FormatSegment1=A}" Width="{lex:Loc}" Margin="{lex:Loc}" Background="{lex:Loc}" FlowDirection="{lex:Loc}" />
         <Image Grid.Row="3" Source="{lex:Loc TestImage}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />

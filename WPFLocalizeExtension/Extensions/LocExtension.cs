@@ -434,11 +434,12 @@ namespace WPFLocalizeExtension.Extensions
             
             // Check, if the key is already in our resource buffer.
             object input = null;
+            var isDefaultConverter = this.Converter is DefaultConverter;
 
             if (!String.IsNullOrEmpty(resourceKey))
             {
                 // We've got a resource key. Try to look it up or get it from the dictionary.
-                if (ResourceBuffer.ContainsKey(resKeyBase + resourceKey))
+                if (isDefaultConverter && ResourceBuffer.ContainsKey(resKeyBase + resourceKey))
                     result = ResourceBuffer[resKeyBase + resourceKey];
                 else
                 {
@@ -450,7 +451,7 @@ namespace WPFLocalizeExtension.Extensions
             {
                 // Try the automatic lookup function.
                 // First, look for a resource entry named: [FrameworkElement name][Separator][Property name]
-                if (ResourceBuffer.ContainsKey(resKeyBase + resKeyNameProp))
+                if (isDefaultConverter && ResourceBuffer.ContainsKey(resKeyBase + resKeyNameProp))
                     result = ResourceBuffer[resKeyBase + resKeyNameProp];
                 else
                 {
@@ -461,7 +462,7 @@ namespace WPFLocalizeExtension.Extensions
                     {
                         // Now, try to look for a resource entry named: [FrameworkElement name]
                         // Note - this has to be nested here, as it would take precedence over the first step in the buffer lookup step.
-                        if (ResourceBuffer.ContainsKey(resKeyBase + resKeyName))
+                        if (isDefaultConverter && ResourceBuffer.ContainsKey(resKeyBase + resKeyName))
                             result = ResourceBuffer[resKeyBase + resKeyName];
                         else
                         {
@@ -478,7 +479,8 @@ namespace WPFLocalizeExtension.Extensions
             if (result == null && input != null)
             {
                 result = this.Converter.Convert(input, targetType, this.ConverterParameter, ci);
-                ResourceBuffer.Add(resKeyBase, result);
+                if (isDefaultConverter)
+                    ResourceBuffer.Add(resKeyBase, result);
             }
 
             return result;
@@ -570,8 +572,9 @@ namespace WPFLocalizeExtension.Extensions
 
             // get the localized object from the dictionary
             string resKey = targetCulture.Name + ":" + typeof(TValue).Name + ":" + this.Key;
+            var isDefaultConverter = this.Converter is DefaultConverter;
 
-            if (ResourceBuffer.ContainsKey(resKey))
+            if (isDefaultConverter && ResourceBuffer.ContainsKey(resKey))
             {
                 resolvedValue = (TValue)ResourceBuffer[resKey];
             }
@@ -587,7 +590,8 @@ namespace WPFLocalizeExtension.Extensions
                 if (result is TValue)
                 {
                     resolvedValue = (TValue)result;
-                    ResourceBuffer.Add(resKey, resolvedValue);
+                    if (isDefaultConverter)
+                        ResourceBuffer.Add(resKey, resolvedValue);
                 }
             }
 
