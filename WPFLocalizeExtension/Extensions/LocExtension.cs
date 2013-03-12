@@ -257,6 +257,7 @@ namespace WPFLocalizeExtension.Extensions
         /// <param name="e">The event arguments.</param>
         public void ResourceChanged(DependencyObject sender, DictionaryEventArgs e)
         {
+            ClearItemFromResourceBuffer(e);
             if (sender == null)
             {
                 UpdateNewValue();
@@ -308,6 +309,45 @@ namespace WPFLocalizeExtension.Extensions
                 }
             }
         }
+
+        private void ClearItemFromResourceBuffer(DictionaryEventArgs dictionaryEventArgs)
+        {
+            if (dictionaryEventArgs.Type == DictionaryEventType.ValueChanged)
+            {
+                var args = dictionaryEventArgs.Tag as ValueChangedEventArgs;
+                if (args != null)
+                {
+                    var keysToRemove = new List<string>();
+                    var ci = args.Tag as CultureInfo;
+                    foreach (var cacheKey in ResourceBuffer.Keys)
+                    {
+                        if (cacheKey.EndsWith(args.Key))
+                        {
+                            if (ci == null || cacheKey.StartsWith(ci.Name))
+                            {
+                                if (ResourceBuffer[cacheKey] != args.Value)
+                                {
+                                    keysToRemove.Add(cacheKey);
+                                }
+                            }
+
+                        }
+                    }
+                    foreach (var keyToRemove in keysToRemove)
+                    {
+                        if (!ResourceBuffer.ContainsKey(keyToRemove))
+                        {
+                            continue;
+                        }
+                        if (ResourceBuffer[keyToRemove] != args.Value)
+                        {
+                            ResourceBuffer.Remove(keyToRemove);
+                        }
+                    }
+                }
+            }
+        }
+
         #endregion
 
         #region Forced culture handling
