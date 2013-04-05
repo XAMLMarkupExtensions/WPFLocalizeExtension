@@ -31,3 +31,4 @@ Sandbox
 *.ncrunchsolution
 *.xap
 ClientBin/*
+*.zip

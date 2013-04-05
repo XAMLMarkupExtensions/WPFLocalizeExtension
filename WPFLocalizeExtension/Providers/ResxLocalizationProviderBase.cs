@@ -225,7 +225,8 @@ namespace WPFLocalizeExtension.Providers
                 try
                 {
                     // go through every assembly loaded in the app domain
-                    foreach (Assembly assemblyInAppDomain in AppDomain.CurrentDomain.GetAssemblies())
+                    var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+                    foreach (var assemblyInAppDomain in loadedAssemblies)
                     {
                         // check if the name pf the assembly is not null
                         if (assemblyInAppDomain.FullName != null)
@@ -282,56 +283,58 @@ namespace WPFLocalizeExtension.Providers
                     }
                 }
 
-                // if no one was found, exception
-                if (foundResource == null)
+                // NOTE: Inverted this IF (nesting is bad, I know) so we just create a new ResourceManager.  -gen3ric
+                if (foundResource != null)
                 {
-                    throw new ArgumentException(
-                        string.Format(
-                            "No resource manager for dictionary '{0}' in assembly '{1}' found! ({1}.{0})",
-                            resourceDictionary,
-                            resourceAssembly));
-                }
+                    // remove ".resources" from the end
+                    foundResource = foundResource.Substring(0, foundResource.Length - ResourceFileExtension.Length);
 
-                // remove ".resources" from the end
-                foundResource = foundResource.Substring(0, foundResource.Length - ResourceFileExtension.Length);
+                    //// Resources.{foundResource}.ResourceManager.GetObject()
+                    //// ^^ prop-info      ^^ method get
 
-                //// Resources.{foundResource}.ResourceManager.GetObject()
-                //// ^^ prop-info      ^^ method get
-
-                try
-                {
-                    // get the propertyinfo from resManager over the type from foundResource
-                    var resourceManagerType = assembly.GetType(foundResource);
-
-                    // check if the resource manager was found.
-                    // if not, assume that the assembly was build with VisualBasic.
-                    // in this case try to manipulate the resource identifier.
-                    if (resourceManagerType == null)
+                    try
                     {
+                        // get the propertyinfo from resManager over the type from foundResource
+                        var resourceManagerType = assembly.GetType(foundResource);
+
+                        // check if the resource manager was found.
+                        // if not, assume that the assembly was build with VisualBasic.
+                        // in this case try to manipulate the resource identifier.
+                        if (resourceManagerType == null)
+                        {
 #if SILVERLIGHT
-                        var assemblyName = resourceAssembly;
+                            var assemblyName = resourceAssembly;
 #else
-                        var assemblyName = assembly.GetName().Name;
+                            var assemblyName = assembly.GetName().Name;
 #endif
-                        resourceManagerType = assembly.GetType(foundResource.Replace(assemblyName, assemblyName + ".My.Resources"));
+                            resourceManagerType = assembly.GetType(foundResource.Replace(assemblyName, assemblyName + ".My.Resources"));
+                        }
+
+                        propInfo = resourceManagerType.GetProperty(ResourceManagerName, ResourceBindingFlags);
+
+                        // get the GET-method from the methodinfo
+                        methodInfo = propInfo.GetGetMethod(true);
+
+                        // get the static ResourceManager property
+                        object resManObject = methodInfo.Invoke(null, null);
+
+                        // cast it to a ResourceManager for better working with
+                        resManager = (ResourceManager)resManObject;
                     }
-
-                    propInfo = resourceManagerType.GetProperty(ResourceManagerName, ResourceBindingFlags);
-
-                    // get the GET-method from the methodinfo
-                    methodInfo = propInfo.GetGetMethod(true);
-
-                    // get the static ResourceManager property
-                    object resManObject = methodInfo.Invoke(null, null);
-
-                    // cast it to a ResourceManager for better working with
-                    resManager = (ResourceManager)resManObject;
+                    catch (Exception ex)
+                    {
+                        // this error has to get thrown because this has to work
+                        throw new InvalidOperationException("Cannot resolve the ResourceManager!", ex);
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    // this error has to get thrown because this has to work
-                    throw new InvalidOperationException("Cannot resolve the ResourceManager!", ex);
+                    resManager = new ResourceManager(resManagerNameToSearch, assembly);
                 }
+
+                // if no one was found, exception
+                if (resManager == null)
+                    throw new ArgumentException(string.Format("No resource manager for dictionary '{0}' in assembly '{1}' found! ({1}.{0})", resourceDictionary, resourceAssembly));
 
                 // Add the ResourceManager to the cachelist
                 Add(resManKey, resManager);
@@ -366,8 +369,7 @@ namespace WPFLocalizeExtension.Providers
                     foreach (var c in cultures)
                     {
                         var dir = Path.Combine(assemblyLocation, c.Name);
-                        if (Directory.Exists(dir) &&
-                            Directory.GetFiles(dir, "*.resources.dll").Length > 0)
+                        if (Directory.Exists(dir) && Directory.GetFiles(dir, "*.resources.dll").Length > 0)
                             AddCulture(c);
                     }
 #endif
