@@ -302,12 +302,14 @@ namespace WPFLocalizeExtension.Providers
                         // in this case try to manipulate the resource identifier.
                         if (resourceManagerType == null)
                         {
-#if SILVERLIGHT
-                            var assemblyName = resourceAssembly;
-#else
-                            var assemblyName = assembly.GetName().Name;
-#endif
-                            resourceManagerType = assembly.GetType(foundResource.Replace(assemblyName, assemblyName + ".My.Resources"));
+                            foreach (var type in assembly.GetExportedTypes())
+                            {
+                                if (type.Name == resourceDictionary)
+                                {
+                                    resourceManagerType = type;
+                                    break;
+                                }
+                            }
                         }
 
                         propInfo = resourceManagerType.GetProperty(ResourceManagerName, ResourceBindingFlags);
