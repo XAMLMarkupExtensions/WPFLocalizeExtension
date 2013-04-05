@@ -82,6 +82,7 @@
       <AutoGen>True</AutoGen>
     </Compile>
     <Compile Include="TestDataClass.cs" />
+    <Compile Include="TestEnum.cs" />
     <Compile Include="ViewModelBase.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

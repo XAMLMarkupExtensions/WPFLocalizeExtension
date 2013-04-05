@@ -84,7 +84,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Engine\EnumComboBox.cs" />
     <Compile Include="Engine\IDictionaryEventListener.cs" />
+    <Compile Include="Engine\LocProxy.cs" />
     <Compile Include="Extensions\BLoc.cs" />
     <Compile Include="Extensions\FELoc.cs" />
     <Compile Include="Providers\InheritingResxLocalizationProvider.cs" />

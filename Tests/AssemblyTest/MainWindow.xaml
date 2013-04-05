@@ -72,7 +72,7 @@
             <RowDefinition Height="100" />
             <RowDefinition Height="*" />
             <RowDefinition Height="25" />
-            <RowDefinition Height="25" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <ComboBox ItemsSource="{Binding Source={x:Static lex:LocalizeDictionary.Instance}, Path=MergedAvailableCultures}"
@@ -102,6 +102,22 @@
                 </Ext:CatExtension>
             </TextBox.Text>
         </TextBox>
+        <lex:EnumComboBox Grid.Row="6" Margin="2" lex:ResxLocalizationProvider.DefaultAssembly="AssemblyTest" lex:ResxLocalizationProvider.DefaultDictionary="Strings" Type="{x:Type Local:TestEnum}">
+            <lex:EnumComboBox.Style>
+                <Style TargetType="{x:Type lex:EnumComboBox}">
+                    <Setter Property="ItemTemplate">
+                        <Setter.Value>
+                            <DataTemplate>
+                                <Grid>
+                                    <lex:LocProxy Source="{Binding}" x:Name="Proxy" PrependType="True" />
+                                    <TextBlock Text="{Binding Result, ElementName=Proxy}" Margin="2" FontWeight="Normal" />
+                                </Grid>
+                            </DataTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </lex:EnumComboBox.Style>
+        </lex:EnumComboBox>
         <!--<TextBox Grid.Row="6" lex:ResxLocalizationProvider.DefaultAssembly="AssemblyTest" lex:ResxLocalizationProvider.DefaultDictionary="CountryRes">
             <TextBox.Text>
                 <MultiBinding StringFormat="Binding test (no design time!): {0} - {1}">

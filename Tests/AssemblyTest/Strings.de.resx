@@ -154,4 +154,13 @@
   <data name="TestText" xml:space="preserve">
     <value>Dies ist ein Test.</value>
   </data>
+  <data name="TestEnum_Input">
+    <value>Eingabe</value>
+  </data>
+  <data name="TestEnum_Output">
+    <value>Ausgabe</value>
+  </data>
+  <data name="TestEnum_Processing">
+    <value>Verarbeitung</value>
+  </data>
 </root>
