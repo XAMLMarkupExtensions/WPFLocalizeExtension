@@ -593,7 +593,7 @@ namespace WPFLocalizeExtension.Engine
                     culture = newCulture;
 
                     // Change the CurrentThread culture if needed.
-                    if (setCurrentThreadCulture)
+                    if (setCurrentThreadCulture && !this.GetIsInDesignMode())
                     {
                         Thread.CurrentThread.CurrentCulture = culture;
                         Thread.CurrentThread.CurrentUICulture = culture;
