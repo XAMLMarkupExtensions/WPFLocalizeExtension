@@ -60,9 +60,9 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
-    <Reference Include="XAMLMarkupExtensions, Version=1.1.5.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="XAMLMarkupExtensions, Version=1.1.6.1, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\XAMLMarkupExtensions.1.1.5\lib\net40\XAMLMarkupExtensions.dll</HintPath>
+      <HintPath>..\..\packages\XAMLMarkupExtensions.1.1.6.1\lib\net40\XAMLMarkupExtensions.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

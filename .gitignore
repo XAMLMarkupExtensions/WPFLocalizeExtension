@@ -32,3 +32,4 @@ Sandbox
 *.xap
 ClientBin/*
 *.zip
+*.pfx
