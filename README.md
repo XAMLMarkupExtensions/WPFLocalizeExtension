@@ -1,4 +1,4 @@
-# LocalizationExtension v2.1.2#
+# LocalizationExtension v2.1.3#
 ### Is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObjects ###
 
 ### Features:###
