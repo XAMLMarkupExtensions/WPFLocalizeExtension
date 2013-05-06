@@ -36,7 +36,7 @@ namespace WPFLocalizeExtension.Providers
     /// </summary>
     public abstract class CSVLocalizationProviderBase : DependencyObject, ILocalizationProvider
     {
-         #region Variables
+        #region Variables
         /// <summary>
         /// Holds the name of the Resource Manager.
         /// </summary>
@@ -147,28 +147,7 @@ namespace WPFLocalizeExtension.Providers
         protected abstract string GetDictionary(DependencyObject target);
         #endregion
 
-        #region ResourceManager Management
-        /// <summary>
-        /// Thread-safe access to the resource manager dictionary.
-        /// </summary>
-        /// <param name="thekey">Key.</param>
-        /// <param name="result">Value.</param>
-        /// <returns>Success of the operation.</returns>
-        protected bool TryGetValue(string thekey, out ResourceManager result)
-        {
-            lock (ResourceManagerListLock) { return this.ResourceManagerList.TryGetValue(thekey, out result); }
-        }
-
-        /// <summary>
-        /// Thread-safe access to the resource manager dictionary.
-        /// </summary>
-        /// <param name="thekey">Key.</param>
-        /// <param name="value">Value.</param>
-        protected void Add(string thekey, ResourceManager value)
-        {
-            lock (ResourceManagerListLock) { this.ResourceManagerList.Add(thekey, value); }
-        }
-
+        #region Culture Management
         /// <summary>
         /// Thread-safe access to the AvailableCultures list.
         /// </summary>
@@ -180,230 +159,6 @@ namespace WPFLocalizeExtension.Providers
                 if (!this.AvailableCultures.Contains(c))
                     this.AvailableCultures.Add(c);
             }
-        }
-
-        /// <summary>
-        /// Updates the list of available cultures using the given resource location.
-        /// </summary>
-        /// <param name="resourceAssembly">The resource assembly.</param>
-        /// <param name="resourceDictionary">The dictionary to look up.</param>
-        /// <returns>True, if the update was successful.</returns>
-        public bool UpdateCultureList(string resourceAssembly, string resourceDictionary)
-        {
-            return GetResourceManager(resourceAssembly, resourceDictionary) != null;
-        }
-
-        /// <summary>
-        /// Looks up in the cached <see cref="ResourceManager"/> list for the searched <see cref="ResourceManager"/>.
-        /// </summary>
-        /// <param name="resourceAssembly">The resource assembly.</param>
-        /// <param name="resourceDictionary">The dictionary to look up.</param>
-        /// <returns>
-        /// The found <see cref="ResourceManager"/>
-        /// </returns>
-        /// <exception cref="System.InvalidOperationException">
-        /// If the ResourceManagers cannot be looked up
-        /// </exception>
-        /// <exception cref="System.ArgumentException">
-        /// If the searched <see cref="ResourceManager"/> wasn't found
-        /// </exception>
-        protected ResourceManager GetResourceManager(string resourceAssembly, string resourceDictionary)
-        {
-            PropertyInfo propInfo;
-            MethodInfo methodInfo;
-            Assembly assembly = null;
-            ResourceManager resManager;
-            string foundResource = null;
-            string resManagerNameToSearch = "." + resourceDictionary + ResourceFileExtension;
-            string[] availableResources;
-            var resManKey = resourceAssembly + resManagerNameToSearch;
-
-            if (!TryGetValue(resManKey, out resManager))
-            {
-                // if the assembly cannot be loaded, throw an exception
-                try
-                {
-                    // go through every assembly loaded in the app domain
-                    var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
-                    foreach (var assemblyInAppDomain in loadedAssemblies)
-                    {
-                        // check if the name pf the assembly is not null
-                        if (assemblyInAppDomain.FullName != null)
-                        {
-                            // get the assembly name object
-                            AssemblyName assemblyName = new AssemblyName(assemblyInAppDomain.FullName);
-
-                            // check if the name of the assembly is the seached one
-                            if (assemblyName.Name == resourceAssembly)
-                            {
-                                // assigne the assembly
-                                assembly = assemblyInAppDomain;
-
-                                // stop the search here
-                                break;
-                            }
-                        }
-                    }
-
-                    // check if the assembly is still null
-                    if (assembly == null)
-                    {
-                        // assign the loaded assembly
-#if SILVERLIGHT
-                        var name = new AssemblyName(resourceAssembly);
-                        assembly = Assembly.Load(name.FullName);
-#else
-                        assembly = Assembly.Load(new AssemblyName(resourceAssembly));
-#endif
-                    }
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception(string.Format("The Assembly '{0}' cannot be loaded.", resourceAssembly), ex);
-                }
-
-                // get all available resourcenames
-                availableResources = assembly.GetManifestResourceNames();
-
-                // The proposed approach of Andras (http://wpflocalizeextension.codeplex.com/discussions/66098?ProjectName=wpflocalizeextension)
-                var possiblePrefixes = new List<string>(assembly.GetTypes().Select((t) => t.Namespace).Distinct());
-
-                for (int i = 0; i < availableResources.Length; i++)
-                {
-                    if (availableResources[i].EndsWith(resManagerNameToSearch))
-                    {
-                        var matches = possiblePrefixes.Where((p) => availableResources[i].StartsWith(p + "."));
-                        if (matches.Count() != 0)
-                        {
-                            // take the first occurrence and break
-                            foundResource = availableResources[i];
-                            break;
-                        }
-                    }
-                }
-
-                // NOTE: Inverted this IF (nesting is bad, I know) so we just create a new ResourceManager.  -gen3ric
-                if (foundResource != null)
-                {
-                    // remove ".resources" from the end
-                    foundResource = foundResource.Substring(0, foundResource.Length - ResourceFileExtension.Length);
-
-                    //// Resources.{foundResource}.ResourceManager.GetObject()
-                    //// ^^ prop-info      ^^ method get
-
-                    try
-                    {
-                        // get the propertyinfo from resManager over the type from foundResource
-                        var resourceManagerType = assembly.GetType(foundResource);
-
-                        // check if the resource manager was found.
-                        // if not, assume that the assembly was build with VisualBasic.
-                        // in this case try to manipulate the resource identifier.
-                        if (resourceManagerType == null)
-                        {
-                            foreach (var type in assembly.GetExportedTypes())
-                            {
-                                if (type.Name == resourceDictionary)
-                                {
-                                    resourceManagerType = type;
-                                    break;
-                                }
-                            }
-                        }
-
-                        propInfo = resourceManagerType.GetProperty(ResourceManagerName, ResourceBindingFlags);
-
-                        // get the GET-method from the methodinfo
-                        methodInfo = propInfo.GetGetMethod(true);
-
-                        // get the static ResourceManager property
-                        object resManObject = methodInfo.Invoke(null, null);
-
-                        // cast it to a ResourceManager for better working with
-                        resManager = (ResourceManager)resManObject;
-                    }
-                    catch (Exception ex)
-                    {
-                        // this error has to get thrown because this has to work
-                        throw new InvalidOperationException("Cannot resolve the ResourceManager!", ex);
-                    }
-                }
-                else
-                {
-                    resManager = new ResourceManager(resManagerNameToSearch, assembly);
-                }
-
-                // if no one was found, exception
-                if (resManager == null)
-                    throw new ArgumentException(string.Format("No resource manager for dictionary '{0}' in assembly '{1}' found! ({1}.{0})", resourceDictionary, resourceAssembly));
-
-                // Add the ResourceManager to the cachelist
-                Add(resManKey, resManager);
-
-                try
-                {
-#if SILVERLIGHT
-                    var cultures = CultureInfoHelper.GetCultures();
-
-                    foreach (var c in cultures)
-                    {
-                        var dir = c.Name + "/";
-
-                        foreach (var p in Deployment.Current.Parts)
-                            if (p.Source.StartsWith(dir))
-                            {
-                                AddCulture(c);
-                                break;
-                            }
-                    }
-#else
-                    #region old
-                    //var assemblyLocation = Path.GetDirectoryName(assembly.Location);
-
-                    //// Get all directories named like a specific culture.
-                    //var dirs = Directory.GetDirectories(assemblyLocation, "??-??").ToList();
-                    //// Get all directories named like a culture.
-                    //dirs.AddRange(Directory.GetDirectories(assemblyLocation, "??"));
-
-                    //// Get the list of all cultures.
-                    //var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
-
-                    //foreach (var c in cultures)
-                    //{
-                    //    var dir = Path.Combine(assemblyLocation, c.Name);
-                    //    if (Directory.Exists(dir) && Directory.GetFiles(dir, "*.resources.dll").Length > 0)
-                    //        AddCulture(c);
-                    //}
-                    #endregion
-
-                    #region new
-                    var assemblyLocation = Path.GetDirectoryName(assembly.Location);
-
-                    //// Get all directories named like a specific culture.
-                    //var dirs = Directory.GetDirectories(assemblyLocation, "??-??").ToList();
-                    //// Get all directories named like a culture.
-                    //dirs.AddRange(Directory.GetDirectories(assemblyLocation, "??"));
-
-                    // Get the list of all cultures.
-                    var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
-
-                    foreach (var c in cultures)
-                    {
-                        var dir = assemblyLocation;
-                        if (Directory.Exists(dir) && Directory.GetFiles(dir, String.Format("*.{0}.resources.dll", c.Name)).Length > 0)
-                            AddCulture(c);
-                    }
-                    #endregion
-#endif
-                }
-                catch
-                {
-                    // This may lead to problems with Silverlight
-                }
-            }
-
-            // return the found ResourceManager
-            return resManager;
         }
         #endregion
 
@@ -434,8 +189,8 @@ namespace WPFLocalizeExtension.Providers
                 var assembly = GetAssembly(target);
                 var dictionary = GetDictionary(target);
 
-                if (!String.IsNullOrEmpty(assembly) && !String.IsNullOrEmpty(dictionary))
-                    GetResourceManager(assembly, dictionary);
+                //if (!String.IsNullOrEmpty(assembly) && !String.IsNullOrEmpty(dictionary))
+                //    GetResourceManager(assembly, dictionary);
             }
             catch
             {

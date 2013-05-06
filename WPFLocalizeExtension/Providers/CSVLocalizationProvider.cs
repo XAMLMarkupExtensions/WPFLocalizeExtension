@@ -42,16 +42,6 @@ namespace WPFLocalizeExtension.Providers
                 typeof(string),
                 typeof(CSVLocalizationProvider),
                 new PropertyMetadata(null, AttachedPropertyChanged));
-
-        /// <summary>
-        /// <see cref="DependencyProperty"/> DefaultAssembly to set the fallback assembly.
-        /// </summary>
-        public static readonly DependencyProperty DefaultAssemblyProperty =
-            DependencyProperty.RegisterAttached(
-                "DefaultAssembly",
-                typeof(string),
-                typeof(CSVLocalizationProvider),
-                new PropertyMetadata(null, AttachedPropertyChanged));
         #endregion
 
         #region Dependency Property Callback
@@ -77,16 +67,6 @@ namespace WPFLocalizeExtension.Providers
         {
             return (obj != null) ? (string)obj.GetValue(DefaultDictionaryProperty) : null;
         }
-
-        /// <summary>
-        /// Getter of <see cref="DependencyProperty"/> default assembly.
-        /// </summary>
-        /// <param name="obj">The dependency object to get the default assembly from.</param>
-        /// <returns>The default assembly.</returns>
-        public static string GetDefaultAssembly(DependencyObject obj)
-        {
-            return (obj != null) ? (string)obj.GetValue(DefaultAssemblyProperty) : null;
-        }
         #endregion
 
         #region Set
@@ -98,16 +78,6 @@ namespace WPFLocalizeExtension.Providers
         public static void SetDefaultDictionary(DependencyObject obj, string value)
         {
             obj.SetValue(DefaultDictionaryProperty, value);
-        }
-
-        /// <summary>
-        /// Setter of <see cref="DependencyProperty"/> default assembly.
-        /// </summary>
-        /// <param name="obj">The dependency object to set the default assembly to.</param>
-        /// <param name="value">The assembly.</param>
-        public static void SetDefaultAssembly(DependencyObject obj, string value)
-        {
-            obj.SetValue(DefaultAssemblyProperty, value);
         }
         #endregion
         #endregion
@@ -156,7 +126,6 @@ namespace WPFLocalizeExtension.Providers
         /// </summary>
         private CSVLocalizationProvider()
         {
-            ResourceManagerList = new Dictionary<string, ResourceManager>();
             AvailableCultures = new ObservableCollection<CultureInfo>();
             AvailableCultures.Add(CultureInfo.InvariantCulture);
         }
@@ -176,7 +145,7 @@ namespace WPFLocalizeExtension.Providers
         }
         #endregion
 
-        #region Abstract assembly & dictionary lookup
+        #region Abstract dictionary lookup
         /// <summary>
         /// An action that will be called when a parent of one of the observed target objects changed.
         /// </summary>
@@ -184,19 +153,6 @@ namespace WPFLocalizeExtension.Providers
         private void ParentChangedAction(DependencyObject obj)
         {
             OnProviderChanged(obj);
-        }
-
-        /// <summary>
-        /// Get the assembly from the context, if possible.
-        /// </summary>
-        /// <param name="target">The target object.</param>
-        /// <returns>The assembly name, if available.</returns>
-        protected override string GetAssembly(DependencyObject target)
-        {
-            if (target == null)
-                return null;
-
-            return target.GetValueOrRegisterParentNotifier<string>(CSVLocalizationProvider.DefaultAssemblyProperty, ParentChangedAction, parentNotifiers);
         }
 
         /// <summary>
@@ -210,6 +166,19 @@ namespace WPFLocalizeExtension.Providers
                 return null;
 
             return target.GetValueOrRegisterParentNotifier<string>(CSVLocalizationProvider.DefaultDictionaryProperty, ParentChangedAction, parentNotifiers);
+        }
+
+        /// <summary>
+        /// Get the assembly from the context, if possible.
+        /// </summary>
+        /// <param name="target">The target object.</param>
+        /// <returns>The assembly name, if available.</returns>
+        protected override string GetAssembly(DependencyObject target)
+        {
+            if (target == null)
+                return null;
+
+            return target.GetValueOrRegisterParentNotifier<string>(CSVEmbeddedLocalizationProvider.DefaultAssemblyProperty, ParentChangedAction, parentNotifiers);
         }
 
         /// <summary>
@@ -232,14 +201,10 @@ namespace WPFLocalizeExtension.Providers
             ParseKey(key, out assembly, out dictionary, out key);
 
             // Now try to read out the default assembly and/or dictionary.
-            if (String.IsNullOrEmpty(assembly))
-                assembly = GetAssembly(target);
             if (String.IsNullOrEmpty(dictionary))
                 dictionary = GetDictionary(target);
 
             // Try to get the culture specific file.
-            //var appPath = GetWorkingDirectory();
-            //var csvDirectory = Path.Combine(appPath, "Localization");
             var csvDirectory = "Localization";
             var csvPath = "";
 
@@ -290,32 +255,6 @@ namespace WPFLocalizeExtension.Providers
                     break;
                 }
             }
-
-            //// Open the file.
-            //using (var reader = new StreamReader(csvPath, Encoding.UTF8))
-            //{
-            //    // Skip the header if needed.
-            //    if (this.HasHeader && !reader.EndOfStream)
-            //        reader.ReadLine();
-
-            //    // Read each line and split it.
-            //    while (!reader.EndOfStream)
-            //    {
-            //        var line = reader.ReadLine();
-            //        var parts = line.Split(";".ToCharArray());
-
-            //        if (parts.Length < 2)
-            //            continue;
-
-            //        // Check the key (1st column).
-            //        if (parts[0] != key)
-            //            continue;
-
-            //        // Get the value (2nd column).
-            //        ret = parts[1];
-            //        break;
-            //    }
-            //}
 
             // Nothing found -> Raise the error message.
             if (ret == null)
