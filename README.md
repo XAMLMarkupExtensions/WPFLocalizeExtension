@@ -72,4 +72,4 @@ http://root-project.org/
 https://nuget.org/packages/WpfLocalizeExtension/
 
 ### Based on XAML Markup Extensions: ###
-http://xamlmarkupextensions.codeplex.com/
+XAMLMarkupExtensions [Codeplex](http://xamlmarkupextensions.codeplex.com/) [Github](https://github.com/MrCircuit/XAMLMarkupExtensions)
