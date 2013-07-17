@@ -60,7 +60,7 @@
 	* Is in use in various productive systems
 
 ### License: ###
-Microsoft Public License (Ms-PL)
+Microsoft Public License (Ms-PL) [Link](https://github.com/SeriousM/WPFLocalizationExtension/blob/master/LICENSE)
 
 -----
 
