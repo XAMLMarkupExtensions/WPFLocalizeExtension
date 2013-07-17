@@ -60,7 +60,7 @@
 	* Is in use in various productive systems
 
 ### License: ###
-[MIT](https://github.com/SeriousM/WPFLocalizationExtension/blob/master/LICENSE)
+[MS-PL](https://github.com/SeriousM/WPFLocalizationExtension/blob/master/LICENSE)
 
 -----
 
