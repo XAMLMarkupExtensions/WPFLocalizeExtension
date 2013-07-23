@@ -247,13 +247,20 @@ namespace WPFLocalizeExtension.Providers
 
                         foreach (var f in files)
                         {
-                            var dst = Path.Combine(assemblyDir, f.Replace(dir + "\\", ""));
-                            if (!File.Exists(dst) || (Directory.GetLastWriteTime(dst) < Directory.GetLastWriteTime(f)))
+                            try
                             {
-                                var dstDir = Path.GetDirectoryName(dst);
-                                if (!Directory.Exists(dstDir))
-                                    Directory.CreateDirectory(dstDir);
-                                File.Copy(f, dst, true);
+                                var dst = Path.Combine(assemblyDir, f.Replace(dir + "\\", ""));
+                                if (!File.Exists(dst) || (Directory.GetLastWriteTime(dst) < Directory.GetLastWriteTime(f)))
+                                {
+                                    var dstDir = Path.GetDirectoryName(dst);
+                                    if (!Directory.Exists(dstDir))
+                                        Directory.CreateDirectory(dstDir);
+                                    File.Copy(f, dst, true);
+                                    updateManager = true;
+                                }
+                            }
+                            catch (Exception ex)
+                            {
                                 updateManager = true;
                             }
                         }
@@ -414,7 +421,7 @@ namespace WPFLocalizeExtension.Providers
                             }
                     }
 #else
-                    var assemblyLocation = String.IsNullOrEmpty(designPath) ? Path.GetDirectoryName(assembly.Location) : designPath;
+                    var assemblyLocation = Path.GetDirectoryName(assembly.Location);
 
                     // Get the list of all cultures.
                     var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
@@ -562,69 +569,6 @@ namespace WPFLocalizeExtension.Providers
         /// An observable list of available cultures.
         /// </summary>
         public ObservableCollection<CultureInfo> AvailableCultures { get; protected set; }
-        #endregion
-
-        #region DesignPath property
-        private static string designPath = null;
-
-        /// <summary>
-        /// <see cref="DependencyProperty"/> DesignPath to set the Culture resources path.
-        /// Only supported at DesignTime.
-        /// </summary>
-#if SILVERLIGHT
-#else
-        [DesignOnly(true)]
-#endif
-        public static readonly DependencyProperty DesignPathProperty =
-            DependencyProperty.RegisterAttached(
-                "DesignPath",
-                typeof(string),
-                typeof(ResxLocalizationProviderBase),
-                new PropertyMetadata(null, OnNewDesignPath));
-
-        /// <summary>
-        /// Called, when the value of DesignPath changed.
-        /// </summary>
-        /// <param name="obj">The dependency object.</param>
-        /// <param name="args">The dependency property event arguments.</param>
-#if SILVERLIGHT
-#else
-        [DesignOnly(true)]
-#endif
-        private static void OnNewDesignPath(DependencyObject obj, DependencyPropertyChangedEventArgs args)
-        {
-            designPath = args.NewValue as string;
-        }
-
-        /// <summary>
-        /// Getter of <see cref="DependencyProperty"/> DesignPath.
-        /// Only supported at DesignTime.
-        /// </summary>
-        /// <param name="obj">The dependency object to get the design culture from.</param>
-        /// <returns>The design culture at design time or the current culture at runtime.</returns>
-#if SILVERLIGHT
-#else
-        [DesignOnly(true)]
-#endif
-        public static string GetDesignPath(DependencyObject obj)
-        {
-            return (string)obj.GetValue(DesignPathProperty);
-        }
-
-        /// <summary>
-        /// Setter of <see cref="DependencyProperty"/> DesignPath.
-        /// Only supported at DesignTime.
-        /// </summary>
-        /// <param name="obj">The dependency object to set the culture to.</param>
-        /// <param name="value">The value.</param>
-#if SILVERLIGHT
-#else
-        [DesignOnly(true)]
-#endif
-        public static void SetDesignPath(DependencyObject obj, string value)
-        {
-            obj.SetValue(DesignPathProperty, value);
-        } 
         #endregion
     }
 }

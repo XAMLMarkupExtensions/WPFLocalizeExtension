@@ -9,7 +9,6 @@
         xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         lex:LocalizeDictionary.DesignCulture="en"
-        lex:ResxLocalizationProviderBase.DesignPath="C:\Firma\Programmierung\dotNET\WPFLocalizationExtension\Tests\AssemblyTest\bin\Debug"
         lex:ResxLocalizationProvider.DefaultAssembly="AssemblyTestResourceLib"
         lex:ResxLocalizationProvider.DefaultDictionary="Strings"
         Title="MainWindow"
