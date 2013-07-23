@@ -18,18 +18,15 @@ namespace WPFLocalizeExtension.Providers
     #region Uses
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Windows;
-    using System.Resources;
-    using System.Reflection;
+    using System.Collections.ObjectModel;
+    using System.ComponentModel;
+    using System.Diagnostics;
     using System.Globalization;
     using System.IO;
-    using System.Collections.ObjectModel;
-    using System.Windows.Media;
-#if !WINDOWS_PHONE
-    using XAMLMarkupExtensions.Base;
-#endif
+    using System.Linq;
+    using System.Reflection;
+    using System.Resources;
+    using System.Windows;
     #endregion
 
     /// <summary>
@@ -148,7 +145,7 @@ namespace WPFLocalizeExtension.Providers
         protected abstract string GetDictionary(DependencyObject target);
         #endregion
 
-        #region ResourceManager Management
+        #region ResourceManager management
         /// <summary>
         /// Thread-safe access to the resource manager dictionary.
         /// </summary>
@@ -168,6 +165,15 @@ namespace WPFLocalizeExtension.Providers
         protected void Add(string thekey, ResourceManager value)
         {
             lock (ResourceManagerListLock) { this.ResourceManagerList.Add(thekey, value); }
+        }
+
+        /// <summary>
+        /// Tries to remove a key from the resource manager dictionary.
+        /// </summary>
+        /// <param name="thekey">Key.</param>
+        protected void TryRemove(string thekey)
+        {
+            lock (ResourceManagerListLock) { if (this.ResourceManagerList.ContainsKey(thekey)) this.ResourceManagerList.Remove(thekey); }
         }
 
         /// <summary>
@@ -217,50 +223,100 @@ namespace WPFLocalizeExtension.Providers
             string foundResource = null;
             string resManagerNameToSearch = "." + resourceDictionary + ResourceFileExtension;
             string[] availableResources;
+
+            //var resManKey = designPath + resourceAssembly + resManagerNameToSearch;
             var resManKey = resourceAssembly + resManagerNameToSearch;
+
+#if !SILVERLIGHT
+            if (AppDomain.CurrentDomain.FriendlyName.Contains("XDesProc"))
+            {
+                var assemblyDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+                foreach (var process in Process.GetProcesses())
+                {
+                    if (!process.ProcessName.Contains(".vshost"))
+                        continue;
+
+                    var dir = Path.GetDirectoryName(process.Modules[0].FileName);
+                    var files = Directory.GetFiles(dir, resourceAssembly + ".*", SearchOption.AllDirectories);
+
+                    if (files.Length > 0)
+                    {
+                        files = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories);
+                        bool updateManager = false;
+
+                        foreach (var f in files)
+                        {
+                            var dst = Path.Combine(assemblyDir, f.Replace(dir + "\\", ""));
+                            if (!File.Exists(dst) || (Directory.GetLastWriteTime(dst) < Directory.GetLastWriteTime(f)))
+                            {
+                                var dstDir = Path.GetDirectoryName(dst);
+                                if (!Directory.Exists(dstDir))
+                                    Directory.CreateDirectory(dstDir);
+                                File.Copy(f, dst, true);
+                                updateManager = true;
+                            }
+                        }
+
+                        if (updateManager)
+                            TryRemove(resManKey);
+
+                        var file = Path.Combine(assemblyDir, resourceAssembly + ".exe");
+                        if (!File.Exists(file))
+                            file = Path.Combine(assemblyDir, resourceAssembly + ".dll");
+
+                        assembly = Assembly.LoadFrom(file);
+                        break;
+                    }
+                }
+            }
+#endif
 
             if (!TryGetValue(resManKey, out resManager))
             {
-                // if the assembly cannot be loaded, throw an exception
-                try
+                // If the assembly cannot be loaded, throw an exception
+                if (assembly == null)
                 {
-                    // go through every assembly loaded in the app domain
-                    var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
-                    foreach (var assemblyInAppDomain in loadedAssemblies)
+                    try
                     {
-                        // check if the name pf the assembly is not null
-                        if (assemblyInAppDomain.FullName != null)
+                        // go through every assembly loaded in the app domain
+                        var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+                        foreach (var assemblyInAppDomain in loadedAssemblies)
                         {
-                            // get the assembly name object
-                            AssemblyName assemblyName = new AssemblyName(assemblyInAppDomain.FullName);
-
-                            // check if the name of the assembly is the seached one
-                            if (assemblyName.Name == resourceAssembly)
+                            // check if the name pf the assembly is not null
+                            if (assemblyInAppDomain.FullName != null)
                             {
-                                // assigne the assembly
-                                assembly = assemblyInAppDomain;
+                                // get the assembly name object
+                                AssemblyName assemblyName = new AssemblyName(assemblyInAppDomain.FullName);
 
-                                // stop the search here
-                                break;
+                                // check if the name of the assembly is the seached one
+                                if (assemblyName.Name == resourceAssembly)
+                                {
+                                    // assigne the assembly
+                                    assembly = assemblyInAppDomain;
+
+                                    // stop the search here
+                                    break;
+                                }
                             }
                         }
-                    }
 
-                    // check if the assembly is still null
-                    if (assembly == null)
-                    {
-                        // assign the loaded assembly
+                        // check if the assembly is still null
+                        if (assembly == null)
+                        {
+                            // assign the loaded assembly
 #if SILVERLIGHT
-                        var name = new AssemblyName(resourceAssembly);
-                        assembly = Assembly.Load(name.FullName);
+                            var name = new AssemblyName(resourceAssembly);
+                            assembly = Assembly.Load(name.FullName);
 #else
-                        assembly = Assembly.Load(new AssemblyName(resourceAssembly));
+                            assembly = Assembly.Load(new AssemblyName(resourceAssembly));
 #endif
+                        }
                     }
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception(string.Format("The Assembly '{0}' cannot be loaded.", resourceAssembly), ex);
+                    catch (Exception ex)
+                    {
+                        throw new Exception(string.Format("The Assembly '{0}' cannot be loaded.", resourceAssembly), ex);
+                    }
                 }
 
                 // get all available resourcenames
@@ -358,12 +414,7 @@ namespace WPFLocalizeExtension.Providers
                             }
                     }
 #else
-                    var assemblyLocation = Path.GetDirectoryName(assembly.Location);
-
-                    // Get all directories named like a specific culture.
-                    var dirs = Directory.GetDirectories(assemblyLocation, "??-??").ToList();
-                    // Get all directories named like a culture.
-                    dirs.AddRange(Directory.GetDirectories(assemblyLocation, "??"));
+                    var assemblyLocation = String.IsNullOrEmpty(designPath) ? Path.GetDirectoryName(assembly.Location) : designPath;
 
                     // Get the list of all cultures.
                     var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
@@ -469,7 +520,7 @@ namespace WPFLocalizeExtension.Providers
                 assembly = GetAssembly(target);
             if (String.IsNullOrEmpty(dictionary))
                 dictionary = GetDictionary(target);
-            
+
             // Final validation of the values.
             if (String.IsNullOrEmpty(assembly))
             {
@@ -511,6 +562,69 @@ namespace WPFLocalizeExtension.Providers
         /// An observable list of available cultures.
         /// </summary>
         public ObservableCollection<CultureInfo> AvailableCultures { get; protected set; }
+        #endregion
+
+        #region DesignPath property
+        private static string designPath = null;
+
+        /// <summary>
+        /// <see cref="DependencyProperty"/> DesignPath to set the Culture resources path.
+        /// Only supported at DesignTime.
+        /// </summary>
+#if SILVERLIGHT
+#else
+        [DesignOnly(true)]
+#endif
+        public static readonly DependencyProperty DesignPathProperty =
+            DependencyProperty.RegisterAttached(
+                "DesignPath",
+                typeof(string),
+                typeof(ResxLocalizationProviderBase),
+                new PropertyMetadata(null, OnNewDesignPath));
+
+        /// <summary>
+        /// Called, when the value of DesignPath changed.
+        /// </summary>
+        /// <param name="obj">The dependency object.</param>
+        /// <param name="args">The dependency property event arguments.</param>
+#if SILVERLIGHT
+#else
+        [DesignOnly(true)]
+#endif
+        private static void OnNewDesignPath(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+        {
+            designPath = args.NewValue as string;
+        }
+
+        /// <summary>
+        /// Getter of <see cref="DependencyProperty"/> DesignPath.
+        /// Only supported at DesignTime.
+        /// </summary>
+        /// <param name="obj">The dependency object to get the design culture from.</param>
+        /// <returns>The design culture at design time or the current culture at runtime.</returns>
+#if SILVERLIGHT
+#else
+        [DesignOnly(true)]
+#endif
+        public static string GetDesignPath(DependencyObject obj)
+        {
+            return (string)obj.GetValue(DesignPathProperty);
+        }
+
+        /// <summary>
+        /// Setter of <see cref="DependencyProperty"/> DesignPath.
+        /// Only supported at DesignTime.
+        /// </summary>
+        /// <param name="obj">The dependency object to set the culture to.</param>
+        /// <param name="value">The value.</param>
+#if SILVERLIGHT
+#else
+        [DesignOnly(true)]
+#endif
+        public static void SetDesignPath(DependencyObject obj, string value)
+        {
+            obj.SetValue(DesignPathProperty, value);
+        } 
         #endregion
     }
 }

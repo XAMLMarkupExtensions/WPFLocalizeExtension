@@ -8,7 +8,8 @@
         xmlns:c="clr-namespace:System.Collections.Generic;assembly=mscorlib"
         xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
-        lex:LocalizeDictionary.DesignCulture="de"
+        lex:LocalizeDictionary.DesignCulture="en"
+        lex:ResxLocalizationProviderBase.DesignPath="C:\Firma\Programmierung\dotNET\WPFLocalizationExtension\Tests\AssemblyTest\bin\Debug"
         lex:ResxLocalizationProvider.DefaultAssembly="AssemblyTestResourceLib"
         lex:ResxLocalizationProvider.DefaultDictionary="Strings"
         Title="MainWindow"
@@ -72,6 +73,7 @@
             <RowDefinition Height="100" />
             <RowDefinition Height="*" />
             <RowDefinition Height="25" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -141,5 +143,12 @@
                 </DataTemplate>
             </TabControl.ItemTemplate>
         </TabControl>
+        <FlowDocumentScrollViewer Grid.Row="8">
+            <FlowDocument>
+                <Paragraph>
+                    <Run Text="{lex:Loc AssemblyTestResourceLib:Strings:ButtonDE}" />
+                </Paragraph>
+            </FlowDocument>
+        </FlowDocumentScrollViewer>
     </Grid>
 </Window>

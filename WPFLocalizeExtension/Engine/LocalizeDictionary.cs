@@ -40,6 +40,7 @@ namespace WPFLocalizeExtension.Engine
 {
     #region Uses
     using System;
+    using System.Linq;
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Globalization;
@@ -296,7 +297,7 @@ namespace WPFLocalizeExtension.Engine
         }
 
         /// <summary>
-        /// Getter of <see cref="DependencyProperty"/> Culture.
+        /// Getter of <see cref="DependencyProperty"/> DesignCulture.
         /// Only supported at DesignTime.
         /// If its in Runtime, <see cref="LocalizeDictionary"/>.Culture will be returned.
         /// </summary>
@@ -361,11 +362,11 @@ namespace WPFLocalizeExtension.Engine
         }
 
         /// <summary>
-        /// Setter of <see cref="DependencyProperty"/> Culture.
+        /// Setter of <see cref="DependencyProperty"/> DesignCulture.
         /// Only supported at DesignTime.
         /// </summary>
         /// <param name="obj">The dependency object to set the culture to.</param>
-        /// <param name="value">The odds format.</param>
+        /// <param name="value">The value.</param>
 #if SILVERLIGHT
 #else
         [DesignOnly(true)]
@@ -373,9 +374,7 @@ namespace WPFLocalizeExtension.Engine
         public static void SetDesignCulture(DependencyObject obj, string value)
         {
             if (Instance.GetIsInDesignMode())
-            {
                 obj.SetValue(DesignCultureProperty, value);
-            }
         }
         #endregion
         #endregion
@@ -879,6 +878,7 @@ namespace WPFLocalizeExtension.Engine
             /// The list of listeners
             /// </summary>
             private static List<WeakReference> listeners = new List<WeakReference>();
+            private static object listenersLock = new object();
 
             /// <summary>
             /// Fire the event.
@@ -887,22 +887,16 @@ namespace WPFLocalizeExtension.Engine
             /// <param name="args">The event arguments.</param>
             internal static void Invoke(DependencyObject sender, DictionaryEventArgs args)
             {
-                List<WeakReference> purgeList = new List<WeakReference>();
-
-                for (int i = 0; i < listeners.Count; i++)
+                lock (listenersLock)
                 {
-                    WeakReference wr = listeners[i];
-
-                    if (wr.IsAlive)
-                        ((IDictionaryEventListener)wr.Target).ResourceChanged(sender, args);
-                    else
-                        purgeList.Add(wr);
+                    foreach (var wr in listeners.ToList())
+                    {
+                        if (wr.IsAlive)
+                            ((IDictionaryEventListener)wr.Target).ResourceChanged(sender, args);
+                        else
+                            listeners.Remove(wr);
+                    }
                 }
-
-                foreach (WeakReference wr in purgeList)
-                    listeners.Remove(wr);
-
-                purgeList.Clear();
             }
 
             /// <summary>
@@ -915,22 +909,22 @@ namespace WPFLocalizeExtension.Engine
                     return;
 
                 // Check, if this listener already was added.
-                List<WeakReference> purgeList = new List<WeakReference>();
                 bool listenerExists = false;
 
-                foreach (var wr in listeners)
+                lock (listenersLock)
                 {
-                    if (!wr.IsAlive)
-                        purgeList.Add(wr);
-                    else if (wr.Target == listener)
-                        listenerExists = true;
+                    foreach (var wr in listeners.ToList())
+                    {
+                        if (!wr.IsAlive)
+                            listeners.Remove(wr);
+                        else if (wr.Target == listener)
+                            listenerExists = true;
+                    }
+
+                    // Add it now.
+                    if (!listenerExists)
+                        listeners.Add(new WeakReference(listener));
                 }
-
-                Purge(purgeList);
-
-                // Add it now.
-                if (!listenerExists)
-                    listeners.Add(new WeakReference(listener));
             }
 
             /// <summary>
@@ -942,29 +936,16 @@ namespace WPFLocalizeExtension.Engine
                 if (listener == null)
                     return;
 
-                List<WeakReference> purgeList = new List<WeakReference>();
-
-                foreach (WeakReference wr in listeners)
+                lock (listenersLock)
                 {
-                    if (!wr.IsAlive)
-                        purgeList.Add(wr);
-                    else if ((IDictionaryEventListener)wr.Target == listener)
-                        purgeList.Add(wr);
+                    foreach (var wr in listeners.ToList())
+                    {
+                        if (!wr.IsAlive)
+                            listeners.Remove(wr);
+                        else if ((IDictionaryEventListener)wr.Target == listener)
+                            listeners.Remove(wr);
+                    }
                 }
-
-                Purge(purgeList);
-            }
-
-            /// <summary>
-            /// Remove a list of weak references from the list.
-            /// </summary>
-            /// <param name="purgeList">The list of references to remove.</param>
-            private static void Purge(List<WeakReference> purgeList)
-            {
-                foreach (WeakReference wr in purgeList)
-                    listeners.Remove(wr);
-
-                purgeList.Clear();
             }
         }
         #endregion

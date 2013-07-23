@@ -46,7 +46,7 @@
         private static void DataChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
         {
             var sfp = sender as StringFormatProxy;
-            if (sfp != null)
+            if (sfp != null && sfp.StringFormat != null)
                 sfp.Result = String.Format(sfp.StringFormat, sfp.Value);
         }
 
