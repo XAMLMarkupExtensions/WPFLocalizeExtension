@@ -287,7 +287,7 @@ namespace WPFLocalizeExtension.Extensions
                         break;
                     }
 #if !SILVERLIGHT
-                    if (!(doParent is Visual) && !(doParent is Visual3D))
+                    if (!(doParent is Visual) && !(doParent is Visual3D) && !(doParent is FrameworkContentElement))
                     {
                         UpdateNewValue();
                         break;
@@ -295,8 +295,12 @@ namespace WPFLocalizeExtension.Extensions
 #endif
                     try
                     {
-                        var doParent2 = VisualTreeHelper.GetParent(doParent);
-                        if (doParent2 == null && doParent is FrameworkElement)
+                      DependencyObject doParent2;
+                      if (doParent is FrameworkContentElement)
+                        doParent2 = ((FrameworkContentElement) doParent).Parent;
+                      else
+                        doParent2 = VisualTreeHelper.GetParent(doParent);
+                      if (doParent2 == null && doParent is FrameworkElement)
                             doParent2 = ((FrameworkElement)doParent).Parent;
 
                         doParent = doParent2;

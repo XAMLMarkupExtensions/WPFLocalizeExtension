@@ -56,12 +56,17 @@ namespace WPFLocalizeExtension.Providers
 
                     // Try to get the parent using the visual tree helper. This may fail on some occations.
 #if !SILVERLIGHT
-                    if (!(depObj is Visual) && !(depObj is Visual3D))
+                    if (!(depObj is Visual) && !(depObj is Visual3D) && !(depObj is FrameworkContentElement))
                         break;
 #endif
                     DependencyObject depObjParent = null;
-                    try { depObjParent = VisualTreeHelper.GetParent(depObj); }
-                    catch { break; }
+                    if (depObj is FrameworkContentElement)
+                      depObjParent = ((FrameworkContentElement)depObj).Parent;
+                    else
+                    {
+                      try { depObjParent = VisualTreeHelper.GetParent(depObj); }
+                      catch { break; }
+                    }
                     // If this failed, try again using the Parent property (sometimes this is not covered by the VisualTreeHelper class :-P.
                     if (depObjParent == null && depObj is FrameworkElement)
                         depObjParent = ((FrameworkElement)depObj).Parent;
@@ -117,12 +122,17 @@ namespace WPFLocalizeExtension.Providers
 
                     // Try to get the parent using the visual tree helper. This may fail on some occations.
 #if !SILVERLIGHT
-                    if (!(depObj is Visual) && !(depObj is Visual3D))
+                    if (!(depObj is Visual) && !(depObj is Visual3D) && !(depObj is FrameworkContentElement))
                         break;
 #endif
                     DependencyObject depObjParent = null;
-                    try { depObjParent = VisualTreeHelper.GetParent(depObj); }
-                    catch { break; }
+                    if (depObj is FrameworkContentElement)
+                      depObjParent = ((FrameworkContentElement)depObj).Parent;
+                    else
+                    {
+                      try { depObjParent = VisualTreeHelper.GetParent(depObj); }
+                      catch { break; }
+                    }
                     // If this failed, try again using the Parent property (sometimes this is not covered by the VisualTreeHelper class :-P.
                     if (depObjParent == null && depObj is FrameworkElement)
                         depObjParent = ((FrameworkElement)depObj).Parent;
