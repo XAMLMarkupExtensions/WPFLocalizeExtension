@@ -365,15 +365,20 @@ namespace WPFLocalizeExtension.Providers
                         // in this case try to manipulate the resource identifier.
                         if (resourceManagerType == null)
                         {
+                            var dictTypeName = resourceDictionary.Replace('.', '_');
+
                             foreach (var type in assembly.GetExportedTypes())
                             {
-                                if (type.Name == resourceDictionary)
+                                if (type.Name == dictTypeName)
                                 {
                                     resourceManagerType = type;
                                     break;
                                 }
                             }
                         }
+
+                        if (resourceManagerType == null)
+                            return null;
 
                         propInfo = resourceManagerType.GetProperty(ResourceManagerName, ResourceBindingFlags);
 
