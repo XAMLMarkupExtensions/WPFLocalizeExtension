@@ -60,13 +60,17 @@ namespace WPFLocalizeExtension.Providers
                         break;
 #endif
                     DependencyObject depObjParent = null;
+          
+#if !SILVERLIGHT
                     if (depObj is FrameworkContentElement)
-                      depObjParent = ((FrameworkContentElement)depObj).Parent;
+                        depObjParent = ((FrameworkContentElement)depObj).Parent;
                     else
+#endif
                     {
-                      try { depObjParent = VisualTreeHelper.GetParent(depObj); }
-                      catch { break; }
+                        try { depObjParent = VisualTreeHelper.GetParent(depObj); }
+                        catch { break; }
                     }
+                    
                     // If this failed, try again using the Parent property (sometimes this is not covered by the VisualTreeHelper class :-P.
                     if (depObjParent == null && depObj is FrameworkElement)
                         depObjParent = ((FrameworkElement)depObj).Parent;
@@ -126,12 +130,15 @@ namespace WPFLocalizeExtension.Providers
                         break;
 #endif
                     DependencyObject depObjParent = null;
+
+#if !SILVERLIGHT
                     if (depObj is FrameworkContentElement)
-                      depObjParent = ((FrameworkContentElement)depObj).Parent;
+                        depObjParent = ((FrameworkContentElement)depObj).Parent;
                     else
+#endif
                     {
-                      try { depObjParent = VisualTreeHelper.GetParent(depObj); }
-                      catch { break; }
+                        try { depObjParent = VisualTreeHelper.GetParent(depObj); }
+                        catch { break; }
                     }
                     // If this failed, try again using the Parent property (sometimes this is not covered by the VisualTreeHelper class :-P.
                     if (depObjParent == null && depObj is FrameworkElement)

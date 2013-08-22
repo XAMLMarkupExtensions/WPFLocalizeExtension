@@ -145,7 +145,7 @@
         <FlowDocumentScrollViewer Grid.Row="8">
             <FlowDocument>
                 <Paragraph>
-                    <Run Text="{lex:Loc AssemblyTestResourceLib:Strings:ButtonDE}" />
+                    <Run Text="{lex:Loc ButtonDE}" />
                 </Paragraph>
             </FlowDocument>
         </FlowDocumentScrollViewer>

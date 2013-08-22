@@ -295,12 +295,16 @@ namespace WPFLocalizeExtension.Extensions
 #endif
                     try
                     {
-                      DependencyObject doParent2;
-                      if (doParent is FrameworkContentElement)
-                        doParent2 = ((FrameworkContentElement) doParent).Parent;
-                      else
-                        doParent2 = VisualTreeHelper.GetParent(doParent);
-                      if (doParent2 == null && doParent is FrameworkElement)
+                        DependencyObject doParent2;
+
+#if !SILVERLIGHT
+                        if (doParent is FrameworkContentElement)
+                            doParent2 = ((FrameworkContentElement)doParent).Parent;
+                        else
+#endif
+                            doParent2 = VisualTreeHelper.GetParent(doParent);
+
+                        if (doParent2 == null && doParent is FrameworkElement)
                             doParent2 = ((FrameworkElement)doParent).Parent;
 
                         doParent = doParent2;
