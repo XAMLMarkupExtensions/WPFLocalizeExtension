@@ -54,6 +54,7 @@
     <Compile Include="Engine\LocalizeDictionary.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Engine\MissingKeyEventArgs.cs" />
     <Compile Include="Engine\ObjectDependencyManager.cs" />
     <Compile Include="Extensions\BLoc.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -135,7 +135,7 @@ namespace WPFLocalizeExtension.Engine
                 new PropertyMetadata(LocalizeDictionary.DefaultSeparation, SetSeparationFromDependencyProperty));
 
         /// <summary>
-        /// <see cref="DependencyProperty"/> Separation to set the separation character/string for resource name patterns.
+        /// A flag indicating that the invariant culture should be included.
         /// </summary>
         public static readonly DependencyProperty IncludeInvariantCultureProperty =
             DependencyProperty.RegisterAttached(
@@ -143,6 +143,16 @@ namespace WPFLocalizeExtension.Engine
                 typeof(bool),
                 typeof(LocalizeDictionary),
                 new PropertyMetadata(true, SetIncludeInvariantCultureFromDependencyProperty));
+
+        /// <summary>
+        /// A flag indicating that missing keys should be output.
+        /// </summary>
+        public static readonly DependencyProperty OutputMissingKeysProperty =
+            DependencyProperty.RegisterAttached(
+                "OutputMissingKeys",
+                typeof(bool),
+                typeof(LocalizeDictionary),
+                new PropertyMetadata(false, SetOutputMissingKeysFromDependencyProperty));
         #endregion
 
         #region Dependency Property Callbacks
@@ -239,7 +249,6 @@ namespace WPFLocalizeExtension.Engine
         /// <param name="args">The event argument.</param>
         private static void SetSeparationFromDependencyProperty(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-            
         }
 
         /// <summary>
@@ -251,6 +260,17 @@ namespace WPFLocalizeExtension.Engine
         {
             if (args.NewValue is bool)
                 Instance.IncludeInvariantCulture = (bool)args.NewValue;
+        }
+
+        /// <summary>
+        /// Callback function. Used to set the <see cref="LocalizeDictionary"/>.OutputMissingKeys if set in Xaml.
+        /// </summary>
+        /// <param name="obj">The dependency object.</param>
+        /// <param name="args">The event argument.</param>
+        private static void SetOutputMissingKeysFromDependencyProperty(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+        {
+            if (args.NewValue is bool)
+                Instance.OutputMissingKeys = (bool)args.NewValue;
         }
         #endregion
 
@@ -294,6 +314,16 @@ namespace WPFLocalizeExtension.Engine
         public static bool GetIncludeInvariantCulture(DependencyObject target)
         {
             return Instance.IncludeInvariantCulture;
+        }
+
+        /// <summary>
+        /// Tries to get the flag from the given target object or of one of its parents.
+        /// </summary>
+        /// <param name="target">The target object for context.</param>
+        /// <returns>The flag.</returns>
+        public static bool GetOutputMissingKeys(DependencyObject target)
+        {
+            return Instance.OutputMissingKeys;
         }
 
         /// <summary>
@@ -362,6 +392,16 @@ namespace WPFLocalizeExtension.Engine
         }
 
         /// <summary>
+        /// Setter of <see cref="DependencyProperty"/> OutputMissingKeys.
+        /// </summary>
+        /// <param name="obj">The dependency object to set the separation to.</param>
+        /// <param name="value">The flag.</param>
+        public static void SetOutputMissingKeys(DependencyObject obj, bool value)
+        {
+            Instance.OutputMissingKeys = value;
+        }
+
+        /// <summary>
         /// Setter of <see cref="DependencyProperty"/> DesignCulture.
         /// Only supported at DesignTime.
         /// </summary>
@@ -404,6 +444,11 @@ namespace WPFLocalizeExtension.Engine
         /// Determines, if the <see cref="LocalizeDictionary.MergedAvailableCultures"/> contains the invariant culture.
         /// </summary>
         private bool includeInvariantCulture = true;
+
+        /// <summary>
+        /// Determines, if missing keys should be output.
+        /// </summary>
+        private bool outputMissingKeys = false;
 
         /// <summary>
         /// A default provider.
@@ -645,6 +690,18 @@ namespace WPFLocalizeExtension.Engine
             }
         }
 
+        public bool OutputMissingKeys
+        {
+            get { return outputMissingKeys; }
+            set
+            {
+                if (outputMissingKeys != value)
+                {
+                    outputMissingKeys = value;
+                }
+            }
+        }
+
         /// <summary>
         /// The separation char for automatic key retrieval.
         /// </summary>
@@ -871,7 +928,30 @@ namespace WPFLocalizeExtension.Engine
         }
         #endregion
 
-        #region CultureChangedEvent
+        #region MissingKeyEvent (standard event)
+        /// <summary>
+        /// An event for missing keys.
+        /// </summary>
+        public event EventHandler<MissingKeyEventArgs> MissingKeyEvent;
+
+        /// <summary>
+        /// Triggers a MissingKeyEvent.
+        /// </summary>
+        /// <param name="sender">The sender of the event.</param>
+        /// <param name="key">The missing key.</param>
+        /// <returns>True, if a reload should be performed.</returns>
+        internal bool OnNewMissingKeyEvent(object sender, string key)
+        {
+            var args = new MissingKeyEventArgs(key);
+
+            if (MissingKeyEvent != null)
+                MissingKeyEvent(sender, args);
+
+            return args.Reload;
+        }
+        #endregion
+
+        #region DictionaryEvent (using weak references)
         internal static class DictionaryEvent
         {
             /// <summary>

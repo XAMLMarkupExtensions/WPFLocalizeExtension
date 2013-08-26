@@ -64,6 +64,7 @@
     <Compile Include="Engine\IDictionaryEventListener.cs" />
     <Compile Include="Engine\LocalizeDictionary.cs" />
     <Compile Include="Engine\LocBinding.cs" />
+    <Compile Include="Engine\MissingKeyEventArgs.cs" />
     <Compile Include="Engine\ObjectDependencyManager.cs" />
     <Compile Include="Extensions\BLoc.cs" />
     <Compile Include="Extensions\Compatibility.cs" />

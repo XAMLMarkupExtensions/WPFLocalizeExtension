@@ -524,11 +524,22 @@ namespace WPFLocalizeExtension.Extensions
             }
 
             // If no result was found, convert the input and add it to the buffer.
-            if (result == null && input != null)
+            if (result == null)
             {
-                result = this.Converter.Convert(input, targetType, this.ConverterParameter, ci);
-                if (isDefaultConverter)
-                    ResourceBuffer.Add(resKeyBase, result);
+                if (input != null)
+                {
+                    result = this.Converter.Convert(input, targetType, this.ConverterParameter, ci);
+                    if (isDefaultConverter)
+                        ResourceBuffer.Add(resKeyBase, result);
+                }
+                else
+                {
+                    if (LocalizeDictionary.Instance.OnNewMissingKeyEvent(this, key))
+                        UpdateNewValue();
+
+                    if (targetType == typeof(String) || targetType == typeof(object))
+                        result = "Key: " + key;
+                }
             }
 
             return result;
