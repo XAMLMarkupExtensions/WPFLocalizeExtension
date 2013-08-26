@@ -155,9 +155,12 @@ namespace WPFLocalizeExtension.Providers
         /// Resets the instance that is used for the ResxLocationProvider
         /// </summary>
         public static void Reset()
-       {
-          instance = null;
-       }
+        {
+            lock (InstanceLock)
+            {
+                instance = null;
+            }
+        }
 
         /// <summary>
         /// The singleton constructor.
