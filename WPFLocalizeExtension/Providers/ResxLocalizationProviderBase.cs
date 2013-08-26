@@ -352,49 +352,27 @@ namespace WPFLocalizeExtension.Providers
                     // remove ".resources" from the end
                     foundResource = foundResource.Substring(0, foundResource.Length - ResourceFileExtension.Length);
 
-                    //// Resources.{foundResource}.ResourceManager.GetObject()
-                    //// ^^ prop-info      ^^ method get
+                    var dictTypeName = resourceDictionary.Replace('.', '_');
 
-                    try
+                    foreach (var type in assembly.GetTypes())
                     {
-                        // get the propertyinfo from resManager over the type from foundResource
-                        var resourceManagerType = assembly.GetType(foundResource);
-
-                        // check if the resource manager was found.
-                        // if not, assume that the assembly was build with VisualBasic.
-                        // in this case try to manipulate the resource identifier.
-                        if (resourceManagerType == null)
+                        if (type.Name == dictTypeName)
                         {
-                            var dictTypeName = resourceDictionary.Replace('.', '_');
-
-                            foreach (var type in assembly.GetExportedTypes())
+                            try
                             {
-                                if (type.Name == dictTypeName)
-                                {
-                                    resourceManagerType = type;
-                                    break;
-                                }
+                                propInfo = type.GetProperty(ResourceManagerName, ResourceBindingFlags);
+
+                                // get the GET-method from the methodinfo
+                                methodInfo = propInfo.GetGetMethod(true);
+
+                                // cast it to a ResourceManager for better working with
+                                resManager = (ResourceManager)methodInfo.Invoke(null, null);
+                                break;
+                            }
+                            catch
+                            {
                             }
                         }
-
-                        if (resourceManagerType == null)
-                            return null;
-
-                        propInfo = resourceManagerType.GetProperty(ResourceManagerName, ResourceBindingFlags);
-
-                        // get the GET-method from the methodinfo
-                        methodInfo = propInfo.GetGetMethod(true);
-
-                        // get the static ResourceManager property
-                        object resManObject = methodInfo.Invoke(null, null);
-
-                        // cast it to a ResourceManager for better working with
-                        resManager = (ResourceManager)resManObject;
-                    }
-                    catch (Exception ex)
-                    {
-                        // this error has to get thrown because this has to work
-                        throw new InvalidOperationException("Cannot resolve the ResourceManager!", ex);
                     }
                 }
                 else
