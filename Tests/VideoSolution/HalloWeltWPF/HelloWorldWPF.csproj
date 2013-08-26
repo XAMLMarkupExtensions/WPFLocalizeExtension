@@ -5,18 +5,16 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{DA56BE11-7D65-4602-9B5B-3EE51C20E830}</ProjectGuid>
+    <ProjectGuid>{64B54D1A-1445-4514-9DEC-7DA11D028F54}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AssemblyTest</RootNamespace>
-    <AssemblyName>AssemblyTest</AssemblyName>
+    <RootNamespace>HalloWeltWPF</RootNamespace>
+    <AssemblyName>HalloWeltWPF</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
-    <Utf8Output>true</Utf8Output>
-    <ExpressionBlendVersion>4.0.30816.0</ExpressionBlendVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -27,7 +25,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -53,42 +50,17 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="XAMLMarkupExtensions, Version=1.1.6.1, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\XAMLMarkupExtensions.1.1.6.1\lib\net40\XAMLMarkupExtensions.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="CaseConverter.cs" />
-    <Compile Include="CountryRes.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>CountryRes.resx</DependentUpon>
-    </Compile>
-    <Compile Include="MyViewModel.cs" />
-    <Compile Include="Resource.With.Dot.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resource.With.Dot.resx</DependentUpon>
-    </Compile>
-    <Compile Include="StringFormatProxy.cs" />
-    <Compile Include="Strings2.Designer.cs">
-      <DependentUpon>Strings2.resx</DependentUpon>
+    <Compile Include="Ressourcen.Designer.cs">
+      <DependentUpon>Ressourcen.resx</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="Strings.Designer.cs">
-      <DependentUpon>Strings.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Include="TestDataClass.cs" />
-    <Compile Include="TestEnum.cs" />
-    <Compile Include="ViewModelBase.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -116,53 +88,26 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <EmbeddedResource Include="Resource.With.Dot.en.resx">
-      <DependentUpon>Resource.With.Dot.resx</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resource.With.Dot.de.resx">
-      <DependentUpon>Resource.With.Dot.resx</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="CountryRes.de.resx">
-      <DependentUpon>CountryRes.resx</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="CountryRes.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>CountryRes.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resource.With.Dot.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resource.With.Dot.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Strings2.de.resx">
-      <DependentUpon>Strings2.resx</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Strings2.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Strings2.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Strings.de.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>Strings.resx</DependentUpon>
+    <EmbeddedResource Include="Ressourcen.ar.resx">
+      <DependentUpon>Ressourcen.resx</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Strings.resx">
+    <EmbeddedResource Include="Ressourcen.de.resx">
+      <DependentUpon>Ressourcen.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Ressourcen.en.resx">
+      <DependentUpon>Ressourcen.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Ressourcen.he.resx">
+      <DependentUpon>Ressourcen.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Ressourcen.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
+      <LastGenOutput>Ressourcen.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="Example.csv">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Example.de.csv">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -171,45 +116,14 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\XAMLMarkupExtensions\XAMLMarkupExtensions\WPFMarkupExtensions-3.5.csproj">
+      <Project>{4EAF896D-9C9A-4654-891A-BC9919864886}</Project>
+      <Name>WPFMarkupExtensions-3.5</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\WPFLocalizeExtension\WPFLocalizeExtension.csproj">
       <Project>{E8C5B094-2CB4-4C26-87F0-351B03612179}</Project>
       <Name>WPFLocalizeExtension</Name>
     </ProjectReference>
-    <ProjectReference Include="..\AssemblyTestResourceLib\AssemblyTestResourceLib.csproj">
-      <Project>{F8ED06E5-39CA-458B-8B84-E043C335BDE2}</Project>
-      <Name>AssemblyTestResourceLib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ProviderExample\ProviderExample.csproj">
-      <Project>{AEECE3FE-7731-47E4-9E0D-D84F18837168}</Project>
-      <Name>ProviderExample</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Test.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Test1.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Test11.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Test12.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\France.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Germany.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\United_Kingdom.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Austria.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

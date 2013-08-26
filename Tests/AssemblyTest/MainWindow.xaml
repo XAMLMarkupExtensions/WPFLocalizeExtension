@@ -145,7 +145,8 @@
         <FlowDocumentScrollViewer Grid.Row="8">
             <FlowDocument>
                 <Paragraph>
-                    <Run Text="{lex:Loc ButtonDE}" />
+                    <!--<Run Text="{lex:Loc ButtonDE}" />-->
+                    <Run lex:ResxLocalizationProvider.DefaultAssembly="AssemblyTest" lex:ResxLocalizationProvider.DefaultDictionary="Resource.With.Dot" Text="{lex:Loc Test}" />
                 </Paragraph>
             </FlowDocument>
         </FlowDocumentScrollViewer>

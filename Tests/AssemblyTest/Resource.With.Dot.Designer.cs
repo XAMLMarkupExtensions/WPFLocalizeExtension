@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace MemoryTest.Properties {
+namespace AssemblyTest {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace MemoryTest.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Resources {
+    public class Resource_With_Dot {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resources() {
+        internal Resource_With_Dot() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace MemoryTest.Properties {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("MemoryTest.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AssemblyTest.Resource.With.Dot", typeof(Resource_With_Dot).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,11 +61,11 @@ namespace MemoryTest.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to TestText.
+        ///   Looks up a localized string similar to Test.
         /// </summary>
-        public static string TestText {
+        public static string Test {
             get {
-                return ResourceManager.GetString("TestText", resourceCulture);
+                return ResourceManager.GetString("Test", resourceCulture);
             }
         }
     }
