@@ -200,6 +200,10 @@ namespace WPFLocalizeExtension.Providers
             return GetResourceManager(resourceAssembly, resourceDictionary) != null;
         }
 
+#if !SILVERLIGHT
+        private AppDomain shadowCacheAppDomain = null;
+#endif
+
         /// <summary>
         /// Looks up in the cached <see cref="ResourceManager"/> list for the searched <see cref="ResourceManager"/>.
         /// </summary>
@@ -230,8 +234,8 @@ namespace WPFLocalizeExtension.Providers
 #if !SILVERLIGHT
             if (AppDomain.CurrentDomain.FriendlyName.Contains("XDesProc"))
             {
-                var assemblyDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-
+                var assemblyDir = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "tmp");
+                
                 foreach (var process in Process.GetProcesses())
                 {
                     if (!process.ProcessName.Contains(".vshost"))
@@ -239,6 +243,7 @@ namespace WPFLocalizeExtension.Providers
 
                     var dir = Path.GetDirectoryName(process.Modules[0].FileName);
                     var files = Directory.GetFiles(dir, resourceAssembly + ".*", SearchOption.AllDirectories);
+                    var dirs = Directory.GetDirectories(dir);
 
                     if (files.Length > 0)
                     {
@@ -247,34 +252,61 @@ namespace WPFLocalizeExtension.Providers
 
                         foreach (var f in files)
                         {
-                            try
-                            {
-                                var dst = Path.Combine(assemblyDir, f.Replace(dir + "\\", ""));
-                                if (!File.Exists(dst) || (Directory.GetLastWriteTime(dst) < Directory.GetLastWriteTime(f)))
-                                {
-                                    var dstDir = Path.GetDirectoryName(dst);
-                                    if (!Directory.Exists(dstDir))
-                                        Directory.CreateDirectory(dstDir);
-                                    File.Copy(f, dst, true);
-                                    updateManager = true;
-                                }
-                            }
-                            catch (Exception ex)
+                            var dst = Path.Combine(assemblyDir, f.Replace(dir + "\\", ""));
+
+                            if (!File.Exists(dst) || (Directory.GetLastWriteTime(dst) < Directory.GetLastWriteTime(f)))
                             {
                                 updateManager = true;
+                                break;
                             }
                         }
 
                         if (updateManager)
+                        {
                             TryRemove(resManKey);
+
+                            if (shadowCacheAppDomain != null)
+                            {
+                                AppDomain.Unload(shadowCacheAppDomain);
+                                shadowCacheAppDomain = null;
+
+                                GC.Collect();
+                                GC.WaitForPendingFinalizers();
+                                GC.Collect();
+                            }
+
+                            foreach (var f in files)
+                            {
+                                var dst = Path.Combine(assemblyDir, f.Replace(dir + "\\", ""));
+
+                                var dstDir = Path.GetDirectoryName(dst);
+                                if (!Directory.Exists(dstDir))
+                                    Directory.CreateDirectory(dstDir);
+                                File.Copy(f, dst, true);
+                            }
+                        }
 
                         var file = Path.Combine(assemblyDir, resourceAssembly + ".exe");
                         if (!File.Exists(file))
                             file = Path.Combine(assemblyDir, resourceAssembly + ".dll");
 
+                        //if (shadowCacheAppDomain == null)
+                        //{
+                        //    shadowCacheAppDomain = AppDomain.CreateDomain("LocalizationDomain");
+                        //    AppDomain.CurrentDomain.AssemblyResolve += (s, e) =>
+                        //    {
+                        //        return Assembly.LoadFrom(file);
+                        //    };
+                        //}
+
+                        //var name = new AssemblyName { CodeBase = file };
+                        //assembly = shadowCacheAppDomain.Load(resourceAssembly);
+
                         assembly = Assembly.LoadFrom(file);
                         break;
                     }
+
+                    break;
                 }
             }
 #endif

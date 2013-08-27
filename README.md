@@ -1,4 +1,4 @@
-# LocalizationExtension v2.1.3#
+# LocalizationExtension v2.1.4#
 ### Is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObjects ###
 
 ### Features:###
@@ -6,8 +6,8 @@
 * First of all: ITS FREE (and will stay free - refer to license section below)
 * Obtain stable results in
 	* WPF applications using .NET 3.5 and higher
-	* **New:** Silverlight 5.0 applications
-	* **New:** Windows Phone applications
+	* Silverlight 5.0 applications
+	* Windows Phone applications
 * **New:** Localization source/provider can be changed freely at arbitrary nodes
 	* Use the Provider property in LocalizeDictionary to change the provider for the particular sub tree
 	* Use the DefaultProvider property to set the provider for the whole application
@@ -23,7 +23,7 @@
 	* Automatic key lookup: If no key is specified, the Name and Property Name of the target are used (e.g. MyButton_Content)
 	* Default assembly, dictionary and culture can be changed dynamically at the RESX provider
 	* Default assembly and dictionary inherit along the visual tree and can be redefined at each node
-* It is available at designtime (MS Expression Blend 3.0 & 4.0, MS VisualStudio 2008 & 2010
+* It is available at designtime (MS Expression Blend 3.0 & 4.0, MS VisualStudio 2008 & 2010 & 2012
     * not for dynamic loaded assemblies which only can be found at runtime and as long the resource (.resx) is built at designtime
 	* Even for Silverlight!
 	* No extra preview application needed
