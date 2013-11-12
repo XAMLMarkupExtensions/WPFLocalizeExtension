@@ -235,7 +235,7 @@ namespace WPFLocalizeExtension.Extensions
             object result = null;
 
             // Try to get the localized input from the resource.
-            string resourceKey = this.Key;
+            string resourceKey = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(Key, null);
 
             CultureInfo ci = GetForcedCultureOrDefault();
 

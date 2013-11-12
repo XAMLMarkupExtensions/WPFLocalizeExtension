@@ -849,6 +849,46 @@ namespace WPFLocalizeExtension.Engine
         }
 
         /// <summary>
+        /// Uses the key and target to build a fully qualified resource key (Assembly, Dictionary, Key)
+        /// </summary>
+        /// <param name="key">Key used as a base to find the full key</param>
+        /// <param name="target">Target used to help determine key information</param>
+        /// <returns>Returns an object with all possible pieces of the given key (Assembly, Dictionary, Key)</returns>
+        public FullyQualifiedResourceKey GetFullyQualifiedResourceKey(string key, DependencyObject target)
+        {
+#if WINDOWS_PHONE
+            var provider = this.DefaultProvider;
+#else
+#if !SILVERLIGHT
+            if (this.DefaultProvider is InheritingResxLocalizationProvider)
+                return GetFullyQualifiedResourceKey(key, target, this.DefaultProvider);
+#endif
+
+            var provider = target != null ? target.GetValue(GetProvider) : null;
+
+            if (provider == null)
+                provider = this.DefaultProvider;
+#endif
+
+            return GetFullyQualifiedResourceKey(key, target, provider);
+        }
+
+        /// <summary>
+        /// Uses the key and target to build a fully qualified resource key (Assembly, Dictionary, Key)
+        /// </summary>
+        /// <param name="key">Key used as a base to find the full key</param>
+        /// <param name="target">Target used to help determine key information</param>
+        /// <param name="provider">Provider to use</param>
+        /// <returns>Returns an object with all possible pieces of the given key (Assembly, Dictionary, Key)</returns>
+        public FullyQualifiedResourceKey GetFullyQualifiedResourceKey(String key, DependencyObject target, ILocalizationProvider provider)
+        {
+            if (provider == null)
+                throw new InvalidOperationException("No provider found and no default provider given.");
+
+            return provider.GetFullyQualifiedResourceKey(key, target);
+        }
+
+        /// <summary>
         /// Looks up the ResourceManagers for the searched <paramref name="resourceKey"/> 
         /// in the <paramref name="resourceDictionary"/> in the <paramref name="resourceAssembly"/>
         /// with an Invariant Culture.

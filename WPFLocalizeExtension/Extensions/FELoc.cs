@@ -388,7 +388,7 @@ namespace WPFLocalizeExtension.Extensions
                 targetType = typeof(BitmapSource);
 
             // Try to get the localized input from the resource.
-            string resourceKey = this.Key;
+            string resourceKey = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(Key, targetObject);
 
             CultureInfo ci = GetForcedCultureOrDefault();
 
@@ -423,8 +423,8 @@ namespace WPFLocalizeExtension.Extensions
                 epProp = "Margin";
 
             string resKeyBase = ci.Name + ":" + targetType.Name + ":";
-            string resKeyNameProp = epName + LocalizeDictionary.GetSeparation(targetObject) + epProp;
-            string resKeyName = epName;
+            string resKeyNameProp = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(epName + LocalizeDictionary.GetSeparation(targetObject) + epProp, targetObject);
+            string resKeyName = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(epName, targetObject);
 
             // Check, if the key is already in our resource buffer.
             object input = null;

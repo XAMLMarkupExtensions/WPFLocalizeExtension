@@ -442,7 +442,7 @@ namespace WPFLocalizeExtension.Extensions
                 targetType = info.TargetPropertyType.GetGenericArguments()[0];
             
             // Try to get the localized input from the resource.
-            string resourceKey = this.Key;
+            string resourceKey = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(Key, targetObject);
             
             CultureInfo ci = GetForcedCultureOrDefault();
 
@@ -477,8 +477,8 @@ namespace WPFLocalizeExtension.Extensions
                 epProp = "Margin";
 
             string resKeyBase = ci.Name + ":" + targetType.Name + ":";
-            string resKeyNameProp = epName + LocalizeDictionary.GetSeparation(targetObject) + epProp;
-            string resKeyName = epName;
+            string resKeyNameProp = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(epName + LocalizeDictionary.GetSeparation(targetObject) + epProp, targetObject);
+            string resKeyName = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(epName, targetObject);
             
             // Check, if the key is already in our resource buffer.
             object input = null;
@@ -629,8 +629,10 @@ namespace WPFLocalizeExtension.Extensions
             // define the default value of the resolved value
             resolvedValue = default(TValue);
 
+            String resourceKey = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(Key, target);
+
             // get the localized object from the dictionary
-            string resKey = targetCulture.Name + ":" + typeof(TValue).Name + ":" + this.Key;
+            string resKey = targetCulture.Name + ":" + typeof(TValue).Name + ":" + resourceKey;
             var isDefaultConverter = this.Converter is DefaultConverter;
 
             if (isDefaultConverter && ResourceBuffer.ContainsKey(resKey))
@@ -639,7 +641,7 @@ namespace WPFLocalizeExtension.Extensions
             }
             else
             {
-                object localizedObject = LocalizeDictionary.Instance.GetLocalizedObject(this.Key, target, targetCulture);
+                object localizedObject = LocalizeDictionary.Instance.GetLocalizedObject(resourceKey, target, targetCulture);
 
                 if (localizedObject == null)
                     return false;

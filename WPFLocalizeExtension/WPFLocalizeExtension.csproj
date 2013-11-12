@@ -82,6 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Engine\EnumComboBox.cs" />
+    <Compile Include="Engine\FullyQualifiedResourceKey.cs" />
     <Compile Include="Engine\IDictionaryEventListener.cs" />
     <Compile Include="Engine\LocProxy.cs" />
     <Compile Include="Engine\MissingKeyEventArgs.cs" />

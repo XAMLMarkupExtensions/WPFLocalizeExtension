@@ -29,6 +29,13 @@ namespace WPFLocalizeExtension.Providers
 #if !WINDOWS_PHONE
     using XAMLMarkupExtensions.Base;
 #endif
+#if WINDOWS_PHONE
+    using WP7LocalizeExtension.Engine;
+#elif SILVERLIGHT
+    using SLLocalizeExtension.Engine;
+#else
+    using WPFLocalizeExtension.Engine;
+#endif
     #endregion
 
     /// <summary>
@@ -163,6 +170,29 @@ namespace WPFLocalizeExtension.Providers
         #endregion
 
         #region ILocalizationProvider implementation
+        /// <summary>
+        /// Uses the key and target to build a fully qualified resource key (Assembly, Dictionary, Key)
+        /// </summary>
+        /// <param name="key">Key used as a base to find the full key</param>
+        /// <param name="target">Target used to help determine key information</param>
+        /// <returns>Returns an object with all possible pieces of the given key (Assembly, Dictionary, Key)</returns>
+        public FullyQualifiedResourceKey GetFullyQualifiedResourceKey(String key, DependencyObject target)
+        {
+          if (target == null)
+            return null;
+
+          String assembly, dictionary;
+          ParseKey(key, out assembly, out dictionary, out key);
+
+          if (String.IsNullOrEmpty(assembly))
+            assembly = GetAssembly(target);
+
+          if (String.IsNullOrEmpty(dictionary))
+            dictionary = GetDictionary(target);
+
+          return new FullyQualifiedResourceKey(key, assembly, dictionary);
+        }
+
         /// <summary>
         /// Gets fired when the provider changed.
         /// </summary>
