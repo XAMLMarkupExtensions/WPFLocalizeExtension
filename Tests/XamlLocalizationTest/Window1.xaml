@@ -97,7 +97,7 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition />
+            <ColumnDefinition Width="333"/>
             <ColumnDefinition />
             <ColumnDefinition />
             <ColumnDefinition />
@@ -116,8 +116,11 @@
         <Button Grid.Row="10" Content="{lex:LocText XamlLocalizationTest:ResTexts:resBack, ForceCulture=de-at}" />
         <Button x:Name="btnChange" Grid.Row="11" Background="{lex:LocBrush Key=resColor, Dict=ResTexts, Assembly=XamlLocalizationTest}">Change Language</Button>
         <Button x:Name="btnNewWindow" Grid.Row="12" Background="Green">Open new window</Button>
-        <Button x:Name="btnCloseChilds" Grid.Row="13">Close subwindows</Button>
-        <Button x:Name="btnCallGC" Grid.Row="14">CALL GC.COLLECT()</Button>
+        <Button x:Name="btnShowKeyValueResTexts" Grid.Row="13">Show Key/Values for ResTexts</Button>
+        <Button x:Name="btnShowKeyValueResTextsDuplicateKeysDifferentValues" Grid.Row="14">Show Key/Values for ResTextsDuplicateKeysDifferentValues</Button>
+        <Button x:Name="btnCloseChilds" Grid.Row="15">Close subwindows</Button>
+        <Button x:Name="btnCallGC" Grid.Row="16">CALL GC.COLLECT()</Button>
+
         <!--<TextBlock Grid.Row="10"><LocText Dict="ResTexts" Key="resBack" Assembly="ResourceAssembly" /></TextBlock>-->
         
         <ListBox Grid.Column="1" Grid.RowSpan="6" ItemTemplate="{StaticResource myDataTemplate}" HorizontalContentAlignment="Stretch">

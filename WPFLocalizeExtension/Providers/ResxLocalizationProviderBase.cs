@@ -484,6 +484,8 @@ namespace WPFLocalizeExtension.Providers
         /// <returns>Returns an object with all possible pieces of the given key (Assembly, Dictionary, Key)</returns>
         public FullyQualifiedResourceKey GetFullyQualifiedResourceKey(String key, DependencyObject target)
         {
+          if (key == null)
+            return null;
           String assembly, dictionary;
           ParseKey(key, out assembly, out dictionary, out key);
 

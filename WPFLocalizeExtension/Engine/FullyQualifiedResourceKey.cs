@@ -42,7 +42,7 @@ namespace WPFLocalizeExtension.Engine
 
         public static implicit operator string(FullyQualifiedResourceKey fullyQualifiedResourceKey)
         {
-          return fullyQualifiedResourceKey.ToString();
+          return fullyQualifiedResourceKey == null ? null : fullyQualifiedResourceKey.ToString();
         }
-  }
+    }
 }
