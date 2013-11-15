@@ -94,6 +94,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="ResTextsDuplicateKeysDifferentValuesKeyValueWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="ResTextsKeyValueWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UserControl1.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -115,6 +123,17 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ResTextsDuplicateKeysDifferentValuesKeyValueWindow.xaml.cs">
+      <DependentUpon>ResTextsDuplicateKeysDifferentValuesKeyValueWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ResTextsKeyValueWindow.xaml.cs">
+      <DependentUpon>ResTextsKeyValueWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Resources\ResTextsDuplicateKeysDifferentValues.Designer.cs">
+      <DependentUpon>ResTextsDuplicateKeysDifferentValues.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="Window1.xaml.cs">
       <DependentUpon>Window1.xaml</DependentUpon>
@@ -150,6 +169,20 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\ResTextsDuplicateKeysDifferentValues.de-AT.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\ResTextsDuplicateKeysDifferentValues.de-DE.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\ResTextsDuplicateKeysDifferentValues.de.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\ResTextsDuplicateKeysDifferentValues.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ResTextsDuplicateKeysDifferentValues.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\ResTexts.de-DE.resx">

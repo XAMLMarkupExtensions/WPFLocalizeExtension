@@ -6,6 +6,8 @@
 // <author>Uwe Mayer</author>
 #endregion
 
+
+
 #if WINDOWS_PHONE
 namespace WP7LocalizeExtension.Providers
 #elif SILVERLIGHT
@@ -19,12 +21,27 @@ namespace WPFLocalizeExtension.Providers
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System;
+#if WINDOWS_PHONE
+    using WP7LocalizeExtension.Engine;
+#elif SILVERLIGHT
+    using SLLocalizeExtension.Engine;
+#else
+    using WPFLocalizeExtension.Engine;
+#endif
 
     /// <summary>
     /// An interface describing classes that provide localized values based on a source/dictionary/key combination.
     /// </summary>
     public interface ILocalizationProvider
     {
+        /// <summary>
+        /// Uses the key and target to build a fully qualified resource key (Assembly, Dictionary, Key)
+        /// </summary>
+        /// <param name="key">Key used as a base to find the full key</param>
+        /// <param name="target">Target used to help determine key information</param>
+        /// <returns>Returns an object with all possible pieces of the given key (Assembly, Dictionary, Key)</returns>
+        FullyQualifiedResourceKey GetFullyQualifiedResourceKey(String key, DependencyObject target);
+      
         /// <summary>
         /// Get the localized object.
         /// </summary>

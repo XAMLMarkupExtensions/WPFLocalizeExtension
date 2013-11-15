@@ -26,11 +26,23 @@ namespace XamlLocalizationTest
             this.btnNewWindow.Click += new RoutedEventHandler(this.BtnNewWindow_Click);
             this.btnCloseChilds.Click += new RoutedEventHandler(this.BtnCloseChilds_Click);
             this.btnCallGC.Click += new RoutedEventHandler(this.BtnCallGC_Click);
+            btnShowKeyValueResTexts.Click += BtnShowKeyValueResTextsOnClick;
+            btnShowKeyValueResTextsDuplicateKeysDifferentValues.Click += BtnShowKeyValueResTextsDuplicateKeysDifferentValuesOnClick;
 
             this.Loaded += new RoutedEventHandler(this.Window1_Loaded);
         }
 
-        /// <summary>
+      private void BtnShowKeyValueResTextsOnClick(object sender, RoutedEventArgs routedEventArgs)
+      {
+        new ResTextsKeyValueWindow{Owner = this}.Show();
+      }
+
+      private void BtnShowKeyValueResTextsDuplicateKeysDifferentValuesOnClick(object sender, RoutedEventArgs routedEventArgs)
+      {
+        new ResTextsDuplicateKeysDifferentValuesKeyValueWindow { Owner = this }.Show();
+      }
+
+      /// <summary>
         /// Raises the <see cref="E:System.Windows.Window.Closing"/> event.
         /// </summary>
         /// <param name="e">A <see cref="T:System.ComponentModel.CancelEventArgs"/> that contains the event data.</param>

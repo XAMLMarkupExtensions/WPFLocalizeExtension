@@ -6,6 +6,10 @@
 // <author>Uwe Mayer</author>
 #endregion
 
+using System.Collections.Generic;
+using WPFLocalizeExtension.Engine;
+using XAMLMarkupExtensions.Base;
+
 namespace ProviderExample
 {
     using System.Collections.ObjectModel;
@@ -111,6 +115,128 @@ namespace ProviderExample
         }
 
         /// <summary>
+        /// Parses a key ([[Assembly:]Dict:]Key and return the parts of it.
+        /// </summary>
+        /// <param name="inKey">The key to parse.</param>
+        /// <param name="outAssembly">The found or default assembly.</param>
+        /// <param name="outDict">The found or default dictionary.</param>
+        /// <param name="outKey">The found or default key.</param>
+        public static void ParseKey(string inKey, out string outAssembly, out string outDict, out string outKey)
+        {
+          // Reset everything to null.
+          outAssembly = null;
+          outDict = null;
+          outKey = null;
+
+          if (!string.IsNullOrEmpty(inKey))
+          {
+            string[] split = inKey.Trim().Split(":".ToCharArray());
+
+            // assembly:dict:key
+            if (split.Length == 3)
+            {
+              outAssembly = !string.IsNullOrEmpty(split[0]) ? split[0] : null;
+              outDict = !string.IsNullOrEmpty(split[1]) ? split[1] : null;
+              outKey = split[2];
+            }
+
+            // dict:key
+            if (split.Length == 2)
+            {
+              outDict = !string.IsNullOrEmpty(split[0]) ? split[0] : null;
+              outKey = split[1];
+            }
+
+            // key
+            if (split.Length == 1)
+            {
+              outKey = split[0];
+            }
+          }
+        }
+
+      public FullyQualifiedResourceKey GetFullyQualifiedResourceKey(string key, DependencyObject target)
+      {
+        String assembly, dictionary;
+        ParseKey(key, out assembly, out dictionary, out key);
+
+        if (target == null)
+          return new FullyQualifiedResourceKey(key, assembly, dictionary);
+
+        if (String.IsNullOrEmpty(assembly))
+          assembly = GetAssembly(target);
+
+        if (String.IsNullOrEmpty(dictionary))
+          dictionary = GetDictionary(target);
+
+        return new FullyQualifiedResourceKey(key, assembly, dictionary);
+      }
+
+      #region Variables
+      /// <summary>
+      /// A dictionary for notification classes for changes of the individual target Parent changes.
+      /// </summary>
+      private Dictionary<DependencyObject, ParentChangedNotifier> parentNotifiers = new Dictionary<DependencyObject, ParentChangedNotifier>();
+      #endregion
+
+      /// <summary>
+      /// An action that will be called when a parent of one of the observed target objects changed.
+      /// </summary>
+      /// <param name="obj">The target <see cref="DependencyObject"/>.</param>
+      private void ParentChangedAction(DependencyObject obj)
+      {
+        OnProviderChanged(obj);
+      }
+
+      /// <summary>
+      /// Calls the <see cref="ILocalizationProvider.ProviderChanged"/> event.
+      /// </summary>
+      /// <param name="target">The target object.</param>
+      protected virtual void OnProviderChanged(DependencyObject target)
+      {
+        try
+        {
+          var assembly = GetAssembly(target);
+          var dictionary = GetDictionary(target);
+
+          //if (!String.IsNullOrEmpty(assembly) && !String.IsNullOrEmpty(dictionary))
+          //    GetResourceManager(assembly, dictionary);
+        }
+        catch
+        {
+        }
+
+        if (ProviderChanged != null)
+          ProviderChanged(this, new ProviderChangedEventArgs(target));
+      }
+
+      /// <summary>
+      /// Get the assembly from the context, if possible.
+      /// </summary>
+      /// <param name="target">The target object.</param>
+      /// <returns>The assembly name, if available.</returns>
+      protected string GetAssembly(DependencyObject target)
+      {
+        if (target == null)
+          return null;
+
+        return target.GetValueOrRegisterParentNotifier<string>(CSVEmbeddedLocalizationProvider.DefaultAssemblyProperty, ParentChangedAction, parentNotifiers);
+      }
+
+      /// <summary>
+      /// Get the dictionary from the context, if possible.
+      /// </summary>
+      /// <param name="target">The target object.</param>
+      /// <returns>The dictionary name, if available.</returns>
+      protected string GetDictionary(DependencyObject target)
+      {
+        if (target == null)
+          return null;
+
+        return target.GetValueOrRegisterParentNotifier<string>(CSVEmbeddedLocalizationProvider.DefaultDictionaryProperty, ParentChangedAction, parentNotifiers);
+      }
+
+      /// <summary>
         /// Get the localized object.
         /// </summary>
         /// <param name="key">The key to the value.</param>

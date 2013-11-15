@@ -27,6 +27,13 @@ namespace WPFLocalizeExtension.Providers
     using System.Reflection;
     using System.Resources;
     using System.Windows;
+#if WINDOWS_PHONE
+    using WP7LocalizeExtension.Engine;
+#elif SILVERLIGHT
+    using SLLocalizeExtension.Engine;
+#else
+    using WPFLocalizeExtension.Engine;
+#endif
     #endregion
 
     /// <summary>
@@ -383,29 +390,17 @@ namespace WPFLocalizeExtension.Providers
                 {
                     // remove ".resources" from the end
                     foundResource = foundResource.Substring(0, foundResource.Length - ResourceFileExtension.Length);
+                    //First try the simple retrieval
+                    var resourceManagerType = assembly.GetType(foundResource);
 
-                    var dictTypeName = resourceDictionary.Replace('.', '_');
-
-                    foreach (var type in assembly.GetTypes())
+                    //If simple doesn't work, check all of the types without using dot notation
+                    if (resourceManagerType == null)
                     {
-                        if (type.Name == dictTypeName)
-                        {
-                            try
-                            {
-                                propInfo = type.GetProperty(ResourceManagerName, ResourceBindingFlags);
-
-                                // get the GET-method from the methodinfo
-                                methodInfo = propInfo.GetGetMethod(true);
-
-                                // cast it to a ResourceManager for better working with
-                                resManager = (ResourceManager)methodInfo.Invoke(null, null);
-                                break;
-                            }
-                            catch
-                            {
-                            }
-                        }
+                      var dictTypeName = resourceDictionary.Replace('.', '_');
+                      resourceManagerType = assembly.GetTypes().FirstOrDefault(type => type.Name == dictTypeName);
                     }
+
+                    resManager = GetResourceManagerFromType(resourceManagerType);
                 }
                 else
                 {
@@ -458,9 +453,54 @@ namespace WPFLocalizeExtension.Providers
             // return the found ResourceManager
             return resManager;
         }
+
+        private ResourceManager GetResourceManagerFromType(Type type)
+        {
+          if (type == null)
+            return null;
+          try
+          {
+            var propInfo = type.GetProperty(ResourceManagerName, ResourceBindingFlags);
+
+            // get the GET-method from the methodinfo
+            var methodInfo = propInfo.GetGetMethod(true);
+
+            // cast it to a ResourceManager for better working with
+            return (ResourceManager)methodInfo.Invoke(null, null);
+          }
+          catch
+          {
+            return null;
+          }
+        }
         #endregion
 
         #region ILocalizationProvider implementation
+        /// <summary>
+        /// Uses the key and target to build a fully qualified resource key (Assembly, Dictionary, Key)
+        /// </summary>
+        /// <param name="key">Key used as a base to find the full key</param>
+        /// <param name="target">Target used to help determine key information</param>
+        /// <returns>Returns an object with all possible pieces of the given key (Assembly, Dictionary, Key)</returns>
+        public FullyQualifiedResourceKey GetFullyQualifiedResourceKey(String key, DependencyObject target)
+        {
+          if (String.IsNullOrEmpty(key))
+            return null;
+          String assembly, dictionary;
+          ParseKey(key, out assembly, out dictionary, out key);
+
+          if (target == null)
+            return new FullyQualifiedResourceKey(key, assembly, dictionary);
+
+          if (String.IsNullOrEmpty(assembly))
+            assembly = GetAssembly(target);
+
+          if (String.IsNullOrEmpty(dictionary))
+            dictionary = GetDictionary(target);
+
+          return new FullyQualifiedResourceKey(key, assembly, dictionary);
+        }
+
         /// <summary>
         /// Gets fired when the provider changed.
         /// </summary>
