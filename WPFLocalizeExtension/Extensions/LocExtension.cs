@@ -92,8 +92,14 @@ namespace WPFLocalizeExtension.Extensions
         /// A parameter that can be supplied along with the converter object.
         /// </summary>
         private object converterParameter = null;
+
+        /// <summary>
+        /// The last endpoint that was used for this extension.
+        /// </summary>
+        private SafeTargetInfo lastEndpoint = null;
         #endregion
 
+        #region Resource buffer handling.
         /// <summary>
         /// Clears the common resource buffer.
         /// </summary>
@@ -102,6 +108,43 @@ namespace WPFLocalizeExtension.Extensions
             if (ResourceBuffer != null)
                 ResourceBuffer.Clear();
             ResourceBuffer = null;
+        }
+        #endregion
+
+        /// <summary>
+        /// Gets the extension that is bound to a given target. Please note, that only the last endpoint of each extension can be evaluated.
+        /// </summary>
+        /// <param name="target">The target object.</param>
+        /// <param name="property">The target property name.</param>
+        /// <param name="propertyIndex">The index in the property (if applicable).</param>
+        /// <returns>The bound extension or null, if not available.</returns>
+        public static LocExtension GetBoundExtension(object target, string property, int propertyIndex = -1)
+        {
+            foreach (var ext in LocalizeDictionary.DictionaryEvent.EnumerateListeners<LocExtension>())
+            {
+                var ep = ext.lastEndpoint;
+                var epProp = "";
+
+                if (!ep.TargetObjectReference.IsAlive)
+                    continue;
+
+                if (ep.TargetProperty is PropertyInfo)
+                    epProp = ((PropertyInfo)ep.TargetProperty).Name;
+#if SILVERLIGHT
+                else if (ep.TargetProperty is DependencyProperty)
+                    epProp = ((DependencyProperty)ep.TargetProperty).ToString();
+#else
+                else if (ep.TargetProperty is DependencyProperty)
+                    epProp = ((DependencyProperty)ep.TargetProperty).Name;
+#endif
+
+                if (ep.TargetObjectReference.Target == target &&
+                    epProp == property &&
+                    ep.TargetPropertyIndex == propertyIndex)
+                    return ext;
+            }
+
+            return null;
         }
 
         #region Properties
@@ -320,42 +363,34 @@ namespace WPFLocalizeExtension.Extensions
 
         private void ClearItemFromResourceBuffer(DictionaryEventArgs dictionaryEventArgs)
         {
-            if (dictionaryEventArgs.Type == DictionaryEventType.ValueChanged)
+            if (dictionaryEventArgs.Type == DictionaryEventType.ValueChanged && dictionaryEventArgs.Tag is ValueChangedEventArgs)
             {
-                var args = dictionaryEventArgs.Tag as ValueChangedEventArgs;
-                if (args != null)
-                {
-                    var keysToRemove = new List<string>();
-                    var ci = args.Tag as CultureInfo;
-                    foreach (var cacheKey in ResourceBuffer.Keys)
-                    {
-                        if (cacheKey.EndsWith(args.Key))
-                        {
-                            if (ci == null || cacheKey.StartsWith(ci.Name))
-                            {
-                                if (ResourceBuffer[cacheKey] != args.Value)
-                                {
-                                    keysToRemove.Add(cacheKey);
-                                }
-                            }
+                var args = (ValueChangedEventArgs)dictionaryEventArgs.Tag;
+                var keysToRemove = new List<string>();
+                var ci = args.Tag as CultureInfo;
 
-                        }
-                    }
-                    foreach (var keyToRemove in keysToRemove)
+                foreach (var cacheKey in ResourceBuffer.Keys)
+                {
+                    if (cacheKey.EndsWith(args.Key))
                     {
-                        if (!ResourceBuffer.ContainsKey(keyToRemove))
+                        if (ci == null || cacheKey.StartsWith(ci.Name))
                         {
-                            continue;
+                            if (ResourceBuffer[cacheKey] != args.Value)
+                                keysToRemove.Add(cacheKey);
                         }
-                        if (ResourceBuffer[keyToRemove] != args.Value)
-                        {
-                            ResourceBuffer.Remove(keyToRemove);
-                        }
+
                     }
+                }
+
+                foreach (var keyToRemove in keysToRemove)
+                {
+                    if (!ResourceBuffer.ContainsKey(keyToRemove))
+                        continue;
+                    if (ResourceBuffer[keyToRemove] != args.Value)
+                        ResourceBuffer.Remove(keyToRemove);
                 }
             }
         }
-
         #endregion
 
         #region Forced culture handling
@@ -428,6 +463,8 @@ namespace WPFLocalizeExtension.Extensions
 
             if (endPoint == null)
                 return null;
+            else
+                lastEndpoint = SafeTargetInfo.FromTargetInfo(endPoint);
 
             var targetObject = endPoint.TargetObject as DependencyObject;
 

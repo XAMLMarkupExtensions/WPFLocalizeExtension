@@ -1,24 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Globalization;
-using WPFLocalizeExtension.Engine;
-using WPFLocalizeExtension.Providers;
-using ProviderExample;
-using WPFLocalizeExtension.Extensions;
-
-namespace AssemblyTest
+﻿namespace AssemblyTest
 {
+    using System.Windows;
+    using System.Windows.Documents;
+    using WPFLocalizeExtension.Extensions;
+    using WPFLocalizeExtension.Providers;
+    using XAMLMarkupExtensions.Base;
+    
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -47,6 +34,12 @@ namespace AssemblyTest
         private void ButtonAssembly_Click(object sender, RoutedEventArgs e)
         {
             this.SetValue(ResxLocalizationProvider.DefaultAssemblyProperty, "AssemblyTest");
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            var ext = LocExtension.GetBoundExtension(TestObject, "Text", -1);
+            MessageBox.Show(ext.ToString());
         }
     }
 }

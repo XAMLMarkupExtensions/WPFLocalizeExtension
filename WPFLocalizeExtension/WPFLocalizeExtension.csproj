@@ -86,6 +86,7 @@
     <Compile Include="Engine\IDictionaryEventListener.cs" />
     <Compile Include="Engine\LocProxy.cs" />
     <Compile Include="Engine\MissingKeyEventArgs.cs" />
+    <Compile Include="Engine\SafeTargetInfo.cs" />
     <Compile Include="Extensions\BLoc.cs" />
     <Compile Include="Extensions\FELoc.cs" />
     <Compile Include="Providers\CSVEmbeddedLocalizationProvider.cs" />

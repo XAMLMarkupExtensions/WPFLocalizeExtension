@@ -146,7 +146,8 @@
             <FlowDocument>
                 <Paragraph>
                     <!--<Run Text="{lex:Loc ButtonDE}" />-->
-                    <Run lex:ResxLocalizationProvider.DefaultAssembly="AssemblyTest" lex:ResxLocalizationProvider.DefaultDictionary="Resource.With.Dot" Text="{lex:Loc Test}" />
+                    <Run Name="TestObject" lex:ResxLocalizationProvider.DefaultAssembly="AssemblyTest" lex:ResxLocalizationProvider.DefaultDictionary="Resource.With.Dot" Text="{lex:Loc Test}" />
+                    <Button Content="Who is bound here?" Click="Button_Click" />
                 </Paragraph>
             </FlowDocument>
         </FlowDocumentScrollViewer>

@@ -66,6 +66,7 @@
     <Compile Include="Engine\LocBinding.cs" />
     <Compile Include="Engine\MissingKeyEventArgs.cs" />
     <Compile Include="Engine\ObjectDependencyManager.cs" />
+    <Compile Include="Engine\SafeTargetInfo.cs" />
     <Compile Include="Extensions\BLoc.cs" />
     <Compile Include="Extensions\Compatibility.cs" />
     <Compile Include="Extensions\LocExtension.cs" />

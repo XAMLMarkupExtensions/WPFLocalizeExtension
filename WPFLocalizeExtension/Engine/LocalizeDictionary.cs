@@ -1067,6 +1067,25 @@ namespace WPFLocalizeExtension.Engine
                     }
                 }
             }
+
+            /// <summary>
+            /// Enumerates all listeners of type T.
+            /// </summary>
+            /// <typeparam name="T">The listener type.</typeparam>
+            /// <returns>An enumeration of listeners.</returns>
+            internal static IEnumerable<T> EnumerateListeners<T>()
+            {
+                lock (listenersLock)
+                {
+                    foreach (var wr in listeners.ToList())
+                    {
+                        if (!wr.IsAlive)
+                            listeners.Remove(wr);
+                        else if (wr.Target is T)
+                            yield return (T)wr.Target;
+                    }
+                }
+            }
         }
         #endregion
 
