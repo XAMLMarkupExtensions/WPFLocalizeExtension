@@ -60,6 +60,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Engine\FullyQualifiedResourceKey.cs" />
     <Compile Include="Engine\IDictionaryEventListener.cs" />
     <Compile Include="Engine\LocalizeDictionary.cs" />
     <Compile Include="Engine\LocBinding.cs" />

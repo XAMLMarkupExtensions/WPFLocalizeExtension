@@ -242,7 +242,7 @@ namespace WPFLocalizeExtension.Providers
             if (AppDomain.CurrentDomain.FriendlyName.Contains("XDesProc"))
             {
                 var assemblyDir = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "tmp");
-                
+
                 foreach (var process in Process.GetProcesses())
                 {
                     if (!process.ProcessName.Contains(".vshost"))
@@ -396,8 +396,8 @@ namespace WPFLocalizeExtension.Providers
                     //If simple doesn't work, check all of the types without using dot notation
                     if (resourceManagerType == null)
                     {
-                      var dictTypeName = resourceDictionary.Replace('.', '_');
-                      resourceManagerType = assembly.GetTypes().FirstOrDefault(type => type.Name == dictTypeName);
+                        var dictTypeName = resourceDictionary.Replace('.', '_');
+                        resourceManagerType = assembly.GetTypes().FirstOrDefault(type => type.Name == dictTypeName);
                     }
 
                     resManager = GetResourceManagerFromType(resourceManagerType);
@@ -456,22 +456,22 @@ namespace WPFLocalizeExtension.Providers
 
         private ResourceManager GetResourceManagerFromType(Type type)
         {
-          if (type == null)
-            return null;
-          try
-          {
-            var propInfo = type.GetProperty(ResourceManagerName, ResourceBindingFlags);
+            if (type == null)
+                return null;
+            try
+            {
+                var propInfo = type.GetProperty(ResourceManagerName, ResourceBindingFlags);
 
-            // get the GET-method from the methodinfo
-            var methodInfo = propInfo.GetGetMethod(true);
+                // get the GET-method from the methodinfo
+                var methodInfo = propInfo.GetGetMethod(true);
 
-            // cast it to a ResourceManager for better working with
-            return (ResourceManager)methodInfo.Invoke(null, null);
-          }
-          catch
-          {
-            return null;
-          }
+                // cast it to a ResourceManager for better working with
+                return (ResourceManager)methodInfo.Invoke(null, null);
+            }
+            catch
+            {
+                return null;
+            }
         }
         #endregion
 
@@ -484,21 +484,21 @@ namespace WPFLocalizeExtension.Providers
         /// <returns>Returns an object with all possible pieces of the given key (Assembly, Dictionary, Key)</returns>
         public FullyQualifiedResourceKey GetFullyQualifiedResourceKey(String key, DependencyObject target)
         {
-          if (String.IsNullOrEmpty(key))
-            return null;
-          String assembly, dictionary;
-          ParseKey(key, out assembly, out dictionary, out key);
+            if (String.IsNullOrEmpty(key))
+                return null;
+            String assembly, dictionary;
+            ParseKey(key, out assembly, out dictionary, out key);
 
-          if (target == null)
+            if (target == null)
+                return new FullyQualifiedResourceKey(key, assembly, dictionary);
+
+            if (String.IsNullOrEmpty(assembly))
+                assembly = GetAssembly(target);
+
+            if (String.IsNullOrEmpty(dictionary))
+                dictionary = GetDictionary(target);
+
             return new FullyQualifiedResourceKey(key, assembly, dictionary);
-
-          if (String.IsNullOrEmpty(assembly))
-            assembly = GetAssembly(target);
-
-          if (String.IsNullOrEmpty(dictionary))
-            dictionary = GetDictionary(target);
-
-          return new FullyQualifiedResourceKey(key, assembly, dictionary);
         }
 
         /// <summary>
