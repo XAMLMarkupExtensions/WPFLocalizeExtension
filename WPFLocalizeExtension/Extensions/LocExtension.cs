@@ -496,7 +496,7 @@ namespace WPFLocalizeExtension.Extensions
 
             // return the evaluated culture info
             return cultureInfo;
-        } 
+        }
         #endregion
 
         #region TargetMarkupExtension implementation
@@ -626,6 +626,102 @@ namespace WPFLocalizeExtension.Extensions
 
         #region Resolve functions
         /// <summary>
+        /// Gets a localized value.
+        /// </summary>
+        /// <typeparam name="TValue">The type of the returned value.</typeparam>
+        /// <param name="key">The key.</param>
+        /// <param name="converter">An optional converter.</param>
+        /// <param name="converterParameter">An optional converter parameter.</param>
+        /// <returns>The resolved localized object.</returns>
+        public static TValue GetLocalizedValue<TValue>(string key, IValueConverter converter = null, object converterParameter = null)
+        {
+#if SILVERLIGHT
+            var targetCulture = LocalizeDictionary.Instance.Culture;
+#else
+            var targetCulture = LocalizeDictionary.Instance.SpecificCulture;
+#endif
+            return GetLocalizedValue<TValue>(key, targetCulture, null, converter, converterParameter);
+        }
+
+        /// <summary>
+        /// Gets a localized value.
+        /// </summary>
+        /// <typeparam name="TValue">The type of the returned value.</typeparam>
+        /// <param name="key">The key.</param>
+        /// <param name="targetCulture">The target culture.</param>
+        /// <param name="converter">An optional converter.</param>
+        /// <param name="converterParameter">An optional converter parameter.</param>
+        /// <returns>The resolved localized object.</returns>
+        public static TValue GetLocalizedValue<TValue>(string key, CultureInfo targetCulture, IValueConverter converter = null, object converterParameter = null)
+        {
+            return GetLocalizedValue<TValue>(key, targetCulture, null, converter, converterParameter);
+        }
+
+        /// <summary>
+        /// Gets a localized value.
+        /// </summary>
+        /// <typeparam name="TValue">The type of the returned value.</typeparam>
+        /// <param name="key">The key.</param>
+        /// <param name="target">The target <see cref="DependencyObject"/>.</param>
+        /// <param name="converter">An optional converter.</param>
+        /// <param name="converterParameter">An optional converter parameter.</param>
+        /// <returns>The resolved localized object.</returns>
+        public static TValue GetLocalizedValue<TValue>(string key, DependencyObject target, IValueConverter converter = null, object converterParameter = null)
+        {
+#if SILVERLIGHT
+            var targetCulture = LocalizeDictionary.Instance.Culture;
+#else
+            var targetCulture = LocalizeDictionary.Instance.SpecificCulture;
+#endif
+            return GetLocalizedValue<TValue>(key, targetCulture, target, converter, converterParameter);
+        }
+
+        /// <summary>
+        /// Gets a localized value.
+        /// </summary>
+        /// <typeparam name="TValue">The type of the returned value.</typeparam>
+        /// <param name="key">The key.</param>
+        /// <param name="targetCulture">The target culture.</param>
+        /// <param name="target">The target <see cref="DependencyObject"/>.</param>
+        /// <param name="converter">An optional converter.</param>
+        /// <param name="converterParameter">An optional converter parameter.</param>
+        /// <returns>The resolved localized object.</returns>
+        public static TValue GetLocalizedValue<TValue>(string key, CultureInfo targetCulture, DependencyObject target, IValueConverter converter = null, object converterParameter = null)
+        {
+            var result = default(TValue);
+
+            var resourceKey = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(key, target);
+
+            // Get the localized object from the dictionary
+            var resKey = targetCulture.Name + ":" + typeof(TValue).Name + ":" + resourceKey;
+            var isDefaultConverter = converter is DefaultConverter;
+
+            if (isDefaultConverter && ResourceBuffer.ContainsKey(resKey))
+                result = (TValue)ResourceBuffer[resKey];
+            else
+            {
+                var localizedObject = LocalizeDictionary.Instance.GetLocalizedObject(resourceKey, target, targetCulture);
+
+                if (localizedObject == null)
+                    return result;
+
+                if (converter == null)
+                    converter = new DefaultConverter();
+
+                var tmp = converter.Convert(localizedObject, typeof(TValue), converterParameter, targetCulture);
+
+                if (tmp is TValue)
+                {
+                    result = (TValue)tmp;
+                    if (isDefaultConverter)
+                        SafeAddItemToResourceBuffer(resKey, result);
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Resolves the localized value of the current Assembly, Dict, Key pair.
         /// </summary>
         /// <param name="resolvedValue">The resolved value.</param>
@@ -633,9 +729,6 @@ namespace WPFLocalizeExtension.Extensions
         /// <returns>
         /// True if the resolve was success, otherwise false.
         /// </returns>
-        /// <exception>
-        /// If the Assembly, Dict, Key pair was not found.
-        /// </exception>
         public bool ResolveLocalizedValue<TValue>(out TValue resolvedValue)
         {
             // return the resolved localized value with the current or forced culture.
@@ -651,9 +744,6 @@ namespace WPFLocalizeExtension.Extensions
         /// <returns>
         /// True if the resolve was success, otherwise false.
         /// </returns>
-        /// <exception>
-        /// If the Assembly, Dict, Key pair was not found.
-        /// </exception>
         public bool ResolveLocalizedValue<TValue>(out TValue resolvedValue, DependencyObject target)
         {
             // return the resolved localized value with the current or forced culture.
@@ -669,9 +759,6 @@ namespace WPFLocalizeExtension.Extensions
         /// <returns>
         /// True if the resolve was success, otherwise false.
         /// </returns>
-        /// <exception>
-        /// If the Assembly, Dict, Key pair was not found.
-        /// </exception>
         public bool ResolveLocalizedValue<TValue>(out TValue resolvedValue, CultureInfo targetCulture)
         {
             return ResolveLocalizedValue(out resolvedValue, targetCulture, null);
@@ -687,15 +774,12 @@ namespace WPFLocalizeExtension.Extensions
         /// <returns>
         /// True if the resolve was success, otherwise false.
         /// </returns>
-        /// <exception>
-        /// If the Assembly, Dict, Key pair was not found.
-        /// </exception>
         public bool ResolveLocalizedValue<TValue>(out TValue resolvedValue, CultureInfo targetCulture, DependencyObject target)
         {
             // define the default value of the resolved value
             resolvedValue = default(TValue);
 
-            String resourceKey = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(Key, target);
+            var resourceKey = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(Key, target);
 
             // get the localized object from the dictionary
             string resKey = targetCulture.Name + ":" + typeof(TValue).Name + ":" + resourceKey;

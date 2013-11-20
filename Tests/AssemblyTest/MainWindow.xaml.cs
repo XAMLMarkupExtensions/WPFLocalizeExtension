@@ -1,5 +1,7 @@
 ﻿namespace AssemblyTest
 {
+    using System;
+    using System.Globalization;
     using System.Windows;
     using System.Windows.Documents;
     using WPFLocalizeExtension.Extensions;
@@ -16,7 +18,7 @@
             this.DataContext = new MyViewModel();
             InitializeComponent();
 
-            //string localisedValue = string.Empty;
+            string localisedValue = string.Empty;
 
             //ILocalizationProvider cvsProvider = new CSVLocalizationProvider() { FileName = "Example", HasHeader = true };
             //LocalizeDictionary.Instance.DefaultProvider = cvsProvider;
@@ -28,7 +30,9 @@
 
             //localisedValue = (string)LocalizeDictionary.Instance.GetLocalizedObject("TestText", null, new CultureInfo("de"), cvsProvider);
 
-            //Console.WriteLine(localisedValue);
+            localisedValue = LocExtension.GetLocalizedValue<string>("AssemblyTestResourceLib:Strings:TestText");
+
+            Console.WriteLine(localisedValue);
         }
 
         private void ButtonAssembly_Click(object sender, RoutedEventArgs e)
