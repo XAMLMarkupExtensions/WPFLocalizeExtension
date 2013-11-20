@@ -227,13 +227,10 @@ namespace WPFLocalizeExtension.Providers
         /// </exception>
         protected ResourceManager GetResourceManager(string resourceAssembly, string resourceDictionary)
         {
-            PropertyInfo propInfo;
-            MethodInfo methodInfo;
             Assembly assembly = null;
             ResourceManager resManager;
             string foundResource = null;
             string resManagerNameToSearch = "." + resourceDictionary + ResourceFileExtension;
-            string[] availableResources;
 
             //var resManKey = designPath + resourceAssembly + resManagerNameToSearch;
             var resManKey = resourceAssembly + resManagerNameToSearch;
@@ -250,7 +247,6 @@ namespace WPFLocalizeExtension.Providers
 
                     var dir = Path.GetDirectoryName(process.Modules[0].FileName);
                     var files = Directory.GetFiles(dir, resourceAssembly + ".*", SearchOption.AllDirectories);
-                    var dirs = Directory.GetDirectories(dir);
 
                     if (files.Length > 0)
                     {
@@ -310,7 +306,6 @@ namespace WPFLocalizeExtension.Providers
                         //assembly = shadowCacheAppDomain.Load(resourceAssembly);
 
                         assembly = Assembly.LoadFrom(file);
-                        break;
                     }
 
                     break;
@@ -329,21 +324,17 @@ namespace WPFLocalizeExtension.Providers
                         var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
                         foreach (var assemblyInAppDomain in loadedAssemblies)
                         {
-                            // check if the name pf the assembly is not null
-                            if (assemblyInAppDomain.FullName != null)
+                            // get the assembly name object
+                            AssemblyName assemblyName = new AssemblyName(assemblyInAppDomain.FullName);
+
+                            // check if the name of the assembly is the seached one
+                            if (assemblyName.Name == resourceAssembly)
                             {
-                                // get the assembly name object
-                                AssemblyName assemblyName = new AssemblyName(assemblyInAppDomain.FullName);
+                                // assigne the assembly
+                                assembly = assemblyInAppDomain;
 
-                                // check if the name of the assembly is the seached one
-                                if (assemblyName.Name == resourceAssembly)
-                                {
-                                    // assigne the assembly
-                                    assembly = assemblyInAppDomain;
-
-                                    // stop the search here
-                                    break;
-                                }
+                                // stop the search here
+                                break;
                             }
                         }
 
@@ -366,20 +357,20 @@ namespace WPFLocalizeExtension.Providers
                 }
 
                 // get all available resourcenames
-                availableResources = assembly.GetManifestResourceNames();
+                string[] availableResources = assembly.GetManifestResourceNames();
 
                 // The proposed approach of Andras (http://wpflocalizeextension.codeplex.com/discussions/66098?ProjectName=wpflocalizeextension)
                 var possiblePrefixes = new List<string>(assembly.GetTypes().Select((t) => t.Namespace).Distinct());
 
-                for (int i = 0; i < availableResources.Length; i++)
+                foreach (string availableResource in availableResources)
                 {
-                    if (availableResources[i].EndsWith(resManagerNameToSearch))
+                    if (availableResource.EndsWith(resManagerNameToSearch))
                     {
-                        var matches = possiblePrefixes.Where((p) => availableResources[i].StartsWith(p + "."));
+                        var matches = possiblePrefixes.Where((p) => availableResource.StartsWith(p + "."));
                         if (matches.Count() != 0)
                         {
                             // take the first occurrence and break
-                            foundResource = availableResources[i];
+                            foundResource = availableResource;
                             break;
                         }
                     }
@@ -571,8 +562,8 @@ namespace WPFLocalizeExtension.Providers
         /// <returns>The value corresponding to the source/dictionary/key path for the given culture (otherwise NULL).</returns>
         public virtual object GetLocalizedObject(string key, DependencyObject target, CultureInfo culture)
         {
-            string assembly = "";
-            string dictionary = "";
+            string assembly;
+            string dictionary;
 
             // Call this function to provide backward compatibility.
             ParseKey(key, out assembly, out dictionary, out key);
