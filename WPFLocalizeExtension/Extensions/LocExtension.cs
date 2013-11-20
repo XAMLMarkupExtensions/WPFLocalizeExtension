@@ -65,6 +65,7 @@ namespace WPFLocalizeExtension.Extensions
         #endregion
 
         #region Variables
+        private static object resourceBufferLock = new object();
         private static Dictionary<string, object> ResourceBuffer = new Dictionary<string, object>();
 
         /// <summary>
@@ -105,12 +106,45 @@ namespace WPFLocalizeExtension.Extensions
         /// </summary>
         internal static void ClearResourceBuffer()
         {
-            if (ResourceBuffer != null)
-                ResourceBuffer.Clear();
+            lock (resourceBufferLock)
+            {
+                if (ResourceBuffer != null)
+                    ResourceBuffer.Clear();
+            }
+            
             ResourceBuffer = null;
+        }
+
+
+        /// <summary>
+        /// Adds an item to the resource buffer (threadsafe).
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="item">The item.</param>
+        internal static void SafeAddItemToResourceBuffer(string key, object item)
+        {
+            lock (resourceBufferLock)
+            {
+                if (!ResourceBuffer.ContainsKey(key))
+                    ResourceBuffer.Add(key, item);
+            }
+        }
+
+        /// <summary>
+        /// Removes an item from the resource buffer (threadsafe).
+        /// </summary>
+        /// <param name="key">The key.</param>
+        internal static void SafeRemoveItemFromResourceBuffer(string key)
+        {
+            lock (resourceBufferLock)
+            {
+                if (ResourceBuffer.ContainsKey(key))
+                    ResourceBuffer.Remove(key);
+            }
         }
         #endregion
 
+        #region GetBoundExtension
         /// <summary>
         /// Gets the extension that is bound to a given target. Please note, that only the last endpoint of each extension can be evaluated.
         /// </summary>
@@ -123,20 +157,11 @@ namespace WPFLocalizeExtension.Extensions
             foreach (var ext in LocalizeDictionary.DictionaryEvent.EnumerateListeners<LocExtension>())
             {
                 var ep = ext.lastEndpoint;
-                var epProp = "";
-
+                
                 if (!ep.TargetObjectReference.IsAlive)
                     continue;
 
-                if (ep.TargetProperty is PropertyInfo)
-                    epProp = ((PropertyInfo)ep.TargetProperty).Name;
-#if SILVERLIGHT
-                else if (ep.TargetProperty is DependencyProperty)
-                    epProp = ((DependencyProperty)ep.TargetProperty).ToString();
-#else
-                else if (ep.TargetProperty is DependencyProperty)
-                    epProp = ((DependencyProperty)ep.TargetProperty).Name;
-#endif
+                var epProp = GetPropertyName(ep.TargetProperty);
 
                 if (ep.TargetObjectReference.Target == target &&
                     epProp == property &&
@@ -146,6 +171,38 @@ namespace WPFLocalizeExtension.Extensions
 
             return null;
         }
+
+        /// <summary>
+        /// Get the name of a property (regular or DependencyProperty).
+        /// </summary>
+        /// <param name="property">The property object.</param>
+        /// <returns>The name of the property.</returns>
+        private static string GetPropertyName(object property)
+        {
+            var epProp = "";
+
+            if (property is PropertyInfo)
+                epProp = ((PropertyInfo)property).Name;
+            else if (property is DependencyProperty)
+            {
+#if SILVERLIGHT
+                epProp = ((DependencyProperty)property).ToString();
+#else
+                epProp = ((DependencyProperty)property).Name;
+#endif
+            }
+
+            // What are these names during design time good for? Any suggestions?
+            if (epProp.Contains("FrameworkElementWidth5"))
+                epProp = "Height";
+            else if (epProp.Contains("FrameworkElementWidth6"))
+                epProp = "Width";
+            else if (epProp.Contains("FrameworkElementMargin12"))
+                epProp = "Margin";
+
+            return epProp;
+        } 
+        #endregion
 
         #region Properties
         /// <summary>
@@ -369,25 +426,16 @@ namespace WPFLocalizeExtension.Extensions
                 var keysToRemove = new List<string>();
                 var ci = args.Tag as CultureInfo;
 
-                foreach (var cacheKey in ResourceBuffer.Keys)
+                foreach (var key in ResourceBuffer.Keys.ToList())
                 {
-                    if (cacheKey.EndsWith(args.Key))
+                    if (key.EndsWith(args.Key))
                     {
-                        if (ci == null || cacheKey.StartsWith(ci.Name))
+                        if (ci == null || key.StartsWith(ci.Name))
                         {
-                            if (ResourceBuffer[cacheKey] != args.Value)
-                                keysToRemove.Add(cacheKey);
+                            if (ResourceBuffer[key] != args.Value)
+                                SafeRemoveItemFromResourceBuffer(key);
                         }
-
                     }
-                }
-
-                foreach (var keyToRemove in keysToRemove)
-                {
-                    if (!ResourceBuffer.ContainsKey(keyToRemove))
-                        continue;
-                    if (ResourceBuffer[keyToRemove] != args.Value)
-                        ResourceBuffer.Remove(keyToRemove);
                 }
             }
         }
@@ -469,7 +517,7 @@ namespace WPFLocalizeExtension.Extensions
             var targetObject = endPoint.TargetObject as DependencyObject;
 
             // Get target type. Change ImageSource to BitmapSource in order to use our own converter.
-            Type targetType = info.TargetPropertyType;
+            var targetType = info.TargetPropertyType;
 
             if (targetType.Equals(typeof(System.Windows.Media.ImageSource)))
                 targetType = typeof(BitmapSource);
@@ -479,14 +527,13 @@ namespace WPFLocalizeExtension.Extensions
                 targetType = info.TargetPropertyType.GetGenericArguments()[0];
             
             // Try to get the localized input from the resource.
-            string resourceKey = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(Key, targetObject);
-            
-            CultureInfo ci = GetForcedCultureOrDefault();
+            var resourceKey = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(Key, targetObject);
+            var ci = GetForcedCultureOrDefault();
 
             // Extract the names of the endpoint object and property
-            string epName = "";
-            string epProp = "";
-
+            var epProp = GetPropertyName(endPoint.TargetProperty);
+            var epName = "";
+            
             if (endPoint.TargetObject is FrameworkElement)
                 epName = (string)((FrameworkElement)endPoint.TargetObject).GetValue(FrameworkElement.NameProperty);
 #if SILVERLIGHT
@@ -495,27 +542,9 @@ namespace WPFLocalizeExtension.Extensions
                 epName = (string)((FrameworkContentElement)endPoint.TargetObject).GetValue(FrameworkContentElement.NameProperty);
 #endif
 
-            if (endPoint.TargetProperty is PropertyInfo)
-                epProp = ((PropertyInfo)endPoint.TargetProperty).Name;
-#if SILVERLIGHT
-            else if (endPoint.TargetProperty is DependencyProperty)
-                epProp = ((DependencyProperty)endPoint.TargetProperty).ToString();
-#else
-            else if (endPoint.TargetProperty is DependencyProperty)
-                epProp = ((DependencyProperty)endPoint.TargetProperty).Name;
-#endif
-
-            // What are these names during design time good for? Any suggestions?
-            if (epProp.Contains("FrameworkElementWidth5"))
-                epProp = "Height";
-            else if (epProp.Contains("FrameworkElementWidth6"))
-                epProp = "Width";
-            else if (epProp.Contains("FrameworkElementMargin12"))
-                epProp = "Margin";
-
-            string resKeyBase = ci.Name + ":" + targetType.Name + ":";
-            string resKeyNameProp = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(epName + LocalizeDictionary.GetSeparation(targetObject) + epProp, targetObject);
-            string resKeyName = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(epName, targetObject);
+            var resKeyBase = ci.Name + ":" + targetType.Name + ":";
+            var resKeyNameProp = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(epName + LocalizeDictionary.GetSeparation(targetObject) + epProp, targetObject);
+            var resKeyName = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(epName, targetObject);
             
             // Check, if the key is already in our resource buffer.
             object input = null;
@@ -567,7 +596,7 @@ namespace WPFLocalizeExtension.Extensions
                 {
                     result = this.Converter.Convert(input, targetType, this.ConverterParameter, ci);
                     if (isDefaultConverter)
-                        ResourceBuffer.Add(resKeyBase, result);
+                        SafeAddItemToResourceBuffer(resKeyBase, result);
                 }
                 else
                 {
@@ -689,7 +718,7 @@ namespace WPFLocalizeExtension.Extensions
                 {
                     resolvedValue = (TValue)result;
                     if (isDefaultConverter)
-                        ResourceBuffer.Add(resKey, resolvedValue);
+                        SafeAddItemToResourceBuffer(resKey, resolvedValue);
                 }
             }
 

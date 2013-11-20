@@ -59,18 +59,10 @@ namespace WPFLocalizeExtension.Extensions
         }
         #endregion
 
+        #region Variables & Properties
+        private static object resourceBufferLock = new object();
         private static Dictionary<string, object> ResourceBuffer = new Dictionary<string, object>();
 
-        /// <summary>
-        /// Clears the common resource buffer.
-        /// </summary>
-        internal static void ClearResourceBuffer()
-        {
-            if (ResourceBuffer != null)
-                ResourceBuffer.Clear();
-            ResourceBuffer = null;
-        }
-        
         private object value = null;
         /// <summary>
         /// The value, the internal binding is pointing at.
@@ -82,7 +74,7 @@ namespace WPFLocalizeExtension.Extensions
             {
                 if (this.value != value)
                 {
-                    this.value = value; 
+                    this.value = value;
                     RaisePropertyChanged("Value");
                 }
             }
@@ -112,7 +104,52 @@ namespace WPFLocalizeExtension.Extensions
         /// <summary>
         /// Gets or sets the culture to force a fixed localized object
         /// </summary>
-        public string ForceCulture { get; set; }
+        public string ForceCulture { get; set; } 
+        #endregion
+
+        #region Resource buffer handling.
+        /// <summary>
+        /// Clears the common resource buffer.
+        /// </summary>
+        internal static void ClearResourceBuffer()
+        {
+            lock (resourceBufferLock)
+            {
+                if (ResourceBuffer != null)
+                    ResourceBuffer.Clear();
+            }
+
+            ResourceBuffer = null;
+        }
+
+
+        /// <summary>
+        /// Adds an item to the resource buffer (threadsafe).
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="item">The item.</param>
+        internal static void SafeAddItemToResourceBuffer(string key, object item)
+        {
+            lock (resourceBufferLock)
+            {
+                if (!ResourceBuffer.ContainsKey(key))
+                    ResourceBuffer.Add(key, item);
+            }
+        }
+
+        /// <summary>
+        /// Removes an item from the resource buffer (threadsafe).
+        /// </summary>
+        /// <param name="key">The key.</param>
+        internal static void SafeRemoveItemFromResourceBuffer(string key)
+        {
+            lock (resourceBufferLock)
+            {
+                if (ResourceBuffer.ContainsKey(key))
+                    ResourceBuffer.Remove(key);
+            }
+        }
+        #endregion
 
         #region Constructors & Dispose
         /// <summary>
@@ -253,7 +290,7 @@ namespace WPFLocalizeExtension.Extensions
                 else
                 {
                     key += resourceKey;
-                    ResourceBuffer.Add(key, result);
+                    SafeAddItemToResourceBuffer(key, result);
                 }
             }
 

@@ -47,20 +47,56 @@ namespace WPFLocalizeExtension.Extensions
         #endregion
 
         #region Private variables
+        private static object resourceBufferLock = new object();
         private static Dictionary<string, object> ResourceBuffer = new Dictionary<string, object>();
+        
         private ParentChangedNotifier parentChangedNotifier = null;
         private TargetInfo targetInfo = null;
         #endregion
 
+        #region Resource buffer handling.
         /// <summary>
         /// Clears the common resource buffer.
         /// </summary>
         internal static void ClearResourceBuffer()
         {
-            if (ResourceBuffer != null)
-                ResourceBuffer.Clear();
+            lock (resourceBufferLock)
+            {
+                if (ResourceBuffer != null)
+                    ResourceBuffer.Clear();
+            }
+
             ResourceBuffer = null;
         }
+
+
+        /// <summary>
+        /// Adds an item to the resource buffer (threadsafe).
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <param name="item">The item.</param>
+        internal static void SafeAddItemToResourceBuffer(string key, object item)
+        {
+            lock (resourceBufferLock)
+            {
+                if (!ResourceBuffer.ContainsKey(key))
+                    ResourceBuffer.Add(key, item);
+            }
+        }
+
+        /// <summary>
+        /// Removes an item from the resource buffer (threadsafe).
+        /// </summary>
+        /// <param name="key">The key.</param>
+        internal static void SafeRemoveItemFromResourceBuffer(string key)
+        {
+            lock (resourceBufferLock)
+            {
+                if (ResourceBuffer.ContainsKey(key))
+                    ResourceBuffer.Remove(key);
+            }
+        }
+        #endregion
 
         #region DependencyProperty: Key
         /// <summary>
@@ -472,7 +508,7 @@ namespace WPFLocalizeExtension.Extensions
             if (result == null && input != null)
             {
                 result = this.Converter.Convert(input, targetType, this.ConverterParameter, ci);
-                ResourceBuffer.Add(resKeyBase, result);
+                SafeAddItemToResourceBuffer(resKeyBase, result);
             }
 
             return result;
