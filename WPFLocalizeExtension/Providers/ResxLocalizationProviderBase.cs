@@ -435,11 +435,11 @@ namespace WPFLocalizeExtension.Providers
 
                     // Get the list of all cultures.
                     var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
-
+                    
                     foreach (var c in cultures)
                     {
-                        var dir = Path.Combine(assemblyLocation, c.Name);
-                        if (Directory.Exists(dir) && Directory.GetFiles(dir, "*.resources.dll").Length > 0)
+                        var rs = resManager.GetResourceSet(c, true, false);
+                        if (rs != null)
                             AddCulture(c);
                     }
 #endif
