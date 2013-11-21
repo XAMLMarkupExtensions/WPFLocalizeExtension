@@ -854,7 +854,7 @@ namespace WPFLocalizeExtension.Engine
         /// <param name="key">Key used as a base to find the full key</param>
         /// <param name="target">Target used to help determine key information</param>
         /// <returns>Returns an object with all possible pieces of the given key (Assembly, Dictionary, Key)</returns>
-        public FullyQualifiedResourceKey GetFullyQualifiedResourceKey(string key, DependencyObject target)
+        public FullyQualifiedResourceKeyBase GetFullyQualifiedResourceKey(string key, DependencyObject target)
         {
 #if WINDOWS_PHONE
             var provider = this.DefaultProvider;
@@ -880,7 +880,7 @@ namespace WPFLocalizeExtension.Engine
         /// <param name="target">Target used to help determine key information</param>
         /// <param name="provider">Provider to use</param>
         /// <returns>Returns an object with all possible pieces of the given key (Assembly, Dictionary, Key)</returns>
-        public FullyQualifiedResourceKey GetFullyQualifiedResourceKey(String key, DependencyObject target, ILocalizationProvider provider)
+        public FullyQualifiedResourceKeyBase GetFullyQualifiedResourceKey(String key, DependencyObject target, ILocalizationProvider provider)
         {
             if (provider == null)
                 throw new InvalidOperationException("No provider found and no default provider given.");

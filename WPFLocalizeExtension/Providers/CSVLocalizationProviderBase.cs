@@ -176,23 +176,23 @@ namespace WPFLocalizeExtension.Providers
         /// <param name="key">Key used as a base to find the full key</param>
         /// <param name="target">Target used to help determine key information</param>
         /// <returns>Returns an object with all possible pieces of the given key (Assembly, Dictionary, Key)</returns>
-        public FullyQualifiedResourceKey GetFullyQualifiedResourceKey(String key, DependencyObject target)
+        public FullyQualifiedResourceKeyBase GetFullyQualifiedResourceKey(String key, DependencyObject target)
         {
-          if (String.IsNullOrEmpty(key))
-            return null;
-          String assembly, dictionary;
-          ParseKey(key, out assembly, out dictionary, out key);
+            if (String.IsNullOrEmpty(key))
+                return null;
+            String assembly, dictionary;
+            ParseKey(key, out assembly, out dictionary, out key);
 
-          if (target == null)
-            return new FullyQualifiedResourceKey(key, assembly, dictionary);
+            if (target == null)
+                return new FQAssemblyDictionaryKey(key, assembly, dictionary);
 
-          if (String.IsNullOrEmpty(assembly))
-            assembly = GetAssembly(target);
+            if (String.IsNullOrEmpty(assembly))
+                assembly = GetAssembly(target);
 
-          if (String.IsNullOrEmpty(dictionary))
-            dictionary = GetDictionary(target);
+            if (String.IsNullOrEmpty(dictionary))
+                dictionary = GetDictionary(target);
 
-          return new FullyQualifiedResourceKey(key, assembly, dictionary);
+            return new FQAssemblyDictionaryKey(key, assembly, dictionary);
         }
 
         /// <summary>

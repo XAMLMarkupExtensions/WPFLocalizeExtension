@@ -60,7 +60,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Engine\FullyQualifiedResourceKey.cs" />
     <Compile Include="Engine\IDictionaryEventListener.cs" />
     <Compile Include="Engine\LocalizeDictionary.cs" />
     <Compile Include="Engine\LocBinding.cs" />
@@ -72,6 +71,8 @@
     <Compile Include="Extensions\LocExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Providers\CultureHelper.cs" />
+    <Compile Include="Providers\FQAssemblyDictionaryKey.cs" />
+    <Compile Include="Providers\FullyQualifiedResourceKeyBase.cs" />
     <Compile Include="Providers\ILocalizationProvider.cs" />
     <Compile Include="Providers\ParentChangedNotifierHelper.cs" />
     <Compile Include="Providers\ProviderEventArgs.cs" />

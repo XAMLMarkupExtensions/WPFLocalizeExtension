@@ -1,5 +1,5 @@
 ﻿#region Copyright information
-// <copyright file="FullyQualifiedResourceKey.cs">
+// <copyright file="FullyQualifiedResourceKeyBase.cs">
 //     Licensed under Microsoft Public License (Ms-PL)
 //     http://wpflocalizeextension.codeplex.com/license
 // </copyright>
@@ -8,11 +8,11 @@
 #endregion
 
 #if WINDOWS_PHONE
-namespace WP7LocalizeExtension.Engine
+namespace WP7LocalizeExtension.Providers
 #elif SILVERLIGHT
-namespace SLLocalizeExtension.Engine
+namespace SLLocalizeExtension.Providers
 #else
-namespace WPFLocalizeExtension.Engine
+namespace WPFLocalizeExtension.Providers
 #endif
 {
     using System;
@@ -21,37 +21,37 @@ namespace WPFLocalizeExtension.Engine
     /// <summary>
     /// A class that bundles the key, assembly and dictionary information.
     /// </summary>
-    public class FullyQualifiedResourceKey
+    public class FQAssemblyDictionaryKey : FullyQualifiedResourceKeyBase
     {
-        private readonly String _key;
+        private readonly String key;
         /// <summary>
         /// The key.
         /// </summary>
-        public String Key { get { return _key; } }
+        public String Key { get { return key; } }
 
-        private readonly String _assembly;
+        private readonly String assembly;
         /// <summary>
         /// The assembly of the dictionary.
         /// </summary>
-        public String Assembly { get { return _assembly; } }
+        public String Assembly { get { return assembly; } }
 
-        private readonly String _dictionary;
+        private readonly String dictionary;
         /// <summary>
         /// The resource dictionary.
         /// </summary>
-        public String Dictionary { get { return _dictionary; } }
+        public String Dictionary { get { return dictionary; } }
 
         /// <summary>
-        /// Creates a new instance of <see cref="FullyQualifiedResourceKey"/>.
+        /// Creates a new instance of <see cref="FullyQualifiedResourceKeyBase"/>.
         /// </summary>
         /// <param name="key">The key.</param>
         /// <param name="assembly">The assembly of the dictionary.</param>
         /// <param name="dictionary">The resource dictionary.</param>
-        public FullyQualifiedResourceKey(string key, string assembly = null, string dictionary = null)
+        public FQAssemblyDictionaryKey(string key, string assembly = null, string dictionary = null)
         {
-            _key = key;
-            _assembly = assembly;
-            _dictionary = dictionary;
+            this.key = key;
+            this.assembly = assembly;
+            this.dictionary = dictionary;
         }
 
         /// <summary>
@@ -61,16 +61,6 @@ namespace WPFLocalizeExtension.Engine
         public override string ToString()
         {
             return String.Join(":", (new[] { Assembly, Dictionary, Key }).Where(x => !String.IsNullOrEmpty(x)).ToArray());
-        }
-
-        /// <summary>
-        /// Implicit string operator.
-        /// </summary>
-        /// <param name="fullyQualifiedResourceKey">The object.</param>
-        /// <returns>The joined version of the assembly, dictionary and key.</returns>
-        public static implicit operator string(FullyQualifiedResourceKey fullyQualifiedResourceKey)
-        {
-            return fullyQualifiedResourceKey == null ? null : fullyQualifiedResourceKey.ToString();
         }
     }
 }

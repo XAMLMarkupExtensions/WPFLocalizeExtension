@@ -40,7 +40,7 @@ namespace WPFLocalizeExtension.Providers
         /// <param name="key">Key used as a base to find the full key</param>
         /// <param name="target">Target used to help determine key information</param>
         /// <returns>Returns an object with all possible pieces of the given key (Assembly, Dictionary, Key)</returns>
-        FullyQualifiedResourceKey GetFullyQualifiedResourceKey(String key, DependencyObject target);
+        FullyQualifiedResourceKeyBase GetFullyQualifiedResourceKey(String key, DependencyObject target);
       
         /// <summary>
         /// Get the localized object.
