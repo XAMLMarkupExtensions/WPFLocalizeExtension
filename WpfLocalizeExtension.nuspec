@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>WpfLocalizeExtension</id>
-        <version>2.1.4</version>
+        <version>2.2.0b</version>
         <title>WPF Localization Extension</title>
         <authors>Bernhard Millauer,Uwe Mayer</authors>
         <owners>Bernhard Millauer,Uwe Mayer</owners>
@@ -11,13 +11,12 @@
         <requireLicenseAcceptance>true</requireLicenseAcceptance>
         <description>LocalizationExtension is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObjects</description>
         <summary>LocalizationExtension is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObjects</summary>
-        <releaseNotes>v2.1.4
-* Switched to XAMLMarkupExtensions v1.1.6.3
-* Added community contributions (svallebro, Kormyr, JustinPihony) for fixes and additions
-* Fixes #9268
-* Fixes #9291
-* Fixes #9294
-* Fixes #9299</releaseNotes>
+        <releaseNotes>v2.2.0b
+* Implemented #9304
+* Fix to #9306
+* Fix to #9307
+* Fix to #9308
+* Implemented #9309</releaseNotes>
         <copyright>Bernhard Millauer, Uwe Mayer</copyright>
         <language>en-US</language>
         <tags>wpf silverlight phone localization extension globalization resx csv resource language</tags>
@@ -26,11 +25,11 @@
         </dependencies>
     </metadata>
     <files>
-        <file src="WPFLocalizeExtension\bin\Release\WPFLocalizeExtension.dll" target="lib\net35\WPFLocalizeExtension.dll" />
-        <file src="WPFLocalizeExtension\bin\Release\WPFLocalizeExtension.xml" target="lib\net35\WPFLocalizeExtension.xml" />
-        <file src="WPFLocalizeExtension\bin\Release\WP7LocalizeExtension.dll" target="lib\sl4-wp71\WP7LocalizeExtension.dll" />
-        <file src="WPFLocalizeExtension\bin\Release\WP7LocalizeExtension.XML" target="lib\sl4-wp71\WP7LocalizeExtension.xml" />
-        <file src="WPFLocalizeExtension\bin\Release\SLLocalizeExtension.dll" target="lib\sl50\SLLocalizeExtension.dll" />
-        <file src="WPFLocalizeExtension\bin\Release\SLLocalizeExtension.XML" target="lib\sl50\SLLocalizeExtension.xml" />
+        <file src="WPFLocalizeExtension\binWPF\Release\WPFLocalizeExtension.dll" target="lib\net35\WPFLocalizeExtension.dll" />
+        <file src="WPFLocalizeExtension\binWPF\Release\WPFLocalizeExtension.xml" target="lib\net35\WPFLocalizeExtension.xml" />
+        <file src="WPFLocalizeExtension\binWP7\Release\WP7LocalizeExtension.dll" target="lib\sl4-wp71\WP7LocalizeExtension.dll" />
+        <file src="WPFLocalizeExtension\binWP7\Release\WP7LocalizeExtension.XML" target="lib\sl4-wp71\WP7LocalizeExtension.xml" />
+        <file src="WPFLocalizeExtension\binSL\Release\SLLocalizeExtension.dll" target="lib\sl50\SLLocalizeExtension.dll" />
+        <file src="WPFLocalizeExtension\binSL\Release\SLLocalizeExtension.XML" target="lib\sl50\SLLocalizeExtension.xml" />
     </files>
 </package>
