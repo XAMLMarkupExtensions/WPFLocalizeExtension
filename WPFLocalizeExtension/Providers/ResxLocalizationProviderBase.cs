@@ -359,20 +359,39 @@ namespace WPFLocalizeExtension.Providers
                 // get all available resourcenames
                 string[] availableResources = assembly.GetManifestResourceNames();
 
+                // get all available types (and ignore unloadable types, e.g. because of unsatisfied dependencies)
+                IEnumerable<Type> availableTypes;
+                try
+                {
+                    availableTypes = assembly.GetTypes();
+                }
+                catch (ReflectionTypeLoadException e)
+                {
+                    availableTypes = e.Types.Where(t => t != null);
+                }
+
                 // The proposed approach of Andras (http://wpflocalizeextension.codeplex.com/discussions/66098?ProjectName=wpflocalizeextension)
-                var possiblePrefixes = new List<string>(assembly.GetTypes().Select((t) => t.Namespace).Distinct());
+                Func<Type, string> tryGetNamespace = delegate(Type type)
+                {
+                    // Ignore unloadable types
+                    try
+                    {
+                        return type.Namespace;
+                    }
+                    catch (Exception)
+                    {
+                        return null;
+                    }
+                };
+                var possiblePrefixes = availableTypes.Select(tryGetNamespace).Where(n => n != null).Distinct().ToList();
 
                 foreach (string availableResource in availableResources)
                 {
-                    if (availableResource.EndsWith(resManagerNameToSearch))
+                    if (availableResource.EndsWith(resManagerNameToSearch) && possiblePrefixes.Any(p => availableResource.StartsWith(p + ".")))
                     {
-                        var matches = possiblePrefixes.Where((p) => availableResource.StartsWith(p + "."));
-                        if (matches.Count() != 0)
-                        {
-                            // take the first occurrence and break
-                            foundResource = availableResource;
-                            break;
-                        }
+                        // take the first occurrence and break
+                        foundResource = availableResource;
+                        break;
                     }
                 }
 
@@ -381,14 +400,36 @@ namespace WPFLocalizeExtension.Providers
                 {
                     // remove ".resources" from the end
                     foundResource = foundResource.Substring(0, foundResource.Length - ResourceFileExtension.Length);
-                    //First try the simple retrieval
-                    var resourceManagerType = assembly.GetType(foundResource);
 
-                    //If simple doesn't work, check all of the types without using dot notation
+                    // First try the simple retrieval
+                    Type resourceManagerType;
+                    try
+                    {
+                        resourceManagerType = assembly.GetType(foundResource);
+                    }
+                    catch (Exception)
+                    {
+                        resourceManagerType = null;
+                    }
+
+                    // If simple doesn't work, check all of the types without using dot notation
                     if (resourceManagerType == null)
                     {
                         var dictTypeName = resourceDictionary.Replace('.', '_');
-                        resourceManagerType = assembly.GetTypes().FirstOrDefault(type => type.Name == dictTypeName);
+
+                        Func<Type, bool> matchesDictTypeName = delegate(Type type)
+                        {
+                            // Ignore unloadable types
+                            try
+                            {
+                                return type.Name == dictTypeName;
+                            }
+                            catch (Exception)
+                            {
+                                return false;
+                            }
+                        };
+                        resourceManagerType = availableTypes.FirstOrDefault(matchesDictTypeName);
                     }
 
                     resManager = GetResourceManagerFromType(resourceManagerType);
