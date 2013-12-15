@@ -111,7 +111,7 @@ namespace WPFLocalizeExtension.Extensions
         /// <summary>
         /// Clears the common resource buffer.
         /// </summary>
-        internal static void ClearResourceBuffer()
+        public static void ClearResourceBuffer()
         {
             lock (resourceBufferLock)
             {
@@ -132,7 +132,7 @@ namespace WPFLocalizeExtension.Extensions
         {
             lock (resourceBufferLock)
             {
-                if (!ResourceBuffer.ContainsKey(key))
+                if (!LocalizeDictionary.Instance.DisableCache && !ResourceBuffer.ContainsKey(key))
                     ResourceBuffer.Add(key, item);
             }
         }

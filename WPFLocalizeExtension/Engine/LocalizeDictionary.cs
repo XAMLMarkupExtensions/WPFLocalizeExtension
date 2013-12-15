@@ -145,6 +145,16 @@ namespace WPFLocalizeExtension.Engine
                 new PropertyMetadata(true, SetIncludeInvariantCultureFromDependencyProperty));
 
         /// <summary>
+        /// A flag indicating that the cache is disabled.
+        /// </summary>
+        public static readonly DependencyProperty DisableCacheProperty =
+            DependencyProperty.RegisterAttached(
+                "DisableCache",
+                typeof(bool),
+                typeof(LocalizeDictionary),
+                new PropertyMetadata(false, SetDisableCacheFromDependencyProperty));
+
+        /// <summary>
         /// A flag indicating that missing keys should be output.
         /// </summary>
         public static readonly DependencyProperty OutputMissingKeysProperty =
@@ -263,6 +273,17 @@ namespace WPFLocalizeExtension.Engine
         }
 
         /// <summary>
+        /// Callback function. Used to set the <see cref="LocalizeDictionary"/>.DisableCache if set in Xaml.
+        /// </summary>
+        /// <param name="obj">The dependency object.</param>
+        /// <param name="args">The event argument.</param>
+        private static void SetDisableCacheFromDependencyProperty(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+        {
+            if (args.NewValue is bool)
+                Instance.DisableCache = (bool)args.NewValue;
+        }
+
+        /// <summary>
         /// Callback function. Used to set the <see cref="LocalizeDictionary"/>.OutputMissingKeys if set in Xaml.
         /// </summary>
         /// <param name="obj">The dependency object.</param>
@@ -314,6 +335,16 @@ namespace WPFLocalizeExtension.Engine
         public static bool GetIncludeInvariantCulture(DependencyObject target)
         {
             return Instance.IncludeInvariantCulture;
+        }
+
+        /// <summary>
+        /// Tries to get the flag from the given target object or of one of its parents.
+        /// </summary>
+        /// <param name="target">The target object for context.</param>
+        /// <returns>The flag.</returns>
+        public static bool GetDisableCache(DependencyObject target)
+        {
+            return Instance.DisableCache;
         }
 
         /// <summary>
@@ -392,6 +423,16 @@ namespace WPFLocalizeExtension.Engine
         }
 
         /// <summary>
+        /// Setter of <see cref="DependencyProperty"/> DisableCache.
+        /// </summary>
+        /// <param name="obj">The dependency object to set the separation to.</param>
+        /// <param name="value">The flag.</param>
+        public static void SetDisableCache(DependencyObject obj, bool value)
+        {
+            Instance.DisableCache = value;
+        }
+
+        /// <summary>
         /// Setter of <see cref="DependencyProperty"/> OutputMissingKeys.
         /// </summary>
         /// <param name="obj">The dependency object to set the separation to.</param>
@@ -444,6 +485,11 @@ namespace WPFLocalizeExtension.Engine
         /// Determines, if the <see cref="LocalizeDictionary.MergedAvailableCultures"/> contains the invariant culture.
         /// </summary>
         private bool includeInvariantCulture = true;
+
+        /// <summary>
+        /// Determines, if the cache is disabled.
+        /// </summary>
+        private bool disableCache = true;
 
         /// <summary>
         /// Determines, if missing keys should be output.
@@ -690,6 +736,24 @@ namespace WPFLocalizeExtension.Engine
             }
         }
 
+        /// <summary>
+        /// Gets or sets the flag that disables the cache.
+        /// </summary>
+        public bool DisableCache
+        {
+            get { return disableCache; }
+            set
+            {
+                if (disableCache != value)
+                {
+                    disableCache = value;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the flag that controls the output of missing keys.
+        /// </summary>
         public bool OutputMissingKeys
         {
             get { return outputMissingKeys; }
