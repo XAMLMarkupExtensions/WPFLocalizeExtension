@@ -603,7 +603,7 @@ namespace WPFLocalizeExtension.Extensions
                     if (LocalizeDictionary.Instance.OnNewMissingKeyEvent(this, key))
                         UpdateNewValue();
 
-                    if (targetType == typeof(String) || targetType == typeof(object))
+                    if (!string.IsNullOrEmpty(key) && (targetType == typeof(String) || targetType == typeof(object)))
                         result = "Key: " + key;
                 }
             }
