@@ -183,6 +183,14 @@ namespace WPFLocalizeExtension.Providers
         }
 
         /// <summary>
+        /// Clears the whole list of cached resource managers.
+        /// </summary>
+        public void ClearResourceManagerList()
+        {
+            lock (ResourceManagerListLock) { this.ResourceManagerList.Clear(); }
+        }
+
+        /// <summary>
         /// Thread-safe access to the AvailableCultures list.
         /// </summary>
         /// <param name="c">The CultureInfo.</param>
