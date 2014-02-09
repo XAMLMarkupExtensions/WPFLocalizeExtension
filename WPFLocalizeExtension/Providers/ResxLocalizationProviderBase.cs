@@ -19,7 +19,6 @@ namespace WPFLocalizeExtension.Providers
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.ComponentModel;
     using System.Diagnostics;
     using System.Globalization;
     using System.IO;
@@ -32,7 +31,7 @@ namespace WPFLocalizeExtension.Providers
 #elif SILVERLIGHT
     using SLLocalizeExtension.Engine;
 #else
-    using WPFLocalizeExtension.Engine;
+    using System.Management;
 #endif
     #endregion
 
@@ -209,6 +208,50 @@ namespace WPFLocalizeExtension.Providers
 
 #if !SILVERLIGHT
         private AppDomain shadowCacheAppDomain = null;
+
+        /// <summary>
+        /// Get the executable path for both x86 and x64 processes.
+        /// </summary>
+        /// <param name="processId">The process id.</param>
+        /// <returns>The path if found; otherwise, null.</returns>
+        private static string GetExecutablePath(int processId)
+        {
+            const string wmiQueryString = "SELECT ProcessId, ExecutablePath, CommandLine FROM Win32_Process";
+            using (var searcher = new ManagementObjectSearcher(wmiQueryString))
+            using (var results = searcher.Get())
+            {
+                var query = from p in Process.GetProcesses()
+                            join mo in results.Cast<ManagementObject>()
+                            on p.Id equals (int)(uint)mo["ProcessId"]
+                            where p.Id == processId
+                            select new
+                            {
+                                Process = p,
+                                Path = (string)mo["ExecutablePath"],
+                                CommandLine = (string)mo["CommandLine"],
+                            };
+                foreach (var item in query)
+                {
+                    return item.Path;
+                }
+            }
+            return null;
+        }
+
+        private bool IsFileOfInterest(string f, string dir)
+        {
+            if (String.IsNullOrEmpty(f))
+                return false;
+
+            if (!(f.EndsWith(".resx", StringComparison.OrdinalIgnoreCase) ||
+                  f.EndsWith(".resources.dll", StringComparison.OrdinalIgnoreCase)) &&
+                !dir.Equals(Path.GetDirectoryName(f), StringComparison.OrdinalIgnoreCase))
+                return false;
+
+            //MessageBox.Show(f);
+
+            return true;
+        }
 #endif
 
         /// <summary>
@@ -232,7 +275,7 @@ namespace WPFLocalizeExtension.Providers
             string foundResource = null;
             string resManagerNameToSearch = "." + resourceDictionary + ResourceFileExtension;
 
-            //var resManKey = designPath + resourceAssembly + resManagerNameToSearch;
+
             var resManKey = resourceAssembly + resManagerNameToSearch;
 
 #if !SILVERLIGHT
@@ -245,12 +288,16 @@ namespace WPFLocalizeExtension.Providers
                     if (!process.ProcessName.Contains(".vshost"))
                         continue;
 
-                    var dir = Path.GetDirectoryName(process.Modules[0].FileName);
+                    var dir = Path.GetDirectoryName(GetExecutablePath(process.Id));
+
+                    if (string.IsNullOrEmpty(dir))
+                        continue;
+
                     var files = Directory.GetFiles(dir, resourceAssembly + ".*", SearchOption.AllDirectories);
 
                     if (files.Length > 0)
                     {
-                        files = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories);
+                        files = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories).Where(f => IsFileOfInterest(f, dir)).ToArray();
                         bool updateManager = false;
 
                         foreach (var f in files)
@@ -280,30 +327,26 @@ namespace WPFLocalizeExtension.Providers
 
                             foreach (var f in files)
                             {
-                                var dst = Path.Combine(assemblyDir, f.Replace(dir + "\\", ""));
+                                try
+                                {
+                                    var dst = Path.Combine(assemblyDir, f.Replace(dir + "\\", ""));
 
-                                var dstDir = Path.GetDirectoryName(dst);
-                                if (!Directory.Exists(dstDir))
-                                    Directory.CreateDirectory(dstDir);
-                                File.Copy(f, dst, true);
+                                    var dstDir = Path.GetDirectoryName(dst);
+                                    if (String.IsNullOrEmpty(dstDir))
+                                        continue;
+                                    if (!Directory.Exists(dstDir))
+                                        Directory.CreateDirectory(dstDir);
+
+                                    File.Copy(f, dst, true);
+                                }
+                                // ReSharper disable once EmptyGeneralCatchClause
+                                catch { }
                             }
                         }
 
                         var file = Path.Combine(assemblyDir, resourceAssembly + ".exe");
                         if (!File.Exists(file))
                             file = Path.Combine(assemblyDir, resourceAssembly + ".dll");
-
-                        //if (shadowCacheAppDomain == null)
-                        //{
-                        //    shadowCacheAppDomain = AppDomain.CreateDomain("LocalizationDomain");
-                        //    AppDomain.CurrentDomain.AssemblyResolve += (s, e) =>
-                        //    {
-                        //        return Assembly.LoadFrom(file);
-                        //    };
-                        //}
-
-                        //var name = new AssemblyName { CodeBase = file };
-                        //assembly = shadowCacheAppDomain.Load(resourceAssembly);
 
                         assembly = Assembly.LoadFrom(file);
                     }

@@ -556,6 +556,9 @@ namespace WPFLocalizeExtension.Engine
             }), e);
         }
 
+        /// <summary>
+        /// Destructor code.
+        /// </summary>
         ~LocalizeDictionary()
         {
 #if !WINDOWS_PHONE

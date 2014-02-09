@@ -29,7 +29,6 @@ namespace WPFLocalizeExtension.Extensions
     using XAMLMarkupExtensions.Base;
     #endregion
 
-    [Obsolete("Please use the new base class LocExtension instead!")]
 #if SILVERLIGHT
 #else
     [MarkupExtensionReturnType(typeof(System.Windows.Media.Brush))]
@@ -40,7 +39,6 @@ namespace WPFLocalizeExtension.Extensions
         public LocBrushExtension(string key) : base(key) { }
     }
 
-    [Obsolete("Please use the new base class LocExtension instead!")]
 #if SILVERLIGHT
 #else
     [MarkupExtensionReturnType(typeof(double))]
@@ -51,7 +49,6 @@ namespace WPFLocalizeExtension.Extensions
         public LocDoubleExtension(string key) : base(key) { }
     }
 
-    [Obsolete("Please use the new base class LocExtension instead!")]
 #if SILVERLIGHT
 #else
     [MarkupExtensionReturnType(typeof(System.Windows.FlowDirection))]
@@ -62,7 +59,6 @@ namespace WPFLocalizeExtension.Extensions
         public LocFlowDirectionExtension(string key) : base(key) { }
     }
 
-    [Obsolete("Please use the new base class LocExtension instead!")]
 #if SILVERLIGHT
 #else
     [MarkupExtensionReturnType(typeof(System.Windows.Media.Imaging.BitmapSource))]
@@ -73,7 +69,6 @@ namespace WPFLocalizeExtension.Extensions
         public LocImageExtension(string key) : base(key) { }
     }
 
-    [Obsolete("Please use the new base class LocExtension instead!")]
 #if SILVERLIGHT
 #else
     [MarkupExtensionReturnType(typeof(string))]
@@ -305,7 +300,6 @@ namespace WPFLocalizeExtension.Extensions
         #endregion
     }
 
-    [Obsolete("Please use the new base class LocExtension instead!")]
 #if SILVERLIGHT
 #else
     [MarkupExtensionReturnType(typeof(string))]
@@ -333,7 +327,6 @@ namespace WPFLocalizeExtension.Extensions
         #endregion
     }
 
-    [Obsolete("Please use the new base class LocExtension instead!")]
 #if SILVERLIGHT
 #else
     [MarkupExtensionReturnType(typeof(string))]
@@ -361,7 +354,6 @@ namespace WPFLocalizeExtension.Extensions
         #endregion
     }
 
-    [Obsolete("Please use the new base class LocExtension instead!")]
 #if SILVERLIGHT
 #else
     [MarkupExtensionReturnType(typeof(System.Windows.Thickness))]
