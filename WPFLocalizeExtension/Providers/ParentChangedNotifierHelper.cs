@@ -58,6 +58,9 @@ namespace WPFLocalizeExtension.Providers
 #if !SILVERLIGHT
                     if (!(depObj is Visual) && !(depObj is Visual3D) && !(depObj is FrameworkContentElement))
                         break;
+
+                    if (depObj is Window)
+                        break;
 #endif
                     DependencyObject depObjParent = null;
           
