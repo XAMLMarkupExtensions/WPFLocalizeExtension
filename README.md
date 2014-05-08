@@ -75,7 +75,7 @@ https://nuget.org/packages/WpfLocalizeExtension/
 [Documentation](http://wpflocalizeextension.codeplex.com/documentation)
 
 ### Localization Tools: ###
-[ResXManager (Visual Studio Plugin and StandAlone)](http://visualstudiogallery.msdn.microsoft.com/3b64e04c-e8de-4b97-8358-06c73a97cc68)
+[ResXManager (Visual Studio Plugin and StandAlone)](http://visualstudiogallery.msdn.microsoft.com/3b64e04c-e8de-4b97-8358-06c73a97cc68)  
 [Zeta Resource Editor (Freeware)](http://www.zeta-resource-editor.com/index.html)
 
 _You can do a donation to me and my work._
