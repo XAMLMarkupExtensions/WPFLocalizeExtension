@@ -71,5 +71,17 @@ http://root-project.org/
 ### NuGet Package: ###
 https://nuget.org/packages/WpfLocalizeExtension/
 
+### Documentation & Tutorial: ###
+[Documentation](http://wpflocalizeextension.codeplex.com/documentation)
+
+### Localization Tools: ###
+[ResXManager (Visual Studio Plugin and StandAlone)](http://visualstudiogallery.msdn.microsoft.com/3b64e04c-e8de-4b97-8358-06c73a97cc68)
+[Zeta Resource Editor (Freeware)](http://www.zeta-resource-editor.com/index.html)
+
+_You can do a donation to me and my work._
+_It would be very nice of you :)_
+
+[![PayPal - The safer, easier way to pay online!](https://www.paypal.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=9373425)
+
 ### Based on XAML Markup Extensions: ###
 XAMLMarkupExtensions [Codeplex](http://xamlmarkupextensions.codeplex.com/) [Github](https://github.com/MrCircuit/XAMLMarkupExtensions)
