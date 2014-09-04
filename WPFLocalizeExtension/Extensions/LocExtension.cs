@@ -158,7 +158,7 @@ namespace WPFLocalizeExtension.Extensions
             {
                 var ep = ext.lastEndpoint;
                 
-                if (!ep.TargetObjectReference.IsAlive)
+                if (ep.TargetObjectReference.Target == null)
                     continue;
 
                 var epProp = GetPropertyName(ep.TargetProperty);

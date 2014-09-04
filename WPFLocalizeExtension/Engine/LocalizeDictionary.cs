@@ -1078,8 +1078,9 @@ namespace WPFLocalizeExtension.Engine
                 {
                     foreach (var wr in listeners.ToList())
                     {
-                        if (wr.IsAlive)
-                            ((IDictionaryEventListener)wr.Target).ResourceChanged(sender, args);
+	                    var targetReference = wr.Target;
+                        if (targetReference != null)
+                            ((IDictionaryEventListener)targetReference).ResourceChanged(sender, args);
                         else
                             listeners.Remove(wr);
                     }
@@ -1102,9 +1103,10 @@ namespace WPFLocalizeExtension.Engine
                 {
                     foreach (var wr in listeners.ToList())
                     {
-                        if (!wr.IsAlive)
+						var targetReference = wr.Target;
+                        if (targetReference == null)
                             listeners.Remove(wr);
-                        else if (wr.Target == listener)
+                        else if (targetReference == listener)
                             listenerExists = true;
                     }
 
@@ -1127,9 +1129,10 @@ namespace WPFLocalizeExtension.Engine
                 {
                     foreach (var wr in listeners.ToList())
                     {
-                        if (!wr.IsAlive)
+						var targetReference = wr.Target;
+                        if (targetReference == null)
                             listeners.Remove(wr);
-                        else if ((IDictionaryEventListener)wr.Target == listener)
+                        else if ((IDictionaryEventListener)targetReference == listener)
                             listeners.Remove(wr);
                     }
                 }
@@ -1146,10 +1149,11 @@ namespace WPFLocalizeExtension.Engine
                 {
                     foreach (var wr in listeners.ToList())
                     {
-                        if (!wr.IsAlive)
+						var targetReference = wr.Target;
+                        if (targetReference == null)
                             listeners.Remove(wr);
-                        else if (wr.Target is T)
-                            yield return (T)wr.Target;
+                        else if (targetReference is T)
+                            yield return (T)targetReference;
                     }
                 }
             }
