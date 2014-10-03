@@ -1,5 +1,5 @@
 # LocalizationExtension
-#### ...is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObjects since 2011!
+#### ...is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObjects since 2008!
 
 ![](/assets/Structure.png)
 
