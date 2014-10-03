@@ -1,5 +1,11 @@
 # LocalizationExtension
-#### Is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObjects
+#### ...is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObjects since 2011!
+
+![](/assets/Structure.png)
+
+#### Products that use this Solution:
+
+![](/assets/SAPLogo.gif) SAP Crystal Reports, Version for Visual Studio .NET
 
 ### Features:
 
@@ -65,7 +71,7 @@
 -----
 
 ### Homepage:
-https://github.com/SeriousM/WPFLocalizationExtension/ 
+https://github.com/SeriousM/WPFLocalizationExtension/
 http://root-project.org/
 
 ### NuGet Package:
