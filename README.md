@@ -1,13 +1,13 @@
-# LocalizationExtension v2.2.0#
-### Is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObjects ###
+# LocalizationExtension
+#### Is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObjects
 
-### Features:###
+### Features:
 
 * First of all: ITS FREE (and will stay free - refer to license section below)
 * Obtain stable results in
 	* WPF applications using .NET 3.5 and higher
 	* Silverlight 5.0 applications
-	* Windows Phone applications
+	* Windows Phone 7.x applications
 * **New:** Localization source/provider can be changed freely at arbitrary nodes
 	* Use the Provider property in LocalizeDictionary to change the provider for the particular sub tree
 	* Use the DefaultProvider property to set the provider for the whole application
@@ -59,22 +59,22 @@
 	* Does not need an additional build task
 	* Is in use in various productive systems
 
-### License: ###
+### License:
 [MS-PL](https://github.com/SeriousM/WPFLocalizationExtension/blob/master/LICENSE)
 
 -----
 
-### Homepage: ###
-http://wpflocalizeextension.codeplex.com/  
+### Homepage:
+https://github.com/SeriousM/WPFLocalizationExtension/ 
 http://root-project.org/
 
-### NuGet Package: ###
+### NuGet Package:
 https://nuget.org/packages/WpfLocalizeExtension/
 
-### Documentation & Tutorial: ###
-[Documentation](http://wpflocalizeextension.codeplex.com/documentation)
+### Documentation & Tutorial:
+[Documentation / Wiki](https://github.com/SeriousM/WPFLocalizationExtension/wiki)
 
-### Localization Tools: ###
+### Localization Tools:
 [ResXManager (Visual Studio Plugin and StandAlone)](http://visualstudiogallery.msdn.microsoft.com/3b64e04c-e8de-4b97-8358-06c73a97cc68)  
 [Zeta Resource Editor (Freeware)](http://www.zeta-resource-editor.com/index.html)
 
@@ -83,5 +83,5 @@ _It would be very nice of you :)_
 
 [![PayPal - The safer, easier way to pay online!](https://www.paypal.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=9373425)
 
-### Based on XAML Markup Extensions: ###
+### Based on XAML Markup Extensions:
 XAMLMarkupExtensions [Codeplex](http://xamlmarkupextensions.codeplex.com/) [Github](https://github.com/MrCircuit/XAMLMarkupExtensions)
