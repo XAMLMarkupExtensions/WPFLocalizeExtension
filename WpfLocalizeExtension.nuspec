@@ -2,12 +2,12 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>WpfLocalizeExtension</id>
-        <version>2.2.0</version>
+        <version>2.2.1</version>
         <title>WPF Localization Extension</title>
         <authors>Bernhard Millauer,Uwe Mayer</authors>
         <owners>Bernhard Millauer,Uwe Mayer</owners>
-        <licenseUrl>http://wpflocalizeextension.codeplex.com/license</licenseUrl>
-        <projectUrl>http://wpflocalizeextension.codeplex.com/</projectUrl>
+        <licenseUrl>https://github.com/SeriousM/WPFLocalizationExtension/blob/master/LICENSE</licenseUrl>
+        <projectUrl>https://github.com/SeriousM/WPFLocalizationExtension/</projectUrl>
         <requireLicenseAcceptance>true</requireLicenseAcceptance>
         <description>LocalizationExtension is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObjects</description>
         <summary>LocalizationExtension is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObjects</summary>
