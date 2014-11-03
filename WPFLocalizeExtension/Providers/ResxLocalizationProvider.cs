@@ -116,14 +116,25 @@ namespace WPFLocalizeExtension.Providers
         /// <summary>
         /// A dictionary for notification classes for changes of the individual target Parent changes.
         /// </summary>
-        private Dictionary<DependencyObject, ParentChangedNotifier> parentNotifiers = new Dictionary<DependencyObject, ParentChangedNotifier>();
+        private readonly Dictionary<DependencyObject, ParentChangedNotifier> _parentNotifiers = new Dictionary<DependencyObject, ParentChangedNotifier>();
+
+        /// <summary>
+        /// To use when no assembly is specified.
+        /// </summary>
+        public string FallbackAssembly { get; set; }
+
+        /// <summary>
+        /// To use when no dictionary is specified.
+        /// </summary>
+        public string FallbackDictionary { get; set; }
+
         #endregion
 
         #region Singleton Variables, Properties & Constructor
         /// <summary>
         /// The instance of the singleton.
         /// </summary>
-        private static ResxLocalizationProvider instance;
+        private static ResxLocalizationProvider _instance;
 
         /// <summary>
         /// Lock object for the creation of the singleton instance.
@@ -137,17 +148,17 @@ namespace WPFLocalizeExtension.Providers
         {
             get
             {
-                if (instance == null)
+                if (_instance == null)
                 {
                     lock (InstanceLock)
                     {
-                        if (instance == null)
-                            instance = new ResxLocalizationProvider();
+                        if (_instance == null)
+                            _instance = new ResxLocalizationProvider();
                     }
                 }
 
                 // return the existing/new instance
-                return instance;
+                return _instance;
             }
         }
 		
@@ -158,7 +169,7 @@ namespace WPFLocalizeExtension.Providers
         {
             lock (InstanceLock)
             {
-                instance = null;
+                _instance = null;
             }
         }
 
@@ -191,9 +202,10 @@ namespace WPFLocalizeExtension.Providers
         protected override string GetAssembly(DependencyObject target)
         {
             if (target == null)
-                return null;
+                return FallbackAssembly;
 
-            return target.GetValueOrRegisterParentNotifier<string>(ResxLocalizationProvider.DefaultAssemblyProperty, ParentChangedAction, parentNotifiers); 
+            var assembly = target.GetValueOrRegisterParentNotifier<string>(DefaultAssemblyProperty, ParentChangedAction, _parentNotifiers);
+            return String.IsNullOrEmpty(assembly) ? FallbackAssembly : assembly;
         }
 
         /// <summary>
@@ -204,9 +216,10 @@ namespace WPFLocalizeExtension.Providers
         protected override string GetDictionary(DependencyObject target)
         {
             if (target == null)
-                return null;
+                return FallbackDictionary;
 
-            return target.GetValueOrRegisterParentNotifier<string>(ResxLocalizationProvider.DefaultDictionaryProperty, ParentChangedAction, parentNotifiers);
+            var dictionary = target.GetValueOrRegisterParentNotifier<string>(DefaultDictionaryProperty, ParentChangedAction, _parentNotifiers);
+            return String.IsNullOrEmpty(dictionary) ? FallbackDictionary : dictionary;
         }
         #endregion
     }
