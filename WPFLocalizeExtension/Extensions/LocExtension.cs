@@ -237,7 +237,6 @@ namespace WPFLocalizeExtension.Extensions
         /// <summary>
         /// Gets or sets the name of the Assembly where the .resx is located.
         /// </summary>
-        [Obsolete("This property is obsolete and will be removed from the extension in the future.\r\nUse the attached properties of the ResxLocalizationProvider instead.")]
         public string Assembly
         {
             get { return this.assembly; }
@@ -247,7 +246,6 @@ namespace WPFLocalizeExtension.Extensions
         /// <summary>
         /// Gets or sets the name of the Dict where the .resx is located.
         /// </summary>
-        [Obsolete("This property is obsolete and will be removed from the extension in the future.\r\nUse the attached properties of the ResxLocalizationProvider instead.")]
         public string Dict
         {
             get { return this.dict; }
