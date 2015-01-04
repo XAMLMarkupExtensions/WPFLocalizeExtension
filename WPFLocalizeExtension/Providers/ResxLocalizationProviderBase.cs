@@ -216,6 +216,8 @@ namespace WPFLocalizeExtension.Providers
 
 #if !SILVERLIGHT
         private AppDomain shadowCacheAppDomain = null;
+        private static Dictionary<int, string> executablePaths = new Dictionary<int,string>();
+        private DateTime lastUpdateCheck = DateTime.MinValue;
 
         /// <summary>
         /// Get the executable path for both x86 and x64 processes.
@@ -224,6 +226,9 @@ namespace WPFLocalizeExtension.Providers
         /// <returns>The path if found; otherwise, null.</returns>
         private static string GetExecutablePath(int processId)
         {
+            if (executablePaths.ContainsKey(processId))
+                return executablePaths[processId];
+
             const string wmiQueryString = "SELECT ProcessId, ExecutablePath, CommandLine FROM Win32_Process";
             using (var searcher = new ManagementObjectSearcher(wmiQueryString))
             using (var results = searcher.Get())
@@ -240,9 +245,11 @@ namespace WPFLocalizeExtension.Providers
                             };
                 foreach (var item in query)
                 {
+                    executablePaths.Add(processId, item.Path);
                     return item.Path;
                 }
             }
+
             return null;
         }
 
@@ -283,24 +290,34 @@ namespace WPFLocalizeExtension.Providers
             string foundResource = null;
             string resManagerNameToSearch = "." + resourceDictionary + ResourceFileExtension;
 
-
             var resManKey = resourceAssembly + resManagerNameToSearch;
 
 #if !SILVERLIGHT
-            if (AppDomain.CurrentDomain.FriendlyName.Contains("XDesProc"))
+            // Here comes our great hack for full VS2012+ design time support with multiple languages.
+            // We check only every second to reduce overhead in the designer.
+            var now = DateTime.Now;
+            
+            if (AppDomain.CurrentDomain.FriendlyName.Contains("XDesProc") && ((now - lastUpdateCheck).TotalSeconds >= 1.0))
             {
+                lastUpdateCheck = now;
+
+                // Get the directory of the assembly (some strange path in the middle of nowhere on the disk, e.g.:
+                // %userprofile%\AppData\Local\Microsoft\VisualStudio\12.0\Designer\ShadowCache\erys4uqz.oq1\l24nfewi.r0y\tmp\
                 var assemblyDir = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "tmp");
 
+                // Find the VS process that shows our design.
                 foreach (var process in Process.GetProcesses())
                 {
                     if (!process.ProcessName.Contains(".vshost"))
                         continue;
 
+                    // Get the executable path (all paths are cached now in order to reduce WMI load.
                     var dir = Path.GetDirectoryName(GetExecutablePath(process.Id));
 
                     if (string.IsNullOrEmpty(dir))
                         continue;
 
+                    // Get all files matching our resource assembly.
                     var files = Directory.GetFiles(dir, resourceAssembly + ".*", SearchOption.AllDirectories);
 
                     if (files.Length > 0)
@@ -308,6 +325,7 @@ namespace WPFLocalizeExtension.Providers
                         files = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories).Where(f => IsFileOfInterest(f, dir)).ToArray();
                         bool updateManager = false;
 
+                        // Find missing or outdated files.
                         foreach (var f in files)
                         {
                             var dst = Path.Combine(assemblyDir, f.Replace(dir + "\\", ""));
@@ -319,6 +337,7 @@ namespace WPFLocalizeExtension.Providers
                             }
                         }
 
+                        // Check, if the resource manager needs to be updated.
                         if (updateManager)
                         {
                             TryRemove(resManKey);
@@ -333,6 +352,7 @@ namespace WPFLocalizeExtension.Providers
                                 GC.Collect();
                             }
 
+                            // Copy all newer or missing files.
                             foreach (var f in files)
                             {
                                 try
@@ -357,9 +377,10 @@ namespace WPFLocalizeExtension.Providers
                             file = Path.Combine(assemblyDir, resourceAssembly + ".dll");
 
                         assembly = Assembly.LoadFrom(file);
-                    }
 
-                    break;
+                        // Must break here - otherwise, we might have caught another instance of VS.
+                        break;
+                    }
                 }
             }
 #endif
