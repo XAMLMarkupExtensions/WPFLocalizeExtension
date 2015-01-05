@@ -134,7 +134,7 @@ namespace WPFLocalizeExtension.Providers
         /// <summary>
         /// The instance of the singleton.
         /// </summary>
-        private static ResxLocalizationProvider _instance;
+        private static ResxLocalizationProvider instance;
 
         /// <summary>
         /// Lock object for the creation of the singleton instance.
@@ -148,17 +148,17 @@ namespace WPFLocalizeExtension.Providers
         {
             get
             {
-                if (_instance == null)
+                if (instance == null)
                 {
                     lock (InstanceLock)
                     {
-                        if (_instance == null)
-                            _instance = new ResxLocalizationProvider();
+                        if (instance == null)
+                            instance = new ResxLocalizationProvider();
                     }
                 }
 
                 // return the existing/new instance
-                return _instance;
+                return instance;
             }
         }
 		
@@ -169,7 +169,7 @@ namespace WPFLocalizeExtension.Providers
         {
             lock (InstanceLock)
             {
-                _instance = null;
+                instance = null;
             }
         }
 
