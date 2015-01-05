@@ -215,7 +215,6 @@ namespace WPFLocalizeExtension.Providers
         }
 
 #if !SILVERLIGHT
-        private AppDomain shadowCacheAppDomain = null;
         private static Dictionary<int, string> executablePaths = new Dictionary<int,string>();
         private DateTime lastUpdateCheck = DateTime.MinValue;
 
@@ -299,9 +298,10 @@ namespace WPFLocalizeExtension.Providers
             
             if (AppDomain.CurrentDomain.FriendlyName.Contains("XDesProc") && ((now - lastUpdateCheck).TotalSeconds >= 1.0))
             {
+                // This block is only handled during design time.
                 lastUpdateCheck = now;
 
-                // Get the directory of the assembly (some strange path in the middle of nowhere on the disk, e.g.:
+                // Get the directory of the executing assembly (some strange path in the middle of nowhere on the disk and attach "\tmp", e.g.:
                 // %userprofile%\AppData\Local\Microsoft\VisualStudio\12.0\Designer\ShadowCache\erys4uqz.oq1\l24nfewi.r0y\tmp\
                 var assemblyDir = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "tmp");
 
@@ -322,43 +322,21 @@ namespace WPFLocalizeExtension.Providers
 
                     if (files.Length > 0)
                     {
+                        // Get more files.
                         files = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories).Where(f => IsFileOfInterest(f, dir)).ToArray();
-                        bool updateManager = false;
+                        
+                        // Remove the resource manager from the dictionary.
+                        TryRemove(resManKey);
 
-                        // Find missing or outdated files.
+                        // Copy all newer or missing files.
                         foreach (var f in files)
                         {
-                            var dst = Path.Combine(assemblyDir, f.Replace(dir + "\\", ""));
-
-                            if (!File.Exists(dst) || (Directory.GetLastWriteTime(dst) < Directory.GetLastWriteTime(f)))
+                            try
                             {
-                                updateManager = true;
-                                break;
-                            }
-                        }
+                                var dst = Path.Combine(assemblyDir, f.Replace(dir + "\\", ""));
 
-                        // Check, if the resource manager needs to be updated.
-                        if (updateManager)
-                        {
-                            TryRemove(resManKey);
-
-                            if (shadowCacheAppDomain != null)
-                            {
-                                AppDomain.Unload(shadowCacheAppDomain);
-                                shadowCacheAppDomain = null;
-
-                                GC.Collect();
-                                GC.WaitForPendingFinalizers();
-                                GC.Collect();
-                            }
-
-                            // Copy all newer or missing files.
-                            foreach (var f in files)
-                            {
-                                try
+                                if (!File.Exists(dst) || (Directory.GetLastWriteTime(dst) < Directory.GetLastWriteTime(f)))
                                 {
-                                    var dst = Path.Combine(assemblyDir, f.Replace(dir + "\\", ""));
-
                                     var dstDir = Path.GetDirectoryName(dst);
                                     if (String.IsNullOrEmpty(dstDir))
                                         continue;
@@ -367,11 +345,12 @@ namespace WPFLocalizeExtension.Providers
 
                                     File.Copy(f, dst, true);
                                 }
-                                // ReSharper disable once EmptyGeneralCatchClause
-                                catch { }
                             }
+                            // ReSharper disable once EmptyGeneralCatchClause
+                            catch { }
                         }
 
+                        // Prepare and load (new) assembly.
                         var file = Path.Combine(assemblyDir, resourceAssembly + ".exe");
                         if (!File.Exists(file))
                             file = Path.Combine(assemblyDir, resourceAssembly + ".dll");
