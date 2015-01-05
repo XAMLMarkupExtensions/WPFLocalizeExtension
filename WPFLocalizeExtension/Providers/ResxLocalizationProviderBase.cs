@@ -257,8 +257,8 @@ namespace WPFLocalizeExtension.Providers
             if (String.IsNullOrEmpty(f))
                 return false;
 
-            if (!(f.EndsWith(".resx", StringComparison.OrdinalIgnoreCase) ||
-                  f.EndsWith(".resources.dll", StringComparison.OrdinalIgnoreCase)) &&
+            if (!(f.EndsWith(".resx", StringComparison.OrdinalIgnoreCase) || f.EndsWith(".resources.dll", StringComparison.OrdinalIgnoreCase) ||
+                  f.EndsWith(".resources", StringComparison.OrdinalIgnoreCase)) &&
                 !dir.Equals(Path.GetDirectoryName(f), StringComparison.OrdinalIgnoreCase))
                 return false;
 
@@ -571,10 +571,7 @@ namespace WPFLocalizeExtension.Providers
                 return null;
             String assembly, dictionary;
             ParseKey(key, out assembly, out dictionary, out key);
-
-            if (target == null)
-                return new FQAssemblyDictionaryKey(key, assembly, dictionary);
-
+            
             if (String.IsNullOrEmpty(assembly))
                 assembly = GetAssembly(target);
 
