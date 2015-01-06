@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencies", "{7141B014-FF60-4105-B88C-9812838D6D0D}"
 EndProject
@@ -28,6 +28,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WP7LocalizeExtension", "WPFLocalizeExtension\WP7LocalizeExtension.csproj", "{D84F8F07-34AB-4652-ADDB-D9B4210FB58E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryTest", "Tests\MemoryTest\MemoryTest.csproj", "{3D591943-C256-46EB-88EA-CCA0B3A498E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fluent.Sample.Foundation", "Tests\FluentLexTest\Fluent.Sample.Foundation.csproj", "{65C4A879-2E9E-4A74-9AC7-A31C71D1F612}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -195,6 +197,18 @@ Global
 		{3D591943-C256-46EB-88EA-CCA0B3A498E6}.Release|Mixed Platforms.Build.0 = Release|x86
 		{3D591943-C256-46EB-88EA-CCA0B3A498E6}.Release|x86.ActiveCfg = Release|x86
 		{3D591943-C256-46EB-88EA-CCA0B3A498E6}.Release|x86.Build.0 = Release|x86
+		{65C4A879-2E9E-4A74-9AC7-A31C71D1F612}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65C4A879-2E9E-4A74-9AC7-A31C71D1F612}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65C4A879-2E9E-4A74-9AC7-A31C71D1F612}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{65C4A879-2E9E-4A74-9AC7-A31C71D1F612}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{65C4A879-2E9E-4A74-9AC7-A31C71D1F612}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{65C4A879-2E9E-4A74-9AC7-A31C71D1F612}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{65C4A879-2E9E-4A74-9AC7-A31C71D1F612}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65C4A879-2E9E-4A74-9AC7-A31C71D1F612}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65C4A879-2E9E-4A74-9AC7-A31C71D1F612}.Release|ARM.ActiveCfg = Release|Any CPU
+		{65C4A879-2E9E-4A74-9AC7-A31C71D1F612}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{65C4A879-2E9E-4A74-9AC7-A31C71D1F612}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{65C4A879-2E9E-4A74-9AC7-A31C71D1F612}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

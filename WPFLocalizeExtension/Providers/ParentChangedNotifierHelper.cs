@@ -68,7 +68,13 @@ namespace WPFLocalizeExtension.Providers
                     if (depObj is FrameworkContentElement)
                         depObjParent = ((FrameworkContentElement)depObj).Parent;
                     else
+                    {
+                        try { depObjParent = LogicalTreeHelper.GetParent(depObj); }
+                        catch { depObjParent = null; }
+                    }
 #endif
+
+                    if (depObjParent == null)
                     {
                         try { depObjParent = VisualTreeHelper.GetParent(depObj); }
                         catch { break; }
