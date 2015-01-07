@@ -11,3 +11,9 @@ Area;Fläche
 Country;Land
 CountryKey;CountryDE
 TestFormat;Die Fläche von {0} beträgt {1} km².
+Tab1;Bla
+Tab2;Blup
+Tab3;Tralala
+TestEnum_Input;EingabeCSV
+TestEnum_Output;AusgabeCSV
+TestEnum_Processing;VerarbeitungCSV

@@ -6,21 +6,22 @@
 // <author>Uwe Mayer</author>
 #endregion
 
+using System.Collections.Generic;
+using WPFLocalizeExtension.Engine;
+using XAMLMarkupExtensions.Base;
+
 namespace ProviderExample
 {
-    using System;
-    using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.Diagnostics;
     using System.Globalization;
-    using System.IO;
-    using System.Linq;
-    using System.Management;
-    using System.Reflection;
-    using System.Text;
     using System.Windows;
+    using System;
+    using System.Reflection;
+    using System.IO;
+    using System.Windows.Media;
     using WPFLocalizeExtension.Providers;
-    using XAMLMarkupExtensions.Base;
+    using System.Runtime.InteropServices;
+    using System.Text;
 
     /// <summary>
     /// A localization provider for comma separated files
@@ -94,75 +95,23 @@ namespace ProviderExample
         /// <returns>The working directory.</returns>
         private string GetWorkingDirectory()
         {
-            if (AppDomain.CurrentDomain.FriendlyName.Contains("XDesProc"))
+            if (System.ComponentModel.DesignerProperties.GetIsInDesignMode(new DependencyObject()))
             {
-                foreach (var process in Process.GetProcesses())
+                var dte = (EnvDTE.DTE)Marshal.GetActiveObject("VisualStudio.DTE.10.0");
+                var sb = dte.Solution.SolutionBuild;
+                string msg = "";
+
+                foreach (String item in (Array)sb.StartupProjects)
                 {
-                    if (!process.ProcessName.Contains(".vshost"))
-                        continue;
-
-                    // Get the executable path (all paths are cached now in order to reduce WMI load.
-                    var dir = Path.GetDirectoryName(GetExecutablePath(process.Id));
-
-                    if (string.IsNullOrEmpty(dir))
-                        continue;
-
-                    return dir;
+                    msg += item;
                 }
 
-                return null;
+                EnvDTE.Project startupProj = dte.Solution.Item(msg);
 
-                //var dte = (EnvDTE.DTE)Marshal.GetActiveObject("VisualStudio.DTE.10.0");
-                //var sb = dte.Solution.SolutionBuild;
-                //string msg = "";
-
-                //foreach (String item in (Array)sb.StartupProjects)
-                //{
-                //    msg += item;
-                //}
-
-                //EnvDTE.Project startupProj = dte.Solution.Item(msg);
-
-                //return (Path.GetDirectoryName(startupProj.FullName));
+                return (Path.GetDirectoryName(startupProj.FullName));
             }
             else
                 return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-        }
-
-        private static Dictionary<int, string> executablePaths = new Dictionary<int, string>();
-        
-        /// <summary>
-        /// Get the executable path for both x86 and x64 processes.
-        /// </summary>
-        /// <param name="processId">The process id.</param>
-        /// <returns>The path if found; otherwise, null.</returns>
-        private static string GetExecutablePath(int processId)
-        {
-            if (executablePaths.ContainsKey(processId))
-                return executablePaths[processId];
-
-            const string wmiQueryString = "SELECT ProcessId, ExecutablePath, CommandLine FROM Win32_Process";
-            using (var searcher = new ManagementObjectSearcher(wmiQueryString))
-            using (var results = searcher.Get())
-            {
-                var query = from p in Process.GetProcesses()
-                            join mo in results.Cast<ManagementObject>()
-                            on p.Id equals (int)(uint)mo["ProcessId"]
-                            where p.Id == processId
-                            select new
-                            {
-                                Process = p,
-                                Path = (string)mo["ExecutablePath"],
-                                CommandLine = (string)mo["CommandLine"],
-                            };
-                foreach (var item in query)
-                {
-                    executablePaths.Add(processId, item.Path);
-                    return item.Path;
-                }
-            }
-
-            return null;
         }
 
         /// <summary>
