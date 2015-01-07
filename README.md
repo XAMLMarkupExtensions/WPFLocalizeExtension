@@ -15,7 +15,7 @@
 * Obtain stable results in
 	* WPF applications using .NET 3.5 and higher
 	* Silverlight 5.0 applications
-	* Windows Phone 7.x applications
+	* Windows Phone 7.x/8.x applications
 * **New:** Localization source/provider can be changed freely at arbitrary nodes
 	* Use the Provider property in LocalizeDictionary to change the provider for the particular sub tree
 	* Use the DefaultProvider property to set the provider for the whole application
