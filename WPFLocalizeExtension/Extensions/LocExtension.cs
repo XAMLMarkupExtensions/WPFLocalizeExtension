@@ -69,17 +69,6 @@ namespace WPFLocalizeExtension.Extensions
         private static Dictionary<string, object> ResourceBuffer = new Dictionary<string, object>();
 
         /// <summary>
-        /// Holds the name of the Assembly where the .resx is located
-        /// </summary>
-        private string assembly;
-
-        /// <summary>
-        /// Holds the Name of the .resx dictionary.
-        /// If it's null, "Resources" will get returned
-        /// </summary>
-        private string dict;
-
-        /// <summary>
         /// Holds the Key to a .resx object
         /// </summary>
         private string key;
@@ -210,18 +199,7 @@ namespace WPFLocalizeExtension.Extensions
         /// </summary>
         public string Key
         {
-            get
-            {
-                var resourceKey = key;
-
-                // This is just for backward compatibility!
-                if (!string.IsNullOrEmpty(dict) || !string.IsNullOrEmpty(assembly))
-                    resourceKey = (dict ?? "") + ":" + resourceKey;
-                if (!string.IsNullOrEmpty(assembly))
-                    resourceKey = assembly + ":" + resourceKey;
-                
-                return resourceKey;
-            }
+            get { return key; }
             set
             {
                 if (key != value)
@@ -232,24 +210,6 @@ namespace WPFLocalizeExtension.Extensions
                     OnNotifyPropertyChanged("Key");
                 }
             }
-        }
-
-        /// <summary>
-        /// Gets or sets the name of the Assembly where the .resx is located.
-        /// </summary>
-        public string Assembly
-        {
-            get { return this.assembly; }
-            set { this.assembly = !string.IsNullOrEmpty(value) ? value : null; }
-        }
-
-        /// <summary>
-        /// Gets or sets the name of the Dict where the .resx is located.
-        /// </summary>
-        public string Dict
-        {
-            get { return this.dict; }
-            set { this.dict = !string.IsNullOrEmpty(value) ? value : null; }
         }
 
         /// <summary>
@@ -299,8 +259,8 @@ namespace WPFLocalizeExtension.Extensions
         [EditorBrowsable(EditorBrowsableState.Never)]
         public string ResourceIdentifierKey
         {
-            get { return string.Format("{0}:{1}:{2}", assembly, dict, key ?? "(null)"); }
-            set { ResxLocalizationProvider.ParseKey(value, out assembly, out dict, out key); }
+            get { return key ?? "(null)"; }
+            set { key = value; }
         }
         #endregion
 
@@ -525,7 +485,7 @@ namespace WPFLocalizeExtension.Extensions
                 targetType = info.TargetPropertyType.GetGenericArguments()[0];
             
             // Try to get the localized input from the resource.
-            var resourceKey = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(Key, targetObject);
+            var resourceKey = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(this.Key, targetObject);
             var ci = GetForcedCultureOrDefault();
 
             // Extract the names of the endpoint object and property
