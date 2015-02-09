@@ -41,7 +41,7 @@ namespace WPFLocalizeExtension.Providers
                 "DefaultDictionary",
                 typeof(string),
                 typeof(ResxLocalizationProvider),
-                new PropertyMetadata(null, AttachedPropertyChanged));
+                new PropertyMetadata(null, DefaultDictionaryChanged));
 
         /// <summary>
         /// <see cref="DependencyProperty"/> DefaultAssembly to set the fallback assembly.
@@ -51,17 +51,29 @@ namespace WPFLocalizeExtension.Providers
                 "DefaultAssembly",
                 typeof(string),
                 typeof(ResxLocalizationProvider),
-                new PropertyMetadata(null, AttachedPropertyChanged));
+                new PropertyMetadata(null, DefaultAssemblyChanged));
         #endregion
 
         #region Dependency Property Callback
         /// <summary>
-        /// Indicates, that one of the attached properties changed.
+        /// Indicates, that the <see cref="DefaultDictionaryProperty"/> attached property changed.
         /// </summary>
         /// <param name="obj">The dependency object.</param>
-        /// <param name="args">The event argument.</param>
-        private static void AttachedPropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
+        /// <param name="e">The event argument.</param>
+        private static void DefaultDictionaryChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
+            Instance.FallbackDictionary = e.NewValue != null ? e.NewValue.ToString() : null;
+            Instance.OnProviderChanged(obj);
+        }
+
+        /// <summary>
+        /// Indicates, that the <see cref="DefaultAssemblyProperty"/> attached property changed.
+        /// </summary>
+        /// <param name="obj">The dependency object.</param>
+        /// <param name="e">The event argument.</param>
+        private static void DefaultAssemblyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        {
+            Instance.FallbackAssembly = e.NewValue != null ? e.NewValue.ToString() : null;
             Instance.OnProviderChanged(obj);
         }
         #endregion
