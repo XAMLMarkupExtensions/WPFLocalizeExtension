@@ -215,8 +215,11 @@ namespace WPFLocalizeExtension.Providers
         }
 
 #if !SILVERLIGHT
-        private static Dictionary<int, string> executablePaths = new Dictionary<int,string>();
+        private static Dictionary<int, string> executablePaths = new Dictionary<int, string>();
         private DateTime lastUpdateCheck = DateTime.MinValue;
+
+        private static string projectDirectory = null;
+        private static string[] projectFilesCache = null;
 
         /// <summary>
         /// Get the executable path for both x86 and x64 processes.
@@ -252,7 +255,7 @@ namespace WPFLocalizeExtension.Providers
             return null;
         }
 
-        private bool IsFileOfInterest(string f, string dir)
+        private static bool IsFileOfInterest(string f, string dir)
         {
             if (String.IsNullOrEmpty(f))
                 return false;
@@ -261,8 +264,6 @@ namespace WPFLocalizeExtension.Providers
                   f.EndsWith(".resources", StringComparison.OrdinalIgnoreCase)) &&
                 !dir.Equals(Path.GetDirectoryName(f), StringComparison.OrdinalIgnoreCase))
                 return false;
-
-            //MessageBox.Show(f);
 
             return true;
         }
@@ -305,61 +306,66 @@ namespace WPFLocalizeExtension.Providers
                 // %userprofile%\AppData\Local\Microsoft\VisualStudio\12.0\Designer\ShadowCache\erys4uqz.oq1\l24nfewi.r0y\tmp\
                 var assemblyDir = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "tmp");
 
-                // Find the VS process that shows our design.
-                foreach (var process in Process.GetProcesses())
+                // If not done yet, find the VS process that shows our design.
+                if (string.IsNullOrEmpty(projectDirectory))
                 {
-                    if (!process.ProcessName.Contains(".vshost"))
-                        continue;
-
-                    // Get the executable path (all paths are cached now in order to reduce WMI load.
-                    var dir = Path.GetDirectoryName(GetExecutablePath(process.Id));
-
-                    if (string.IsNullOrEmpty(dir))
-                        continue;
-
-                    // Get all files matching our resource assembly.
-                    var files = Directory.GetFiles(dir, resourceAssembly + ".*", SearchOption.AllDirectories);
-
-                    if (files.Length > 0)
+                    foreach (var process in Process.GetProcesses())
                     {
-                        // Get more files.
-                        files = Directory.GetFiles(dir, "*.*", SearchOption.AllDirectories).Where(f => IsFileOfInterest(f, dir)).ToArray();
-                        
-                        // Remove the resource manager from the dictionary.
-                        TryRemove(resManKey);
+                        if (!process.ProcessName.Contains(".vshost"))
+                            continue;
 
-                        // Copy all newer or missing files.
-                        foreach (var f in files)
+                        // Get the executable path (all paths are cached now in order to reduce WMI load.
+                        projectDirectory = Path.GetDirectoryName(GetExecutablePath(process.Id));
+
+                        if (string.IsNullOrEmpty(projectDirectory))
+                            continue;
+
+                        // Get all files.
+                        var files = Directory.GetFiles(projectDirectory, "*.*", SearchOption.AllDirectories);
+
+                        if (files.Where(f => Path.GetFileName(f).StartsWith(resourceAssembly)).Count() > 0)
                         {
-                            try
-                            {
-                                var dst = Path.Combine(assemblyDir, f.Replace(dir + "\\", ""));
+                            // We got a hit. Filter the files that are of interest for this provider.
+                            projectFilesCache = files.Where(f => IsFileOfInterest(f, projectDirectory)).ToArray();
 
-                                if (!File.Exists(dst) || (Directory.GetLastWriteTime(dst) < Directory.GetLastWriteTime(f)))
-                                {
-                                    var dstDir = Path.GetDirectoryName(dst);
-                                    if (String.IsNullOrEmpty(dstDir))
-                                        continue;
-                                    if (!Directory.Exists(dstDir))
-                                        Directory.CreateDirectory(dstDir);
-
-                                    File.Copy(f, dst, true);
-                                }
-                            }
-                            // ReSharper disable once EmptyGeneralCatchClause
-                            catch { }
+                            // Must break here - otherwise, we might catch another instance of VS.
+                            break;
                         }
-
-                        // Prepare and load (new) assembly.
-                        var file = Path.Combine(assemblyDir, resourceAssembly + ".exe");
-                        if (!File.Exists(file))
-                            file = Path.Combine(assemblyDir, resourceAssembly + ".dll");
-
-                        assembly = Assembly.LoadFrom(file);
-
-                        // Must break here - otherwise, we might have caught another instance of VS.
-                        break;
                     }
+                }
+                else
+                {
+                    // Remove the resource manager from the dictionary.
+                    TryRemove(resManKey);
+
+                    // Copy all newer or missing files.
+                    foreach (var f in projectFilesCache)
+                    {
+                        try
+                        {
+                            var dst = Path.Combine(assemblyDir, f.Replace(projectDirectory + "\\", ""));
+
+                            if (!File.Exists(dst) || (Directory.GetLastWriteTime(dst) < Directory.GetLastWriteTime(f)))
+                            {
+                                var dstDir = Path.GetDirectoryName(dst);
+                                if (String.IsNullOrEmpty(dstDir))
+                                    continue;
+                                if (!Directory.Exists(dstDir))
+                                    Directory.CreateDirectory(dstDir);
+
+                                File.Copy(f, dst, true);
+                            }
+                        }
+                        // ReSharper disable once EmptyGeneralCatchClause
+                        catch { }
+                    }
+
+                    // Prepare and load (new) assembly.
+                    var file = Path.Combine(assemblyDir, resourceAssembly + ".exe");
+                    if (!File.Exists(file))
+                        file = Path.Combine(assemblyDir, resourceAssembly + ".dll");
+
+                    assembly = Assembly.LoadFrom(file);
                 }
             }
 #endif
