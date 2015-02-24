@@ -15,7 +15,7 @@
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type={x:Type Local:MyViewModel}, IsDesignTimeCreatable=True}"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" Height="393" Width="329">
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" Height="479" Width="329">
     
         <!--Use this syntax to set the inheriting provider-->
         <!--lex:LocalizeDictionary.DefaultProvider="{x:Static lex:InheritingResxLocalizationProvider.Instance}"
@@ -74,6 +74,7 @@
             <RowDefinition Height="100" />
             <RowDefinition Height="*" />
             <RowDefinition Height="25" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -153,5 +154,6 @@
                 </Paragraph>
             </FlowDocument>
         </FlowDocumentScrollViewer>
+        <Button Grid.Row="9" Content="Multiple UI Threads" Margin="5" Click="ButtonMultiThreading_Click" />
     </Grid>
 </Window>

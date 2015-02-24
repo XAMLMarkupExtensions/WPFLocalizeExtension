@@ -25,6 +25,7 @@
 	* Notification about resource changes
 	* Get the list of all available cultures from a provider - or just take the bindable merged list from LocalizeDictionary
 	* CSV provider project in the Tests folder as an example for custom providers
+	* **Multiple UI thread support**
 * BLoc Extension that derives from Binding to support binding scenarios
 * Supports binding-like write style like "Text = {lex:LocText ResAssembly:ResFile:ResKey}"
 	* Define a default assembly and / or resource file to reduce the key to ResAssembly::ResKey, ResFile:ResKey or even ResKey

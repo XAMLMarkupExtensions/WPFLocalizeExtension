@@ -15,28 +15,22 @@ namespace WPFLocalizeExtension.Extensions
 {
     #region Uses
     using System;
-    using System.Windows.Markup;
-    using System.Windows;
-    using System.Reflection;
+    using System.Collections;
+    using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Globalization;
     using System.Linq;
+    using System.Reflection;
+    using System.Windows;
+    using System.Windows.Data;
+    using System.Windows.Markup;
     using System.Windows.Media;
     using System.Windows.Media.Imaging;
-    using System.Globalization;
-    using System.Collections.Generic;
-    using System.Windows.Data;
-#if SILVERLIGHT
-    using SLLocalizeExtension.Engine;
-    using SLLocalizeExtension.TypeConverters;
-    using SLLocalizeExtension.Providers;
-#else
-    using WPFLocalizeExtension.Engine;
-    using WPFLocalizeExtension.TypeConverters;
-    using WPFLocalizeExtension.Providers;
-#endif
-    using XAMLMarkupExtensions.Base;
-    using System.Collections;
     using System.Windows.Media.Media3D;
+    using Engine;
+    using Providers;
+    using TypeConverters;
+    using XAMLMarkupExtensions.Base;
     #endregion
 
     /// <summary>
@@ -360,7 +354,7 @@ namespace WPFLocalizeExtension.Extensions
                             doParent2 = ((FrameworkContentElement)doParent).Parent;
                         else
 #endif
-                            doParent2 = VisualTreeHelper.GetParent(doParent);
+                            doParent2 = doParent.GetParent(true);
 
                         if (doParent2 == null && doParent is FrameworkElement)
                             doParent2 = ((FrameworkElement)doParent).Parent;
@@ -493,11 +487,11 @@ namespace WPFLocalizeExtension.Extensions
             var epName = "";
             
             if (endPoint.TargetObject is FrameworkElement)
-                epName = (string)((FrameworkElement)endPoint.TargetObject).GetValue(FrameworkElement.NameProperty);
+                epName = ((FrameworkElement)endPoint.TargetObject).GetValueSync<string>(FrameworkElement.NameProperty);
 #if SILVERLIGHT
 #else
             else if (endPoint.TargetObject is FrameworkContentElement)
-                epName = (string)((FrameworkContentElement)endPoint.TargetObject).GetValue(FrameworkContentElement.NameProperty);
+                epName = ((FrameworkContentElement)endPoint.TargetObject).GetValueSync<string>(FrameworkContentElement.NameProperty);
 #endif
 
             var resKeyBase = ci.Name + ":" + targetType.Name + ":";

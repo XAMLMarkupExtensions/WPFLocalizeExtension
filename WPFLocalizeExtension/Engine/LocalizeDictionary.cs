@@ -40,27 +40,22 @@ namespace WPFLocalizeExtension.Engine
 {
     #region Uses
     using System;
-    using System.Linq;
     using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Globalization;
-    using System.Windows;
-    using System.Windows.Input;
     using System.Collections.ObjectModel;
     using System.Collections.Specialized;
+    using System.ComponentModel;
+    using System.Globalization;
+    using System.Linq;
     using System.Threading;
-#if WINDOWS_PHONE
-    using WP7LocalizeExtension.Providers;
-    using WP7LocalizeExtension.Extensions;
-#else
+    using System.Windows;
+    using System.Windows.Input;
+    using Extensions;
+    using Providers;
+#if !WINDOWS_PHONE
     using XAMLMarkupExtensions.Base;
-#if SILVERLIGHT
-    using SLLocalizeExtension.Providers;
-    using SLLocalizeExtension.Extensions;
-#else
-    using WPFLocalizeExtension.Providers;
-    using WPFLocalizeExtension.Extensions;
 #endif
+#if !SILVERLIGHT
+    using System.Windows.Threading;
 #endif
     #endregion
 
@@ -304,7 +299,7 @@ namespace WPFLocalizeExtension.Engine
         /// <returns>The provider.</returns>
         public static ILocalizationProvider GetProvider(DependencyObject obj)
         {
-            return (obj != null) ? (ILocalizationProvider)obj.GetValue(ProviderProperty) : null;
+            return obj.GetValueSync<ILocalizationProvider>(ProviderProperty);
         }
 
         /// <summary>
@@ -371,13 +366,9 @@ namespace WPFLocalizeExtension.Engine
         public static string GetDesignCulture(DependencyObject obj)
         {
             if (Instance.GetIsInDesignMode())
-            {
-                return (string)obj.GetValue(DesignCultureProperty);
-            }
+                return obj.GetValueSync<string>(DesignCultureProperty);
             else
-            {
                 return Instance.Culture.ToString();
-            }
         }
         #endregion
 
@@ -389,7 +380,7 @@ namespace WPFLocalizeExtension.Engine
         /// <param name="value">The provider.</param>
         public static void SetProvider(DependencyObject obj, ILocalizationProvider value)
         {
-            obj.SetValue(ProviderProperty, value);
+            obj.SetValueSync(ProviderProperty, value);
         }
 
         /// <summary>
@@ -455,7 +446,7 @@ namespace WPFLocalizeExtension.Engine
         public static void SetDesignCulture(DependencyObject obj, string value)
         {
             if (Instance.GetIsInDesignMode())
-                obj.SetValue(DesignCultureProperty, value);
+                obj.SetValueSync(DesignCultureProperty, value);
         }
         #endregion
         #endregion
@@ -1074,17 +1065,22 @@ namespace WPFLocalizeExtension.Engine
             /// <param name="args">The event arguments.</param>
             internal static void Invoke(DependencyObject sender, DictionaryEventArgs args)
             {
+                var list = new List<IDictionaryEventListener>();
+
                 lock (listenersLock)
                 {
                     foreach (var wr in listeners.ToList())
                     {
 	                    var targetReference = wr.Target;
                         if (targetReference != null)
-                            ((IDictionaryEventListener)targetReference).ResourceChanged(sender, args);
+                            list.Add((IDictionaryEventListener)targetReference);
                         else
                             listeners.Remove(wr);
                     }
                 }
+
+                foreach (var item in list)
+                    item.ResourceChanged(sender, args);
             }
 
             /// <summary>

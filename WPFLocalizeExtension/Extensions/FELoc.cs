@@ -10,17 +10,17 @@
 namespace WPFLocalizeExtension.Extensions
 {
     using System;
-    using System.Windows;
-    using System.Windows.Data;
-    using System.Globalization;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Globalization;
+    using System.Reflection;
+    using System.Windows;
+    using System.Windows.Data;
     using System.Windows.Markup.Primitives;
     using System.Windows.Media.Imaging;
-    using System.Reflection;
+    using Engine;
+    using TypeConverters;
     using XAMLMarkupExtensions.Base;
-    using WPFLocalizeExtension.Engine;
-    using WPFLocalizeExtension.TypeConverters;
     
     /// <summary>
     /// A localization utility based on <see cref="FrameworkElement"/>.
@@ -114,8 +114,8 @@ namespace WPFLocalizeExtension.Extensions
         /// </summary>
         public string Key
         {
-            get { return GetValue(KeyProperty) as string; }
-            set { SetValue(KeyProperty, value); }
+            get { return this.GetValueSync<string>(KeyProperty); }
+            set { this.SetValueSync(KeyProperty, value); }
         }
         #endregion
 
@@ -135,8 +135,8 @@ namespace WPFLocalizeExtension.Extensions
         /// </summary>
         public IValueConverter Converter
         {
-            get { return GetValue(ConverterProperty) as IValueConverter; }
-            set { SetValue(ConverterProperty, value); }
+            get { return this.GetValueSync<IValueConverter>(ConverterProperty); }
+            set { this.SetValueSync(ConverterProperty, value); }
         } 
         #endregion
 
@@ -156,8 +156,8 @@ namespace WPFLocalizeExtension.Extensions
         /// </summary>
         public object ConverterParameter
         {
-            get { return GetValue(ConverterParameterProperty); }
-            set { SetValue(ConverterParameterProperty, value); }
+            get { return this.GetValueSync<object>(ConverterParameterProperty); }
+            set { this.SetValueSync(ConverterParameterProperty, value); }
         }
         #endregion
 
@@ -177,8 +177,8 @@ namespace WPFLocalizeExtension.Extensions
         /// </summary>
         public string ForceCulture
         {
-            get { return GetValue(ForceCultureProperty) as string; }
-            set { SetValue(ForceCultureProperty, value); }
+            get { return this.GetValueSync<string>(ForceCultureProperty); }
+            set { this.SetValueSync(ForceCultureProperty, value); }
         }
         #endregion
 
@@ -433,11 +433,11 @@ namespace WPFLocalizeExtension.Extensions
             string epProp = "";
 
             if (targetObject is FrameworkElement)
-                epName = (string)((FrameworkElement)targetObject).GetValue(FrameworkElement.NameProperty);
+                epName = ((FrameworkElement)targetObject).GetValueSync<string>(FrameworkElement.NameProperty);
 #if SILVERLIGHT
 #else
             else if (targetObject is FrameworkContentElement)
-                epName = (string)((FrameworkContentElement)targetObject).GetValue(FrameworkContentElement.NameProperty);
+                epName = ((FrameworkContentElement)targetObject).GetValueSync<string>(FrameworkContentElement.NameProperty);
 #endif
 
             if (targetInfo.TargetProperty is PropertyInfo)

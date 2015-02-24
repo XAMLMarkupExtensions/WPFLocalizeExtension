@@ -91,6 +91,7 @@
     <Optimize>true</Optimize>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Engine\DependencyObjectHelper.cs" />
     <Compile Include="Engine\IDictionaryEventListener.cs" />
     <Compile Include="Engine\LocalizeDictionary.cs">
       <SubType>Code</SubType>

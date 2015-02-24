@@ -15,15 +15,15 @@ namespace WPFLocalizeExtension.Providers
     #region Uses
     using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Windows;
-    using System.Resources;
-    using System.Reflection;
+    using System.Collections.ObjectModel;
     using System.Globalization;
     using System.IO;
-    using System.Collections.ObjectModel;
-    using System.Windows.Media;
+    using System.Linq;
+    using System.Reflection;
+    using System.Resources;
+    using System.Text;
+    using System.Windows;
+    using Engine;
     using XAMLMarkupExtensions.Base;
     #endregion
 
@@ -32,7 +32,7 @@ namespace WPFLocalizeExtension.Providers
     /// </summary>
     public class CSVEmbeddedLocalizationProvider : CSVLocalizationProviderBase
     {
-         #region Dependency Properties
+        #region Dependency Properties
         /// <summary>
         /// <see cref="DependencyProperty"/> DefaultDictionary to set the fallback resource dictionary.
         /// </summary>
@@ -75,7 +75,7 @@ namespace WPFLocalizeExtension.Providers
         /// <returns>The default dictionary.</returns>
         public static string GetDefaultDictionary(DependencyObject obj)
         {
-            return (obj != null) ? (string)obj.GetValue(DefaultDictionaryProperty) : null;
+            return obj.GetValueSync<string>(DefaultDictionaryProperty);
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace WPFLocalizeExtension.Providers
         /// <returns>The default assembly.</returns>
         public static string GetDefaultAssembly(DependencyObject obj)
         {
-            return (obj != null) ? (string)obj.GetValue(DefaultAssemblyProperty) : null;
+            return obj.GetValueSync<string>(DefaultAssemblyProperty);
         }
         #endregion
 
@@ -97,7 +97,7 @@ namespace WPFLocalizeExtension.Providers
         /// <param name="value">The dictionary.</param>
         public static void SetDefaultDictionary(DependencyObject obj, string value)
         {
-            obj.SetValue(DefaultDictionaryProperty, value);
+            obj.SetValueSync(DefaultDictionaryProperty, value);
         }
 
         /// <summary>
@@ -107,7 +107,7 @@ namespace WPFLocalizeExtension.Providers
         /// <param name="value">The assembly.</param>
         public static void SetDefaultAssembly(DependencyObject obj, string value)
         {
-            obj.SetValue(DefaultAssemblyProperty, value);
+            obj.SetValueSync(DefaultAssemblyProperty, value);
         }
         #endregion
         #endregion

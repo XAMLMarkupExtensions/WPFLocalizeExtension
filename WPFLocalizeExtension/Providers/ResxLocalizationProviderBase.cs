@@ -698,12 +698,20 @@ namespace WPFLocalizeExtension.Providers
             }
             catch (Exception e)
             {
-                OnProviderError(target, key, "Error retrieving the resource manager\r\n" + e.Message);
+                OnProviderError(target, key, "Error retrieving the resource manager.\r\n" + e.Message);
                 return null;
             }
 
             // finally, return the searched object as type of the generic type
-            return resManager.GetObject(key, culture);
+            try
+            {
+                return resManager.GetObject(key, culture);
+            }
+            catch (Exception e)
+            {
+                OnProviderError(target, key, "Error retrieving the resource.\r\n" + e.Message);
+                return null;
+            }
         }
 
         /// <summary>

@@ -13,11 +13,13 @@ namespace WPFLocalizeExtension.Providers
 #endif
 {
     using System;
-    using System.Windows;
-    using System.Windows.Media;
     using System.Collections.Generic;
-    using XAMLMarkupExtensions.Base;
+    using System.Windows;
+    using System.Windows.Data;
+    using System.Windows.Media;
     using System.Windows.Media.Media3D;
+    using Engine;
+    using XAMLMarkupExtensions.Base;
 
     /// <summary>
     /// Extension methods for <see cref="DependencyObject"/> in conjunction with the <see cref="ParentChangedNotifier"/>.
@@ -69,14 +71,14 @@ namespace WPFLocalizeExtension.Providers
                         depObjParent = ((FrameworkContentElement)depObj).Parent;
                     else
                     {
-                        try { depObjParent = LogicalTreeHelper.GetParent(depObj); }
+                        try { depObjParent = depObj.GetParent(false); }
                         catch { depObjParent = null; }
                     }
 #endif
 
                     if (depObjParent == null)
                     {
-                        try { depObjParent = VisualTreeHelper.GetParent(depObj); }
+                        try { depObjParent = depObj.GetParent(true); }
                         catch { break; }
                     }
                     
@@ -89,7 +91,7 @@ namespace WPFLocalizeExtension.Providers
                         // Try to establish a notification on changes of the Parent property of dp.
                         if (depObj is FrameworkElement && !parentNotifiers.ContainsKey(target))
                         {
-                            parentNotifiers.Add(target, new ParentChangedNotifier((FrameworkElement)depObj, () =>
+                            var pcn = new ParentChangedNotifier((FrameworkElement)depObj, () =>
                             {
                                 // Call the action...
                                 ParentChangedAction(target);
@@ -100,7 +102,9 @@ namespace WPFLocalizeExtension.Providers
                                     notifier.Dispose();
                                     parentNotifiers.Remove(target);
                                 }
-                            }));
+                            });
+
+                            parentNotifiers.Add(target, pcn);
                         }
                         break;
                     }
@@ -146,7 +150,7 @@ namespace WPFLocalizeExtension.Providers
                     else
 #endif
                     {
-                        try { depObjParent = VisualTreeHelper.GetParent(depObj); }
+                        try { depObjParent = depObj.GetParent(true); }
                         catch { break; }
                     }
                     // If this failed, try again using the Parent property (sometimes this is not covered by the VisualTreeHelper class :-P.
@@ -178,11 +182,39 @@ namespace WPFLocalizeExtension.Providers
         {
             return target.GetValueOrRegisterParentNotifier<T>((depObj) =>
             {
-                var value = depObj.GetValue(property);
-                if (value is T)
-                    return (T)value;
-                return default(T);
+                return depObj.GetValueSync<T>(property);
             }, ParentChangedAction, parentNotifiers);
+        }
+
+        /// <summary>
+        /// Gets the parent in the visual or logical tree.
+        /// </summary>
+        /// <param name="depObj">The dependency object.</param>
+        /// <param name="isVisualTree">True for visual tree, false for logical tree.</param>
+        /// <returns>The parent, if available.</returns>
+        public static DependencyObject GetParent(this DependencyObject depObj, bool isVisualTree)
+        {
+#if SILVERLIGHT
+            return GetParentInternal(depObj, isVisualTree);
+#else
+            if (depObj.CheckAccess())
+                return GetParentInternal(depObj, isVisualTree);
+            else
+                return (DependencyObject)depObj.Dispatcher.Invoke(new Func<DependencyObject>(() => GetParentInternal(depObj, isVisualTree)));
+#endif
+        }
+
+        private static DependencyObject GetParentInternal(DependencyObject depObj, bool isVisualTree)
+        {
+            if (isVisualTree)
+                return VisualTreeHelper.GetParent(depObj);
+#if !SILVERLIGHT
+            else
+                return LogicalTreeHelper.GetParent(depObj);
+#else
+            else
+                return null;
+#endif
         }
     }
 }
