@@ -12,83 +12,16 @@
         Title="TestWindow">
     <Window.Resources>
         <ResourceDictionary>
-        <converters:MultiplyConverter x:Key="multiplyConverter"/>
         <Style TargetType="{x:Type controls:SettingsMenu}">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
-            <Setter Property="Visibility" Value="Visible"/>
             <Setter Property="Template">
                 <Setter.Value>
-                        <ControlTemplate TargetType="{x:Type controls:SettingsMenu}">
-                        <ControlTemplate.Resources>
-                            <Storyboard x:Key="Checked">
-                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)" Storyboard.TargetName="markGrid">
-                                    <EasingDoubleKeyFrame KeyTime="0:0:0.15" Value="90"/>
-                                </DoubleAnimationUsingKeyFrames>
-                            </Storyboard>
-                            <Storyboard x:Key="Unchecked">
-                                <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(TransformGroup.Children)[2].(RotateTransform.Angle)" Storyboard.TargetName="markGrid">
-                                    <EasingDoubleKeyFrame KeyTime="0" Value="90"/>
-                                    <EasingDoubleKeyFrame KeyTime="0:0:0.15" Value="0"/>
-                                </DoubleAnimationUsingKeyFrames>
-                            </Storyboard>
-                        </ControlTemplate.Resources>
-                            <Grid x:Name="MainLayout" Background="{DynamicResource NormalBrush}">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-                                <Grid x:Name="SearchLayout" Margin="0" Panel.ZIndex="2">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Ellipse Grid.Column="1" Height="10" Width="10" Fill="{DynamicResource LEDStateOKBrush}" Visibility="{TemplateBinding FilterIndicatorVisibility}" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center" RenderTransformOrigin="0.5,0.5"/>
-                                </Grid>
-                                <Grid x:Name="ContentLayout" Grid.Row="1">
-                                    <!-- Setting Area -->
-                                    <Border x:Name="SettingsBorder" Visibility="Collapsed" ClipToBounds="True" Grid.Row="1" Panel.ZIndex="1" VerticalAlignment="Top" Margin="0">
-                                        <Border.Tag>
-                                            <sys:Double>0.0</sys:Double>
-                                        </Border.Tag>
-                                        <Border.Height>
-                                            <MultiBinding Converter="{StaticResource multiplyConverter}" UpdateSourceTrigger="Explicit">
-                                                <Binding Path="ActualHeight" ElementName="Contents"/>
-                                                <Binding Path="Tag" RelativeSource="{RelativeSource Self}"/>
-                                            </MultiBinding>
-                                        </Border.Height>
-                                        <Grid x:Name="SettingsLayout">
-                                            <Rectangle x:Name="BlurBar"
-							Opacity="1" ClipToBounds="True" SnapsToDevicePixels="True" Width="{Binding ActualWidth, ElementName=ContentsBorder}" Height="{Binding ActualHeight, ElementName=ContentsBorder}" HorizontalAlignment="Center" VerticalAlignment="Top">
-                                                <Rectangle.Effect>
-                                                    <BlurEffect Radius="15"/>
-                                                </Rectangle.Effect>
-                                                <Rectangle.Fill>
-                                                    <VisualBrush Visual="{Binding ElementName=ContentsBorder}" AlignmentX="Left"
-									AlignmentY="Top" ViewboxUnits="Absolute" Stretch="None"/>
-                                                </Rectangle.Fill>
-                                            </Rectangle>
-                                            <Rectangle 
-							Opacity="0.4" ClipToBounds="True" SnapsToDevicePixels="True" Fill="{DynamicResource ControlBackgroundBrush}" Grid.ColumnSpan="2"/>
-                                            <Rectangle x:Name="LightColour"
-							Opacity="0.4" ClipToBounds="True" SnapsToDevicePixels="True" Fill="#FFF3F3F3" Grid.ColumnSpan="2"/>
-                                            <Border BorderThickness="1,0,1,1" Margin="0" BorderBrush="{DynamicResource NormalBorderBrush}"/>
-                                            <Grid x:Name="Contents" VerticalAlignment="Bottom" MaxHeight="{Binding Path=ActualHeight, ElementName=ContentLayout, UpdateSourceTrigger=PropertyChanged}" Margin="0,-114,0,0">
-                                                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                                                    <ContentPresenter x:Name="SettingsContent"
-														  Content="{TemplateBinding MenuContent}"/>
-                                                </ScrollViewer>
-                                            </Grid>
-                                        </Grid>
-                                    </Border>
-                                    <!-- Setting Area End -->
-                                    <Border x:Name="ContentsBorder" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource NormalBorderBrush}"
-					Background="{DynamicResource ControlBackgroundBrush}">
-                                        <ContentPresenter x:Name="MainContent"/>
-                                    </Border>
-                                </Grid>
-                            </Grid>
-                        </ControlTemplate>
+                    <ControlTemplate TargetType="{x:Type controls:SettingsMenu}">
+                        <Grid x:Name="Contents" Visibility="Collapsed">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <ContentPresenter x:Name="SettingsContent" Content="{TemplateBinding MenuContent}"/>
+                            </ScrollViewer>
+                        </Grid>
+                    </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
@@ -103,21 +36,9 @@
 
         <controls:SettingsMenu Grid.Column="1">
             <controls:SettingsMenu.MenuContent>
-            <Grid  x:Name="MainSettings" Margin="5,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
                 <UniformGrid Margin="0,5,0,3" Rows="1">
                         <RadioButton Content="{lex:Loc MemoryTest:Resources:TestText}"/>
-                        <RadioButton Content="{lex:Loc MemoryTest:Resources:TestText}"/>
                 </UniformGrid>
-            </Grid>
             </controls:SettingsMenu.MenuContent>
         </controls:SettingsMenu>
     </Grid>
