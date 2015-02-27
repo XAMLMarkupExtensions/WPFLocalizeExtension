@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:lex="http://wpflocalizeextension.codeplex.com"
         xmlns:controls="clr-namespace:MemoryTest.Controls"
-        xmlns:converters="clr-namespace:MemoryTest.Converters"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         lex:LocalizeDictionary.DesignCulture="en"
         lex:ResxLocalizationProvider.DefaultAssembly="MemoryTest"
