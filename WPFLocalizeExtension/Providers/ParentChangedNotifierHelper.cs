@@ -36,85 +36,88 @@ namespace WPFLocalizeExtension.Providers
         /// <param name="ParentChangedAction">The notification action on the change event of the Parent property.</param>
         /// <param name="parentNotifiers">A dictionary of already registered notifiers.</param>
         /// <returns>The value, if possible.</returns>
-        public static T GetValueOrRegisterParentNotifier<T>(this DependencyObject target, Func<DependencyObject, T> GetFunction, Action<DependencyObject> ParentChangedAction, Dictionary<DependencyObject, ParentChangedNotifier> parentNotifiers)
+        public static T GetValueOrRegisterParentNotifier<T>(
+			this DependencyObject target, 
+			Func<DependencyObject, T> GetFunction, 
+			Action<DependencyObject> ParentChangedAction, 
+			ParentNotifiers parentNotifiers)
         {
             var ret = default(T);
 
-            if (target != null)
-            {
-                var depObj = target;
+	        if (target == null) return ret;
 
-                while (ret == null)
-                {
-                    // Try to get the value using the provided GetFunction.
-                    ret = GetFunction(depObj);
+	        var depObj = target;
+	        var weakTarget = new WeakReference(target);
 
-                    if (ret != null && parentNotifiers.ContainsKey(target))
-                    {
-                        var notifier = parentNotifiers[target];
-                        notifier.Dispose();
-                        parentNotifiers.Remove(target);
-                    }
+	        while (ret == null)
+	        {
+		        // Try to get the value using the provided GetFunction.
+		        ret = GetFunction(depObj);
 
-                    // Try to get the parent using the visual tree helper. This may fail on some occations.
+		        if (ret != null && parentNotifiers.ContainsKey(target))
+		        {
+			        parentNotifiers.Remove(target);
+		        }
+
+		        // Try to get the parent using the visual tree helper. This may fail on some occations.
 #if !SILVERLIGHT
-                    if (!(depObj is Visual) && !(depObj is Visual3D) && !(depObj is FrameworkContentElement))
-                        break;
+		        if (!(depObj is Visual) && !(depObj is Visual3D) && !(depObj is FrameworkContentElement))
+			        break;
 
-                    if (depObj is Window)
-                        break;
+		        if (depObj is Window)
+			        break;
 #endif
-                    DependencyObject depObjParent = null;
+		        DependencyObject depObjParent = null;
           
 #if !SILVERLIGHT
-                    if (depObj is FrameworkContentElement)
-                        depObjParent = ((FrameworkContentElement)depObj).Parent;
-                    else
-                    {
-                        try { depObjParent = depObj.GetParent(false); }
-                        catch { depObjParent = null; }
-                    }
+		        if (depObj is FrameworkContentElement)
+			        depObjParent = ((FrameworkContentElement)depObj).Parent;
+		        else
+		        {
+			        try { depObjParent = depObj.GetParent(false); }
+			        catch { depObjParent = null; }
+		        }
 #endif
 
-                    if (depObjParent == null)
-                    {
-                        try { depObjParent = depObj.GetParent(true); }
-                        catch { break; }
-                    }
+		        if (depObjParent == null)
+		        {
+			        try { depObjParent = depObj.GetParent(true); }
+			        catch { break; }
+		        }
                     
-                    // If this failed, try again using the Parent property (sometimes this is not covered by the VisualTreeHelper class :-P.
-                    if (depObjParent == null && depObj is FrameworkElement)
-                        depObjParent = ((FrameworkElement)depObj).Parent;
+		        // If this failed, try again using the Parent property (sometimes this is not covered by the VisualTreeHelper class :-P.
+		        if (depObjParent == null && depObj is FrameworkElement)
+			        depObjParent = ((FrameworkElement)depObj).Parent;
 
-                    if (ret == null && depObjParent == null)
-                    {
-                        // Try to establish a notification on changes of the Parent property of dp.
-                        if (depObj is FrameworkElement && !parentNotifiers.ContainsKey(target))
-                        {
-                            var pcn = new ParentChangedNotifier((FrameworkElement)depObj, () =>
-                            {
-                                // Call the action...
-                                ParentChangedAction(target);
-                                // ...and remove the notifier - it will probably not be used again.
-                                if (parentNotifiers.ContainsKey(target))
-                                {
-                                    var notifier = parentNotifiers[target];
-                                    notifier.Dispose();
-                                    parentNotifiers.Remove(target);
-                                }
-                            });
+		        if (ret == null && depObjParent == null)
+		        {
+			        // Try to establish a notification on changes of the Parent property of dp.
+			        if (depObj is FrameworkElement && !parentNotifiers.ContainsKey(target))
+			        {
+				        var pcn = new ParentChangedNotifier((FrameworkElement)depObj, () =>
+				        {
+							var localTarget = (DependencyObject)weakTarget.Target;
+					        if (!weakTarget.IsAlive) return;
+					        
+					        // Call the action...
+					        ParentChangedAction(localTarget);
+					        // ...and remove the notifier - it will probably not be used again.
+					        if (parentNotifiers.ContainsKey(localTarget))
+					        {
+						        parentNotifiers.Remove(localTarget);
+					        }
+				        });
 
-                            parentNotifiers.Add(target, pcn);
-                        }
-                        break;
-                    }
+				        parentNotifiers.Add(target, pcn);
+			        }
+			        break;
+		        }
 
-                    // Assign the parent to the current DependencyObject and start the next iteration.
-                    depObj = depObjParent;
-                }
-            }
+		        // Assign the parent to the current DependencyObject and start the next iteration.
+		        depObj = depObjParent;
+	        }
 
-            return ret;
+	        return ret;
         }
 
         /// <summary>
@@ -178,7 +181,11 @@ namespace WPFLocalizeExtension.Providers
         /// <param name="ParentChangedAction">The notification action on the change event of the Parent property.</param>
         /// <param name="parentNotifiers">A dictionary of already registered notifiers.</param>
         /// <returns>The value, if possible.</returns>
-        public static T GetValueOrRegisterParentNotifier<T>(this DependencyObject target, DependencyProperty property, Action<DependencyObject> ParentChangedAction, Dictionary<DependencyObject, ParentChangedNotifier> parentNotifiers)
+        public static T GetValueOrRegisterParentNotifier<T>(
+			this DependencyObject target, 
+			DependencyProperty property, 
+			Action<DependencyObject> ParentChangedAction, 
+			ParentNotifiers parentNotifiers)
         {
             return target.GetValueOrRegisterParentNotifier<T>((depObj) =>
             {

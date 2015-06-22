@@ -501,7 +501,7 @@ namespace WPFLocalizeExtension.Engine
         /// <summary>
         /// A dictionary for notification classes for changes of the individual target Parent changes.
         /// </summary>
-        private Dictionary<DependencyObject, ParentChangedNotifier> parentNotifiers = new Dictionary<DependencyObject, ParentChangedNotifier>();
+        private ParentNotifiers parentNotifiers = new ParentNotifiers();
 #endif
         #endregion
 
