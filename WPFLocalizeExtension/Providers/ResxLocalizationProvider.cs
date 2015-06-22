@@ -124,7 +124,7 @@ namespace WPFLocalizeExtension.Providers
         /// <summary>
         /// A dictionary for notification classes for changes of the individual target Parent changes.
         /// </summary>
-        private readonly Dictionary<DependencyObject, ParentChangedNotifier> _parentNotifiers = new Dictionary<DependencyObject, ParentChangedNotifier>();
+        private readonly ParentNotifiers _parentNotifiers = new ParentNotifiers();
 
         /// <summary>
         /// To use when no assembly is specified.
