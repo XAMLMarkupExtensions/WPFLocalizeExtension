@@ -2,10 +2,43 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:lex="http://wpflocalizeextension.codeplex.com"
+        xmlns:controls="clr-namespace:MemoryTest.Controls"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         lex:LocalizeDictionary.DesignCulture="en"
         lex:ResxLocalizationProvider.DefaultAssembly="MemoryTest"
         lex:ResxLocalizationProvider.DefaultDictionary="Resources"
         SizeToContent="WidthAndHeight"
         Title="TestWindow">
-    <Label Content="{lex:Loc TestText}" />
+    <Window.Resources>
+        <ResourceDictionary>
+        <Style TargetType="{x:Type controls:SettingsMenu}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type controls:SettingsMenu}">
+                        <Grid x:Name="Contents" Visibility="Collapsed">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <ContentPresenter x:Name="SettingsContent" Content="{TemplateBinding MenuContent}"/>
+                            </ScrollViewer>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </ResourceDictionary>
+    </Window.Resources>
+    <Grid x:Name="MainContent">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Label Content="{lex:Loc MemoryTest:Resources:TestText}" Grid.Column="0"/>
+
+        <controls:SettingsMenu Grid.Column="1">
+            <controls:SettingsMenu.MenuContent>
+                <UniformGrid Margin="0,5,0,3" Rows="1">
+                        <RadioButton Content="{lex:Loc MemoryTest:Resources:TestText}"/>
+                </UniformGrid>
+            </controls:SettingsMenu.MenuContent>
+        </controls:SettingsMenu>
+    </Grid>
 </Window>

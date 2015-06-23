@@ -495,8 +495,6 @@ namespace WPFLocalizeExtension.Extensions
 #endif
 
             var resKeyBase = ci.Name + ":" + targetType.Name + ":";
-            var resKeyNameProp = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(epName + LocalizeDictionary.GetSeparation(targetObject) + epProp, targetObject);
-            var resKeyName = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(epName, targetObject);
             
             // Check, if the key is already in our resource buffer.
             object input = null;
@@ -514,7 +512,10 @@ namespace WPFLocalizeExtension.Extensions
                 }
             }
             else
-            {
+            {            
+				var resKeyNameProp = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(epName + LocalizeDictionary.GetSeparation(targetObject) + epProp, targetObject);
+				var resKeyName = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(epName, targetObject);
+
                 // Try the automatic lookup function.
                 // First, look for a resource entry named: [FrameworkElement name][Separator][Property name]
                 if (isDefaultConverter && ResourceBuffer.ContainsKey(resKeyBase + resKeyNameProp))
