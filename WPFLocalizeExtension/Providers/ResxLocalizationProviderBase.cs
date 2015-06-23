@@ -70,6 +70,16 @@ namespace WPFLocalizeExtension.Providers
         /// Lock object for concurrent access to the available culture list.
         /// </summary>
         protected object AvailableCultureListLock = new object();
+
+        private static bool ignoreCase = true;
+        /// <summary>
+        /// Gets or sets the ignore case flag.
+        /// </summary>
+        public static bool IgnoreCase
+        {
+            get { return ignoreCase; }
+            set { ignoreCase = value; }
+        }
         #endregion
 
         #region Helper functions
@@ -705,6 +715,7 @@ namespace WPFLocalizeExtension.Providers
             // finally, return the searched object as type of the generic type
             try
             {
+                resManager.IgnoreCase = ignoreCase;
                 return resManager.GetObject(key, culture);
             }
             catch (Exception e)

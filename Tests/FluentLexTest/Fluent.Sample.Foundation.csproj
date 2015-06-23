@@ -92,8 +92,9 @@
     <Reference Include="WPFLocalizeExtension">
       <HintPath>..\..\WPFLocalizeExtension\binWPF\Debug\WPFLocalizeExtension.dll</HintPath>
     </Reference>
-    <Reference Include="XAMLMarkupExtensions">
-      <HintPath>..\..\packages\XAMLMarkupExtensions.1.2\lib\net40\XAMLMarkupExtensions.dll</HintPath>
+    <Reference Include="XAMLMarkupExtensions, Version=1.2.1.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\XAMLMarkupExtensions.1.2.1.1\lib\net40\XAMLMarkupExtensions.dll</HintPath>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -111,6 +111,7 @@ namespace WP7LocalizeExtension.Providers
         #region Variables
         private static string defaultAssembly = "";
         private static string defaultDictionary = "";
+        private static bool ignoreCase = true;
         #endregion
 
         #region Singleton Variables, Properties & Constructor

@@ -135,7 +135,6 @@ namespace WPFLocalizeExtension.Providers
         /// To use when no dictionary is specified.
         /// </summary>
         public string FallbackDictionary { get; set; }
-
         #endregion
 
         #region Singleton Variables, Properties & Constructor

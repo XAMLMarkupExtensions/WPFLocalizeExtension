@@ -55,8 +55,9 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Net" />
     <Reference Include="System.Windows.Browser" />
-    <Reference Include="XAMLMarkupExtensions">
-      <HintPath>..\packages\XAMLMarkupExtensions.1.2\lib\sl50\XAMLMarkupExtensions.dll</HintPath>
+    <Reference Include="XAMLMarkupExtensions, Version=1.2.1.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\XAMLMarkupExtensions.1.2.1.1\lib\sl50\XAMLMarkupExtensions.dll</HintPath>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -65,7 +66,9 @@
     <Compile Include="Engine\LocBinding.cs" />
     <Compile Include="Engine\MissingKeyEventArgs.cs" />
     <Compile Include="Engine\ObjectDependencyManager.cs" />
+    <Compile Include="Engine\ParentNotifiers.cs" />
     <Compile Include="Engine\SafeTargetInfo.cs" />
+    <Compile Include="Engine\TypedWeakReference.cs" />
     <Compile Include="Extensions\BLoc.cs" />
     <Compile Include="Extensions\Compatibility.cs" />
     <Compile Include="Extensions\LocExtension.cs" />

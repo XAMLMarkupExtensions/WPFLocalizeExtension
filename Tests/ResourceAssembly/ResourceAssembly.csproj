@@ -65,8 +65,9 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="XAMLMarkupExtensions">
-      <HintPath>..\..\packages\XAMLMarkupExtensions.1.2\lib\net35\XAMLMarkupExtensions.dll</HintPath>
+    <Reference Include="XAMLMarkupExtensions, Version=1.2.1.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\XAMLMarkupExtensions.1.2.1.1\lib\net35\XAMLMarkupExtensions.dll</HintPath>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>

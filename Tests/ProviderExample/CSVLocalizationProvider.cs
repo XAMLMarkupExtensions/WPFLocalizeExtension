@@ -19,6 +19,7 @@ namespace ProviderExample
     using System.Reflection;
     using System.Text;
     using System.Windows;
+    using WPFLocalizeExtension.Engine;
     using WPFLocalizeExtension.Providers;
     using XAMLMarkupExtensions.Base;
 
@@ -227,7 +228,7 @@ namespace ProviderExample
         /// <summary>
         /// A dictionary for notification classes for changes of the individual target Parent changes.
         /// </summary>
-        private Dictionary<DependencyObject, ParentChangedNotifier> parentNotifiers = new Dictionary<DependencyObject, ParentChangedNotifier>();
+        private readonly ParentNotifiers _parentNotifiers = new ParentNotifiers();
         #endregion
 
         /// <summary>
@@ -271,7 +272,7 @@ namespace ProviderExample
             if (target == null)
                 return null;
 
-            return target.GetValueOrRegisterParentNotifier<string>(CSVEmbeddedLocalizationProvider.DefaultAssemblyProperty, ParentChangedAction, parentNotifiers);
+            return target.GetValueOrRegisterParentNotifier<string>(CSVEmbeddedLocalizationProvider.DefaultAssemblyProperty, ParentChangedAction, _parentNotifiers);
         }
 
         /// <summary>
@@ -284,7 +285,7 @@ namespace ProviderExample
             if (target == null)
                 return null;
 
-            return target.GetValueOrRegisterParentNotifier<string>(CSVEmbeddedLocalizationProvider.DefaultDictionaryProperty, ParentChangedAction, parentNotifiers);
+            return target.GetValueOrRegisterParentNotifier<string>(CSVEmbeddedLocalizationProvider.DefaultDictionaryProperty, ParentChangedAction, _parentNotifiers);
         }
 
         /// <summary>
