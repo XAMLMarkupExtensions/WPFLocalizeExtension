@@ -158,7 +158,17 @@
         </member>
         <member name="F:Fluent.DropDownButton.DropDownHeightProperty">
             <summary>
-            /Using a DependencyProperty as the backing store for InitialDropDownHeight.  This enables animation, styling, binding, etc...
+            Using a DependencyProperty as the backing store for InitialDropDownHeight.  This enables animation, styling, binding, etc...
+            </summary>
+        </member>
+        <member name="F:Fluent.DropDownButton.ClosePopupOnMouseDownProperty">
+            <summary>
+            Using a DependencyProperty as the backing store for ClosePopupOnMouseDown.  This enables animation, styling, binding, etc...
+            </summary>
+        </member>
+        <member name="F:Fluent.DropDownButton.ClosePopupOnMouseDownDelayProperty">
+            <summary>
+            Using a DependencyProperty as the backing store for ClosePopupOnMouseDownDelay.  This enables animation, styling, binding, etc...
             </summary>
         </member>
         <member name="M:Fluent.DropDownButton.#cctor">
@@ -309,6 +319,16 @@
             Gets or sets initial dropdown height
             </summary>
         </member>
+        <member name="P:Fluent.DropDownButton.ClosePopupOnMouseDown">
+            <summary>
+            Gets or sets whether the popup of this drop down button should automatically be closed on mouse down.
+            </summary>
+        </member>
+        <member name="P:Fluent.DropDownButton.ClosePopupOnMouseDownDelay">
+            <summary>
+            Gets or sets the delay in milliseconds to close the popup on mouse down.
+            </summary>
+        </member>
         <member name="E:Fluent.DropDownButton.DropDownOpened">
             <summary>
             Occurs when context menu is opened
@@ -446,13 +466,12 @@
             Represents adorner for Backstage
             </summary>
         </member>
-        <member name="M:Fluent.BackstageAdorner.#ctor(System.Windows.FrameworkElement,System.Windows.UIElement,System.Double)">
+        <member name="M:Fluent.BackstageAdorner.#ctor(System.Windows.FrameworkElement,Fluent.Backstage)">
             <summary>
             Constructor
             </summary>
             <param name="adornedElement">Adorned element</param>
             <param name="backstage">Backstage</param>
-            <param name="topOffset">Adorner offset from top of window</param>
         </member>
         <member name="M:Fluent.BackstageAdorner.ArrangeOverride(System.Windows.Size)">
             <summary>
@@ -718,13 +737,6 @@
             Invoked when an unhandled <see cref="E:System.Windows.Input.Keyboard.KeyDown"/> attached event reaches an element in its route that is derived from this class. Implement this method to add class handling for this event. 
             </summary>
             <param name="e">The <see cref="T:System.Windows.Input.KeyEventArgs"/> that contains the event data.</param>
-        </member>
-        <member name="M:Fluent.Backstage.GetAdornerLayer(System.Windows.UIElement)">
-            <summary>
-            Get adorner layer for element
-            </summary>
-            <param name="element">Element</param>
-            <returns>Adorner layer</returns>
         </member>
         <member name="M:Fluent.Backstage.OnMouseLeftButtonDown(System.Windows.Input.MouseButtonEventArgs)">
             <summary>
@@ -1651,15 +1663,6 @@
             Handles back navigation with KeyTips
             </summary>
         </member>
-        <member name="M:Fluent.ComboBox.CustomPopupPlacementMethod(System.Windows.Size,System.Windows.Size,System.Windows.Point)">
-            <summary>
-            Implements custom placement for ribbon popup
-            </summary>
-            <param name="popupsize"></param>
-            <param name="targetsize"></param>
-            <param name="offset"></param>
-            <returns></returns>
-        </member>
         <member name="P:Fluent.ComboBox.Size">
             <summary>
             Gets or sets Size for the element.
@@ -2062,21 +2065,6 @@
         <member name="F:Fluent.FrameworkHelper.UseLayoutRoundingProperty">
             <summary>
              Using a DependencyProperty as the backing store for UseLayoutRounding.  This enables animation, styling, binding, etc...
-            </summary>
-        </member>
-        <member name="T:Fluent.EasingThicknessKeyFrame">
-            <summary>
-            Forwards to <see cref="T:System.Windows.Media.Animation.EasingThicknessKeyFrame"/>
-            </summary>
-        </member>
-        <member name="T:Fluent.CubicEase">
-            <summary>
-            Forwards to <see cref="T:System.Windows.Media.Animation.CubicEase"/>
-            </summary>
-        </member>
-        <member name="T:Fluent.EasingDoubleKeyFrame">
-            <summary>
-            Forwards to <see cref="T:System.Windows.Media.Animation.EasingDoubleKeyFrame"/>
             </summary>
         </member>
         <member name="T:Fluent.GalleryGroupContainer">
@@ -5278,11 +5266,6 @@
             Using a DependencyProperty as the backing store for GlassBorderThickness.  This enables animation, styling, binding, etc...
             </summary>
         </member>
-        <member name="F:Fluent.RibbonWindow.CaptionHeightProperty">
-            <summary>
-            Using a DependencyProperty as the backing store for CaptionHeight.  This enables animation, styling, binding, etc...
-            </summary>
-        </member>
         <member name="F:Fluent.RibbonWindow.CornerRadiusProperty">
             <summary>
             Using a DependencyProperty as the backing store for CornerRadius.  This enables animation, styling, binding, etc...
@@ -5366,11 +5349,6 @@
         <member name="P:Fluent.RibbonWindow.GlassBorderThickness">
             <summary>
             Gets or sets glass border thickness
-            </summary>
-        </member>
-        <member name="P:Fluent.RibbonWindow.CaptionHeight">
-            <summary>
-            Gets or sets caption height
             </summary>
         </member>
         <member name="P:Fluent.RibbonWindow.CornerRadius">
@@ -6101,13 +6079,6 @@
             <summary>
             Detachs self
             </summary>
-        </member>
-        <member name="M:Fluent.KeyTipService.GetElementWindow(System.Windows.UIElement)">
-            <summary>
-            Gets window where element is loacated or null
-            </summary>
-            <param name="element">Elemet</param>
-            <returns>Window where element is loacated or null</returns>
         </member>
         <member name="P:Fluent.KeyTipService.AreAnyKeyTipsVisible">
             <summary>
