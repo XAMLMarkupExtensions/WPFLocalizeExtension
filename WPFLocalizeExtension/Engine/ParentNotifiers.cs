@@ -48,7 +48,8 @@ namespace WPFLocalizeExtension.Engine
 
 			if (singleOrDefault != null)
 			{
-				_inner[singleOrDefault].Target.Dispose();
+                if (_inner[singleOrDefault].IsAlive)
+                    _inner[singleOrDefault].Target.Dispose();
 				_inner.Remove(singleOrDefault);
 			}
 		}
