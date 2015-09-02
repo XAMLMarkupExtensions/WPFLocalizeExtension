@@ -1,5 +1,5 @@
 ﻿#region Copyright information
-// <copyright file="LocBinding.cs">
+// <copyright file="EnumComboBox.cs">
 //     Licensed under Microsoft Public License (Ms-PL)
 //     http://wpflocalizeextension.codeplex.com/license
 // </copyright>

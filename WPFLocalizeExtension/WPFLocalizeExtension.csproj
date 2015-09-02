@@ -85,6 +85,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Engine\EnumComboBox.cs" />
+    <Compile Include="Engine\EnumRun.cs" />
     <Compile Include="Engine\ParentNotifiers.cs" />
     <Compile Include="Engine\TypedWeakReference.cs" />
     <Compile Include="Providers\FQAssemblyDictionaryKey.cs" />
