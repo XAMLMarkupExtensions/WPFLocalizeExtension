@@ -60,6 +60,8 @@ namespace WPFLocalizeExtension.Extensions
 
         #region Variables
         private static object resourceBufferLock = new object();
+        private static object ResolveLock = new object();
+
         private static Dictionary<string, object> ResourceBuffer = new Dictionary<string, object>();
 
         /// <summary>
@@ -641,37 +643,41 @@ namespace WPFLocalizeExtension.Extensions
         /// <returns>The resolved localized object.</returns>
         public static TValue GetLocalizedValue<TValue>(string key, CultureInfo targetCulture, DependencyObject target, IValueConverter converter = null, object converterParameter = null)
         {
-            var result = default(TValue);
-
-            var resourceKey = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(key, target);
-
-            // Get the localized object from the dictionary
-            var resKey = targetCulture.Name + ":" + typeof(TValue).Name + ":" + resourceKey;
-            var isDefaultConverter = converter is DefaultConverter;
-
-            if (isDefaultConverter && ResourceBuffer.ContainsKey(resKey))
-                result = (TValue)ResourceBuffer[resKey];
-            else
+            lock (ResolveLock)
             {
-                var localizedObject = LocalizeDictionary.Instance.GetLocalizedObject(resourceKey, target, targetCulture);
+                var result = default(TValue);
 
-                if (localizedObject == null)
-                    return result;
+                var resourceKey = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(key, target);
 
-                if (converter == null)
-                    converter = new DefaultConverter();
+                // Get the localized object from the dictionary
+                var resKey = targetCulture.Name + ":" + typeof (TValue).Name + ":" + resourceKey;
+                var isDefaultConverter = converter is DefaultConverter;
 
-                var tmp = converter.Convert(localizedObject, typeof(TValue), converterParameter, targetCulture);
-
-                if (tmp is TValue)
+                if (isDefaultConverter && ResourceBuffer.ContainsKey(resKey))
+                    result = (TValue) ResourceBuffer[resKey];
+                else
                 {
-                    result = (TValue)tmp;
-                    if (isDefaultConverter)
-                        SafeAddItemToResourceBuffer(resKey, result);
-                }
-            }
+                    var localizedObject = LocalizeDictionary.Instance.GetLocalizedObject(resourceKey, target,
+                        targetCulture);
 
-            return result;
+                    if (localizedObject == null)
+                        return result;
+
+                    if (converter == null)
+                        converter = new DefaultConverter();
+
+                    var tmp = converter.Convert(localizedObject, typeof (TValue), converterParameter, targetCulture);
+
+                    if (tmp is TValue)
+                    {
+                        result = (TValue) tmp;
+                        if (isDefaultConverter)
+                            SafeAddItemToResourceBuffer(resKey, result);
+                    }
+                }
+
+                return result;
+            }
         }
 
         /// <summary>
