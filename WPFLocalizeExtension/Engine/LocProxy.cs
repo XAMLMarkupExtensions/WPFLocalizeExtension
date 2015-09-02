@@ -113,7 +113,14 @@ namespace WPFLocalizeExtension.Engine
                     if (proxy.PrependType)
                         key = source.GetType().Name + proxy.Separator + key;
 
-                    proxy.ext.Key = key;
+                    if (proxy.ext == null)
+                    {
+                        proxy.ext = new LocExtension();
+                        proxy.ext.Key = key;
+                        proxy.ext.SetBinding(proxy, proxy.GetType().GetProperty("Result"));
+                    }
+                    else
+                        proxy.ext.Key = key;
                 }
             }
         }
@@ -123,8 +130,6 @@ namespace WPFLocalizeExtension.Engine
         /// </summary>
         public LocProxy()
         {
-            ext = new LocExtension();
-            ext.SetBinding(this, GetType().GetProperty("Result"));
         }
     }
 }
