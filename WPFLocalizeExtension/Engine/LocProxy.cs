@@ -75,7 +75,24 @@ namespace WPFLocalizeExtension.Engine
         {
             get { return (string)GetValue(SeparatorProperty); }
             set { SetValue(SeparatorProperty, value); }
-        } 
+        }
+        #endregion
+
+        #region CustomPrefix property
+        /// <summary>
+        /// The CustomPrefix.
+        /// </summary>
+        public static DependencyProperty CustomPrefixProperty = DependencyProperty.Register("CustomPrefix", typeof(string), typeof(LocProxy), new PropertyMetadata(null, PropertiesChanged));
+
+        /// <summary>
+        /// The backing property for <see cref="LocProxy.CustomPrefixProperty"/>
+        /// </summary>
+        [Category("Common")]
+        public string CustomPrefix
+        {
+            get { return (string)GetValue(CustomPrefixProperty); }
+            set { SetValue(CustomPrefixProperty, value); }
+        }
         #endregion
 
         #region Readonly result property
@@ -112,6 +129,8 @@ namespace WPFLocalizeExtension.Engine
 
                     if (proxy.PrependType)
                         key = source.GetType().Name + proxy.Separator + key;
+                    if (!string.IsNullOrEmpty(proxy.CustomPrefix))
+                        key = proxy.CustomPrefix + proxy.Separator + key;
 
                     if (proxy.ext == null)
                     {
