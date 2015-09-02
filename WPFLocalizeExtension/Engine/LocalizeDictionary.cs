@@ -497,6 +497,11 @@ namespace WPFLocalizeExtension.Engine
         /// </summary>
         private bool setCurrentThreadCulture = true;
 
+        /// <summary>
+        /// Determines if the code is run in DesignMode or not.
+        /// </summary>
+        private bool? _isInDesignMode = null;
+
 #if !WINDOWS_PHONE
         /// <summary>
         /// A dictionary for notification classes for changes of the individual target Parent changes.
@@ -809,6 +814,7 @@ namespace WPFLocalizeExtension.Engine
         }
 
         private ObservableCollection<CultureInfo> mergedAvailableCultures = null;
+
         /// <summary>
         /// Gets the merged list of all available cultures.
         /// </summary>
@@ -1010,19 +1016,36 @@ namespace WPFLocalizeExtension.Engine
         /// <returns>TRUE if in design mode, else FALSE</returns>
         public bool GetIsInDesignMode()
         {
+            lock (SyncRoot)
+            {
 #if SILVERLIGHT
 #else
-            if (this.Dispatcher == null || this.Dispatcher.Thread == null || !this.Dispatcher.Thread.IsAlive)
-            {
-                return false;
-            }
+                if (_isInDesignMode.HasValue)
+                    return _isInDesignMode.Value;
 
-            if (!this.Dispatcher.CheckAccess())
-            {
-                return (bool)this.Dispatcher.Invoke(new Func<bool>(this.GetIsInDesignMode));
-            }
+                if (this.Dispatcher == null || this.Dispatcher.Thread == null || !this.Dispatcher.Thread.IsAlive)
+                {
+                    _isInDesignMode = false;
+                    return _isInDesignMode.Value;
+                }
+
+                if (!this.Dispatcher.CheckAccess())
+                {
+                    try
+                    {
+                        _isInDesignMode = (bool)this.Dispatcher.Invoke(DispatcherPriority.Normal, TimeSpan.FromMilliseconds(100), new Func<bool>(this.GetIsInDesignMode));
+                    }
+                    catch (Exception)
+                    {
+                        _isInDesignMode = default(bool);
+                    }
+                    
+                    return _isInDesignMode.Value;
+                }
 #endif
-            return DesignerProperties.GetIsInDesignMode(this);
+                _isInDesignMode = DesignerProperties.GetIsInDesignMode(this);
+                return _isInDesignMode.Value;
+            }
         }
         #endregion
 
@@ -1071,7 +1094,7 @@ namespace WPFLocalizeExtension.Engine
                 {
                     foreach (var wr in listeners.ToList())
                     {
-	                    var targetReference = wr.Target;
+                        var targetReference = wr.Target;
                         if (targetReference != null)
                             list.Add((IDictionaryEventListener)targetReference);
                         else
@@ -1099,7 +1122,7 @@ namespace WPFLocalizeExtension.Engine
                 {
                     foreach (var wr in listeners.ToList())
                     {
-						var targetReference = wr.Target;
+                        var targetReference = wr.Target;
                         if (targetReference == null)
                             listeners.Remove(wr);
                         else if (targetReference == listener)
@@ -1125,7 +1148,7 @@ namespace WPFLocalizeExtension.Engine
                 {
                     foreach (var wr in listeners.ToList())
                     {
-						var targetReference = wr.Target;
+                        var targetReference = wr.Target;
                         if (targetReference == null)
                             listeners.Remove(wr);
                         else if ((IDictionaryEventListener)targetReference == listener)
@@ -1145,7 +1168,7 @@ namespace WPFLocalizeExtension.Engine
                 {
                     foreach (var wr in listeners.ToList())
                     {
-						var targetReference = wr.Target;
+                        var targetReference = wr.Target;
                         if (targetReference == null)
                             listeners.Remove(wr);
                         else if (targetReference is T)
@@ -1250,7 +1273,7 @@ namespace WPFLocalizeExtension.Engine
             /// <param name="parameter">Data used by the command. If the command does not require data to be passed, this object can be set to null.</param>
             public void Execute(object parameter)
             {
-                var c = (CultureInfo)parameter;
+                var c = new CultureInfo((string)parameter);
                 this.execute(c);
             }
             #endregion
