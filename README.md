@@ -55,7 +55,7 @@
 	* Implements INotifyPropertyChanged for advanced use
 	* Offers some functionality to check and get resource values in code behind (e.g. ResolveLocalizedValue)
 * Easy to use
-	* Can be used with any resource file (.resx) accross all assemblies (also the dynamic loaded one at runtime)
+	* Can be used with any resource file (.resx) across all assemblies (also the dynamic loaded one at runtime)
 	* Does not need any initializing process (like "call xyz to register a special localize dictionary")
 	* Can localize any type of data type, as long a TypeConverter exists for it
 * Example extensions included for
