@@ -1,6 +1,7 @@
 ﻿namespace AssemblyTest
 {
     using System;
+    using System.Diagnostics;
     using System.Globalization;
     using System.Threading;
     using System.Windows;
@@ -16,6 +17,11 @@
     {
         public MainWindow()
         {
+            ResxLocalizationProvider.Instance.ProviderError += (s, e) =>
+            {
+                Debug.WriteLine("Missing Key: " + e.Key);
+            };
+
             this.DataContext = new MyViewModel();
             InitializeComponent();
 

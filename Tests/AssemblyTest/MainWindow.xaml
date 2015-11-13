@@ -9,6 +9,7 @@
         xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         lex:LocalizeDictionary.DesignCulture="en"
+        lex:LocalizeDictionary.OutputMissingKeys="True"
         lex:ResxLocalizationProvider.DefaultAssembly="AssemblyTestResourceLib"
         lex:ResxLocalizationProvider.DefaultDictionary="Strings"
         Title="MainWindow"
@@ -78,6 +79,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <ComboBox ItemsSource="{Binding Source={x:Static lex:LocalizeDictionary.Instance}, Path=MergedAvailableCultures}"
                   SelectedItem="{Binding Source={x:Static lex:LocalizeDictionary.Instance}, Path=Culture}"
@@ -98,14 +100,21 @@
             <Local:Countries Country="Germany" CountryDE="Deutschland" Area="357039" />
             <Local:Countries Country="United Kingdom" CountryDE="Großbrittanien" Area="244103" />
         </ListBox>
-        <TextBox Grid.Row="5" lex:ResxLocalizationProvider.DefaultAssembly="AssemblyTest" lex:ResxLocalizationProvider.DefaultDictionary="CountryRes">
+        <!--<TextBlock Grid.Row="5" Text="{Binding ElementName=Proxy, Path=Result}">
+            <lex:LocProxy Name="Proxy" PrependType="True"
+                          Source="{Binding EnumValue}" />
+        </TextBlock>-->
+        <TextBlock Grid.Row="5" Text="{Binding ElementName=Proxy, Path=Result}">
+            <lex:EnumRun PrependType="True" EnumValue="{Binding EnumValue}" />
+        </TextBlock>
+        <!--<TextBox Grid.Row="5" lex:ResxLocalizationProvider.DefaultAssembly="AssemblyTest" lex:ResxLocalizationProvider.DefaultDictionary="CountryRes">
             <TextBox.Text>
                 <Ext:CatExtension Format="Nested list test: {0} - {1}">
                     <lex:LocExtension Key="Country" />
                     <lex:LocExtension Key="Area" />
                 </Ext:CatExtension>
             </TextBox.Text>
-        </TextBox>
+        </TextBox>-->
         <lex:EnumComboBox Grid.Row="6" Margin="2" lex:LocalizeDictionary.Provider="{StaticResource ResourceKey=CSVProvider}" Type="{x:Type Local:TestEnum}">
             <lex:EnumComboBox.Style>
                 <Style TargetType="{x:Type lex:EnumComboBox}">

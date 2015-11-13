@@ -27,6 +27,23 @@ namespace AssemblyTest
             }
         }
 
+        private TestEnum enumValue = TestEnum.Processing;
+        /// <summary>
+        /// Gets or sets the enumValue.
+        /// </summary>
+        public TestEnum EnumValue
+        {
+            get { return enumValue; }
+            set
+            {
+                if (enumValue != value)
+                {
+                    enumValue = value;
+                    RaisePropertyChanged("EnumValue");
+                }
+            }
+        }
+
         public MyViewModel()
         {
             ResxLocalizationProvider.Instance.UpdateCultureList("AssemblyTest", "Strings");

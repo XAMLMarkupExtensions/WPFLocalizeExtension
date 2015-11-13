@@ -716,7 +716,12 @@ namespace WPFLocalizeExtension.Providers
             try
             {
                 resManager.IgnoreCase = ignoreCase;
-                return resManager.GetObject(key, culture);
+                var result = resManager.GetObject(key, culture);
+
+                if (result == null)
+                    OnProviderError(target, key, "Missing key.");
+
+                return result;
             }
             catch (Exception e)
             {
