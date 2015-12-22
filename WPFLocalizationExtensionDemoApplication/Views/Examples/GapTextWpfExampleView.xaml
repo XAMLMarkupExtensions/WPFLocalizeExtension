@@ -82,8 +82,23 @@
                 </lex:GapTextControl.Gaps>
             </lex:GapTextControl>
         </GroupBox>
-        <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}, Path=DataContext.Animals}" 
-                              SelectedItem="{Binding SelectedAnimal}"
-                              DisplayMemberPath="Name"/>
+        <GroupBox Header="{extensions:LocText Key=Examples.GapTextWpfExample.Example, FormatSegment1=E}">
+            <lex:GapTextControl FormatString="{Binding DynamicFormatString}"
+                                 HorizontalAlignment="Stretch"
+                                 MinHeight="100">
+                <lex:GapTextControl.Template>
+                    <ControlTemplate>
+                        <Border BorderBrush="Red">
+                            <TextBlock x:Name="PART_TextBlock" />
+                        </Border>
+                    </ControlTemplate>
+                </lex:GapTextControl.Template>
+                <lex:GapTextControl.Gaps>
+                    <Run Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=lex:GapTextControl}, Path=DataContext.SelectedAnimal.Name}" />
+                    <TextBox IsEnabled="False" Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=lex:GapTextControl}, Path=DataContext.SelectedAnimal.LastSeen}" />
+                </lex:GapTextControl.Gaps>
+            </lex:GapTextControl>
+        </GroupBox>
+
     </StackPanel>
 </UserControl>

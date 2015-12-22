@@ -23,7 +23,7 @@ namespace WPFLocalizationExtensionDemoApplication.ViewModels.Examples
 
             this.Animals = new BindableCollection<Animal>();
 
-            this.Animals.Add(new Animal("Dodo", DateTime.Now.Year - 1681));
+            this.Animals.Add(new Animal("Dodo", DateTime.Now.Year - 1681, 1681));
 
             var million = 1000*1000;
 
@@ -83,20 +83,18 @@ namespace WPFLocalizationExtensionDemoApplication.ViewModels.Examples
 
         public class Animal
         {
-            public Animal(string name, int age)
+            public Animal(string name, int age, int? lastSeen = null)
             {
                 this.Name = name;
                 this.Age = age;
+                this.LastSeen = lastSeen;
             }
 
             public string Name { get; set; }
 
             public int Age { get; set; }
 
-            //public override string ToString()
-            //{
-            //    return this.Name;
-            //}
+            public int? LastSeen { get; set; }
         }
 
         public BindableCollection<Animal> Animals { get; set; }
@@ -112,6 +110,22 @@ namespace WPFLocalizationExtensionDemoApplication.ViewModels.Examples
                 if (Equals(value, _selectedAnimal)) return;
                 _selectedAnimal = value;
                 NotifyOfPropertyChange(() => SelectedAnimal);
+                NotifyOfPropertyChange(() => this.DynamicFormatString);
+            }
+        }
+
+        public string DynamicFormatString
+        {
+            get
+            {
+                if (this.SelectedAnimal.LastSeen != null)
+                {
+                    return "The last {0} has been seen in {1}.";
+                }
+                else
+                {
+                    return string.Empty;
+                }
             }
         }
     }
