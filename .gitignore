@@ -34,3 +34,4 @@ ClientBin/*
 *.zip
 *.pfx
 Example.xlsx
+packages/
