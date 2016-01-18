@@ -791,7 +791,7 @@ namespace WPFLocalizeExtension.Engine
                     if (defaultProvider != null)
                     {
                         defaultProvider.ProviderChanged -= new ProviderChangedEventHandler(ProviderUpdated);
-                        defaultProvider.ValueChanged += new ValueChangedEventHandler(ValueChanged);
+                        defaultProvider.ValueChanged -= new ValueChangedEventHandler(ValueChanged);
                         defaultProvider.AvailableCultures.CollectionChanged -= new NotifyCollectionChangedEventHandler(AvailableCulturesCollectionChanged);
                     }
 
