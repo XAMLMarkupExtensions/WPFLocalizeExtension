@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencies", "{7141B014-FF60-4105-B88C-9812838D6D0D}"
 EndProject
@@ -28,6 +28,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryTest", "Tests\MemoryTest\MemoryTest.csproj", "{3D591943-C256-46EB-88EA-CCA0B3A498E6}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fluent.Sample.Foundation", "Tests\FluentLexTest\Fluent.Sample.Foundation.csproj", "{65C4A879-2E9E-4A74-9AC7-A31C71D1F612}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GapTextWpfTest", "GapTextWpfTest\GapTextWpfTest.csproj", "{777707A8-E4B6-4482-A67B-A80CC789317F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -195,6 +197,22 @@ Global
 		{65C4A879-2E9E-4A74-9AC7-A31C71D1F612}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{65C4A879-2E9E-4A74-9AC7-A31C71D1F612}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{65C4A879-2E9E-4A74-9AC7-A31C71D1F612}.Release|x86.ActiveCfg = Release|Any CPU
+		{777707A8-E4B6-4482-A67B-A80CC789317F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{777707A8-E4B6-4482-A67B-A80CC789317F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{777707A8-E4B6-4482-A67B-A80CC789317F}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{777707A8-E4B6-4482-A67B-A80CC789317F}.Debug|ARM.Build.0 = Debug|Any CPU
+		{777707A8-E4B6-4482-A67B-A80CC789317F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{777707A8-E4B6-4482-A67B-A80CC789317F}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{777707A8-E4B6-4482-A67B-A80CC789317F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{777707A8-E4B6-4482-A67B-A80CC789317F}.Debug|x86.Build.0 = Debug|Any CPU
+		{777707A8-E4B6-4482-A67B-A80CC789317F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{777707A8-E4B6-4482-A67B-A80CC789317F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{777707A8-E4B6-4482-A67B-A80CC789317F}.Release|ARM.ActiveCfg = Release|Any CPU
+		{777707A8-E4B6-4482-A67B-A80CC789317F}.Release|ARM.Build.0 = Release|Any CPU
+		{777707A8-E4B6-4482-A67B-A80CC789317F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{777707A8-E4B6-4482-A67B-A80CC789317F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{777707A8-E4B6-4482-A67B-A80CC789317F}.Release|x86.ActiveCfg = Release|Any CPU
+		{777707A8-E4B6-4482-A67B-A80CC789317F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

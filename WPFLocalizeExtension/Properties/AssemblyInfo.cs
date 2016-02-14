@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Windows;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
@@ -9,6 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("SLLocalizeExtension")]
 [assembly: AssemblyProduct("SLLocalizeExtension")]
 #else
+[assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: AssemblyTitle("WPFLocalizeExtension")]
 [assembly: AssemblyProduct("WPFLocalizeExtension")]
 #endif
