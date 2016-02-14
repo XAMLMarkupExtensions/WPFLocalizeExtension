@@ -18,6 +18,7 @@ namespace WPFLocalizeExtension.Engine
     using System.Windows;
     using System.Windows.Controls;
     using System.Collections.Generic;
+    using System.Windows.Markup;
 
     /// <summary>
     /// An extended combobox that is enumerating Enum values.
@@ -25,6 +26,7 @@ namespace WPFLocalizeExtension.Engine
     /// </summary>
     public class EnumComboBox : ComboBox
     {
+        #region Type property
         /// <summary>
         /// The Type.
         /// </summary>
@@ -48,7 +50,59 @@ namespace WPFLocalizeExtension.Engine
                 return;
 
             ecb.SetType(ecb.Type);
+        } 
+        #endregion
+
+        #region PrependType property
+        /// <summary>
+        /// This flag determines, if the type should be added using the given separator.
+        /// </summary>
+        public static DependencyProperty PrependTypeProperty = DependencyProperty.Register("PrependType", typeof(bool), typeof(EnumComboBox), new PropertyMetadata(false));
+
+        /// <summary>
+        /// The backing property for <see cref="LocProxy.PrependTypeProperty"/>
+        /// </summary>
+        [Category("Common")]
+        public bool PrependType
+        {
+            get { return (bool)GetValue(PrependTypeProperty); }
+            set { SetValue(PrependTypeProperty, value); }
         }
+        #endregion
+
+        #region Separator property
+        /// <summary>
+        /// The Separator.
+        /// </summary>
+        public static DependencyProperty SeparatorProperty = DependencyProperty.Register("Separator", typeof(string), typeof(EnumComboBox), new PropertyMetadata("_"));
+
+        /// <summary>
+        /// The backing property for <see cref="LocProxy.SeparatorProperty"/>
+        /// </summary>
+        [Category("Common")]
+        public string Separator
+        {
+            get { return (string)GetValue(SeparatorProperty); }
+            set { SetValue(SeparatorProperty, value); }
+        }
+        #endregion
+
+        #region Prefix property
+        /// <summary>
+        /// The Prefix.
+        /// </summary>
+        public static DependencyProperty PrefixProperty = DependencyProperty.Register("Prefix", typeof(string), typeof(EnumComboBox), new PropertyMetadata(null));
+
+        /// <summary>
+        /// The backing property for <see cref="LocProxy.PrefixProperty"/>
+        /// </summary>
+        [Category("Common")]
+        public string Prefix
+        {
+            get { return (string)GetValue(PrefixProperty); }
+            set { SetValue(PrefixProperty, value); }
+        }
+        #endregion
 
         private void SetType(Type type)
         {
@@ -78,6 +132,25 @@ namespace WPFLocalizeExtension.Engine
             catch
             {
             }
+        }
+
+        /// <summary>
+        /// Creates a new instance.
+        /// </summary>
+        public EnumComboBox()
+        {
+            var context = new ParserContext();
+            
+            context.XmlnsDictionary.Add("", "http://schemas.microsoft.com/winfx/2006/xaml/presentation");
+            context.XmlnsDictionary.Add("lex", "http://wpflocalizeextension.codeplex.com");
+
+            var xaml = "<DataTemplate><TextBlock><lex:EnumRun EnumValue=\"{Binding}\"";
+            xaml += " PrependType=\"{Binding PrependType, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=lex:EnumComboBox}}\"";
+            xaml += " Separator=\"{Binding Separator, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=lex:EnumComboBox}}\"";
+            xaml += " Prefix=\"{Binding Prefix, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=lex:EnumComboBox}}\"";
+            xaml += " /></TextBlock></DataTemplate>";
+
+            ItemTemplate = (DataTemplate)XamlReader.Parse(xaml, context);
         }
     }
 }
