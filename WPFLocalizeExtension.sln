@@ -7,10 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPFLocalizeExtension", "WPF
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SLLocalizeExtension", "WPFLocalizeExtension\SLLocalizeExtension.csproj", "{7422AF3D-69D5-4862-90CF-62A8C5B23FBC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WP7LocalizeExtension", "WPFLocalizeExtension\WP7LocalizeExtension.csproj", "{D84F8F07-34AB-4652-ADDB-D9B4210FB58E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GapTextWpfTest", "GapTextWpfTest\GapTextWpfTest.csproj", "{777707A8-E4B6-4482-A67B-A80CC789317F}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPFLocalizationExtensionDemoApplication", "WPFLocalizationExtensionDemoApplication\WPFLocalizationExtensionDemoApplication.csproj", "{53618740-D7CF-43C3-A8A7-D81522A16623}"
 EndProject
 Global
@@ -27,14 +23,6 @@ Global
 		{7422AF3D-69D5-4862-90CF-62A8C5B23FBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7422AF3D-69D5-4862-90CF-62A8C5B23FBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7422AF3D-69D5-4862-90CF-62A8C5B23FBC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D84F8F07-34AB-4652-ADDB-D9B4210FB58E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D84F8F07-34AB-4652-ADDB-D9B4210FB58E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D84F8F07-34AB-4652-ADDB-D9B4210FB58E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D84F8F07-34AB-4652-ADDB-D9B4210FB58E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{777707A8-E4B6-4482-A67B-A80CC789317F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{777707A8-E4B6-4482-A67B-A80CC789317F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{777707A8-E4B6-4482-A67B-A80CC789317F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{777707A8-E4B6-4482-A67B-A80CC789317F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{53618740-D7CF-43C3-A8A7-D81522A16623}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{53618740-D7CF-43C3-A8A7-D81522A16623}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{53618740-D7CF-43C3-A8A7-D81522A16623}.Release|Any CPU.ActiveCfg = Release|Any CPU

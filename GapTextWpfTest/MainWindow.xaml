@@ -42,7 +42,7 @@
         </TextBlock>
         
         <Label Background="DarkOrange" Content="Z" />
-        <localLex:GapTextControl FormatString="The shop in {0} is open on {1} from {2} to {3}">
+        <localLex:GapTextControl FormatString="The shop in {0} is open on {1} from {2} to {3}. We could have more of these in {0}!">
             <localLex:GapTextControl.Template>
                 <ControlTemplate>
                     <TextBlock x:Name="PART_TextBlock" />

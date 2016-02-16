@@ -35,3 +35,4 @@ ClientBin/*
 *.pfx
 Example.xlsx
 packages/
+.vs/

@@ -1,28 +1,41 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text.RegularExpressions;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using XAMLMarkupExtensions.Base;
+﻿#region Copyright information
+// <copyright file="GapTextControl.cs">
+//     Licensed under Microsoft Public License (Ms-PL)
+//     http://wpflocalizeextension.codeplex.com/license
+// </copyright>
+// <author>Peter Wendorff</author>
+// <author>Uwe Mayer</author>
+#endregion
 
 namespace WPFLocalizeExtension.Engine
 {
+    using System;
+    using System.Collections.ObjectModel;
+    using System.IO;
+    using System.Text.RegularExpressions;
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Data;
+    using System.Windows.Documents;
+    using System.Windows.Markup;
+    using System.Xml;
+
+    /// <summary>
+    /// A gap text control.
+    /// </summary>
     //TODO: proper handling of \n in string contents
     [TemplatePart(Name = PART_TextBlock, Type = typeof(TextBlock))]
     public class GapTextControl : Control
     {
         #region Dependency Properties
-
         /// <summary>
         /// This property is the string that may contain gaps for controls.
         /// </summary>
         public static readonly DependencyProperty FormatStringProperty = DependencyProperty.Register(
-            "FormatString",
-            typeof (string),
-            typeof (GapTextControl),
-            new UIPropertyMetadata(string.Empty, OnFormatStringChanged));
+            nameof(FormatString),
+            typeof(string),
+            typeof(GapTextControl),
+            new PropertyMetadata(string.Empty, OnFormatStringChanged));
 
         /// <summary>
         /// If this property is set to true there is no error thrown 
@@ -34,28 +47,28 @@ namespace WPFLocalizeExtension.Engine
         /// As an example consider a submit button would be missing due to a missing placeholder in the FormatString.
         /// </summary>
         public static readonly DependencyProperty IgnoreLessGapsProperty = DependencyProperty.Register(
-            "IgnoreLessGaps",
-            typeof (bool),
-            typeof (GapTextControl),
-            new UIPropertyMetadata(false));
+            nameof(IgnoreLessGaps),
+            typeof(bool),
+            typeof(GapTextControl),
+            new PropertyMetadata(false));
 
         /// <summary>
         /// If this property is true, any FormatString that refers to the same string item multiple times produces an exception.
         /// </summary>
         public static readonly DependencyProperty IgnoreDuplicateStringReferencesProperty = DependencyProperty.Register(
-            "IgnoreDuplicateStringReferences",
+            nameof(IgnoreDuplicateStringReferences),
             typeof(bool),
             typeof(GapTextControl),
-            new UIPropertyMetadata(true));
+            new PropertyMetadata(true));
 
         /// <summary>
         /// If this property is true, any FormatString that refers to the same control item multiple times produces an exception.
         /// </summary>
         public static readonly DependencyProperty IgnoreDuplicateControlReferencesProperty = DependencyProperty.Register(
-            "IgnoreDuplicateControlReferences",
+            nameof(IgnoreDuplicateControlReferences),
             typeof(bool),
             typeof(GapTextControl),
-            new UIPropertyMetadata(false));
+            new PropertyMetadata(false));
 
         /// <summary>
         /// property that stores the items to be inserted into the gaps.
@@ -63,10 +76,10 @@ namespace WPFLocalizeExtension.Engine
         /// All other items are converted to Text using their ToString() implementation.
         /// </summary>
         public static readonly DependencyProperty GapsProperty = DependencyProperty.Register(
-            "Gaps",
+            nameof(Gaps),
             typeof(ObservableCollection<object>),
             typeof(GapTextControl),
-            new UIPropertyMetadata(default(ObservableCollection<object>), OnGapsChanged));
+            new PropertyMetadata(default(ObservableCollection<object>), OnGapsChanged));
 
         private static void OnGapsChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
         {
@@ -75,160 +88,136 @@ namespace WPFLocalizeExtension.Engine
             // re-assemble children:
             if (dependencyPropertyChangedEventArgs.OldValue != dependencyPropertyChangedEventArgs.NewValue)
             {
-                var self = (GapTextControl) dependencyObject;
+                var self = (GapTextControl)dependencyObject;
                 self.OnContentChanged();
             }
         }
-
         #endregion
 
-        #region constructors
-
+        #region Constructors
         static GapTextControl()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(
-                typeof(GapTextControl),
-                new FrameworkPropertyMetadata(typeof(GapTextControl)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(GapTextControl), new FrameworkPropertyMetadata(typeof(GapTextControl)));
         }
 
+        /// <summary>
+        /// Creates a new instance.
+        /// </summary>
         public GapTextControl()
         {
-            this.Gaps = new ObservableCollection<object>();
-            this.Gaps.CollectionChanged += (sender, args) => this.OnContentChanged();
+            Gaps = new ObservableCollection<object>();
+            Gaps.CollectionChanged += (sender, args) => OnContentChanged();
         }
         #endregion
 
-        #region properties matching DependencyProperties
-
+        #region Properties matching the DependencyProperties
+        /// <summary>
+        /// Gets or set the format string.
+        /// </summary>
         public string FormatString
         {
-            get
-            {
-                return (string) GetValue(FormatStringProperty);
-            }
-            set
-            {
-                SetValue(FormatStringProperty, value);
-            }
+            get { return (string)GetValue(FormatStringProperty); }
+            set { SetValue(FormatStringProperty, value); }
         }
 
-        public bool IgnoreLessGaps {
-            get { return (bool) GetValue(IgnoreLessGapsProperty); }
-            set { SetValue(IgnoreLessGapsProperty, value);}
+        public bool IgnoreLessGaps
+        {
+            get { return (bool)GetValue(IgnoreLessGapsProperty); }
+            set { SetValue(IgnoreLessGapsProperty, value); }
         }
 
         public bool IgnoreDuplicateStringReferences
         {
-            get { return (bool) GetValue(IgnoreDuplicateStringReferencesProperty); }
+            get { return (bool)GetValue(IgnoreDuplicateStringReferencesProperty); }
             set { SetValue(IgnoreDuplicateStringReferencesProperty, value); }
         }
-        public bool IgnoreDuplicateControlReferences {
-            get { return (bool) GetValue(IgnoreDuplicateControlReferencesProperty); }
+
+        public bool IgnoreDuplicateControlReferences
+        {
+            get { return (bool)GetValue(IgnoreDuplicateControlReferencesProperty); }
             set { SetValue(IgnoreDuplicateControlReferencesProperty, value); }
         }
 
+        /// <summary>
+        /// Gets or sets the gap collection.
+        /// </summary>
         public ObservableCollection<object> Gaps
         {
-            get { return (ObservableCollection<object>) GetValue(GapsProperty); }
+            get { return (ObservableCollection<object>)GetValue(GapsProperty); }
             set { SetValue(GapsProperty, value); }
         }
-
         #endregion
 
-        #region constants
-
+        #region Constants
         /// <summary>
         /// Pattern to split the FormatString, see https://github.com/SeriousM/WPFLocalizationExtension/issues/78#issuecomment-163023915 for documentation ( TODO!!!)
         /// </summary>
-        public const string RegexPattern = @"(.*?){(\d*)}"; 
+        public const string RegexPattern = @"(.*?){(\d*)}";
         #endregion
 
-        #region constants for TemplateParts
-
+        #region Constants for TemplateParts
         // ReSharper disable once InconsistentNaming
         private const string PART_TextBlock = "PART_TextBlock";
-
         #endregion
 
         #region Sub-Controls
-
         private TextBlock theTextBlock = new TextBlock();
-        
         #endregion
 
         #region DependencyProperty changed event handlers
-
         private static void OnFormatStringChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (e.OldValue != e.NewValue)
             {
-                var self = (GapTextControl) d;
+                var self = (GapTextControl)d;
                 self.OnContentChanged();
             }
         }
 
-        public enum InlineType
+        private T DeepCopy<T>(T obj)
+            where T : DependencyObject
         {
-            Inline,
-            // ReSharper disable once InconsistentNaming
-            UIElement,
-            String
+            var xaml = XamlWriter.Save(obj);
+            var stringReader = new StringReader(xaml);
+            var xmlTextReader = new XmlTextReader(stringReader);
+            var result = (T)XamlReader.Load(xmlTextReader);
+
+            var enumerator = obj.GetLocalValueEnumerator();
+            while (enumerator.MoveNext())
+            {
+                var dp = enumerator.Current.Property;
+                var be = BindingOperations.GetBindingExpression(obj, dp);
+                if (be != null && be.ParentBinding != null && be.ParentBinding.Path != null)
+                    BindingOperations.SetBinding(result, dp, be.ParentBinding);
+            }
+
+            return result;
         }
 
         private void OnContentChanged()
         {
-            //re-arrange the children:
-            this.theTextBlock.Inlines.Clear();
-            
-            if (this.FormatString != null)
+            // Re-arrange the children:
+            theTextBlock.Inlines.Clear();
+
+            if (FormatString != null)
             {
                 var matchedUpToIndex = 0;
 
                 // 1) determine which items are to be used as string and which are to be inserted as controls:
                 // allowed according to https://msdn.microsoft.com/de-de/library/system.windows.documents.inlinecollection%28v=vs.110%29.aspx are
                 // Inline, String (creates an implicit Run), UIElement (creates an implicit InlineUIContainer with the supplied UIElement inside), 
-                if (this.Gaps != null)
+                if (Gaps != null)
                 {
-                    List<Tuple<InlineType, object>> classifiedGaps = new List<Tuple<InlineType, object>>(this.Gaps.Count);
+                    var match = Regex.Match(FormatString, RegexPattern);
 
-                    foreach (var gap in this.Gaps)
-                    {
-                        // inlines are directly allowed
-                        var inlineGap = gap as Inline;
-                        if (inlineGap != null)
-                        {
-                            // inline gaps are basically strings
-                            classifiedGaps.Add(new Tuple<InlineType, object>(InlineType.Inline, gap));
-                        }
-                        else
-                        {
-                            var uiElementGap = gap as UIElement;
-                            if (uiElementGap != null)
-                            {
-                                // this is a control and should be added as such
-                                classifiedGaps.Add(new Tuple<InlineType, object>(InlineType.UIElement, gap));
-                            }
-                            else
-                            {
-                                // cast it to string and add an implicit run 
-                                // TODO: proove that this done implicitly anyways by string.Format()
-                                classifiedGaps.Add(new Tuple<InlineType, object>(InlineType.String, gap.ToString()));
-                            }
-                        }
-                    }
-
-
-                    //string[] controlPlaceholders = controlGapIndices.Select(i => string.Format("{0}", i)).ToArray();
-                    var match = Regex.Match(this.FormatString, RegexPattern);
-                    
                     while (match.Success)
                     {
                         // Handle match here...
                         var wholeMatch = match.Groups[0].Value; // contains string and simple placeholder at the end.
                         var formatStringPartial = match.Groups[1].Value;
-                            // has still to be formatted TODO or even better bound accordingly by lex:loc binding
+                        // has still to be formatted TODO or even better bound accordingly by lex:loc binding
                         var itemIndex = int.Parse(match.Groups[2].Value);
-                            // it's secure to parse an int here as this follows from the regex.
+                        // it's secure to parse an int here as this follows from the regex.
 
                         matchedUpToIndex += wholeMatch.Length;
 
@@ -237,90 +226,70 @@ namespace WPFLocalizeExtension.Engine
 
                         // add the inlines:
                         // 1) the prefix that is formatted with the whole gaps parameters:
-                        this.theTextBlock.Inlines.Add(string.Format(formatStringPartial, this.Gaps));
+                        theTextBlock.Inlines.Add(string.Format(formatStringPartial, Gaps));
+
+                        // Check availability of a classified gap.
+                        if (Gaps.Count <= itemIndex)
+                            continue;
+                        var gap = Gaps[itemIndex];
+
                         // 2) the item encoded in the placeholder:
                         try
                         {
-                            var necessaryTuple = classifiedGaps[itemIndex];
-
-                            switch (necessaryTuple.Item1)
+                            if (gap is UIElement)
                             {
-                                case InlineType.UIElement:
-                                    this.theTextBlock.Inlines.Add((UIElement) this.Gaps[itemIndex]);
-                                    break;
-                                case InlineType.String:
-                                    this.theTextBlock.Inlines.Add((string) this.Gaps[itemIndex]);
-                                    break;
-                                case InlineType.Inline:
-                                    this.theTextBlock.Inlines.Add((Inline) this.Gaps[itemIndex]);
-                                    break;
+                                var item = DeepCopy((UIElement)gap);
+                                theTextBlock.Inlines.Add(item);
                             }
+                            else if (gap is Inline)
+                            {
+                                var item = DeepCopy((Inline)gap);
+                                theTextBlock.Inlines.Add(item);
+                            }
+                            else if (gap != null)
+                                theTextBlock.Inlines.Add(gap.ToString());
                         }
                         catch (Exception e)
                         {
                             // break for now
                         }
-                        
-
                     }
                 }
 
                 // add the remaining part:
-
-                this.theTextBlock.Inlines.Add(string.Format(FormatString.Substring(matchedUpToIndex), this.Gaps));
-                //this.theTextBlock.InvalidateVisual();
-                this.InvalidateVisual();
+                theTextBlock.Inlines.Add(string.Format(FormatString.Substring(matchedUpToIndex), Gaps));
                 
-
+                InvalidateVisual();
             }
             else
             {
-                throw new Exception("property FormatString is not a string!");
-            } 
+                throw new Exception("FormatString is not a string!");
+            }
         }
-
         #endregion
 
-        #region public methods and operators 
-
+        #region Template stuff
+        /// <summary>
+        /// Will be called prior to display of the control.
+        /// </summary>
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-            this.AttachToVisualTree();
+            AttachToVisualTree();
         }
-
-        #endregion
-
-        #region methods
 
         private void AttachToVisualTree()
         {
-            // this.theTextBlock = this.GetTemplateChild(PART_TextBlock) as TextBlock;
-
-            if (this.Template != null)
+            if (Template != null)
             {
-                TextBlock textBlock = this.Template.FindName(PART_TextBlock, this) as TextBlock;
-                if (textBlock != this.theTextBlock)
+                var textBlock = Template.FindName(PART_TextBlock, this) as TextBlock;
+                if (textBlock != theTextBlock)
                 {
-                    //Firstly you have to unhook existing handler
-                    //if (MB != null)
-                    //{
-                    //    MB.MouseEnter -= new MouseEventHandler(MB_MEnter);
-                    //    MB.MouseLeave -= new MouseEventHandler(MB_MLeave);
-                    //}
-                    this.theTextBlock = textBlock;
-                    this.OnContentChanged();
-                    //if (MB != null)
-                    //{
-                    //    // Now we have to Add a default basecolor
-                    //    MB.Background = new LinearGradientBrush(this.Color, this.Color, .5);
-                    //    MB.MouseEnter += new MouseEventHandler(MB_MEnter);
-                    //    MB.MouseLeave += new MouseEventHandler(MB_MLeave);
-                    //}
+                    theTextBlock = textBlock;
+                    OnContentChanged();
                 }
             }
         }
-
         #endregion
     }
 }
