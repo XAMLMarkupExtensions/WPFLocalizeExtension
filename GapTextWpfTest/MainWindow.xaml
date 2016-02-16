@@ -18,7 +18,7 @@
         <Label Background="Red" Content="static WrapPanel" />
         <WrapPanel Grid.Row="0">
             <TextBlock Text="Dies ist ein " />
-            <TextBox x:Name="GapTextInput" />
+            <TextBox />
             <TextBlock Text=". " />
             <DatePicker Text="" />
             <TextBlock Text=" ist ein Datum." />
@@ -31,13 +31,13 @@
                    TextDecorations="Underline"
                    LineStackingStrategy="BlockLineHeight">
             <Run Text="The shop in " />
-            <Run Text="{Binding City}" />
+            <TextBox Text="{Binding City}" />
             <Run Text=" is open on " />
-            <ComboBox x:Name="DayOfTheWeek" ItemsSource="{Binding WeekDays}" />
+            <ComboBox ItemsSource="{Binding WeekDays}" />
             <Run Text=" from " />
-            <TextBox x:Name="openingTime" Text="{Binding OpeningTime}" />
+            <TextBox Text="{Binding OpeningTime}" />
             <Run Text=" to " />
-            <TextBox x:Name="closingTime" Text="{Binding ClosingTime}" />
+            <TextBox Text="{Binding ClosingTime}" />
             <Run Text="." />
         </TextBlock>
         
@@ -50,7 +50,7 @@
             </localLex:GapTextControl.Template>
             <localLex:GapTextControl.Gaps>
                 <Run Text="{Binding City}" />
-                <ComboBox x:Name="DayOfTheWek" ItemsSource="{Binding WeekDays}" />
+                <ComboBox ItemsSource="{Binding WeekDays}" />
                 <DatePicker SelectedDate="{Binding OpeningTime}" />
                 <DatePicker SelectedDate="{Binding ClosingTime}" />
             </localLex:GapTextControl.Gaps>
