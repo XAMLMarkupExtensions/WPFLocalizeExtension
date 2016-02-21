@@ -6,7 +6,9 @@
         xmlns:local="clr-namespace:GapTextWpfTest"
         xmlns:system="clr-namespace:System;assembly=mscorlib"
         xmlns:converters="clr-namespace:GapTextWpfTest.Converters"
-        xmlns:localLex ="clr-namespace:WPFLocalizeExtension.Engine;assembly=WPFLocalizeExtension"
+        xmlns:lex="http://wpflocalizeextension.codeplex.com"
+        lex:ResxLocalizationProvider.DefaultAssembly="GapTextWpfTest"
+        lex:ResxLocalizationProvider.DefaultDictionary="Resources"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="200"
         DataContext="{Binding RelativeSource={RelativeSource Self}}">
@@ -33,7 +35,7 @@
             <Run Text="The shop in " />
             <TextBox Text="{Binding City}" />
             <Run Text=" is open on " />
-            <ComboBox ItemsSource="{Binding WeekDays}" />
+            <lex:EnumComboBox Type="{x:Type local:WeekDay}" />
             <Run Text=" from " />
             <TextBox Text="{Binding OpeningTime}" />
             <Run Text=" to " />
@@ -42,43 +44,43 @@
         </TextBlock>
         
         <Label Background="DarkOrange" Content="Z" />
-        <localLex:GapTextControl FormatString="The shop in {0} is open on {1} from {2} to {3}. We could have more of these in {0}!">
-            <localLex:GapTextControl.Template>
+        <lex:GapTextControl FormatString="The shop in {0} is open on {1} from {2} to {3}. We could have more of these in {0}!">
+            <lex:GapTextControl.Template>
                 <ControlTemplate>
                     <TextBlock x:Name="PART_TextBlock" />
                 </ControlTemplate>
-            </localLex:GapTextControl.Template>
-            <localLex:GapTextControl.Gaps>
-                <Run Text="{Binding City}" />
-                <ComboBox ItemsSource="{Binding WeekDays}" />
+            </lex:GapTextControl.Template>
+            <lex:GapTextControl.Gaps>
+                <TextBox Name="Test" Text="{Binding City}" TextChanged="TestTextChanged" />
+                <lex:EnumComboBox Type="{x:Type local:WeekDay}" />
                 <DatePicker SelectedDate="{Binding OpeningTime}" />
                 <DatePicker SelectedDate="{Binding ClosingTime}" />
-            </localLex:GapTextControl.Gaps>
-        </localLex:GapTextControl>
+            </lex:GapTextControl.Gaps>
+        </lex:GapTextControl>
         
         <Label Background="DarkOrange" Content="Y" />
-        <localLex:GapTextControl FormatString="Dies ist ein Test ohne Platzhalter">
-            <localLex:GapTextControl.Template>
+        <lex:GapTextControl FormatString="Dies ist ein Test ohne Platzhalter">
+            <lex:GapTextControl.Template>
                 <ControlTemplate>
                     <TextBlock x:Name="PART_TextBlock" />
                 </ControlTemplate>
-            </localLex:GapTextControl.Template>
-        </localLex:GapTextControl>
+            </lex:GapTextControl.Template>
+        </lex:GapTextControl>
         
         <Label Background="DarkOrange" Content="X" />
-        <localLex:GapTextControl FormatString="Ein Test mit {0}"
+        <lex:GapTextControl FormatString="Ein Test mit {0}"
                                  HorizontalAlignment="Stretch"
                                  MinHeight="100">
-            <localLex:GapTextControl.Template>
+            <lex:GapTextControl.Template>
                 <ControlTemplate>
                     <Border BorderBrush="Red">
                         <TextBlock x:Name="PART_TextBlock" />
                     </Border>
                 </ControlTemplate>
-            </localLex:GapTextControl.Template>
-            <localLex:GapTextControl.Gaps>
+            </lex:GapTextControl.Template>
+            <lex:GapTextControl.Gaps>
                 <Run Text="[Test]" />
-            </localLex:GapTextControl.Gaps>
-        </localLex:GapTextControl>
+            </lex:GapTextControl.Gaps>
+        </lex:GapTextControl>
     </StackPanel>
 </Window>

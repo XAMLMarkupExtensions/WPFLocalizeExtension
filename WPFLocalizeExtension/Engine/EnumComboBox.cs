@@ -104,6 +104,35 @@ namespace WPFLocalizeExtension.Engine
         }
         #endregion
 
+        #region XamlWriter Hack
+        /// <summary>
+        /// Overwrite and bypass the Items property.
+        /// </summary>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public new ItemCollection Items
+        {
+            get { return base.Items; }
+        }
+
+        private bool shouldSerializeTemplate = false;
+
+        protected override void OnItemTemplateChanged(DataTemplate oldItemTemplate, DataTemplate newItemTemplate)
+        {
+            if (oldItemTemplate != null)
+                shouldSerializeTemplate = true;
+
+            base.OnItemTemplateChanged(oldItemTemplate, newItemTemplate);
+        }
+
+        protected override bool ShouldSerializeProperty(DependencyProperty dp)
+        {
+            if ((dp == ItemTemplateProperty) && !shouldSerializeTemplate)
+                return false;
+            else
+                return base.ShouldSerializeProperty(dp);
+        } 
+        #endregion
+
         private void SetType(Type type)
         {
             try
@@ -126,8 +155,8 @@ namespace WPFLocalizeExtension.Engine
                     if (attr == null || attr.Browsable)
                         items.Add(field.GetValue(0));
                 }
-
-                this.ItemsSource = items;
+                
+                ItemsSource = items;
             }
             catch
             {

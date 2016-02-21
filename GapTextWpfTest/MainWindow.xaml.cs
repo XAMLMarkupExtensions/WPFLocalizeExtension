@@ -3,7 +3,19 @@
     using System;
     using System.Collections.ObjectModel;
     using System.ComponentModel;
+    using System.Diagnostics;
     using System.Windows;
+
+    public enum WeekDay
+    {
+        Monday,
+        Tuesday,
+        Wednesday,
+        Thursday,
+        Friday,
+        Saturday,
+        Sunday,
+    }
 
     /// <summary>
     /// Interaktionslogik für MainWindow.xaml
@@ -95,6 +107,11 @@
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void TestTextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            Debug.WriteLine("Test");
         }
     }
 }
