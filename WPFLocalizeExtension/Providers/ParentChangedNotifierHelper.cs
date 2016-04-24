@@ -61,6 +61,9 @@ namespace WPFLocalizeExtension.Providers
 
 		        // Try to get the parent using the visual tree helper. This may fail on some occations.
 #if !SILVERLIGHT
+		        if (depObj is System.Windows.Controls.ToolTip)
+			        break;
+
 		        if (!(depObj is Visual) && !(depObj is Visual3D) && !(depObj is FrameworkContentElement))
 			        break;
 
