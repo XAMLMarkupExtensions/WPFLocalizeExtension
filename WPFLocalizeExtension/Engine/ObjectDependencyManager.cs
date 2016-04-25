@@ -6,13 +6,7 @@
 // <author>Bernhard Millauer</author>
 #endregion
 
-#if WINDOWS_PHONE
-namespace WP7LocalizeExtension.Engine
-#elif SILVERLIGHT
-namespace SLLocalizeExtension.Engine
-#else
 namespace WPFLocalizeExtension.Engine
-#endif
 {
     #region Uses
     using System;

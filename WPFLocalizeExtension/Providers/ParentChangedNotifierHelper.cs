@@ -6,11 +6,7 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-#if SILVERLIGHT
-namespace SLLocalizeExtension.Providers
-#else
 namespace WPFLocalizeExtension.Providers
-#endif
 {
     using System;
     using System.Collections.Generic;
@@ -60,7 +56,6 @@ namespace WPFLocalizeExtension.Providers
 		        }
 
 		        // Try to get the parent using the visual tree helper. This may fail on some occations.
-#if !SILVERLIGHT
 		        if (depObj is System.Windows.Controls.ToolTip)
 			        break;
 
@@ -69,10 +64,8 @@ namespace WPFLocalizeExtension.Providers
 
 		        if (depObj is Window)
 			        break;
-#endif
 		        DependencyObject depObjParent = null;
           
-#if !SILVERLIGHT
 		        if (depObj is FrameworkContentElement)
 			        depObjParent = ((FrameworkContentElement)depObj).Parent;
 		        else
@@ -80,7 +73,6 @@ namespace WPFLocalizeExtension.Providers
 			        try { depObjParent = depObj.GetParent(false); }
 			        catch { depObjParent = null; }
 		        }
-#endif
 
 		        if (depObjParent == null)
 		        {
@@ -144,17 +136,13 @@ namespace WPFLocalizeExtension.Providers
                     ret = GetFunction(depObj);
 
                     // Try to get the parent using the visual tree helper. This may fail on some occations.
-#if !SILVERLIGHT
                     if (!(depObj is Visual) && !(depObj is Visual3D) && !(depObj is FrameworkContentElement))
                         break;
-#endif
                     DependencyObject depObjParent = null;
 
-#if !SILVERLIGHT
                     if (depObj is FrameworkContentElement)
                         depObjParent = ((FrameworkContentElement)depObj).Parent;
                     else
-#endif
                     {
                         try { depObjParent = depObj.GetParent(true); }
                         catch { break; }
@@ -204,27 +192,18 @@ namespace WPFLocalizeExtension.Providers
         /// <returns>The parent, if available.</returns>
         public static DependencyObject GetParent(this DependencyObject depObj, bool isVisualTree)
         {
-#if SILVERLIGHT
-            return GetParentInternal(depObj, isVisualTree);
-#else
             if (depObj.CheckAccess())
                 return GetParentInternal(depObj, isVisualTree);
             else
                 return (DependencyObject)depObj.Dispatcher.Invoke(new Func<DependencyObject>(() => GetParentInternal(depObj, isVisualTree)));
-#endif
         }
 
         private static DependencyObject GetParentInternal(DependencyObject depObj, bool isVisualTree)
         {
             if (isVisualTree)
                 return VisualTreeHelper.GetParent(depObj);
-#if !SILVERLIGHT
             else
                 return LogicalTreeHelper.GetParent(depObj);
-#else
-            else
-                return null;
-#endif
         }
     }
 }

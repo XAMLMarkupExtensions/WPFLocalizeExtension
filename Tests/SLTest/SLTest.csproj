@@ -145,12 +145,6 @@
     <Resource Include="Resources\United_Kingdom.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\WPFLocalizeExtension\SLLocalizeExtension.csproj">
-      <Project>{7422AF3D-69D5-4862-90CF-62A8C5B23FBC}</Project>
-      <Name>SLLocalizeExtension</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Properties\OutOfBrowserSettings.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />

@@ -6,28 +6,14 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-
-
-#if WINDOWS_PHONE
-namespace WP7LocalizeExtension.Providers
-#elif SILVERLIGHT
-namespace SLLocalizeExtension.Providers
-#else
 namespace WPFLocalizeExtension.Providers
-#endif
 {
     using System.Windows;
     using System.Globalization;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System;
-#if WINDOWS_PHONE
-    using WP7LocalizeExtension.Engine;
-#elif SILVERLIGHT
-    using SLLocalizeExtension.Engine;
-#else
     using WPFLocalizeExtension.Engine;
-#endif
 
     /// <summary>
     /// An interface describing classes that provide localized values based on a source/dictionary/key combination.

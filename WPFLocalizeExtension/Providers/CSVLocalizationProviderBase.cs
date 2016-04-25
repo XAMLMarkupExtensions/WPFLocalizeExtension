@@ -6,13 +6,7 @@
 // <author>Sébastien Sevrin</author>
 #endregion
 
-#if WINDOWS_PHONE
-namespace WP7LocalizeExtension.Providers
-#elif SILVERLIGHT
-namespace SLLocalizeExtension.Providers
-#else
 namespace WPFLocalizeExtension.Providers
-#endif
 {
     #region Uses
     using System;
@@ -26,16 +20,8 @@ namespace WPFLocalizeExtension.Providers
     using System.IO;
     using System.Collections.ObjectModel;
     using System.Windows.Media;
-#if !WINDOWS_PHONE
     using XAMLMarkupExtensions.Base;
-#endif
-#if WINDOWS_PHONE
-    using WP7LocalizeExtension.Engine;
-#elif SILVERLIGHT
-    using SLLocalizeExtension.Engine;
-#else
     using WPFLocalizeExtension.Engine;
-#endif
     #endregion
 
     /// <summary>

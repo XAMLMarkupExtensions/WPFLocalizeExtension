@@ -6,11 +6,7 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-#if SILVERLIGHT
-namespace SLLocalizeExtension.Engine
-#else
 namespace WPFLocalizeExtension.Engine
-#endif
 {
     #region Uses
     using System;
@@ -19,11 +15,7 @@ namespace WPFLocalizeExtension.Engine
     using System.Text;
     using System.Windows;
     using System.Windows.Data;    
-#if SILVERLIGHT
-    using SLLocalizeExtension.Extensions;
-#else
     using WPFLocalizeExtension.Extensions;
-#endif
     #endregion
 
     /// <summary>
@@ -36,11 +28,6 @@ namespace WPFLocalizeExtension.Engine
         /// <summary>
         /// We don't know what will be the Source/target type so we keep 'object'.
         /// </summary>
-#if SILVERLIGHT
-        public static readonly DependencyProperty SourceProperty =
-            DependencyProperty.Register("Source", typeof(object), typeof(LocBinding),
-            new PropertyMetadata(null, OnPropertyChanged));
-#else
         public static readonly DependencyProperty SourceProperty =
             DependencyProperty.Register("Source", typeof(object), typeof(LocBinding),
             new FrameworkPropertyMetadata(OnPropertyChanged)
@@ -48,7 +35,6 @@ namespace WPFLocalizeExtension.Engine
                 BindsTwoWayByDefault = true,
                 DefaultUpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
             });
-#endif
 
         /// <summary>
         /// The source.

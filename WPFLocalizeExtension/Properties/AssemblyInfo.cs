@@ -6,14 +6,9 @@ using System.Windows;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-#if SILVERLIGHT
-[assembly: AssemblyTitle("SLLocalizeExtension")]
-[assembly: AssemblyProduct("SLLocalizeExtension")]
-#else
 [assembly: ThemeInfo(ResourceDictionaryLocation.None, ResourceDictionaryLocation.SourceAssembly)]
 [assembly: AssemblyTitle("WPFLocalizeExtension")]
 [assembly: AssemblyProduct("WPFLocalizeExtension")]
-#endif
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Root-Project")]

@@ -6,13 +6,7 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-#if WINDOWS_PHONE
-namespace WP7LocalizeExtension.TypeConverters
-#elif SILVERLIGHT
-namespace SLLocalizeExtension.TypeConverters
-#else
 namespace WPFLocalizeExtension.TypeConverters
-#endif
 {
     using System;
     using System.Windows;
@@ -49,43 +43,6 @@ namespace WPFLocalizeExtension.TypeConverters
             if (targetType.Equals(typeof(System.Object)) || resourceType.Equals(targetType))
                 return value;
 
-#if SILVERLIGHT
-            // Is the type already known?
-            if (!TypeConverters.ContainsKey(targetType))
-            {
-                if (typeof(Enum).IsAssignableFrom(targetType))
-                {
-                    TypeConverters.Add(targetType, new TypeConverters.EnumConverter(targetType));
-                }
-                else
-                {
-                    Type converterType = null;
-                    var attributes = targetType.GetCustomAttributes(typeof(TypeConverterAttribute), false);
-
-                    if (attributes.Length == 1)
-                    {
-                        var converterAttribute = (TypeConverterAttribute)attributes[0];
-                        converterType = Type.GetType(converterAttribute.ConverterTypeName);
-                    }
-
-                    if (converterType == null)
-                    {
-                        // Find a suitable "common" converter.
-                        if (targetType == typeof(double))
-                            converterType = typeof(TypeConverters.DoubleConverter);
-                        else if (targetType == typeof(Thickness))
-                            converterType = typeof(TypeConverters.ThicknessConverter);
-                        else if (targetType == typeof(Brush))
-                            converterType = typeof(TypeConverters.BrushConverter);
-                        else
-                            return value;
-                    }
-
-                    // Get the type converter and store it in the dictionary (even if it is NULL).
-                    TypeConverters.Add(targetType, Activator.CreateInstance(converterType) as TypeConverter);
-                }
-            }
-#else
             // Register missing type converters - this class will do this only once per appdomain.
             RegisterMissingTypeConverters.Register();
 
@@ -100,7 +57,6 @@ namespace WPFLocalizeExtension.TypeConverters
                 // Get the type converter and store it in the dictionary (even if it is NULL).
                 TypeConverters.Add(targetType, c);
             }
-#endif
 
             // Get the converter.
             TypeConverter conv = TypeConverters[targetType];

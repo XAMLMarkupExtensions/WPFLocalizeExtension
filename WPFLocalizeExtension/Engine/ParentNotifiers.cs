@@ -11,13 +11,7 @@ using System.Linq;
 using System.Windows;
 using XAMLMarkupExtensions.Base;
 
-#if WINDOWS_PHONE
-namespace WP7LocalizeExtension.Engine
-#elif SILVERLIGHT
-namespace SLLocalizeExtension.Engine
-#else
 namespace WPFLocalizeExtension.Engine
-#endif
 {
     /// <summary>
     /// A memory safe dictionary storage for <see cref="ParentChangedNotifier"/> instances.
