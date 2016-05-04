@@ -10,33 +10,15 @@
 using System.Windows.Markup;
 
 // Register this namespace one with prefix
-#if WINDOWS_PHONE
-[assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "WP7LocalizeExtension.Engine")]
-[assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "WP7LocalizeExtension.Extensions")]
-[assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "WP7LocalizeExtension.Providers")]
-[assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "WP7LocalizeExtension.TypeConverters")]
-#elif SILVERLIGHT
-[assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "SLLocalizeExtension.Engine")]
-[assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "SLLocalizeExtension.Extensions")]
-[assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "SLLocalizeExtension.Providers")]
-[assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "SLLocalizeExtension.TypeConverters")]
-#else
 [assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "WPFLocalizeExtension.Engine")]
 [assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "WPFLocalizeExtension.Extensions")]
 [assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "WPFLocalizeExtension.Providers")]
 [assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "WPFLocalizeExtension.TypeConverters")]
-#endif
 
 // Assign a default namespace prefix for the schema
 [assembly: XmlnsPrefix("http://wpflocalizeextension.codeplex.com", "lex")]
 
-#if WINDOWS_PHONE
-namespace WP7LocalizeExtension.Engine
-#elif SILVERLIGHT
-namespace SLLocalizeExtension.Engine
-#else
 namespace WPFLocalizeExtension.Engine
-#endif
 {
     #region Uses
     using System;
@@ -51,12 +33,8 @@ namespace WPFLocalizeExtension.Engine
     using System.Windows.Input;
     using Extensions;
     using Providers;
-#if !WINDOWS_PHONE
     using XAMLMarkupExtensions.Base;
-#endif
-#if !SILVERLIGHT
     using System.Windows.Threading;
-#endif
     #endregion
 
     /// <summary>
@@ -108,10 +86,7 @@ namespace WPFLocalizeExtension.Engine
         /// <see cref="DependencyProperty"/> DesignCulture to set the Culture.
         /// Only supported at DesignTime.
         /// </summary>
-#if SILVERLIGHT
-#else
         [DesignOnly(true)]
-#endif
         public static readonly DependencyProperty DesignCultureProperty =
             DependencyProperty.RegisterAttached(
                 "DesignCulture",
@@ -167,10 +142,7 @@ namespace WPFLocalizeExtension.Engine
         /// </summary>
         /// <param name="obj">The dependency object.</param>
         /// <param name="args">The event argument.</param>
-#if SILVERLIGHT
-#else
         [DesignOnly(true)]
-#endif
         private static void SetCultureFromDependencyProperty(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
             if (!Instance.GetIsInDesignMode())
@@ -359,10 +331,7 @@ namespace WPFLocalizeExtension.Engine
         /// </summary>
         /// <param name="obj">The dependency object to get the design culture from.</param>
         /// <returns>The design culture at design time or the current culture at runtime.</returns>
-#if SILVERLIGHT
-#else
         [DesignOnly(true)]
-#endif
         public static string GetDesignCulture(DependencyObject obj)
         {
             if (Instance.GetIsInDesignMode())
@@ -439,10 +408,7 @@ namespace WPFLocalizeExtension.Engine
         /// </summary>
         /// <param name="obj">The dependency object to set the culture to.</param>
         /// <param name="value">The value.</param>
-#if SILVERLIGHT
-#else
         [DesignOnly(true)]
-#endif
         public static void SetDesignCulture(DependencyObject obj, string value)
         {
             if (Instance.GetIsInDesignMode())
@@ -502,12 +468,10 @@ namespace WPFLocalizeExtension.Engine
         /// </summary>
         private bool? _isInDesignMode = null;
 
-#if !WINDOWS_PHONE
         /// <summary>
         /// A dictionary for notification classes for changes of the individual target Parent changes.
         /// </summary>
         private ParentNotifiers parentNotifiers = new ParentNotifiers();
-#endif
         #endregion
 
         #region Constructor
@@ -517,11 +481,7 @@ namespace WPFLocalizeExtension.Engine
         /// </summary>
         private LocalizeDictionary()
         {
-#if WINDOWS_PHONE
-            this.DefaultProvider = StaticResxLocalizationProvider.Instance;
-#else
             this.DefaultProvider = ResxLocalizationProvider.Instance;
-#endif
             this.SetCultureCommand = new CultureInfoDelegateCommand(SetCulture);
         }
 
@@ -557,12 +517,8 @@ namespace WPFLocalizeExtension.Engine
         /// </summary>
         ~LocalizeDictionary()
         {
-#if !WINDOWS_PHONE
             LocExtension.ClearResourceBuffer();
-#endif
-#if !SILVERLIGHT
             FELoc.ClearResourceBuffer();
-#endif
             BLoc.ClearResourceBuffer();
         }
         #endregion
@@ -838,8 +794,6 @@ namespace WPFLocalizeExtension.Engine
         /// </summary>
         public ICommand SetCultureCommand { get; private set; }
 
-#if SILVERLIGHT
-#else
         /// <summary>
         /// Gets the specific <see cref="CultureInfo"/> of the current culture.
         /// This can be used for format manners.
@@ -853,7 +807,6 @@ namespace WPFLocalizeExtension.Engine
                 return CultureInfo.CreateSpecificCulture(this.Culture.ToString());
             }
         } 
-#endif
         #endregion
 
         #region Localization Core
@@ -879,19 +832,13 @@ namespace WPFLocalizeExtension.Engine
         /// <returns>The value corresponding to the source/dictionary/key path for the given culture (otherwise NULL).</returns>
         public object GetLocalizedObject(string key, DependencyObject target, CultureInfo culture)
         {
-#if WINDOWS_PHONE
-            var provider = this.DefaultProvider;
-#else
-#if !SILVERLIGHT
             if (this.DefaultProvider is InheritingResxLocalizationProvider)
                 return GetLocalizedObject(key, target, culture, this.DefaultProvider);
-#endif
                 
             var provider = target != null ? target.GetValue(GetProvider) : null;
 
             if (provider == null)
                 provider = this.DefaultProvider;
-#endif
 
             return GetLocalizedObject(key, target, culture, provider);
         }
@@ -920,19 +867,13 @@ namespace WPFLocalizeExtension.Engine
         /// <returns>Returns an object with all possible pieces of the given key (Assembly, Dictionary, Key)</returns>
         public FullyQualifiedResourceKeyBase GetFullyQualifiedResourceKey(string key, DependencyObject target)
         {
-#if WINDOWS_PHONE
-            var provider = this.DefaultProvider;
-#else
-#if !SILVERLIGHT
             if (this.DefaultProvider is InheritingResxLocalizationProvider)
                 return GetFullyQualifiedResourceKey(key, target, this.DefaultProvider);
-#endif
 
             var provider = target != null ? target.GetValue(GetProvider) : null;
 
             if (provider == null)
                 provider = this.DefaultProvider;
-#endif
 
             return GetFullyQualifiedResourceKey(key, target, provider);
         }
@@ -983,11 +924,7 @@ namespace WPFLocalizeExtension.Engine
         /// </returns>
         public bool ResourceKeyExists(string resourceAssembly, string resourceDictionary, string resourceKey, CultureInfo cultureToUse)
         {
-#if WINDOWS_PHONE
-            var provider = StaticResxLocalizationProvider.Instance;
-#else
             var provider = ResxLocalizationProvider.Instance;
-#endif
 
             return ResourceKeyExists(resourceAssembly + ":" + resourceDictionary + ":" + resourceKey, cultureToUse, provider);
         }
@@ -1018,8 +955,6 @@ namespace WPFLocalizeExtension.Engine
         {
             lock (SyncRoot)
             {
-#if SILVERLIGHT
-#else
                 if (_isInDesignMode.HasValue)
                     return _isInDesignMode.Value;
 
@@ -1042,7 +977,6 @@ namespace WPFLocalizeExtension.Engine
                     
                     return _isInDesignMode.Value;
                 }
-#endif
                 _isInDesignMode = DesignerProperties.GetIsInDesignMode(this);
                 return _isInDesignMode.Value;
             }
@@ -1241,9 +1175,6 @@ namespace WPFLocalizeExtension.Engine
             /// <summary>
             /// Occurs when changes occur that affect whether or not the command should execute. 
             /// </summary>
-#if SILVERLIGHT
-            public event EventHandler CanExecuteChanged;
-#else
             public event EventHandler CanExecuteChanged
             {
                 add
@@ -1255,7 +1186,6 @@ namespace WPFLocalizeExtension.Engine
                     CommandManager.RequerySuggested -= value;
                 }
             }
-#endif
 
             /// <summary>
             /// Determines whether the command can execute in its current state.

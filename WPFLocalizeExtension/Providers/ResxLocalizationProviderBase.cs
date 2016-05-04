@@ -7,13 +7,7 @@
 // <author>Bernhard Millauer</author>
 #endregion
 
-#if WINDOWS_PHONE
-namespace WP7LocalizeExtension.Providers
-#elif SILVERLIGHT
-namespace SLLocalizeExtension.Providers
-#else
 namespace WPFLocalizeExtension.Providers
-#endif
 {
     #region Uses
     using System;
@@ -26,13 +20,7 @@ namespace WPFLocalizeExtension.Providers
     using System.Reflection;
     using System.Resources;
     using System.Windows;
-#if WINDOWS_PHONE
-    using WP7LocalizeExtension.Engine;
-#elif SILVERLIGHT
-    using SLLocalizeExtension.Engine;
-#else
     using System.Management;
-#endif
     #endregion
 
     /// <summary>
@@ -224,7 +212,6 @@ namespace WPFLocalizeExtension.Providers
             return GetResourceManager(resourceAssembly, resourceDictionary) != null;
         }
 
-#if !SILVERLIGHT
         private static Dictionary<int, string> executablePaths = new Dictionary<int, string>();
         private DateTime lastUpdateCheck = DateTime.MinValue;
 
@@ -277,7 +264,6 @@ namespace WPFLocalizeExtension.Providers
 
             return true;
         }
-#endif
 
         /// <summary>
         /// Looks up in the cached <see cref="ResourceManager"/> list for the searched <see cref="ResourceManager"/>.
@@ -302,7 +288,6 @@ namespace WPFLocalizeExtension.Providers
 
             var resManKey = resourceAssembly + resManagerNameToSearch;
 
-#if !SILVERLIGHT
             // Here comes our great hack for full VS2012+ design time support with multiple languages.
             // We check only every second to reduce overhead in the designer.
             var now = DateTime.Now;
@@ -378,7 +363,6 @@ namespace WPFLocalizeExtension.Providers
                     assembly = Assembly.LoadFrom(file);
                 }
             }
-#endif
 
             if (!TryGetValue(resManKey, out resManager))
             {
@@ -409,12 +393,7 @@ namespace WPFLocalizeExtension.Providers
                         if (assembly == null)
                         {
                             // assign the loaded assembly
-#if SILVERLIGHT
-                            var name = new AssemblyName(resourceAssembly);
-                            assembly = Assembly.Load(name.FullName);
-#else
                             assembly = Assembly.Load(new AssemblyName(resourceAssembly));
-#endif
                         }
                     }
                     catch (Exception ex)
@@ -515,21 +494,6 @@ namespace WPFLocalizeExtension.Providers
 
                 try
                 {
-#if SILVERLIGHT
-                    var cultures = CultureInfoHelper.GetCultures();
-
-                    foreach (var c in cultures)
-                    {
-                        var dir = c.Name + "/";
-
-                        foreach (var p in Deployment.Current.Parts)
-                            if (p.Source.StartsWith(dir))
-                            {
-                                AddCulture(c);
-                                break;
-                            }
-                    }
-#else
                     var assemblyLocation = Path.GetDirectoryName(assembly.Location);
 
                     // Get the list of all cultures.
@@ -541,7 +505,6 @@ namespace WPFLocalizeExtension.Providers
                         if (rs != null)
                             AddCulture(c);
                     }
-#endif
                 }
                 catch
                 {

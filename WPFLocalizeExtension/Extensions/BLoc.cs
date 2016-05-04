@@ -7,13 +7,7 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-#if WINDOWS_PHONE
-namespace WP7LocalizeExtension.Extensions
-#elif SILVERLIGHT
-namespace SLLocalizeExtension.Extensions
-#else
 namespace WPFLocalizeExtension.Extensions
-#endif
 {
     using System;
     using System.Windows.Data;
@@ -24,16 +18,8 @@ namespace WPFLocalizeExtension.Extensions
     using System.Reflection;
     using System.Windows.Media.Imaging;
     using System.Collections;
-#if WINDOWS_PHONE
-    using WP7LocalizeExtension.TypeConverters;
-    using WP7LocalizeExtension.Engine;
-#elif SILVERLIGHT
-    using SLLocalizeExtension.TypeConverters;
-    using SLLocalizeExtension.Engine;
-#else
     using WPFLocalizeExtension.TypeConverters;
     using WPFLocalizeExtension.Engine;
-#endif
 
     /// <summary>
     /// A localization extension based on <see cref="Binding"/>.
@@ -220,11 +206,7 @@ namespace WPFLocalizeExtension.Extensions
                     if (LocalizeDictionary.Instance.GetIsInDesignMode())
                     {
                         // cultureInfo will be set to the current specific culture
-#if SILVERLIGHT
-                        cultureInfo = LocalizeDictionary.Instance.Culture;
-#else
                         cultureInfo = LocalizeDictionary.Instance.SpecificCulture;
-#endif
                     }
                     else
                     {
@@ -236,11 +218,7 @@ namespace WPFLocalizeExtension.Extensions
             else
             {
                 // take the current specific culture
-#if SILVERLIGHT
-                cultureInfo = LocalizeDictionary.Instance.Culture;
-#else
                 cultureInfo = LocalizeDictionary.Instance.SpecificCulture;
-#endif
             }
 
             // return the evaluated culture info
