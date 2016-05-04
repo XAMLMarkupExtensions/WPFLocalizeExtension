@@ -44,6 +44,16 @@ namespace WPFLocalizeExtension.Providers
                 typeof(string),
                 typeof(ResxLocalizationProvider),
                 new PropertyMetadata(null, DefaultAssemblyChanged));
+
+        /// <summary>
+        /// <see cref="DependencyProperty"/> IgnoreCase to set the case sensitivity.
+        /// </summary>
+        public static readonly DependencyProperty IgnoreCaseProperty =
+            DependencyProperty.RegisterAttached(
+                "IgnoreCase",
+                typeof(bool),
+                typeof(ResxLocalizationProvider),
+                new PropertyMetadata(true, IgnoreCaseChanged));
         #endregion
 
         #region Dependency Property Callback
@@ -66,6 +76,17 @@ namespace WPFLocalizeExtension.Providers
         private static void DefaultAssemblyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
             Instance.FallbackAssembly = e.NewValue != null ? e.NewValue.ToString() : null;
+            Instance.OnProviderChanged(obj);
+        }
+
+        /// <summary>
+        /// Indicates, that the <see cref="IgnoreCaseProperty"/> attached property changed.
+        /// </summary>
+        /// <param name="obj">The dependency object.</param>
+        /// <param name="e">The event argument.</param>
+        private static void IgnoreCaseChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        {
+            Instance.IgnoreCase = (bool)e.NewValue;
             Instance.OnProviderChanged(obj);
         }
         #endregion
@@ -91,6 +112,16 @@ namespace WPFLocalizeExtension.Providers
         {
             return obj.GetValueSync<string>(DefaultAssemblyProperty);
         }
+
+        /// <summary>
+        /// Getter of <see cref="DependencyProperty"/> ignore case flag.
+        /// </summary>
+        /// <param name="obj">The dependency object to get the ignore case flag from.</param>
+        /// <returns>The ignore case flag.</returns>
+        public static bool GetIgnoreCase(DependencyObject obj)
+        {
+            return obj.GetValueSync<bool>(IgnoreCaseProperty);
+        }
         #endregion
 
         #region Set
@@ -112,6 +143,16 @@ namespace WPFLocalizeExtension.Providers
         public static void SetDefaultAssembly(DependencyObject obj, string value)
         {
             obj.SetValueSync(DefaultAssemblyProperty, value);
+        }
+
+        /// <summary>
+        /// Setter of <see cref="DependencyProperty"/> ignore case flag.
+        /// </summary>
+        /// <param name="obj">The dependency object to set the ignore case flag to.</param>
+        /// <param name="value">The ignore case flag.</param>
+        public static void SetIgnoreCase(DependencyObject obj, bool value)
+        {
+            obj.SetValueSync(IgnoreCaseProperty, value);
         }
         #endregion
         #endregion

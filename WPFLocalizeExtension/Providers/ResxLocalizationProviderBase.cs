@@ -59,11 +59,11 @@ namespace WPFLocalizeExtension.Providers
         /// </summary>
         protected object AvailableCultureListLock = new object();
 
-        private static bool ignoreCase = true;
+        private bool ignoreCase = true;
         /// <summary>
         /// Gets or sets the ignore case flag.
         /// </summary>
-        public static bool IgnoreCase
+        public bool IgnoreCase
         {
             get { return ignoreCase; }
             set { ignoreCase = value; }
