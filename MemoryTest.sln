@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPFLocalizeExtension", "WPFLocalizeExtension\WPFLocalizeExtension.csproj", "{E8C5B094-2CB4-4C26-87F0-351B03612179}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryTest", "Tests\MemoryTest\MemoryTest.csproj", "{3D591943-C256-46EB-88EA-CCA0B3A498E6}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPFMarkupExtensions-3.5", "..\XAMLMarkupExtensions\XAMLMarkupExtensions\WPFMarkupExtensions-3.5.csproj", "{4EAF896D-9C9A-4654-891A-BC9919864886}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,16 +37,6 @@ Global
 		{3D591943-C256-46EB-88EA-CCA0B3A498E6}.Release|Mixed Platforms.Build.0 = Release|x86
 		{3D591943-C256-46EB-88EA-CCA0B3A498E6}.Release|x86.ActiveCfg = Release|x86
 		{3D591943-C256-46EB-88EA-CCA0B3A498E6}.Release|x86.Build.0 = Release|x86
-		{4EAF896D-9C9A-4654-891A-BC9919864886}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4EAF896D-9C9A-4654-891A-BC9919864886}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4EAF896D-9C9A-4654-891A-BC9919864886}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{4EAF896D-9C9A-4654-891A-BC9919864886}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{4EAF896D-9C9A-4654-891A-BC9919864886}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{4EAF896D-9C9A-4654-891A-BC9919864886}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4EAF896D-9C9A-4654-891A-BC9919864886}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4EAF896D-9C9A-4654-891A-BC9919864886}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{4EAF896D-9C9A-4654-891A-BC9919864886}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{4EAF896D-9C9A-4654-891A-BC9919864886}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

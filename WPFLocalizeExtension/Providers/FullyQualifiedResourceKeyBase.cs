@@ -7,13 +7,7 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-#if WINDOWS_PHONE
-namespace WP7LocalizeExtension.Providers
-#elif SILVERLIGHT
-namespace SLLocalizeExtension.Providers
-#else
 namespace WPFLocalizeExtension.Providers
-#endif
 {
     using System;
     using System.Linq;

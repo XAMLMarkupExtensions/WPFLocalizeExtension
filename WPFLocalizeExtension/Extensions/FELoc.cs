@@ -361,11 +361,7 @@ namespace WPFLocalizeExtension.Extensions
                     if (LocalizeDictionary.Instance.GetIsInDesignMode())
                     {
                         // cultureInfo will be set to the current specific culture
-#if SILVERLIGHT
-                        cultureInfo = LocalizeDictionary.Instance.Culture;
-#else
                         cultureInfo = LocalizeDictionary.Instance.SpecificCulture;
-#endif
                     }
                     else
                     {
@@ -377,11 +373,7 @@ namespace WPFLocalizeExtension.Extensions
             else
             {
                 // take the current specific culture
-#if SILVERLIGHT
-                cultureInfo = LocalizeDictionary.Instance.Culture;
-#else
                 cultureInfo = LocalizeDictionary.Instance.SpecificCulture;
-#endif
             }
 
             // return the evaluated culture info
@@ -434,21 +426,13 @@ namespace WPFLocalizeExtension.Extensions
 
             if (targetObject is FrameworkElement)
                 epName = ((FrameworkElement)targetObject).GetValueSync<string>(FrameworkElement.NameProperty);
-#if SILVERLIGHT
-#else
             else if (targetObject is FrameworkContentElement)
                 epName = ((FrameworkContentElement)targetObject).GetValueSync<string>(FrameworkContentElement.NameProperty);
-#endif
 
             if (targetInfo.TargetProperty is PropertyInfo)
                 epProp = ((PropertyInfo)targetInfo.TargetProperty).Name;
-#if SILVERLIGHT
-            else if (targetInfo.TargetProperty is DependencyProperty)
-                epProp = ((DependencyProperty)targetInfo.TargetProperty).ToString();
-#else
             else if (targetInfo.TargetProperty is DependencyProperty)
                 epProp = ((DependencyProperty)targetInfo.TargetProperty).Name;
-#endif
 
             // What are these names during design time good for? Any suggestions?
             if (epProp.Contains("FrameworkElementWidth5"))

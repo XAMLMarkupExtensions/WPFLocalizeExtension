@@ -7,11 +7,7 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-#if SILVERLIGHT
-namespace SLLocalizeExtension.Extensions
-#else
 namespace WPFLocalizeExtension.Extensions
-#endif
 {
 #pragma warning disable 1591
 
@@ -21,58 +17,39 @@ namespace WPFLocalizeExtension.Extensions
     using System.Linq;
     using System.Text;
     using System.Windows.Markup;
-#if SILVERLIGHT
-    using SLLocalizeExtension.Engine;
-#else
     using WPFLocalizeExtension.Engine;
-#endif
     using XAMLMarkupExtensions.Base;
     #endregion
 
-#if SILVERLIGHT
-#else
     [MarkupExtensionReturnType(typeof(System.Windows.Media.Brush))]
-#endif
     public class LocBrushExtension : LocExtension
     {
         public LocBrushExtension() : base() { }
         public LocBrushExtension(string key) : base(key) { }
     }
 
-#if SILVERLIGHT
-#else
     [MarkupExtensionReturnType(typeof(double))]
-#endif
     public class LocDoubleExtension : LocExtension
     {
         public LocDoubleExtension() : base() { }
         public LocDoubleExtension(string key) : base(key) { }
     }
 
-#if SILVERLIGHT
-#else
     [MarkupExtensionReturnType(typeof(System.Windows.FlowDirection))]
-#endif
     public class LocFlowDirectionExtension : LocExtension
     {
         public LocFlowDirectionExtension() : base() { }
         public LocFlowDirectionExtension(string key) : base(key) { }
     }
 
-#if SILVERLIGHT
-#else
     [MarkupExtensionReturnType(typeof(System.Windows.Media.Imaging.BitmapSource))]
-#endif
     public class LocImageExtension : LocExtension
     {
         public LocImageExtension() : base() { }
         public LocImageExtension(string key) : base(key) { }
     }
 
-#if SILVERLIGHT
-#else
     [MarkupExtensionReturnType(typeof(string))]
-#endif
     public class LocTextExtension : LocExtension
     {
         #region Constructors
@@ -268,11 +245,7 @@ namespace WPFLocalizeExtension.Extensions
             {
                 // add some format segments, in case that the main text contains format place holders like {0}
                 textMain = string.Format(
-                    #if SILVERLIGHT
-                    LocalizeDictionary.Instance.Culture,
-#else
                     LocalizeDictionary.Instance.SpecificCulture,
-#endif
                     textMain,
                     this.formatSegments[0] ?? string.Empty,
                     this.formatSegments[1] ?? string.Empty,
@@ -300,10 +273,7 @@ namespace WPFLocalizeExtension.Extensions
         #endregion
     }
 
-#if SILVERLIGHT
-#else
     [MarkupExtensionReturnType(typeof(string))]
-#endif
     public class LocTextLowerExtension : LocTextExtension
     {
         #region Constructors
@@ -327,10 +297,7 @@ namespace WPFLocalizeExtension.Extensions
         #endregion
     }
 
-#if SILVERLIGHT
-#else
     [MarkupExtensionReturnType(typeof(string))]
-#endif
     public class LocTextUpperExtension : LocTextExtension
     {
         #region Constructors
@@ -354,10 +321,7 @@ namespace WPFLocalizeExtension.Extensions
         #endregion
     }
 
-#if SILVERLIGHT
-#else
     [MarkupExtensionReturnType(typeof(System.Windows.Thickness))]
-#endif
     public class LocThicknessExtension : LocExtension
     {
         public LocThicknessExtension() : base() { }

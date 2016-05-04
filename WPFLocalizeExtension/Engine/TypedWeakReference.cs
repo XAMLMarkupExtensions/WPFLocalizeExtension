@@ -9,13 +9,7 @@
 using System;
 using System.Runtime.Serialization;
 
-#if WINDOWS_PHONE
-namespace WP7LocalizeExtension.Engine
-#elif SILVERLIGHT
-namespace SLLocalizeExtension.Engine
-#else
 namespace WPFLocalizeExtension.Engine
-#endif
 {
     /// <summary>
     /// A types version of <see cref="WeakReference"/>.
@@ -41,7 +35,6 @@ namespace WPFLocalizeExtension.Engine
 		{
 		}
 
-#if !SILVERLIGHT
         /// <summary>
         /// Creates a new instance.
         /// </summary>
@@ -51,7 +44,6 @@ namespace WPFLocalizeExtension.Engine
             : base(info, context)
         {
         }
-#endif
 
         /// <summary>
         /// Gets or sets the target.
