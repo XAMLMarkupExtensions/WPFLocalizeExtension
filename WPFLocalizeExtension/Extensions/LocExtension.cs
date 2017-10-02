@@ -7,28 +7,27 @@
 // <author>Uwe Mayer</author>
 #endregion
 
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
+using System.Linq;
+using System.Reflection;
+using System.Windows;
+using System.Windows.Data;
+using System.Windows.Markup;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
+
+using WPFLocalizeExtension.Engine;
+using WPFLocalizeExtension.Providers;
+using WPFLocalizeExtension.TypeConverters;
+using XAMLMarkupExtensions.Base;
+
 namespace WPFLocalizeExtension.Extensions
 {
-    #region Uses
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Globalization;
-    using System.Linq;
-    using System.Reflection;
-    using System.Windows;
-    using System.Windows.Data;
-    using System.Windows.Markup;
-    using System.Windows.Media;
-    using System.Windows.Media.Imaging;
-    using System.Windows.Media.Media3D;
-    using Engine;
-    using Providers;
-    using TypeConverters;
-    using XAMLMarkupExtensions.Base;
-    #endregion
-
     /// <summary>
     /// A generic localization extension.
     /// </summary>
@@ -49,36 +48,35 @@ namespace WPFLocalizeExtension.Extensions
         /// </param>
         internal void OnNotifyPropertyChanged(string property)
         {
-            if (this.PropertyChanged != null)
-                this.PropertyChanged(this, new PropertyChangedEventArgs(property));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
         }
         #endregion
 
         #region Variables
-        private static object resourceBufferLock = new object();
-        private static object ResolveLock = new object();
+        private static readonly object ResourceBufferLock = new object();
+        private static readonly object ResolveLock = new object();
 
-        private static Dictionary<string, object> ResourceBuffer = new Dictionary<string, object>();
+        private static Dictionary<string, object> _resourceBuffer = new Dictionary<string, object>();
 
         /// <summary>
         /// Holds the Key to a .resx object
         /// </summary>
-        private string key;
+        private string _key;
 
         /// <summary>
         /// A custom converter, supplied in the XAML code.
         /// </summary>
-        private IValueConverter converter = null;
+        private IValueConverter _converter;
 
         /// <summary>
         /// A parameter that can be supplied along with the converter object.
         /// </summary>
-        private object converterParameter = null;
+        private object _converterParameter;
 
         /// <summary>
         /// The last endpoint that was used for this extension.
         /// </summary>
-        private SafeTargetInfo lastEndpoint = null;
+        private SafeTargetInfo _lastEndpoint;
         #endregion
 
         #region Resource buffer handling.
@@ -87,13 +85,11 @@ namespace WPFLocalizeExtension.Extensions
         /// </summary>
         public static void ClearResourceBuffer()
         {
-            lock (resourceBufferLock)
+            lock (ResourceBufferLock)
             {
-                if (ResourceBuffer != null)
-                    ResourceBuffer.Clear();
+                _resourceBuffer?.Clear();
+                _resourceBuffer = null;
             }
-            
-            ResourceBuffer = null;
         }
 
 
@@ -104,10 +100,10 @@ namespace WPFLocalizeExtension.Extensions
         /// <param name="item">The item.</param>
         internal static void SafeAddItemToResourceBuffer(string key, object item)
         {
-            lock (resourceBufferLock)
+            lock (ResourceBufferLock)
             {
-                if (!LocalizeDictionary.Instance.DisableCache && !ResourceBuffer.ContainsKey(key))
-                    ResourceBuffer.Add(key, item);
+                if (!LocalizeDictionary.Instance.DisableCache && !_resourceBuffer.ContainsKey(key))
+                    _resourceBuffer.Add(key, item);
             }
         }
 
@@ -117,10 +113,10 @@ namespace WPFLocalizeExtension.Extensions
         /// <param name="key">The key.</param>
         internal static void SafeRemoveItemFromResourceBuffer(string key)
         {
-            lock (resourceBufferLock)
+            lock (ResourceBufferLock)
             {
-                if (ResourceBuffer.ContainsKey(key))
-                    ResourceBuffer.Remove(key);
+                if (_resourceBuffer.ContainsKey(key))
+                    _resourceBuffer.Remove(key);
             }
         }
         #endregion
@@ -137,7 +133,7 @@ namespace WPFLocalizeExtension.Extensions
         {
             foreach (var ext in LocalizeDictionary.DictionaryEvent.EnumerateListeners<LocExtension>())
             {
-                var ep = ext.lastEndpoint;
+                var ep = ext._lastEndpoint;
                 
                 if (ep.TargetObjectReference.Target == null)
                     continue;
@@ -162,8 +158,8 @@ namespace WPFLocalizeExtension.Extensions
         {
             var epProp = "";
 
-            if (property is PropertyInfo)
-                epProp = ((PropertyInfo)property).Name;
+            if (property is PropertyInfo info)
+                epProp = info.Name;
             else if (property is DependencyProperty)
             {
                 epProp = ((DependencyProperty)property).Name;
@@ -187,15 +183,15 @@ namespace WPFLocalizeExtension.Extensions
         /// </summary>
         public string Key
         {
-            get { return key; }
+            get => _key;
             set
             {
-                if (key != value)
+                if (_key != value)
                 {
-                    key = value;
+                    _key = value;
                     UpdateNewValue();
 
-                    OnNotifyPropertyChanged("Key");
+                    OnNotifyPropertyChanged(nameof(Key));
                 }
             }
         }
@@ -207,12 +203,12 @@ namespace WPFLocalizeExtension.Extensions
         {
             get
             {
-                if (converter == null)
-                    converter = new DefaultConverter();
+                if (_converter == null)
+                    _converter = new DefaultConverter();
 
-                return converter;
+                return _converter;
             }
-            set { converter = value; }
+            set => _converter = value;
         }
 
         /// <summary>
@@ -220,8 +216,8 @@ namespace WPFLocalizeExtension.Extensions
         /// </summary>
         public object ConverterParameter
         {
-            get { return converterParameter; }
-            set { converterParameter = value; }
+            get => _converterParameter;
+            set => _converterParameter = value;
         }
 
         /// <summary>
@@ -244,8 +240,8 @@ namespace WPFLocalizeExtension.Extensions
         [EditorBrowsable(EditorBrowsableState.Never)]
         public string ResourceIdentifierKey
         {
-            get { return key ?? "(null)"; }
-            set { key = value; }
+            get => _key ?? "(null)";
+            set => _key = value;
         }
         #endregion
 
@@ -254,10 +250,9 @@ namespace WPFLocalizeExtension.Extensions
         /// Initializes a new instance of the <see cref="LocExtension"/> class.
         /// </summary>
         public LocExtension()
-            : base()
         {
             // Register this extension as an event listener on the first target.
-            base.OnFirstTarget = () =>
+            OnFirstTarget = () =>
             {
                 LocalizeDictionary.DictionaryEvent.AddListener(this);
             };
@@ -270,7 +265,7 @@ namespace WPFLocalizeExtension.Extensions
         public LocExtension(string key)
             : this()
         {
-            this.Key = key;
+            Key = key;
         }
 
         /// <summary>
@@ -336,8 +331,8 @@ namespace WPFLocalizeExtension.Extensions
                     {
                         DependencyObject doParent2;
 
-                        if (doParent is FrameworkContentElement)
-                            doParent2 = ((FrameworkContentElement)doParent).Parent;
+                        if (doParent is FrameworkContentElement element)
+                            doParent2 = element.Parent;
                         else
                             doParent2 = doParent.GetParent(true);
 
@@ -360,17 +355,19 @@ namespace WPFLocalizeExtension.Extensions
             if (dictionaryEventArgs.Type == DictionaryEventType.ValueChanged && dictionaryEventArgs.Tag is ValueChangedEventArgs)
             {
                 var args = (ValueChangedEventArgs)dictionaryEventArgs.Tag;
-                var keysToRemove = new List<string>();
                 var ci = args.Tag as CultureInfo;
 
-                foreach (var key in ResourceBuffer.Keys.ToList())
+                lock (ResolveLock)
                 {
-                    if (key.EndsWith(args.Key))
+                    foreach (var key in _resourceBuffer.Keys.ToList())
                     {
-                        if (ci == null || key.StartsWith(ci.Name))
+                        if (key.EndsWith(args.Key))
                         {
-                            if (ResourceBuffer[key] != args.Value)
-                                SafeRemoveItemFromResourceBuffer(key);
+                            if (ci == null || key.StartsWith(ci.Name))
+                            {
+                                if (_resourceBuffer[key] != args.Value)
+                                    SafeRemoveItemFromResourceBuffer(key);
+                            }
                         }
                     }
                 }
@@ -393,14 +390,14 @@ namespace WPFLocalizeExtension.Extensions
             CultureInfo cultureInfo;
 
             // check if the forced culture is not null or empty
-            if (!string.IsNullOrEmpty(this.ForceCulture))
+            if (!string.IsNullOrEmpty(ForceCulture))
             {
                 // try to create a valid cultureinfo, if defined
                 try
                 {
                     // try to create a specific culture from the forced one
                     // cultureInfo = CultureInfo.CreateSpecificCulture(this.ForceCulture);
-                    cultureInfo = new CultureInfo(this.ForceCulture);
+                    cultureInfo = new CultureInfo(ForceCulture);
                 }
                 catch (ArgumentException ex)
                 {
@@ -413,7 +410,7 @@ namespace WPFLocalizeExtension.Extensions
                     else
                     {
                         // tell the customer, that the forced culture cannot be converted propperly
-                        throw new ArgumentException("Cannot create a CultureInfo with '" + this.ForceCulture + "'", ex);
+                        throw new ArgumentException("Cannot create a CultureInfo with '" + ForceCulture + "'", ex);
                     }
                 }
             }
@@ -441,14 +438,14 @@ namespace WPFLocalizeExtension.Extensions
             if (endPoint == null)
                 return null;
             else
-                lastEndpoint = SafeTargetInfo.FromTargetInfo(endPoint);
+                _lastEndpoint = SafeTargetInfo.FromTargetInfo(endPoint);
 
             var targetObject = endPoint.TargetObject as DependencyObject;
 
             // Get target type. Change ImageSource to BitmapSource in order to use our own converter.
             var targetType = info.TargetPropertyType;
 
-            if (targetType.Equals(typeof(System.Windows.Media.ImageSource)))
+            if (targetType == typeof(ImageSource))
                 targetType = typeof(BitmapSource);
 
             // In case of a list target, get the correct list element type.
@@ -456,7 +453,7 @@ namespace WPFLocalizeExtension.Extensions
                 targetType = info.TargetPropertyType.GetGenericArguments()[0];
             
             // Try to get the localized input from the resource.
-            var resourceKey = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(this.Key, targetObject);
+            var resourceKey = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(Key, targetObject);
             var ci = GetForcedCultureOrDefault();
 
             // Extract the names of the endpoint object and property
@@ -471,17 +468,20 @@ namespace WPFLocalizeExtension.Extensions
             var resKeyBase = ci.Name + ":" + targetType.Name + ":";
             // Check, if the key is already in our resource buffer.
             object input = null;
-            var isDefaultConverter = this.Converter is DefaultConverter;
+            var isDefaultConverter = Converter is DefaultConverter;
 
             if (!String.IsNullOrEmpty(resourceKey))
             {
                 // We've got a resource key. Try to look it up or get it from the dictionary.
-                if (isDefaultConverter && ResourceBuffer.ContainsKey(resKeyBase + resourceKey))
-                    result = ResourceBuffer[resKeyBase + resourceKey];
-                else
+                lock (ResourceBufferLock)
                 {
-                    input = LocalizeDictionary.Instance.GetLocalizedObject(resourceKey, targetObject, ci);
-                    resKeyBase += resourceKey;
+                    if (isDefaultConverter && _resourceBuffer.ContainsKey(resKeyBase + resourceKey))
+                        result = _resourceBuffer[resKeyBase + resourceKey];
+                    else
+                    {
+                        input = LocalizeDictionary.Instance.GetLocalizedObject(resourceKey, targetObject, ci);
+                        resKeyBase += resourceKey;
+                    }
                 }
             }
             else
@@ -490,29 +490,32 @@ namespace WPFLocalizeExtension.Extensions
                 
                 // Try the automatic lookup function.
                 // First, look for a resource entry named: [FrameworkElement name][Separator][Property name]
-                if (isDefaultConverter && ResourceBuffer.ContainsKey(resKeyBase + resKeyNameProp))
-                    result = ResourceBuffer[resKeyBase + resKeyNameProp];
-                else
+                lock (ResourceBufferLock)
                 {
-                    // It was not stored in the buffer - try to retrieve it from the dictionary.
-                    input = LocalizeDictionary.Instance.GetLocalizedObject(resKeyNameProp, targetObject, ci);
-
-                    if (input == null)
-                    {
-                        var resKeyName = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(epName, targetObject);
-
-                        // Now, try to look for a resource entry named: [FrameworkElement name]
-                        // Note - this has to be nested here, as it would take precedence over the first step in the buffer lookup step.
-                        if (isDefaultConverter && ResourceBuffer.ContainsKey(resKeyBase + resKeyName))
-                            result = ResourceBuffer[resKeyBase + resKeyName];
-                        else
-                        {
-                            input = LocalizeDictionary.Instance.GetLocalizedObject(resKeyName, targetObject, ci);
-                            resKeyBase += resKeyName;
-                        }
-                    }
+                    if (isDefaultConverter && _resourceBuffer.ContainsKey(resKeyBase + resKeyNameProp))
+                        result = _resourceBuffer[resKeyBase + resKeyNameProp];
                     else
-                        resKeyBase += resKeyNameProp;
+                    {
+                        // It was not stored in the buffer - try to retrieve it from the dictionary.
+                        input = LocalizeDictionary.Instance.GetLocalizedObject(resKeyNameProp, targetObject, ci);
+
+                        if (input == null)
+                        {
+                            var resKeyName = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(epName, targetObject);
+
+                            // Now, try to look for a resource entry named: [FrameworkElement name]
+                            // Note - this has to be nested here, as it would take precedence over the first step in the buffer lookup step.
+                            if (isDefaultConverter && _resourceBuffer.ContainsKey(resKeyBase + resKeyName))
+                                result = _resourceBuffer[resKeyBase + resKeyName];
+                            else
+                            {
+                                input = LocalizeDictionary.Instance.GetLocalizedObject(resKeyName, targetObject, ci);
+                                resKeyBase += resKeyName;
+                            }
+                        }
+                        else
+                            resKeyBase += resKeyNameProp;
+                    }
                 }
             }
 
@@ -521,17 +524,17 @@ namespace WPFLocalizeExtension.Extensions
             {
                 if (input != null)
                 {
-                    result = this.Converter.Convert(input, targetType, this.ConverterParameter, ci);
+                    result = Converter.Convert(input, targetType, ConverterParameter, ci);
                     if (isDefaultConverter)
                         SafeAddItemToResourceBuffer(resKeyBase, result);
                 }
                 else
                 {
-                    if (LocalizeDictionary.Instance.OnNewMissingKeyEvent(this, key))
+                    if (LocalizeDictionary.Instance.OnNewMissingKeyEvent(this, _key))
                         UpdateNewValue();
 
-                    if (!string.IsNullOrEmpty(key) && (targetType == typeof(String) || targetType == typeof(object)))
-                        result = "Key: " + key;
+                    if (!string.IsNullOrEmpty(_key) && (targetType == typeof(String) || targetType == typeof(object)))
+                        result = "Key: " + _key;
                 }
             }
 
@@ -617,8 +620,8 @@ namespace WPFLocalizeExtension.Extensions
                 var resKey = targetCulture.Name + ":" + typeof (TValue).Name + ":" + resourceKey;
                 var isDefaultConverter = converter is DefaultConverter;
 
-                if (isDefaultConverter && ResourceBuffer.ContainsKey(resKey))
-                    result = (TValue) ResourceBuffer[resKey];
+                if (isDefaultConverter && _resourceBuffer.ContainsKey(resKey))
+                    result = (TValue) _resourceBuffer[resKey];
                 else
                 {
                     var localizedObject = LocalizeDictionary.Instance.GetLocalizedObject(resourceKey, target,
@@ -632,9 +635,9 @@ namespace WPFLocalizeExtension.Extensions
 
                     var tmp = converter.Convert(localizedObject, typeof (TValue), converterParameter, targetCulture);
 
-                    if (tmp is TValue)
+                    if (tmp is TValue value)
                     {
-                        result = (TValue) tmp;
+                        result = value;
                         if (isDefaultConverter)
                             SafeAddItemToResourceBuffer(resKey, result);
                     }
@@ -655,7 +658,7 @@ namespace WPFLocalizeExtension.Extensions
         public bool ResolveLocalizedValue<TValue>(out TValue resolvedValue)
         {
             // return the resolved localized value with the current or forced culture.
-            return this.ResolveLocalizedValue(out resolvedValue, this.GetForcedCultureOrDefault(), null);
+            return ResolveLocalizedValue(out resolvedValue, GetForcedCultureOrDefault(), null);
         }
 
         /// <summary>
@@ -670,7 +673,7 @@ namespace WPFLocalizeExtension.Extensions
         public bool ResolveLocalizedValue<TValue>(out TValue resolvedValue, DependencyObject target)
         {
             // return the resolved localized value with the current or forced culture.
-            return this.ResolveLocalizedValue(out resolvedValue, this.GetForcedCultureOrDefault(), target);
+            return ResolveLocalizedValue(out resolvedValue, GetForcedCultureOrDefault(), target);
         }
 
         /// <summary>
@@ -705,27 +708,30 @@ namespace WPFLocalizeExtension.Extensions
             var resourceKey = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(Key, target);
 
             // get the localized object from the dictionary
-            string resKey = targetCulture.Name + ":" + typeof(TValue).Name + ":" + resourceKey;
-            var isDefaultConverter = this.Converter is DefaultConverter;
+            var resKey = targetCulture.Name + ":" + typeof(TValue).Name + ":" + resourceKey;
+            var isDefaultConverter = Converter is DefaultConverter;
 
-            if (isDefaultConverter && ResourceBuffer.ContainsKey(resKey))
+            lock (ResourceBufferLock)
             {
-                resolvedValue = (TValue)ResourceBuffer[resKey];
-            }
-            else
-            {
-                object localizedObject = LocalizeDictionary.Instance.GetLocalizedObject(resourceKey, target, targetCulture);
-
-                if (localizedObject == null)
-                    return false;
-
-                object result = this.Converter.Convert(localizedObject, typeof(TValue), this.ConverterParameter, targetCulture);
-                
-                if (result is TValue)
+                if (isDefaultConverter && _resourceBuffer.ContainsKey(resKey))
                 {
-                    resolvedValue = (TValue)result;
-                    if (isDefaultConverter)
-                        SafeAddItemToResourceBuffer(resKey, resolvedValue);
+                    resolvedValue = (TValue)_resourceBuffer[resKey];
+                }
+                else
+                {
+                    var localizedObject = LocalizeDictionary.Instance.GetLocalizedObject(resourceKey, target, targetCulture);
+
+                    if (localizedObject == null)
+                        return false;
+
+                    var result = Converter.Convert(localizedObject, typeof(TValue), ConverterParameter, targetCulture);
+                
+                    if (result is TValue value)
+                    {
+                        resolvedValue = value;
+                        if (isDefaultConverter)
+                            SafeAddItemToResourceBuffer(resKey, resolvedValue);
+                    }
                 }
             }
 
@@ -770,7 +776,7 @@ namespace WPFLocalizeExtension.Extensions
         /// </exception>
         public bool SetBinding(object targetObject, object targetProperty)
         {
-            return SetBinding((object)targetObject, targetProperty, -1);
+            return SetBinding(targetObject, targetProperty, -1);
         }
 
         /// <summary>
@@ -837,7 +843,7 @@ namespace WPFLocalizeExtension.Extensions
         /// <returns>Loc: + key</returns>
         public override string ToString()
         {
-            return "Loc:" + key;
+            return "Loc:" + _key;
         }
     }
 }

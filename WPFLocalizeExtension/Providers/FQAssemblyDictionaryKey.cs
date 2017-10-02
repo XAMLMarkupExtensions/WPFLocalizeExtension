@@ -7,33 +7,32 @@
 // <author>Uwe Mayer</author>
 #endregion
 
+using System.Linq;
+
 namespace WPFLocalizeExtension.Providers
 {
-    using System;
-    using System.Linq;
-
     /// <summary>
     /// A class that bundles the key, assembly and dictionary information.
     /// </summary>
     public class FQAssemblyDictionaryKey : FullyQualifiedResourceKeyBase
     {
-        private readonly String key;
+        private readonly string _key;
         /// <summary>
         /// The key.
         /// </summary>
-        public String Key { get { return key; } }
+        public string Key => _key;
 
-        private readonly String assembly;
+        private readonly string _assembly;
         /// <summary>
         /// The assembly of the dictionary.
         /// </summary>
-        public String Assembly { get { return assembly; } }
+        public string Assembly => _assembly;
 
-        private readonly String dictionary;
+        private readonly string _dictionary;
         /// <summary>
         /// The resource dictionary.
         /// </summary>
-        public String Dictionary { get { return dictionary; } }
+        public string Dictionary => _dictionary;
 
         /// <summary>
         /// Creates a new instance of <see cref="FullyQualifiedResourceKeyBase"/>.
@@ -43,9 +42,9 @@ namespace WPFLocalizeExtension.Providers
         /// <param name="dictionary">The resource dictionary.</param>
         public FQAssemblyDictionaryKey(string key, string assembly = null, string dictionary = null)
         {
-            this.key = key;
-            this.assembly = assembly;
-            this.dictionary = dictionary;
+            _key = key;
+            _assembly = assembly;
+            _dictionary = dictionary;
         }
 
         /// <summary>
@@ -54,7 +53,7 @@ namespace WPFLocalizeExtension.Providers
         /// <returns>The joined version of the assembly, dictionary and key.</returns>
         public override string ToString()
         {
-            return String.Join(":", (new[] { Assembly, Dictionary, Key }).Where(x => !String.IsNullOrEmpty(x)).ToArray());
+            return string.Join(":", new[] { Assembly, Dictionary, Key }.Where(x => !string.IsNullOrEmpty(x)).ToArray());
         }
     }
 }

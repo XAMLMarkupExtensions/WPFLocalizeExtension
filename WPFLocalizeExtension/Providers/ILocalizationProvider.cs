@@ -6,15 +6,12 @@
 // <author>Uwe Mayer</author>
 #endregion
 
+using System.Windows;
+using System.Globalization;
+using System.Collections.ObjectModel;
+
 namespace WPFLocalizeExtension.Providers
 {
-    using System.Windows;
-    using System.Globalization;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System;
-    using WPFLocalizeExtension.Engine;
-
     /// <summary>
     /// An interface describing classes that provide localized values based on a source/dictionary/key combination.
     /// </summary>
@@ -26,7 +23,7 @@ namespace WPFLocalizeExtension.Providers
         /// <param name="key">Key used as a base to find the full key</param>
         /// <param name="target">Target used to help determine key information</param>
         /// <returns>Returns an object with all possible pieces of the given key (Assembly, Dictionary, Key)</returns>
-        FullyQualifiedResourceKeyBase GetFullyQualifiedResourceKey(String key, DependencyObject target);
+        FullyQualifiedResourceKeyBase GetFullyQualifiedResourceKey(string key, DependencyObject target);
       
         /// <summary>
         /// Get the localized object.

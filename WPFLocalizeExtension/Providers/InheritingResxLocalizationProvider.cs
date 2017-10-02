@@ -6,17 +6,16 @@
 // <author>Uwe Mayer</author>
 #endregion
 
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Globalization;
+using System.Resources;
+using System.Windows;
+
+using XAMLMarkupExtensions.Base;
+
 namespace WPFLocalizeExtension.Providers
 {
-    #region Uses
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Globalization;
-    using System.Resources;
-    using System.Windows;
-    using XAMLMarkupExtensions.Base;
-    #endregion
-
     /// <summary>
     /// A singleton RESX provider that uses inheriting attached properties.
     /// </summary>
@@ -106,7 +105,7 @@ namespace WPFLocalizeExtension.Providers
         /// <summary>
         /// The instance of the singleton.
         /// </summary>
-        private static InheritingResxLocalizationProvider instance;
+        private static InheritingResxLocalizationProvider _instance;
 
         /// <summary>
         /// Lock object for the creation of the singleton instance.
@@ -120,17 +119,17 @@ namespace WPFLocalizeExtension.Providers
         {
             get
             {
-                if (instance == null)
+                if (_instance == null)
                 {
                     lock (InstanceLock)
                     {
-                        if (instance == null)
-                            instance = new InheritingResxLocalizationProvider();
+                        if (_instance == null)
+                            _instance = new InheritingResxLocalizationProvider();
                     }
                 }
 
                 // return the existing/new instance
-                return instance;
+                return _instance;
             }
         }
 
@@ -140,8 +139,7 @@ namespace WPFLocalizeExtension.Providers
         private InheritingResxLocalizationProvider()
         {
             ResourceManagerList = new Dictionary<string, ResourceManager>();
-            AvailableCultures = new ObservableCollection<CultureInfo>();
-            AvailableCultures.Add(CultureInfo.InvariantCulture);
+            AvailableCultures = new ObservableCollection<CultureInfo> {CultureInfo.InvariantCulture};
         }
         #endregion
 
@@ -153,10 +151,7 @@ namespace WPFLocalizeExtension.Providers
         /// <returns>The assembly name, if available.</returns>
         protected override string GetAssembly(DependencyObject target)
         {
-            if (target == null)
-                return null;
-
-            return target.GetValue(InheritingResxLocalizationProvider.DefaultAssemblyProperty) as string; 
+            return target?.GetValue(DefaultAssemblyProperty) as string; 
         }
 
         /// <summary>
@@ -166,10 +161,7 @@ namespace WPFLocalizeExtension.Providers
         /// <returns>The dictionary name, if available.</returns>
         protected override string GetDictionary(DependencyObject target)
         {
-            if (target == null)
-                return null;
-
-            return target.GetValue(InheritingResxLocalizationProvider.DefaultDictionaryProperty) as string;
+            return target?.GetValue(DefaultDictionaryProperty) as string;
         }
         #endregion
     }

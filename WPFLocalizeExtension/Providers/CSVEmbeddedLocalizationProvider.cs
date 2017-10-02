@@ -6,23 +6,22 @@
 // <author>Sébastien Sevrin</author>
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Resources;
+using System.Text;
+using System.Windows;
+
+using WPFLocalizeExtension.Engine;
+using XAMLMarkupExtensions.Base;
+
 namespace WPFLocalizeExtension.Providers
 {
-    #region Uses
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Globalization;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
-    using System.Resources;
-    using System.Text;
-    using System.Windows;
-    using Engine;
-    using XAMLMarkupExtensions.Base;
-    #endregion
-
     /// <summary>
     /// A singleton CSV provider that uses attached properties and the Parent property to iterate through the visual tree.
     /// </summary>
@@ -112,14 +111,14 @@ namespace WPFLocalizeExtension.Providers
         /// <summary>
         /// A dictionary for notification classes for changes of the individual target Parent changes.
         /// </summary>
-        private ParentNotifiers parentNotifiers = new ParentNotifiers();
+        private readonly ParentNotifiers _parentNotifiers = new ParentNotifiers();
         #endregion
 
         #region Singleton Variables, Properties & Constructor
         /// <summary>
         /// The instance of the singleton.
         /// </summary>
-        private static CSVEmbeddedLocalizationProvider instance;
+        private static CSVEmbeddedLocalizationProvider _instance;
 
         /// <summary>
         /// Lock object for the creation of the singleton instance.
@@ -133,17 +132,17 @@ namespace WPFLocalizeExtension.Providers
         {
             get
             {
-                if (instance == null)
+                if (_instance == null)
                 {
                     lock (InstanceLock)
                     {
-                        if (instance == null)
-                            instance = new CSVEmbeddedLocalizationProvider();
+                        if (_instance == null)
+                            _instance = new CSVEmbeddedLocalizationProvider();
                     }
                 }
 
                 // return the existing/new instance
-                return instance;
+                return _instance;
             }
         }
 
@@ -153,22 +152,17 @@ namespace WPFLocalizeExtension.Providers
         private CSVEmbeddedLocalizationProvider()
         {
             ResourceManagerList = new Dictionary<string, ResourceManager>();
-            AvailableCultures = new ObservableCollection<CultureInfo>();
-            AvailableCultures.Add(CultureInfo.InvariantCulture);
+            AvailableCultures = new ObservableCollection<CultureInfo> {CultureInfo.InvariantCulture};
         }
 
-        private bool hasHeader = false;
+        private bool _hasHeader;
         /// <summary>
         /// A flag indicating, if it has a header row.
         /// </summary>
         public bool HasHeader
         {
-            get { return hasHeader; }
-            set
-            {
-                hasHeader = value;
-                //OnProviderChanged(null); 
-            }
+            get => _hasHeader;
+            set => _hasHeader = value;
         }
         #endregion
 
@@ -189,10 +183,7 @@ namespace WPFLocalizeExtension.Providers
         /// <returns>The assembly name, if available.</returns>
         protected override string GetAssembly(DependencyObject target)
         {
-            if (target == null)
-                return null;
-
-            return target.GetValueOrRegisterParentNotifier<string>(CSVEmbeddedLocalizationProvider.DefaultAssemblyProperty, ParentChangedAction, parentNotifiers); 
+            return target?.GetValueOrRegisterParentNotifier<string>(DefaultAssemblyProperty, ParentChangedAction, _parentNotifiers); 
         }
 
         /// <summary>
@@ -202,10 +193,7 @@ namespace WPFLocalizeExtension.Providers
         /// <returns>The dictionary name, if available.</returns>
         protected override string GetDictionary(DependencyObject target)
         {
-            if (target == null)
-                return null;
-
-            return target.GetValueOrRegisterParentNotifier<string>(CSVEmbeddedLocalizationProvider.DefaultDictionaryProperty, ParentChangedAction, parentNotifiers);
+            return target?.GetValueOrRegisterParentNotifier<string>(DefaultDictionaryProperty, ParentChangedAction, _parentNotifiers);
         }
 
         /// <summary>
@@ -219,47 +207,44 @@ namespace WPFLocalizeExtension.Providers
         {
             string ret = null;
 
-            string filename = "";
-
-            string assembly = "";
-            string dictionary = "";
+            var filename = "";
 
             // Call this function to provide backward compatibility.
-            ParseKey(key, out assembly, out dictionary, out key);
+            ParseKey(key, out var assembly, out var dictionary, out key);
 
             // Now try to read out the default assembly and/or dictionary.
-            if (String.IsNullOrEmpty(assembly))
+            if (string.IsNullOrEmpty(assembly))
                 assembly = GetAssembly(target);
-            if (String.IsNullOrEmpty(dictionary))
+
+            if (string.IsNullOrEmpty(dictionary))
                 dictionary = GetDictionary(target);
 
 
             var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
             foreach (var assemblyInAppDomain in loadedAssemblies)
             {
-                // check if the name pf the assembly is not null
-                if (assemblyInAppDomain.FullName != null)
-                {
                     // get the assembly name object
-                    AssemblyName assemblyName = new AssemblyName(assemblyInAppDomain.FullName);
+                    var assemblyName = new AssemblyName(assemblyInAppDomain.FullName);
 
 
                     // check if the name of the assembly is the seached one
-                    if (assemblyName.Name == assembly)
+                if (assemblyName.Name == assembly)
+                {
+                    //filename = assemblyInAppDomain.GetManifestResourceNames().Where(r => r.Contains(dictionary)).FirstOrDefault();
+                    filename = assemblyInAppDomain.GetManifestResourceNames().FirstOrDefault(r => r.Contains($"{dictionary}{(string.IsNullOrEmpty(culture.Name) ? "" : "-")}{culture.Name}"));
+                    if (filename != null)
                     {
-                        //filename = assemblyInAppDomain.GetManifestResourceNames().Where(r => r.Contains(dictionary)).FirstOrDefault();
-                        filename = assemblyInAppDomain.GetManifestResourceNames().Where(r => r.Contains(string.Format("{0}{1}{2}", dictionary, string.IsNullOrEmpty(culture.Name) ? "" : "-", culture.Name))).FirstOrDefault();
-                        if (filename != null)
+                        using (var reader = new StreamReader(assemblyInAppDomain.GetManifestResourceStream(filename) ?? throw new InvalidOperationException(), Encoding.Default))
                         {
-                            using (StreamReader reader = new StreamReader(assemblyInAppDomain.GetManifestResourceStream(filename), Encoding.Default))
-                            {
-                                if (this.HasHeader && !reader.EndOfStream)
-                                    reader.ReadLine();
+                            if (HasHeader && !reader.EndOfStream)
+                                reader.ReadLine();
 
-                                // Read each line and split it.
-                                while (!reader.EndOfStream)
+                            // Read each line and split it.
+                            while (!reader.EndOfStream)
+                            {
+                                var line = reader.ReadLine();
+                                if (line != null)
                                 {
-                                    var line = reader.ReadLine();
                                     var parts = line.Split(";".ToCharArray());
 
                                     if (parts.Length < 2)
@@ -271,8 +256,8 @@ namespace WPFLocalizeExtension.Providers
 
                                     // Get the value (2nd column).
                                     ret = parts[1];
-                                    break;
                                 }
+                                break;
                             }
                         }
                     }

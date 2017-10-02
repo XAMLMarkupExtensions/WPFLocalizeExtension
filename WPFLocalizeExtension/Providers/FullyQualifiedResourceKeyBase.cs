@@ -9,9 +9,6 @@
 
 namespace WPFLocalizeExtension.Providers
 {
-    using System;
-    using System.Linq;
-
     /// <summary>
     /// An abstract class for key identification.
     /// </summary>
@@ -24,7 +21,7 @@ namespace WPFLocalizeExtension.Providers
         /// <returns>The joined version of the assembly, dictionary and key.</returns>
         public static implicit operator string(FullyQualifiedResourceKeyBase fullyQualifiedResourceKey)
         {
-            return fullyQualifiedResourceKey == null ? null : fullyQualifiedResourceKey.ToString();
+            return fullyQualifiedResourceKey?.ToString();
         }
     }
 }

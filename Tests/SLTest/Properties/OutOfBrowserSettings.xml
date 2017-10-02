@@ -1,7 +1,0 @@
-<OutOfBrowserSettings ShortName="SLTest Application" EnableGPUAcceleration="False" ShowInstallMenuItem="True">
-  <OutOfBrowserSettings.Blurb>SLTest Application on your desktop; at home, at work or on the go.</OutOfBrowserSettings.Blurb>
-  <OutOfBrowserSettings.WindowSettings>
-    <WindowSettings Title="SLTest Application" />
-  </OutOfBrowserSettings.WindowSettings>
-  <OutOfBrowserSettings.Icons />
-</OutOfBrowserSettings>

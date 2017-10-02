@@ -6,23 +6,24 @@
 // <author>Uwe Mayer</author>
 #endregion
 
+using System;
+using System.ComponentModel;
+using System.Windows;
+using System.Windows.Documents;
+
+using WPFLocalizeExtension.Extensions;
+
 namespace WPFLocalizeExtension.Engine
 {
-    using System;
-    using System.ComponentModel;
-    using System.Windows;
-    using System.Windows.Documents;
-    using WPFLocalizeExtension.Extensions;
-
     /// <summary>
-    /// An extension of <see cref="Run"/> for displaying localized enums.
+    /// An extension of <see cref="T:System.Windows.Documents.Run" /> for displaying localized enums.
     /// </summary>
     public class EnumRun : Run
     {
         /// <summary>
         /// Our own <see cref="LocExtension"/> instance.
         /// </summary>
-        private LocExtension ext = null;
+        private LocExtension _ext;
 
         #region EnumValue property
         /// <summary>
@@ -31,13 +32,13 @@ namespace WPFLocalizeExtension.Engine
         public static DependencyProperty EnumValueProperty = DependencyProperty.Register("EnumValue", typeof(Enum), typeof(EnumRun), new PropertyMetadata(PropertiesChanged));
 
         /// <summary>
-        /// The backing property for <see cref="LocProxy.EnumValueProperty"/>
+        /// The backing property for <see cref="EnumValueProperty"/>
         /// </summary>
         [Category("Common")]
         public Enum EnumValue
         {
-            get { return (Enum)GetValue(EnumValueProperty); }
-            set { SetValue(EnumValueProperty, value); }
+            get => (Enum)GetValue(EnumValueProperty);
+            set => SetValue(EnumValueProperty, value);
         }
         #endregion
 
@@ -53,8 +54,8 @@ namespace WPFLocalizeExtension.Engine
         [Category("Common")]
         public bool PrependType
         {
-            get { return (bool)GetValue(PrependTypeProperty); }
-            set { SetValue(PrependTypeProperty, value); }
+            get => (bool)GetValue(PrependTypeProperty);
+            set => SetValue(PrependTypeProperty, value);
         }
         #endregion
 
@@ -70,8 +71,8 @@ namespace WPFLocalizeExtension.Engine
         [Category("Common")]
         public string Separator
         {
-            get { return (string)GetValue(SeparatorProperty); }
-            set { SetValue(SeparatorProperty, value); }
+            get => (string)GetValue(SeparatorProperty);
+            set => SetValue(SeparatorProperty, value);
         }
         #endregion
 
@@ -87,8 +88,8 @@ namespace WPFLocalizeExtension.Engine
         [Category("Common")]
         public string Prefix
         {
-            get { return (string)GetValue(PrefixProperty); }
-            set { SetValue(PrefixProperty, value); }
+            get => (string)GetValue(PrefixProperty);
+            set => SetValue(PrefixProperty, value);
         }
         #endregion
 
@@ -99,8 +100,7 @@ namespace WPFLocalizeExtension.Engine
         /// <param name="e">The event arguments.</param>
         private static void PropertiesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var run = d as EnumRun;
-            if (run != null)
+            if (d is EnumRun run)
             {
                 var value = run.EnumValue;
                 if (value != null)
@@ -112,14 +112,13 @@ namespace WPFLocalizeExtension.Engine
                     if (!string.IsNullOrEmpty(run.Prefix))
                         key = run.Prefix + run.Separator + key;
 
-                    if (run.ext == null)
+                    if (run._ext == null)
                     {
-                        run.ext = new LocExtension();
-                        run.ext.Key = key;
-                        run.ext.SetBinding(run, run.GetType().GetProperty("Text"));
+                        run._ext = new LocExtension {Key = key};
+                        run._ext.SetBinding(run, run.GetType().GetProperty("Text"));
                     }
                     else
-                        run.ext.Key = key;
+                        run._ext.Key = key;
                 }
             }
         }

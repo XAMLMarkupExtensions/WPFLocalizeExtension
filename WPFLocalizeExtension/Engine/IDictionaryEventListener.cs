@@ -6,11 +6,11 @@
 // <author>Uwe Mayer</author>
 #endregion
 
+using System;
+using System.Windows;
+
 namespace WPFLocalizeExtension.Engine
 {
-    using System;
-    using System.Windows;
-
     /// <summary>
     /// Interface for listeners on dictionary events of the <see cref="LocalizeDictionary"/> class.
     /// </summary>
@@ -59,12 +59,12 @@ namespace WPFLocalizeExtension.Engine
         /// <summary>
         /// The type of the event.
         /// </summary>
-        public DictionaryEventType Type { get; private set; }
+        public DictionaryEventType Type { get; }
 
         /// <summary>
         /// A corresponding tag.
         /// </summary>
-        public object Tag { get; private set; }
+        public object Tag { get; }
 
         /// <summary>
         /// The constructor.
@@ -73,8 +73,8 @@ namespace WPFLocalizeExtension.Engine
         /// <param name="tag">The corresponding tag.</param>
         public DictionaryEventArgs(DictionaryEventType type, object tag)
         {
-            this.Type = type;
-            this.Tag = tag;
+            Type = type;
+            Tag = tag;
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace WPFLocalizeExtension.Engine
         /// <returns>The type and tag as a string.</returns>
         public override string ToString()
         {
-            return this.Type.ToString() + ": " + this.Tag;
+            return Type + ": " + Tag;
         }
     }
 }

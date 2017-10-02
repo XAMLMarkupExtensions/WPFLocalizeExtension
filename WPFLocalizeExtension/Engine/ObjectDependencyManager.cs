@@ -6,14 +6,12 @@
 // <author>Bernhard Millauer</author>
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+
 namespace WPFLocalizeExtension.Engine
 {
-    #region Uses
-    using System;
-    using System.Collections.Generic;
-    using System.Runtime.CompilerServices;
-    #endregion
-
     /// <summary>
     /// This class ensures, that a specific object lives as long a associated object is alive.
     /// </summary>
@@ -22,16 +20,16 @@ namespace WPFLocalizeExtension.Engine
         /// <summary>
         /// This member holds the list of all <see cref="WeakReference"/>s and their appropriate objects.
         /// </summary>
-        private static Dictionary<object, List<WeakReference>> internalList;
+        private static readonly Dictionary<object, List<WeakReference>> InternalList;
 
         /// <summary>
         /// Initializes static members of the <see cref="ObjectDependencyManager"/> class. 
         /// Static Constructor. Creates a new instance of 
-        /// Dictionary(object, <see cref="WeakReference"/>) and set it to the <see cref="internalList"/>.
+        /// Dictionary(object, <see cref="WeakReference"/>) and set it to the <see cref="InternalList"/>.
         /// </summary>
         static ObjectDependencyManager()
         {
-            internalList = new Dictionary<object, List<WeakReference>>();
+            InternalList = new Dictionary<object, List<WeakReference>>();
         }
 
         /// <summary>
@@ -60,13 +58,13 @@ namespace WPFLocalizeExtension.Engine
             // if the objToHold is null, we cannot handle this afterwards.
             if (objToHold == null)
             {
-                throw new ArgumentNullException("objToHold", "The objToHold cannot be null");
+                throw new ArgumentNullException(nameof(objToHold), "The objToHold cannot be null");
             }
 
             // if the objToHold is a weakreference, we cannot handle this type afterwards.
             if (objToHold.GetType() == typeof(WeakReference))
             {
-                throw new ArgumentException("objToHold cannot be type of WeakReference", "objToHold");
+                throw new ArgumentException("objToHold cannot be type of WeakReference", nameof(objToHold));
             }
 
             // if the target of the weakreference is the objToHold, this would be a cycling play.
@@ -76,22 +74,22 @@ namespace WPFLocalizeExtension.Engine
             }
 
             // holds the status of registration of the object dependency
-            bool itemRegistered = false;
+            var itemRegistered = false;
 
             // check if the objToHold is contained in the internalList.
-            if (!internalList.ContainsKey(objToHold))
+            if (!InternalList.ContainsKey(objToHold))
             {
                 // add the objToHold to the internal list.
                 List<WeakReference> lst = new List<WeakReference> { weakRefDp };
 
-                internalList.Add(objToHold, lst);
+                InternalList.Add(objToHold, lst);
 
                 itemRegistered = true;
             }
             else
             {
                 // otherweise, check if the weakRefDp exists and add it if necessary
-                List<WeakReference> lst = internalList[objToHold];
+                List<WeakReference> lst = InternalList[objToHold];
                 if (!lst.Contains(weakRefDp))
                 {
                     lst.Add(weakRefDp);
@@ -126,7 +124,7 @@ namespace WPFLocalizeExtension.Engine
             if (objToRemove != null)
             {
                 // if the key wasnt found, throw an exception.
-                if (!internalList.Remove(objToRemove))
+                if (!InternalList.Remove(objToRemove))
                 {
                     throw new Exception("Key was not found!");
                 }
@@ -141,7 +139,7 @@ namespace WPFLocalizeExtension.Engine
             List<object> keysToRemove = new List<object>();
 
             // step through all object dependenies
-            foreach (KeyValuePair<object, List<WeakReference>> kvp in internalList)
+            foreach (KeyValuePair<object, List<WeakReference>> kvp in InternalList)
             {
                 // step recursive through all weak references
                 for (int i = kvp.Value.Count - 1; i >= 0; i--)
@@ -165,7 +163,7 @@ namespace WPFLocalizeExtension.Engine
             for (int i = keysToRemove.Count - 1; i >= 0; i--)
             {
                 // remove the key from the internalList
-                internalList.Remove(keysToRemove[i]);
+                InternalList.Remove(keysToRemove[i]);
             }
 
             // clear up the keysToRemove

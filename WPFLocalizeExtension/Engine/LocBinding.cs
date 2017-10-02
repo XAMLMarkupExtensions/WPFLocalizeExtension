@@ -6,18 +6,13 @@
 // <author>Uwe Mayer</author>
 #endregion
 
+using System.Windows;
+using System.Windows.Data;
+
+using WPFLocalizeExtension.Extensions;
+
 namespace WPFLocalizeExtension.Engine
 {
-    #region Uses
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Windows;
-    using System.Windows.Data;    
-    using WPFLocalizeExtension.Extensions;
-    #endregion
-
     /// <summary>
     /// A binding proxy class that accepts bindings and forwards them to the LocExtension.
     /// Based on: http://www.codeproject.com/Articles/71348/Binding-on-a-Property-which-is-not-a-DependencyPro
@@ -39,26 +34,26 @@ namespace WPFLocalizeExtension.Engine
         /// <summary>
         /// The source.
         /// </summary>
-        public Object Source
+        public object Source
         {
-            get { return GetValue(LocBinding.SourceProperty); }
-            set { SetValue(LocBinding.SourceProperty, value); }
+            get => GetValue(SourceProperty);
+            set => SetValue(SourceProperty, value);
         }
         #endregion
 
         #region Target LocExtension
-        private LocExtension target = null;
+        private LocExtension _target;
         /// <summary>
         /// The target extension.
         /// </summary>
         public LocExtension Target
         {
-            get { return target; }
+            get => _target;
             set
             {
-                target = value;
-                if ((target != null) && (this.Source != null))
-                    target.Key = this.Source.ToString();
+                _target = value;
+                if (_target != null && Source != null)
+                    _target.Key = Source.ToString();
             }
         }
         #endregion
@@ -66,12 +61,10 @@ namespace WPFLocalizeExtension.Engine
         #region OnPropertyChanged
         private static void OnPropertyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs args)
         {
-            var locBinding = obj as LocBinding;
-
-            if (locBinding != null && args.Property == LocBinding.SourceProperty)
+            if (obj is LocBinding locBinding && args.Property == SourceProperty)
             {
-                if (!object.ReferenceEquals(locBinding.Source, locBinding.target) && (locBinding.target != null) && (locBinding.Source != null))
-                    locBinding.target.Key = locBinding.Source.ToString();
+                if (!ReferenceEquals(locBinding.Source, locBinding._target) && locBinding._target != null && locBinding.Source != null)
+                    locBinding._target.Key = locBinding.Source.ToString();
             }
         }
         #endregion

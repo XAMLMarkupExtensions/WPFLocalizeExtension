@@ -9,6 +9,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+
 using XAMLMarkupExtensions.Base;
 
 namespace WPFLocalizeExtension.Engine
