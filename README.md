@@ -3,6 +3,8 @@
 # LocalizationExtension
 #### ...is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObjects since 2008!
 
+[![Join the chat at https://gitter.im/SeriousM/WPFLocalizationExtension](https://badges.gitter.im/SeriousM/WPFLocalizationExtension.svg)](https://gitter.im/SeriousM/WPFLocalizationExtension?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ![](/assets/Structure.png)
 
 #### Products that use this Solution:
