@@ -87,6 +87,17 @@ namespace WPFLocalizeExtension.Providers
             Instance.IgnoreCase = (bool)e.NewValue;
             Instance.OnProviderChanged(obj);
         }
+
+        /// <summary>
+        /// Indicates, that the <see cref="IgnoreCaseProperty"/> attached property changed.
+        /// </summary>
+        /// <param name="obj">The dependency object.</param>
+        /// <param name="e">The event argument.</param>
+        private static void IgnoreCaseChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        {
+            Instance.IgnoreCase = (bool)e.NewValue;
+            Instance.OnProviderChanged(obj);
+        }
         #endregion
 
         #region Dependency Property Management
