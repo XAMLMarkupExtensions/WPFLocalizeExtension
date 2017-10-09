@@ -6,22 +6,21 @@
 // <author>Uwe Mayer</author>
 #endregion
 
+using System;
+using System.Windows;
+using System.Windows.Data;
+using System.Globalization;
+using System.ComponentModel;
+using System.Collections.Generic;
+
 namespace WPFLocalizeExtension.TypeConverters
 {
-    using System;
-    using System.Windows;
-    using System.Windows.Data;
-    using System.Windows.Media;
-    using System.Globalization;
-    using System.ComponentModel;
-    using System.Collections.Generic;
-
     /// <summary>
     /// Implements a standard converter that calls itself all known type converters.
     /// </summary>
     public class DefaultConverter : IValueConverter
     {
-        private static Dictionary<Type, TypeConverter> TypeConverters = new Dictionary<Type, TypeConverter>();
+        private static readonly Dictionary<Type, TypeConverter> TypeConverters = new Dictionary<Type, TypeConverter>();
         
         /// <summary>
         /// Modifies the source data before passing it to the target for display in the UI.
@@ -36,11 +35,11 @@ namespace WPFLocalizeExtension.TypeConverters
             if (value == null)
                 return null;
 
-            object result = null;
-            Type resourceType = value.GetType();
+            object result;
+            var resourceType = value.GetType();
 
             // Simplest cases: The target type is object or same as the input.
-            if (targetType.Equals(typeof(System.Object)) || resourceType.Equals(targetType))
+            if (targetType == typeof(object) || resourceType == targetType)
                 return value;
 
             // Register missing type converters - this class will do this only once per appdomain.
@@ -52,17 +51,17 @@ namespace WPFLocalizeExtension.TypeConverters
                 var c = TypeDescriptor.GetConverter(targetType);
 
                 if (targetType == typeof(Thickness))
-                    c = new TypeConverters.ThicknessConverter();
+                    c = new ThicknessConverter();
 
                 // Get the type converter and store it in the dictionary (even if it is NULL).
                 TypeConverters.Add(targetType, c);
             }
 
             // Get the converter.
-            TypeConverter conv = TypeConverters[targetType];
+            var conv = TypeConverters[targetType];
 
             // No converter or not convertable?
-            if ((conv == null) || !conv.CanConvertFrom(resourceType))
+            if (conv == null || !conv.CanConvertFrom(resourceType))
                 return null;
 
             // Finally, try to convert the value.

@@ -7,20 +7,16 @@
 // <author>Uwe Mayer</author>
 #endregion
 
+using System;
+using System.ComponentModel;
+using System.Windows;
+using System.Windows.Media.Imaging;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Globalization;
+
 namespace WPFLocalizeExtension.TypeConverters
 {
-    #region Uses
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-    using System.ComponentModel;
-    using System.Windows;
-    using System.Windows.Media.Imaging;
-    using System.Drawing;
-    using System.Drawing.Imaging;
-    using System.Globalization;
-    #endregion
-
     /// <summary>
     /// A type converter class for Bitmap resources that are used in WPF.
     /// </summary>
@@ -34,7 +30,7 @@ namespace WPFLocalizeExtension.TypeConverters
         /// <returns>true if this converter can perform the conversion; otherwise, false.</returns>
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
         {
-            return ((sourceType != null) && (sourceType.Equals(typeof(System.Drawing.Bitmap))));
+            return sourceType == typeof(Bitmap);
         }
 
         /// <summary>
@@ -45,7 +41,7 @@ namespace WPFLocalizeExtension.TypeConverters
         /// <returns>true if this converter can perform the conversion; otherwise, false.</returns>
         public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
         {
-            return ((destinationType != null) && (destinationType.Equals(typeof(System.Drawing.Bitmap))));
+            return destinationType == typeof(Bitmap);
         }
 
         /// <summary>
@@ -57,19 +53,17 @@ namespace WPFLocalizeExtension.TypeConverters
         /// <returns>An <see cref="Object"/> that represents the converted value.</returns>
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
-            Bitmap bitmap = value as Bitmap;
-
-            if (bitmap == null)
+            if (!(value is Bitmap bitmap))
                 return null;
 
-            IntPtr bmpPt = bitmap.GetHbitmap();
+            var bmpPt = bitmap.GetHbitmap();
 
             // create the bitmapSource
-            System.Windows.Media.Imaging.BitmapSource bitmapSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
+            var bitmapSource = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
                 bmpPt,
                 IntPtr.Zero,
                 Int32Rect.Empty,
-                System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
+                BitmapSizeOptions.FromEmptyOptions());
 
             // freeze the bitmap to avoid hooking events to the bitmap
             bitmapSource.Freeze();
@@ -99,17 +93,17 @@ namespace WPFLocalizeExtension.TypeConverters
         /// <returns>An <see cref="Object"/> that represents the converted value.</returns>
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
-            BitmapSource source = value as BitmapSource;
+            var source = value as BitmapSource;
 
             if (value == null)
                 return null;
 
-            Bitmap bmp = new Bitmap(
+            var bmp = new Bitmap(
                 source.PixelWidth,
                 source.PixelHeight,
                 PixelFormat.Format32bppPArgb);
 
-            BitmapData data = bmp.LockBits(
+            var data = bmp.LockBits(
                 new Rectangle(System.Drawing.Point.Empty, bmp.Size),
                 ImageLockMode.WriteOnly,
                 PixelFormat.Format32bppPArgb);

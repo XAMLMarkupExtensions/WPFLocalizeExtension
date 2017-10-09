@@ -6,19 +6,17 @@
 // <author>Uwe Mayer</author>
 #endregion
 
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Globalization;
+using System.Resources;
+using System.Windows;
+
+using WPFLocalizeExtension.Engine;
+using XAMLMarkupExtensions.Base;
+
 namespace WPFLocalizeExtension.Providers
 {
-    #region Uses
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Globalization;
-    using System.Resources;
-    using System.Windows;
-    using Engine;
-    using XAMLMarkupExtensions.Base;
-    #endregion
-
     /// <summary>
     /// A singleton RESX provider that uses attached properties and the Parent property to iterate through the visual tree.
     /// </summary>
@@ -64,7 +62,7 @@ namespace WPFLocalizeExtension.Providers
         /// <param name="e">The event argument.</param>
         private static void DefaultDictionaryChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
-            Instance.FallbackDictionary = e.NewValue != null ? e.NewValue.ToString() : null;
+            Instance.FallbackDictionary = e.NewValue?.ToString();
             Instance.OnProviderChanged(obj);
         }
 
@@ -75,7 +73,7 @@ namespace WPFLocalizeExtension.Providers
         /// <param name="e">The event argument.</param>
         private static void DefaultAssemblyChanged(DependencyObject obj, DependencyPropertyChangedEventArgs e)
         {
-            Instance.FallbackAssembly = e.NewValue != null ? e.NewValue.ToString() : null;
+            Instance.FallbackAssembly = e.NewValue?.ToString();
             Instance.OnProviderChanged(obj);
         }
 
@@ -89,6 +87,7 @@ namespace WPFLocalizeExtension.Providers
             Instance.IgnoreCase = (bool)e.NewValue;
             Instance.OnProviderChanged(obj);
         }
+
         #endregion
 
         #region Dependency Property Management
@@ -178,7 +177,7 @@ namespace WPFLocalizeExtension.Providers
         /// <summary>
         /// The instance of the singleton.
         /// </summary>
-        private static ResxLocalizationProvider instance;
+        private static ResxLocalizationProvider _instance;
 
         /// <summary>
         /// Lock object for the creation of the singleton instance.
@@ -192,17 +191,17 @@ namespace WPFLocalizeExtension.Providers
         {
             get
             {
-                if (instance == null)
+                if (_instance == null)
                 {
                     lock (InstanceLock)
                     {
-                        if (instance == null)
-                            instance = new ResxLocalizationProvider();
+                        if (_instance == null)
+                            _instance = new ResxLocalizationProvider();
                     }
                 }
 
                 // return the existing/new instance
-                return instance;
+                return _instance;
             }
         }
 		
@@ -213,7 +212,7 @@ namespace WPFLocalizeExtension.Providers
         {
             lock (InstanceLock)
             {
-                instance = null;
+                _instance = null;
             }
         }
 
@@ -223,8 +222,7 @@ namespace WPFLocalizeExtension.Providers
         private ResxLocalizationProvider()
         {
             ResourceManagerList = new Dictionary<string, ResourceManager>();
-            AvailableCultures = new ObservableCollection<CultureInfo>();
-            AvailableCultures.Add(CultureInfo.InvariantCulture);
+            AvailableCultures = new ObservableCollection<CultureInfo> {CultureInfo.InvariantCulture};
         }
         #endregion
 
@@ -249,7 +247,7 @@ namespace WPFLocalizeExtension.Providers
                 return FallbackAssembly;
 
             var assembly = target.GetValueOrRegisterParentNotifier<string>(DefaultAssemblyProperty, ParentChangedAction, _parentNotifiers);
-            return String.IsNullOrEmpty(assembly) ? FallbackAssembly : assembly;
+            return string.IsNullOrEmpty(assembly) ? FallbackAssembly : assembly;
         }
 
         /// <summary>
@@ -263,7 +261,7 @@ namespace WPFLocalizeExtension.Providers
                 return FallbackDictionary;
 
             var dictionary = target.GetValueOrRegisterParentNotifier<string>(DefaultDictionaryProperty, ParentChangedAction, _parentNotifiers);
-            return String.IsNullOrEmpty(dictionary) ? FallbackDictionary : dictionary;
+            return string.IsNullOrEmpty(dictionary) ? FallbackDictionary : dictionary;
         }
         #endregion
     }

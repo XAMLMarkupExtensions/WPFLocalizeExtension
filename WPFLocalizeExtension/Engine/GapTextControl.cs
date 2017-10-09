@@ -7,23 +7,22 @@
 // <author>Uwe Mayer</author>
 #endregion
 
+using System;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Markup;
+using System.Xml;
+
 namespace WPFLocalizeExtension.Engine
 {
-    using System;
-    using System.Collections.ObjectModel;
-    using System.IO;
-    using System.Text.RegularExpressions;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Data;
-    using System.Windows.Documents;
-    using System.Windows.Markup;
-    using System.Xml;
-
     /// <summary>
     /// A gap text control.
     /// </summary>
-    //TODO: proper handling of \n in string contents
     [TemplatePart(Name = PART_TextBlock, Type = typeof(TextBlock))]
     public class GapTextControl : Control
     {
@@ -116,26 +115,26 @@ namespace WPFLocalizeExtension.Engine
         /// </summary>
         public string FormatString
         {
-            get { return (string)GetValue(FormatStringProperty); }
-            set { SetValue(FormatStringProperty, value); }
+            get => (string)GetValue(FormatStringProperty);
+            set => SetValue(FormatStringProperty, value);
         }
 
         public bool IgnoreLessGaps
         {
-            get { return (bool)GetValue(IgnoreLessGapsProperty); }
-            set { SetValue(IgnoreLessGapsProperty, value); }
+            get => (bool)GetValue(IgnoreLessGapsProperty);
+            set => SetValue(IgnoreLessGapsProperty, value);
         }
 
         public bool IgnoreDuplicateStringReferences
         {
-            get { return (bool)GetValue(IgnoreDuplicateStringReferencesProperty); }
-            set { SetValue(IgnoreDuplicateStringReferencesProperty, value); }
+            get => (bool)GetValue(IgnoreDuplicateStringReferencesProperty);
+            set => SetValue(IgnoreDuplicateStringReferencesProperty, value);
         }
 
         public bool IgnoreDuplicateControlReferences
         {
-            get { return (bool)GetValue(IgnoreDuplicateControlReferencesProperty); }
-            set { SetValue(IgnoreDuplicateControlReferencesProperty, value); }
+            get => (bool)GetValue(IgnoreDuplicateControlReferencesProperty);
+            set => SetValue(IgnoreDuplicateControlReferencesProperty, value);
         }
 
         /// <summary>
@@ -143,8 +142,8 @@ namespace WPFLocalizeExtension.Engine
         /// </summary>
         public ObservableCollection<object> Gaps
         {
-            get { return (ObservableCollection<object>)GetValue(GapsProperty); }
-            set { SetValue(GapsProperty, value); }
+            get => (ObservableCollection<object>)GetValue(GapsProperty);
+            set => SetValue(GapsProperty, value);
         }
         #endregion
 
@@ -161,7 +160,7 @@ namespace WPFLocalizeExtension.Engine
         #endregion
 
         #region Sub-Controls
-        private TextBlock theTextBlock = new TextBlock();
+        private TextBlock _theTextBlock = new TextBlock();
         #endregion
 
         #region DependencyProperty changed event handlers
@@ -174,7 +173,7 @@ namespace WPFLocalizeExtension.Engine
             }
         }
 
-        private T DeepCopy<T>(T obj)
+        private static T DeepCopy<T>(T obj)
             where T : DependencyObject
         {
             var xaml = XamlWriter.Save(obj);
@@ -187,7 +186,7 @@ namespace WPFLocalizeExtension.Engine
             {
                 var dp = enumerator.Current.Property;
                 var be = BindingOperations.GetBindingExpression(obj, dp);
-                if (be != null && be.ParentBinding != null && be.ParentBinding.Path != null)
+                if (be?.ParentBinding?.Path != null)
                     BindingOperations.SetBinding(result, dp, be.ParentBinding);
             }
 
@@ -197,7 +196,7 @@ namespace WPFLocalizeExtension.Engine
         private void OnContentChanged()
         {
             // Re-arrange the children:
-            theTextBlock.Inlines.Clear();
+            _theTextBlock.Inlines.Clear();
 
             if (FormatString != null)
             {
@@ -226,7 +225,7 @@ namespace WPFLocalizeExtension.Engine
 
                         // add the inlines:
                         // 1) the prefix that is formatted with the whole gaps parameters:
-                        theTextBlock.Inlines.Add(string.Format(formatStringPartial, Gaps));
+                        _theTextBlock.Inlines.Add(string.Format(formatStringPartial, Gaps));
 
                         // Check availability of a classified gap.
                         if (Gaps.Count <= itemIndex)
@@ -236,20 +235,20 @@ namespace WPFLocalizeExtension.Engine
                         // 2) the item encoded in the placeholder:
                         try
                         {
-                            if (gap is UIElement)
+                            if (gap is UIElement element)
                             {
-                                var item = DeepCopy((UIElement)gap);
-                                theTextBlock.Inlines.Add(item);
+                                var item = DeepCopy(element);
+                                _theTextBlock.Inlines.Add(item);
                             }
                             else if (gap is Inline)
                             {
                                 var item = DeepCopy((Inline)gap);
-                                theTextBlock.Inlines.Add(item);
+                                _theTextBlock.Inlines.Add(item);
                             }
                             else if (gap != null)
-                                theTextBlock.Inlines.Add(gap.ToString());
+                                _theTextBlock.Inlines.Add(gap.ToString());
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
                             // break for now
                         }
@@ -257,7 +256,7 @@ namespace WPFLocalizeExtension.Engine
                 }
 
                 // add the remaining part:
-                theTextBlock.Inlines.Add(string.Format(FormatString.Substring(matchedUpToIndex), Gaps));
+                _theTextBlock.Inlines.Add(string.Format(FormatString.Substring(matchedUpToIndex), Gaps));
                 
                 InvalidateVisual();
             }
@@ -283,9 +282,9 @@ namespace WPFLocalizeExtension.Engine
             if (Template != null)
             {
                 var textBlock = Template.FindName(PART_TextBlock, this) as TextBlock;
-                if (textBlock != theTextBlock)
+                if (textBlock != _theTextBlock)
                 {
-                    theTextBlock = textBlock;
+                    _theTextBlock = textBlock;
                     OnContentChanged();
                 }
             }

@@ -6,19 +6,19 @@
 // <author>Uwe Mayer</author>
 #endregion
 
+using System;
+using System.Linq;
+using System.ComponentModel;
+using System.Windows;
+using System.Windows.Controls;
+using System.Collections.Generic;
+using System.Windows.Markup;
+
 namespace WPFLocalizeExtension.Engine
 {
-    using System;
-    using System.Linq;
-    using System.ComponentModel;
-    using System.Windows;
-    using System.Windows.Controls;
-    using System.Collections.Generic;
-    using System.Windows.Markup;
-
     /// <summary>
     /// An extended combobox that is enumerating Enum values.
-    /// <para>Use the <see cref="BrowsableAttribute"/> to hide specific entries.</para>
+    /// <para>Use the <see cref="T:System.ComponentModel.BrowsableAttribute" /> to hide specific entries.</para>
     /// </summary>
     public class EnumComboBox : ComboBox
     {
@@ -34,15 +34,13 @@ namespace WPFLocalizeExtension.Engine
         [Category("Common")]
         public Type Type
         {
-            get { return (Type)GetValue(TypeProperty); }
-            set { SetValue(TypeProperty, value); }
+            get => (Type)GetValue(TypeProperty);
+            set => SetValue(TypeProperty, value);
         }
 
         private static void TypeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var ecb = d as EnumComboBox;
-
-            if (ecb == null)
+            if (!(d is EnumComboBox ecb))
                 return;
 
             ecb.SetType(ecb.Type);
@@ -61,8 +59,8 @@ namespace WPFLocalizeExtension.Engine
         [Category("Common")]
         public bool PrependType
         {
-            get { return (bool)GetValue(PrependTypeProperty); }
-            set { SetValue(PrependTypeProperty, value); }
+            get => (bool)GetValue(PrependTypeProperty);
+            set => SetValue(PrependTypeProperty, value);
         }
         #endregion
 
@@ -78,8 +76,8 @@ namespace WPFLocalizeExtension.Engine
         [Category("Common")]
         public string Separator
         {
-            get { return (string)GetValue(SeparatorProperty); }
-            set { SetValue(SeparatorProperty, value); }
+            get => (string)GetValue(SeparatorProperty);
+            set => SetValue(SeparatorProperty, value);
         }
         #endregion
 
@@ -95,8 +93,8 @@ namespace WPFLocalizeExtension.Engine
         [Category("Common")]
         public string Prefix
         {
-            get { return (string)GetValue(PrefixProperty); }
-            set { SetValue(PrefixProperty, value); }
+            get => (string)GetValue(PrefixProperty);
+            set => SetValue(PrefixProperty, value);
         }
         #endregion
 
@@ -105,27 +103,24 @@ namespace WPFLocalizeExtension.Engine
         /// Overwrite and bypass the Items property.
         /// </summary>
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public new ItemCollection Items
-        {
-            get { return base.Items; }
-        }
+        public new ItemCollection Items => base.Items;
 
-        private bool shouldSerializeTemplate = false;
+        private bool _shouldSerializeTemplate;
 
         protected override void OnItemTemplateChanged(DataTemplate oldItemTemplate, DataTemplate newItemTemplate)
         {
             if (oldItemTemplate != null)
-                shouldSerializeTemplate = true;
+                _shouldSerializeTemplate = true;
 
             base.OnItemTemplateChanged(oldItemTemplate, newItemTemplate);
         }
 
         protected override bool ShouldSerializeProperty(DependencyProperty dp)
         {
-            if ((dp == ItemTemplateProperty) && !shouldSerializeTemplate)
+            if (dp == ItemTemplateProperty && !_shouldSerializeTemplate)
                 return false;
-            else
-                return base.ShouldSerializeProperty(dp);
+
+            return base.ShouldSerializeProperty(dp);
         } 
         #endregion
 
@@ -134,7 +129,6 @@ namespace WPFLocalizeExtension.Engine
             try
             {
                 var items = new List<object>();
-                var values = Enum.GetValues(type);
 
                 // First we need to get list of all enum fields
                 var fields = type.GetFields();
@@ -156,6 +150,7 @@ namespace WPFLocalizeExtension.Engine
             }
             catch
             {
+                // ignored
             }
         }
 

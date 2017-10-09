@@ -7,20 +7,17 @@
 // <author>Uwe Mayer</author>
 #endregion
 
+using System;
+using System.Windows.Data;
+using System.ComponentModel;
+using System.Collections.Generic;
+using System.Windows;
+using System.Globalization;
+
+using WPFLocalizeExtension.Engine;
+
 namespace WPFLocalizeExtension.Extensions
 {
-    using System;
-    using System.Windows.Data;
-    using System.ComponentModel;
-    using System.Collections.Generic;
-    using System.Windows;
-    using System.Globalization;
-    using System.Reflection;
-    using System.Windows.Media.Imaging;
-    using System.Collections;
-    using WPFLocalizeExtension.TypeConverters;
-    using WPFLocalizeExtension.Engine;
-
     /// <summary>
     /// A localization extension based on <see cref="Binding"/>.
     /// </summary>
@@ -40,49 +37,45 @@ namespace WPFLocalizeExtension.Extensions
         /// </param>
         internal void RaisePropertyChanged(string property)
         {
-            if (this.PropertyChanged != null)
-                this.PropertyChanged(this, new PropertyChangedEventArgs(property));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
         }
         #endregion
 
         #region Variables & Properties
-        private static object resourceBufferLock = new object();
-        private static Dictionary<string, object> ResourceBuffer = new Dictionary<string, object>();
+        private static readonly object ResourceBufferLock = new object();
+        private static Dictionary<string, object> _resourceBuffer = new Dictionary<string, object>();
 
-        private object value = null;
+        private object _value;
         /// <summary>
         /// The value, the internal binding is pointing at.
         /// </summary>
         public object Value
         {
-            get { return value; }
+            get => _value;
             set
             {
-                if (this.value != value)
+                if (_value != value)
                 {
-                    this.value = value;
-                    RaisePropertyChanged("Value");
+                    _value = value;
+                    RaisePropertyChanged(nameof(Value));
                 }
             }
         }
 
-        private string key;
+        private string _key;
         /// <summary>
         /// Gets or sets the Key to a .resx object
         /// </summary>
         public string Key
         {
-            get
-            {
-                return key;
-            }
+            get => _key;
             set
             {
-                if (key != value)
+                if (_key != value)
                 {
-                    key = value;
+                    _key = value;
                     UpdateNewValue();
-                    RaisePropertyChanged("Key");
+                    RaisePropertyChanged(nameof(Key));
                 }
             }
         }
@@ -99,13 +92,11 @@ namespace WPFLocalizeExtension.Extensions
         /// </summary>
         public static void ClearResourceBuffer()
         {
-            lock (resourceBufferLock)
+            lock (ResourceBufferLock)
             {
-                if (ResourceBuffer != null)
-                    ResourceBuffer.Clear();
+                _resourceBuffer?.Clear();
+                _resourceBuffer = null;
             }
-
-            ResourceBuffer = null;
         }
 
 
@@ -116,10 +107,10 @@ namespace WPFLocalizeExtension.Extensions
         /// <param name="item">The item.</param>
         internal static void SafeAddItemToResourceBuffer(string key, object item)
         {
-            lock (resourceBufferLock)
+            lock (ResourceBufferLock)
             {
-                if (!LocalizeDictionary.Instance.DisableCache && !ResourceBuffer.ContainsKey(key))
-                    ResourceBuffer.Add(key, item);
+                if (!LocalizeDictionary.Instance.DisableCache && !_resourceBuffer.ContainsKey(key))
+                    _resourceBuffer.Add(key, item);
             }
         }
 
@@ -129,10 +120,10 @@ namespace WPFLocalizeExtension.Extensions
         /// <param name="key">The key.</param>
         internal static void SafeRemoveItemFromResourceBuffer(string key)
         {
-            lock (resourceBufferLock)
+            lock (ResourceBufferLock)
             {
-                if (ResourceBuffer.ContainsKey(key))
-                    ResourceBuffer.Remove(key);
+                if (_resourceBuffer.ContainsKey(key))
+                    _resourceBuffer.Remove(key);
             }
         }
         #endregion
@@ -142,11 +133,10 @@ namespace WPFLocalizeExtension.Extensions
         /// Initializes a new instance of the <see cref="BLoc"/> class.
         /// </summary>
         public BLoc()
-            : base()
         {
             LocalizeDictionary.DictionaryEvent.AddListener(this);
-            this.Path = new PropertyPath("Value");
-            this.Source = this;
+            Path = new PropertyPath("Value");
+            Source = this;
         }
 
         /// <summary>
@@ -156,7 +146,7 @@ namespace WPFLocalizeExtension.Extensions
         public BLoc(string key)
             : this()
         {
-            this.Key = key;
+            Key = key;
         }
 
         /// <summary>
@@ -191,14 +181,14 @@ namespace WPFLocalizeExtension.Extensions
             CultureInfo cultureInfo;
 
             // check if the forced culture is not null or empty
-            if (!string.IsNullOrEmpty(this.ForceCulture))
+            if (!string.IsNullOrEmpty(ForceCulture))
             {
                 // try to create a valid cultureinfo, if defined
                 try
                 {
                     // try to create a specific culture from the forced one
                     // cultureInfo = CultureInfo.CreateSpecificCulture(this.ForceCulture);
-                    cultureInfo = new CultureInfo(this.ForceCulture);
+                    cultureInfo = new CultureInfo(ForceCulture);
                 }
                 catch (ArgumentException ex)
                 {
@@ -211,7 +201,7 @@ namespace WPFLocalizeExtension.Extensions
                     else
                     {
                         // tell the customer, that the forced culture cannot be converted propperly
-                        throw new ArgumentException("Cannot create a CultureInfo with '" + this.ForceCulture + "'", ex);
+                        throw new ArgumentException("Cannot create a CultureInfo with '" + ForceCulture + "'", ex);
                     }
                 }
             }
@@ -238,7 +228,7 @@ namespace WPFLocalizeExtension.Extensions
 
         private void UpdateNewValue()
         {
-            this.Value = FormatOutput();
+            Value = FormatOutput();
         }
 
         #region Future TargetMarkupExtension implementation
@@ -247,26 +237,27 @@ namespace WPFLocalizeExtension.Extensions
         /// </summary>
         public object FormatOutput()
         {
-            object result = null;
+            object result;
 
             // Try to get the localized input from the resource.
             string resourceKey = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(Key, null);
 
-            CultureInfo ci = GetForcedCultureOrDefault();
+            var ci = GetForcedCultureOrDefault();
 
-            string key = ci.Name + ":";
+            var key = ci.Name + ":";
 
             // Check, if the key is already in our resource buffer.
-            if (ResourceBuffer.ContainsKey(key + resourceKey))
-                result = ResourceBuffer[key + resourceKey];
-            else
+            lock (ResourceBufferLock)
             {
-                result = LocalizeDictionary.Instance.GetLocalizedObject(resourceKey, null, ci);
-
-                if (result == null)
-                    return null;
+                if (_resourceBuffer.ContainsKey(key + resourceKey))
+                    result = _resourceBuffer[key + resourceKey];
                 else
                 {
+                    result = LocalizeDictionary.Instance.GetLocalizedObject(resourceKey, null, ci);
+
+                    if (result == null)
+                        return null;
+
                     key += resourceKey;
                     SafeAddItemToResourceBuffer(key, result);
                 }

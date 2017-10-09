@@ -6,17 +6,11 @@
 // <author>Uwe Mayer</author>
 #endregion
 
+using System.ComponentModel;
+using System.Windows.Media.Imaging;
+
 namespace WPFLocalizeExtension.TypeConverters
 {
-    #region Uses
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.ComponentModel;
-    using System.Windows.Media.Imaging;
-    #endregion
-
     /// <summary>
     /// Register missing type converters here.
     /// </summary>
@@ -25,19 +19,19 @@ namespace WPFLocalizeExtension.TypeConverters
         /// <summary>
         /// A flag indication if the registration was successful.
         /// </summary>
-        private static bool registered = false;
+        private static bool _registered;
         
         /// <summary>
         /// Registers the missing type converters.
         /// </summary>
         public static void Register()
         {
-            if (registered)
+            if (_registered)
                 return;
             
-            TypeDescriptor.AddAttributes(typeof(BitmapSource), new Attribute[] { new TypeConverterAttribute(typeof(BitmapSourceTypeConverter)) });
+            TypeDescriptor.AddAttributes(typeof(BitmapSource), new TypeConverterAttribute(typeof(BitmapSourceTypeConverter)));
 
-            registered = true;
+            _registered = true;
         }
     }
 }

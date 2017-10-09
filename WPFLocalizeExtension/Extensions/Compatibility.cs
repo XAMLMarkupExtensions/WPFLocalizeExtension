@@ -7,45 +7,45 @@
 // <author>Uwe Mayer</author>
 #endregion
 
+using System;
+using System.Windows.Markup;
+
+using WPFLocalizeExtension.Engine;
+using XAMLMarkupExtensions.Base;
+
 namespace WPFLocalizeExtension.Extensions
 {
 #pragma warning disable 1591
 
-    #region Uses
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Windows.Markup;
-    using WPFLocalizeExtension.Engine;
-    using XAMLMarkupExtensions.Base;
-    #endregion
-
     [MarkupExtensionReturnType(typeof(System.Windows.Media.Brush))]
     public class LocBrushExtension : LocExtension
     {
-        public LocBrushExtension() : base() { }
+        public LocBrushExtension()
+        { }
         public LocBrushExtension(string key) : base(key) { }
     }
 
     [MarkupExtensionReturnType(typeof(double))]
     public class LocDoubleExtension : LocExtension
     {
-        public LocDoubleExtension() : base() { }
+        public LocDoubleExtension()
+        { }
         public LocDoubleExtension(string key) : base(key) { }
     }
 
     [MarkupExtensionReturnType(typeof(System.Windows.FlowDirection))]
     public class LocFlowDirectionExtension : LocExtension
     {
-        public LocFlowDirectionExtension() : base() { }
+        public LocFlowDirectionExtension()
+        { }
         public LocFlowDirectionExtension(string key) : base(key) { }
     }
 
     [MarkupExtensionReturnType(typeof(System.Windows.Media.Imaging.BitmapSource))]
     public class LocImageExtension : LocExtension
     {
-        public LocImageExtension() : base() { }
+        public LocImageExtension()
+        { }
         public LocImageExtension(string key) : base(key) { }
     }
 
@@ -53,7 +53,8 @@ namespace WPFLocalizeExtension.Extensions
     public class LocTextExtension : LocExtension
     {
         #region Constructors
-        public LocTextExtension() : base() { }
+        public LocTextExtension()
+        { }
         public LocTextExtension(string key) : base(key) { }
         #endregion
 
@@ -80,17 +81,17 @@ namespace WPFLocalizeExtension.Extensions
         /// <summary>
         /// Holds the local prefix value
         /// </summary>
-        private string prefix;
+        private string _prefix;
 
         /// <summary>
         /// Holds the local suffix value
         /// </summary>
-        private string suffix;
+        private string _suffix;
 
         /// <summary>
         /// Holds the local format segment array
         /// </summary>
-        private string[] formatSegments = new string[5]; 
+        private readonly string[] _formatSegments = new string[5]; 
         #endregion
 
         #region Properties
@@ -99,11 +100,8 @@ namespace WPFLocalizeExtension.Extensions
         /// </summary>
         public string Prefix
         {
-            get { return this.prefix; }
-            set
-            {
-                this.prefix = value;
-            }
+            get => _prefix;
+            set => _prefix = value;
         }
 
         /// <summary>
@@ -111,11 +109,8 @@ namespace WPFLocalizeExtension.Extensions
         /// </summary>
         public string Suffix
         {
-            get { return this.suffix; }
-            set
-            {
-                this.suffix = value;
-            }
+            get => _suffix;
+            set => _suffix = value;
         }
 
         /// <summary>
@@ -126,11 +121,8 @@ namespace WPFLocalizeExtension.Extensions
         /// <value>The format segment 1.</value>
         public string FormatSegment1
         {
-            get { return this.formatSegments[0]; }
-            set
-            {
-                this.formatSegments[0] = value;
-            }
+            get => _formatSegments[0];
+            set => _formatSegments[0] = value;
         }
 
         /// <summary>
@@ -141,11 +133,8 @@ namespace WPFLocalizeExtension.Extensions
         /// <value>The format segment 2.</value>
         public string FormatSegment2
         {
-            get { return this.formatSegments[1]; }
-            set
-            {
-                this.formatSegments[1] = value;
-            }
+            get => _formatSegments[1];
+            set => _formatSegments[1] = value;
         }
 
         /// <summary>
@@ -156,11 +145,8 @@ namespace WPFLocalizeExtension.Extensions
         /// <value>The format segment 3.</value>
         public string FormatSegment3
         {
-            get { return this.formatSegments[2]; }
-            set
-            {
-                this.formatSegments[2] = value;
-            }
+            get => _formatSegments[2];
+            set => _formatSegments[2] = value;
         }
 
         /// <summary>
@@ -171,11 +157,8 @@ namespace WPFLocalizeExtension.Extensions
         /// <value>The format segment 4.</value>
         public string FormatSegment4
         {
-            get { return this.formatSegments[3]; }
-            set
-            {
-                this.formatSegments[3] = value;
-            }
+            get => _formatSegments[3];
+            set => _formatSegments[3] = value;
         }
 
         /// <summary>
@@ -186,11 +169,8 @@ namespace WPFLocalizeExtension.Extensions
         /// <value>The format segment 5.</value>
         public string FormatSegment5
         {
-            get { return this.formatSegments[4]; }
-            set
-            {
-                this.formatSegments[4] = value;
-            }
+            get => _formatSegments[4];
+            set => _formatSegments[4] = value;
         } 
         #endregion
 
@@ -204,17 +184,17 @@ namespace WPFLocalizeExtension.Extensions
         private string GetAppendText(TextAppendType at)
         {
             // define a return value
-            string retVal = string.Empty;
+            var retVal = string.Empty;
 
             // check if it should be a prefix, the format will be [PREFIX],
             // or check if it should be a suffix, the format will be [SUFFIX]
-            if (at == TextAppendType.Prefix && !string.IsNullOrEmpty(this.prefix))
+            if (at == TextAppendType.Prefix && !string.IsNullOrEmpty(_prefix))
             {
-                retVal = this.prefix ?? string.Empty;
+                retVal = _prefix ?? string.Empty;
             }
-            else if (at == TextAppendType.Suffix && !string.IsNullOrEmpty(this.suffix))
+            else if (at == TextAppendType.Suffix && !string.IsNullOrEmpty(_suffix))
             {
-                retVal = this.suffix ?? string.Empty;
+                retVal = _suffix ?? string.Empty;
             }
 
             // return the formated prefix or suffix
@@ -239,7 +219,7 @@ namespace WPFLocalizeExtension.Extensions
         /// <param name="endPoint">Information about the endpoint.</param>
         public override object FormatOutput(TargetInfo endPoint, TargetInfo info)
         {
-            string textMain = base.FormatOutput(endPoint, info) as String ?? String.Empty;
+            var textMain = base.FormatOutput(endPoint, info) as string ?? string.Empty;
 
             try
             {
@@ -247,11 +227,11 @@ namespace WPFLocalizeExtension.Extensions
                 textMain = string.Format(
                     LocalizeDictionary.Instance.SpecificCulture,
                     textMain,
-                    this.formatSegments[0] ?? string.Empty,
-                    this.formatSegments[1] ?? string.Empty,
-                    this.formatSegments[2] ?? string.Empty,
-                    this.formatSegments[3] ?? string.Empty,
-                    this.formatSegments[4] ?? string.Empty);
+                    _formatSegments[0] ?? string.Empty,
+                    _formatSegments[1] ?? string.Empty,
+                    _formatSegments[2] ?? string.Empty,
+                    _formatSegments[3] ?? string.Empty,
+                    _formatSegments[4] ?? string.Empty);
             }
             catch (FormatException)
             {
@@ -260,13 +240,13 @@ namespace WPFLocalizeExtension.Extensions
             }
 
             // get the prefix
-            string textPrefix = this.GetAppendText(TextAppendType.Prefix);
+            var textPrefix = GetAppendText(TextAppendType.Prefix);
 
             // get the suffix
-            string textSuffix = this.GetAppendText(TextAppendType.Suffix);
+            var textSuffix = GetAppendText(TextAppendType.Suffix);
 
             // format the text with prefix and suffix to [PREFIX]LocalizedText[SUFFIX]
-            textMain = this.FormatText(textPrefix + textMain + textSuffix);
+            textMain = FormatText(textPrefix + textMain + textSuffix);
 
             return textMain;
         } 
@@ -277,7 +257,8 @@ namespace WPFLocalizeExtension.Extensions
     public class LocTextLowerExtension : LocTextExtension
     {
         #region Constructors
-        public LocTextLowerExtension() : base() { }
+        public LocTextLowerExtension()
+        { }
         public LocTextLowerExtension(string key) : base(key) { }
         #endregion
 
@@ -292,7 +273,7 @@ namespace WPFLocalizeExtension.Extensions
         /// </returns>
         protected override string FormatText(string target)
         {
-            return target == null ? string.Empty : target.ToLower(this.GetForcedCultureOrDefault());
+            return target?.ToLower(GetForcedCultureOrDefault()) ?? string.Empty;
         }
         #endregion
     }
@@ -301,7 +282,8 @@ namespace WPFLocalizeExtension.Extensions
     public class LocTextUpperExtension : LocTextExtension
     {
         #region Constructors
-        public LocTextUpperExtension() : base() { }
+        public LocTextUpperExtension()
+        { }
         public LocTextUpperExtension(string key) : base(key) { }
         #endregion
 
@@ -316,7 +298,7 @@ namespace WPFLocalizeExtension.Extensions
         /// </returns>
         protected override string FormatText(string target)
         {
-            return target == null ? string.Empty : target.ToUpper(this.GetForcedCultureOrDefault());
+            return target?.ToUpper(GetForcedCultureOrDefault()) ?? string.Empty;
         }
         #endregion
     }
@@ -324,7 +306,8 @@ namespace WPFLocalizeExtension.Extensions
     [MarkupExtensionReturnType(typeof(System.Windows.Thickness))]
     public class LocThicknessExtension : LocExtension
     {
-        public LocThicknessExtension() : base() { }
+        public LocThicknessExtension()
+        { }
         public LocThicknessExtension(string key) : base(key) { }
     }
 

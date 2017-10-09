@@ -6,24 +6,16 @@
 // <author>Sébastien Sevrin</author>
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.Windows;
+using System.Resources;
+using System.Reflection;
+using System.Globalization;
+using System.Collections.ObjectModel;
+
 namespace WPFLocalizeExtension.Providers
 {
-    #region Uses
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Windows;
-    using System.Resources;
-    using System.Reflection;
-    using System.Globalization;
-    using System.IO;
-    using System.Collections.ObjectModel;
-    using System.Windows.Media;
-    using XAMLMarkupExtensions.Base;
-    using WPFLocalizeExtension.Engine;
-    #endregion
-
     /// <summary>
     /// The base for CSV file providers.
     /// </summary>
@@ -70,14 +62,10 @@ namespace WPFLocalizeExtension.Providers
         protected string GetAssemblyName(Assembly assembly)
         {
             if (assembly == null)
-            {
-                throw new ArgumentNullException("assembly");
-            }
+                throw new ArgumentNullException(nameof(assembly));
 
             if (assembly.FullName == null)
-            {
                 throw new NullReferenceException("assembly.FullName is null");
-            }
 
             return assembly.FullName.Split(',')[0];
         }
@@ -98,7 +86,7 @@ namespace WPFLocalizeExtension.Providers
 
             if (!string.IsNullOrEmpty(inKey))
             {
-                string[] split = inKey.Trim().Split(":".ToCharArray());
+                var split = inKey.Trim().Split(":".ToCharArray());
 
                 // assembly:dict:key
                 if (split.Length == 3)
@@ -117,9 +105,7 @@ namespace WPFLocalizeExtension.Providers
 
                 // key
                 if (split.Length == 1)
-                {
                     outKey = split[0];
-                }
             }
         }
         #endregion
@@ -149,8 +135,8 @@ namespace WPFLocalizeExtension.Providers
         {
             lock (AvailableCultureListLock)
             {
-                if (!this.AvailableCultures.Contains(c))
-                    this.AvailableCultures.Add(c);
+                if (!AvailableCultures.Contains(c))
+                    AvailableCultures.Add(c);
             }
         }
         #endregion
@@ -162,20 +148,20 @@ namespace WPFLocalizeExtension.Providers
         /// <param name="key">Key used as a base to find the full key</param>
         /// <param name="target">Target used to help determine key information</param>
         /// <returns>Returns an object with all possible pieces of the given key (Assembly, Dictionary, Key)</returns>
-        public FullyQualifiedResourceKeyBase GetFullyQualifiedResourceKey(String key, DependencyObject target)
+        public FullyQualifiedResourceKeyBase GetFullyQualifiedResourceKey(string key, DependencyObject target)
         {
-            if (String.IsNullOrEmpty(key))
+            if (string.IsNullOrEmpty(key))
                 return null;
-            String assembly, dictionary;
-            ParseKey(key, out assembly, out dictionary, out key);
+
+            ParseKey(key, out var assembly, out var dictionary, out key);
 
             if (target == null)
                 return new FQAssemblyDictionaryKey(key, assembly, dictionary);
 
-            if (String.IsNullOrEmpty(assembly))
+            if (string.IsNullOrEmpty(assembly))
                 assembly = GetAssembly(target);
 
-            if (String.IsNullOrEmpty(dictionary))
+            if (string.IsNullOrEmpty(dictionary))
                 dictionary = GetDictionary(target);
 
             return new FQAssemblyDictionaryKey(key, assembly, dictionary);
@@ -212,10 +198,10 @@ namespace WPFLocalizeExtension.Providers
             }
             catch
             {
+                // ignored
             }
 
-            if (ProviderChanged != null)
-                ProviderChanged(this, new ProviderChangedEventArgs(target));
+            ProviderChanged?.Invoke(this, new ProviderChangedEventArgs(target));
         }
 
         /// <summary>
@@ -226,8 +212,7 @@ namespace WPFLocalizeExtension.Providers
         /// <param name="message">The error message.</param>
         protected virtual void OnProviderError(DependencyObject target, string key, string message)
         {
-            if (ProviderError != null)
-                ProviderError(this, new ProviderErrorEventArgs(target, key, message));
+            ProviderError?.Invoke(this, new ProviderErrorEventArgs(target, key, message));
         }
 
         /// <summary>
@@ -238,8 +223,7 @@ namespace WPFLocalizeExtension.Providers
         /// <param name="tag">A custom tag.</param>
         protected virtual void OnValueChanged(string key, object value, object tag)
         {
-            if (ValueChanged != null)
-                ValueChanged(this, new ValueChangedEventArgs(key, value, tag));
+            ValueChanged?.Invoke(this, new ValueChangedEventArgs(key, value, tag));
         }
 
         /// <summary>

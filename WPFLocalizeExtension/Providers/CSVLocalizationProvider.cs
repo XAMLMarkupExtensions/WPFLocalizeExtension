@@ -6,20 +6,17 @@
 // <author>Sébastien Sevrin</author>
 #endregion
 
+using System.Collections.ObjectModel;
+using System.Globalization;
+using System.IO;
+using System.Text;
+using System.Windows;
+
+using WPFLocalizeExtension.Engine;
+using XAMLMarkupExtensions.Base;
+
 namespace WPFLocalizeExtension.Providers
 {
-    #region Uses
-    using System;
-    using System.Collections.Generic;
-    using System.Collections.ObjectModel;
-    using System.Globalization;
-    using System.IO;
-    using System.Text;
-    using System.Windows;
-    using Engine;
-    using XAMLMarkupExtensions.Base;
-    #endregion
-
     /// <summary>
     /// A singleton CSV provider that uses attached properties and the Parent property to iterate through the visual tree.
     /// </summary>
@@ -79,14 +76,14 @@ namespace WPFLocalizeExtension.Providers
         /// <summary>
         /// A dictionary for notification classes for changes of the individual target Parent changes.
         /// </summary>
-        private ParentNotifiers parentNotifiers = new ParentNotifiers();
+        private readonly ParentNotifiers _parentNotifiers = new ParentNotifiers();
         #endregion
 
         #region Singleton Variables, Properties & Constructor
         /// <summary>
         /// The instance of the singleton.
         /// </summary>
-        private static CSVLocalizationProvider instance;
+        private static CSVLocalizationProvider _instance;
 
         /// <summary>
         /// Lock object for the creation of the singleton instance.
@@ -100,17 +97,17 @@ namespace WPFLocalizeExtension.Providers
         {
             get
             {
-                if (instance == null)
+                if (_instance == null)
                 {
                     lock (InstanceLock)
                     {
-                        if (instance == null)
-                            instance = new CSVLocalizationProvider();
+                        if (_instance == null)
+                            _instance = new CSVLocalizationProvider();
                     }
                 }
 
                 // return the existing/new instance
-                return instance;
+                return _instance;
             }
         }
 
@@ -119,22 +116,17 @@ namespace WPFLocalizeExtension.Providers
         /// </summary>
         private CSVLocalizationProvider()
         {
-            AvailableCultures = new ObservableCollection<CultureInfo>();
-            AvailableCultures.Add(CultureInfo.InvariantCulture);
+            AvailableCultures = new ObservableCollection<CultureInfo> {CultureInfo.InvariantCulture};
         }
 
-        private bool hasHeader = false;
+        private bool _hasHeader;
         /// <summary>
         /// A flag indicating, if it has a header row.
         /// </summary>
         public bool HasHeader
         {
-            get { return hasHeader; }
-            set
-            {
-                hasHeader = value;
-                //OnProviderChanged(null); 
-            }
+            get => _hasHeader;
+            set => _hasHeader = value;
         }
         #endregion
 
@@ -155,10 +147,7 @@ namespace WPFLocalizeExtension.Providers
         /// <returns>The dictionary name, if available.</returns>
         protected override string GetDictionary(DependencyObject target)
         {
-            if (target == null)
-                return null;
-
-            return target.GetValueOrRegisterParentNotifier<string>(CSVLocalizationProvider.DefaultDictionaryProperty, ParentChangedAction, parentNotifiers);
+            return target?.GetValueOrRegisterParentNotifier<string>(DefaultDictionaryProperty, ParentChangedAction, _parentNotifiers);
         }
 
         /// <summary>
@@ -168,10 +157,7 @@ namespace WPFLocalizeExtension.Providers
         /// <returns>The assembly name, if available.</returns>
         protected override string GetAssembly(DependencyObject target)
         {
-            if (target == null)
-                return null;
-
-            return target.GetValueOrRegisterParentNotifier<string>(CSVEmbeddedLocalizationProvider.DefaultAssemblyProperty, ParentChangedAction, parentNotifiers);
+            return target?.GetValueOrRegisterParentNotifier<string>(CSVEmbeddedLocalizationProvider.DefaultAssemblyProperty, ParentChangedAction, _parentNotifiers);
         }
 
         /// <summary>
@@ -184,26 +170,22 @@ namespace WPFLocalizeExtension.Providers
         public override object GetLocalizedObject(string key, DependencyObject target, CultureInfo culture)
         {
             string ret = null;
-
-            string filename = "";
-
-            string assembly = "";
-            string dictionary = "";
+            const string filename = "";
 
             // Call this function to provide backward compatibility.
-            ParseKey(key, out assembly, out dictionary, out key);
+            ParseKey(key, out _, out var dictionary, out key);
 
             // Now try to read out the default assembly and/or dictionary.
-            if (String.IsNullOrEmpty(dictionary))
+            if (string.IsNullOrEmpty(dictionary))
                 dictionary = GetDictionary(target);
 
             // Try to get the culture specific file.
-            var csvDirectory = "Localization";
+            const string csvDirectory = "Localization";
             var csvPath = "";
 
             while (culture != CultureInfo.InvariantCulture)
             {
-                csvPath = Path.Combine(csvDirectory, dictionary + (String.IsNullOrEmpty(culture.Name) ? "" : "." + culture.Name) + ".csv");
+                csvPath = Path.Combine(csvDirectory, dictionary + (string.IsNullOrEmpty(culture.Name) ? "" : "." + culture.Name) + ".csv");
 
                 if (File.Exists(csvPath))
                     break;
@@ -227,24 +209,27 @@ namespace WPFLocalizeExtension.Providers
             using (var reader = new StreamReader(csvPath, Encoding.Default))
             {
                 // Skip the header if needed.
-                if (this.HasHeader && !reader.EndOfStream)
+                if (HasHeader && !reader.EndOfStream)
                     reader.ReadLine();
 
                 // Read each line and split it.
                 while (!reader.EndOfStream)
                 {
                     var line = reader.ReadLine();
-                    var parts = line.Split(";".ToCharArray());
+                    if (line != null)
+                    {
+                        var parts = line.Split(";".ToCharArray());
 
-                    if (parts.Length < 2)
-                        continue;
+                        if (parts.Length < 2)
+                            continue;
 
-                    // Check the key (1st column).
-                    if (parts[0] != key)
-                        continue;
+                        // Check the key (1st column).
+                        if (parts[0] != key)
+                            continue;
 
-                    // Get the value (2nd column).
-                    ret = parts[1];
+                        // Get the value (2nd column).
+                        ret = parts[1];
+                    }
                     break;
                 }
             }

@@ -6,20 +6,20 @@
 // <author>Uwe Mayer</author>
 #endregion
 
+using System;
+using XAMLMarkupExtensions.Base;
+
 namespace WPFLocalizeExtension.Engine
 {
-    using System;
-    using XAMLMarkupExtensions.Base;
-    
     /// <summary>
-    /// An extension to the <see cref="XAMLMarkupExtensions.Base.TargetInfo"/> class with WeakReference instead of direct object linking.
+    /// An extension to the <see cref="T:XAMLMarkupExtensions.Base.TargetInfo" /> class with WeakReference instead of direct object linking.
     /// </summary>
     public class SafeTargetInfo : TargetInfo
     {
         /// <summary>
         /// Gets the target object reference.
         /// </summary>
-        public WeakReference TargetObjectReference { get; private set; }
+        public WeakReference TargetObjectReference { get; }
         
         /// <summary>
         /// Creates a new TargetInfo instance.
@@ -31,7 +31,7 @@ namespace WPFLocalizeExtension.Engine
         public SafeTargetInfo(object targetObject, object targetProperty, Type targetPropertyType, int targetPropertyIndex)
             : base(null, targetProperty, targetPropertyType, targetPropertyIndex)
         {
-            this.TargetObjectReference = new WeakReference(targetObject);
+            TargetObjectReference = new WeakReference(targetObject);
         }
 
         /// <summary>
