@@ -4,7 +4,7 @@
     <TargetFramework>net35</TargetFramework>
     <AssemblyName>WPFLocalizeExtension</AssemblyName>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <Version>2.3.3</Version>
+    <Version>3.0.0</Version>
     <AssemblyTitle>UrlDownloader</AssemblyTitle>
     <Authors>Bernhard Millauer,Uwe Mayer</Authors>
     <PackageLicenseUrl>https://github.com/SeriousM/WPFLocalizationExtension/blob/master/LICENSE</PackageLicenseUrl>
@@ -14,7 +14,7 @@
     <Company />
     <Product>WPF Localization Extension</Product>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <PackageReleaseNotes>v2.3.3
+    <PackageReleaseNotes>v3.0.0
 * Dropped Windows Phone 8 support
 * Dropped Silverlight support
 * Default ItemTemplate for EnumComboBox
