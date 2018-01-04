@@ -203,23 +203,28 @@ namespace WPFLocalizeExtension.Providers
                 // return the existing/new instance
                 return _instance;
             }
+
+            set
+            {
+                lock (InstanceLock)
+                {
+                    _instance = value;
+                }
+            }
         }
-		
-		/// <summary>
+
+        /// <summary>
         /// Resets the instance that is used for the ResxLocationProvider
         /// </summary>
         public static void Reset()
         {
-            lock (InstanceLock)
-            {
-                _instance = null;
-            }
+            Instance = null;
         }
 
         /// <summary>
         /// The singleton constructor.
         /// </summary>
-        private ResxLocalizationProvider()
+        protected ResxLocalizationProvider()
         {
             ResourceManagerList = new Dictionary<string, ResourceManager>();
             AvailableCultures = new ObservableCollection<CultureInfo> {CultureInfo.InvariantCulture};

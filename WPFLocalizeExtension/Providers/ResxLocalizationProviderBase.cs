@@ -131,7 +131,7 @@ namespace WPFLocalizeExtension.Providers
         }
         #endregion
 
-        #region Abstract assembly & dictionary lookup
+        #region Assembly & dictionary lookup
         /// <summary>
         /// Get the assembly from the context, if possible.
         /// </summary>
@@ -542,7 +542,7 @@ namespace WPFLocalizeExtension.Providers
         /// <param name="key">Key used as a base to find the full key</param>
         /// <param name="target">Target used to help determine key information</param>
         /// <returns>Returns an object with all possible pieces of the given key (Assembly, Dictionary, Key)</returns>
-        public FullyQualifiedResourceKeyBase GetFullyQualifiedResourceKey(string key, DependencyObject target)
+        public virtual FullyQualifiedResourceKeyBase GetFullyQualifiedResourceKey(string key, DependencyObject target)
         {
             if (string.IsNullOrEmpty(key))
                 return null;
@@ -626,30 +626,22 @@ namespace WPFLocalizeExtension.Providers
         /// <returns>The value corresponding to the source/dictionary/key path for the given culture (otherwise NULL).</returns>
         public virtual object GetLocalizedObject(string key, DependencyObject target, CultureInfo culture)
         {
-            // Call this function to provide backward compatibility.
-            ParseKey(key, out var assembly, out var dictionary, out key);
-
-            // Now try to read out the default assembly and/or dictionary.
-            if (string.IsNullOrEmpty(assembly))
-                assembly = GetAssembly(target);
-
-            if (string.IsNullOrEmpty(dictionary))
-                dictionary = GetDictionary(target);
+            FQAssemblyDictionaryKey fqKey = (FQAssemblyDictionaryKey)GetFullyQualifiedResourceKey(key, target);
 
             // Final validation of the values.
-            if (string.IsNullOrEmpty(assembly))
+            if (string.IsNullOrEmpty(fqKey.Assembly))
             {
                 OnProviderError(target, key, "No assembly provided.");
                 return null;
             }
 
-            if (string.IsNullOrEmpty(dictionary))
+            if (string.IsNullOrEmpty(fqKey.Dictionary))
             {
                 OnProviderError(target, key, "No dictionary provided.");
                 return null;
             }
 
-            if (string.IsNullOrEmpty(key))
+            if (string.IsNullOrEmpty(fqKey.Key))
             {
                 OnProviderError(target, key, "No key provided.");
                 return null;
@@ -661,7 +653,7 @@ namespace WPFLocalizeExtension.Providers
             // try to get the resouce manager
             try
             {
-                resManager = GetResourceManager(assembly, dictionary);
+                resManager = GetResourceManager(fqKey.Assembly, fqKey.Dictionary);
             }
             catch (Exception e)
             {
@@ -673,7 +665,7 @@ namespace WPFLocalizeExtension.Providers
             try
             {
                 resManager.IgnoreCase = _ignoreCase;
-                var result = resManager.GetObject(key, culture);
+                var result = resManager.GetObject(fqKey.Key, culture);
 
                 if (result == null)
                     OnProviderError(target, key, "Missing key.");
