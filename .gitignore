@@ -36,3 +36,4 @@ ClientBin/*
 Example.xlsx
 packages/
 .vs/
+*.nupkg

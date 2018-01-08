@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
     <metadata>
         <id>WPFLocalizeExtension</id>
-        <version>3.0.1</version>
+        <version>3.1.0</version>
         <title>WPF Localization Extension</title>
         <authors>Bernhard Millauer,Uwe Mayer</authors>
         <owners>Bernhard Millauer,Uwe Mayer</owners>
@@ -11,13 +11,11 @@
         <requireLicenseAcceptance>true</requireLicenseAcceptance>
         <description>LocalizationExtension is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObjects</description>
         <summary>LocalizationExtension is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObjects</summary>
-        <releaseNotes>v3.0.1
-* #122 fixed - File version update</releaseNotes>
         <copyright>Bernhard Millauer, Uwe Mayer</copyright>
         <tags>wpf localization extension globalization resx csv resource language</tags>
         <dependencies>
             <group targetFramework=".NETFramework3.5">
-                <dependency id="XAMLMarkupExtensions" version="1.2.2" exclude="Build,Analyzers" />
+                <dependency id="XAMLMarkupExtensions" version="1.3.0" exclude="Build,Analyzers" />
             </group>
         </dependencies>
         <frameworkAssemblies>
@@ -34,4 +32,9 @@
             <frameworkAssembly assemblyName="WindowsBase" targetFramework=".NETFramework3.5" />
         </frameworkAssemblies>
     </metadata>
+    <files>
+		<file src="WPFLocalizeExtension\bin\Release\net35\WPFLocalizeExtension.dll" target="lib\net35\WPFLocalizeExtension.dll" />
+		<file src="WPFLocalizeExtension\bin\Release\net35\WPFLocalizeExtension.pdb" target="lib\net35\WPFLocalizeExtension.pdb" />
+		<file src="WPFLocalizeExtension\bin\Release\net35\WPFLocalizeExtension.xml" target="lib\net35\WPFLocalizeExtension.xml" />
+	</files>
 </package>
