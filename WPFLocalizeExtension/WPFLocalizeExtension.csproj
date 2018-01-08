@@ -19,7 +19,7 @@
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageTags>wpf localization extension globalization resx csv resource language</PackageTags>
     <RepositoryUrl>https://github.com/SeriousM/WPFLocalizationExtension.git</RepositoryUrl>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -27,8 +27,12 @@
     <DefineConstants>TRACE;DEBUG</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\net35\WPFLocalizeExtension.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
-    <PackageReference Include="XAMLMarkupExtensions" Version="1.2.2" />
+    <PackageReference Include="XAMLMarkupExtensions" Version="1.3.0" />
   </ItemGroup>
 
   <ItemGroup>
