@@ -29,7 +29,7 @@
                 </lex:GapTextControl.Template>
                 <lex:GapTextControl.Gaps>
                     <Run Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=lex:GapTextControl}, Path=DataContext.City}" />
-                    <lex:EnumComboBox Type="{x:Type system:DayOfWeek}" SelectedItem="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=lex:GapTextControl}, Path=DataContext.WeekDay}" />
+                    <lex:EnumComboBox Type="{x:Type system:DayOfWeek}" SelectedItem="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=lex:GapTextControl}, Path=DataContext.WeekDay}" Prefix="Examples.A.DayOfWeek" />
                     <DatePicker SelectedDate="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=lex:GapTextControl}, Path=DataContext.OpeningTime}" />
                     <DatePicker SelectedDate="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=lex:GapTextControl}, Path=DataContext.ClosingTime}" />
                     <Run Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=lex:GapTextControl}, Path=DataContext.WeekDay}" />
