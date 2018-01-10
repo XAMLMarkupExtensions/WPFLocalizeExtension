@@ -629,21 +629,21 @@ namespace WPFLocalizeExtension.Providers
             FQAssemblyDictionaryKey fqKey = (FQAssemblyDictionaryKey)GetFullyQualifiedResourceKey(key, target);
 
             // Final validation of the values.
+            // Most important is key. fqKey may be null.
+            if (string.IsNullOrEmpty(fqKey?.Key))
+            {
+                OnProviderError(target, key, "No key provided.");
+                return null;
+            }
+            // fqKey cannot be null now
             if (string.IsNullOrEmpty(fqKey.Assembly))
             {
                 OnProviderError(target, key, "No assembly provided.");
                 return null;
             }
-
             if (string.IsNullOrEmpty(fqKey.Dictionary))
             {
                 OnProviderError(target, key, "No dictionary provided.");
-                return null;
-            }
-
-            if (string.IsNullOrEmpty(fqKey.Key))
-            {
-                OnProviderError(target, key, "No key provided.");
                 return null;
             }
 
