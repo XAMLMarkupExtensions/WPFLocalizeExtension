@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
     <metadata>
         <id>WPFLocalizeExtension</id>
-        <version>3.1.0</version>
+        <version>3.1.1</version>
         <title>WPF Localization Extension</title>
         <authors>Bernhard Millauer,Uwe Mayer</authors>
         <owners>Bernhard Millauer,Uwe Mayer</owners>
