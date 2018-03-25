@@ -8,7 +8,6 @@
              xmlns:extensions="http://wpflocalizeextension.codeplex.com"
              xmlns:examples="clr-namespace:WPFLocalizationExtensionDemoApplication.ViewModels.Examples"
              lex:LocalizeDictionary.DesignCulture="en"
-             lex:LocalizeDictionary.OutputMissingKeys="True"
              extensions:ResxLocalizationProvider.DefaultAssembly="WPFLocalizationExtensionDemoApplication"
              extensions:ResxLocalizationProvider.DefaultDictionary="Strings"
              mc:Ignorable="d" 

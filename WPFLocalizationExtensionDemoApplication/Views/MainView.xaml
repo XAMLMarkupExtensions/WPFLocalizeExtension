@@ -8,7 +8,6 @@
              xmlns:micro="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
              xmlns:lex="http://wpflocalizeextension.codeplex.com"
              lex:LocalizeDictionary.DesignCulture="en"
-             lex:LocalizeDictionary.OutputMissingKeys="True"
              lex:ResxLocalizationProvider.DefaultAssembly="WPFLocalizationExtensionDemoApplication"
              lex:ResxLocalizationProvider.DefaultDictionary="Strings"
              mc:Ignorable="d"

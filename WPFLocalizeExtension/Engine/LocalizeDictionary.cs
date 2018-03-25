@@ -129,7 +129,7 @@ namespace WPFLocalizeExtension.Engine
                 "OutputMissingKeys",
                 typeof(bool),
                 typeof(LocalizeDictionary),
-                new PropertyMetadata(false, SetOutputMissingKeysFromDependencyProperty));
+                new PropertyMetadata(true, SetOutputMissingKeysFromDependencyProperty));
         #endregion
 
         #region Dependency Property Callbacks
