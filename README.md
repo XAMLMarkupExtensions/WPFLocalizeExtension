@@ -70,6 +70,9 @@
 	* Does not need an additional build task
 	* Is in use in various productive systems
 
+### Documentation:
+[On NoDoq](http://www.nudoq.org/#!/Packages/WpfLocalizeExtension)
+
 ### License:
 [MS-PL](https://github.com/SeriousM/WPFLocalizationExtension/blob/master/LICENSE)
 
