@@ -5,9 +5,9 @@
         <version>3.1.2</version>
         <title>WPF Localization Extension</title>
         <authors>Bernhard Millauer,Uwe Mayer</authors>
-        <owners>Bernhard Millauer,Uwe Mayer</owners>
-        <licenseUrl>https://github.com/SeriousM/WPFLocalizationExtension/blob/master/LICENSE</licenseUrl>
-        <projectUrl>https://github.com/SeriousM/WPFLocalizationExtension/</projectUrl>
+        <owners>Bernhard Millauer,Uwe Mayer,XAMLMarkupExtensions</owners>
+        <licenseUrl>https://github.com/XAMLMarkupExtensions/WPFLocalizationExtension/blob/master/LICENSE</licenseUrl>
+        <projectUrl>https://github.com/XAMLMarkupExtensions/WPFLocalizationExtension/</projectUrl>
         <requireLicenseAcceptance>true</requireLicenseAcceptance>
         <description>LocalizationExtension is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObjects</description>
         <summary>LocalizationExtension is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObjects</summary>
