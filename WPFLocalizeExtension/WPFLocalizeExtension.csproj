@@ -5,7 +5,7 @@
     <AssemblyName>WPFLocalizeExtension</AssemblyName>
     <AssemblyVersion>3.0.1.0</AssemblyVersion>
     <Version>3.0.1</Version>
-    <AssemblyTitle>UrlDownloader</AssemblyTitle>
+    <AssemblyTitle>WPFLocalizeExtension</AssemblyTitle>
     <Authors>Bernhard Millauer,Uwe Mayer</Authors>
     <PackageLicenseUrl>https://github.com/SeriousM/WPFLocalizationExtension/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/SeriousM/WPFLocalizationExtension/</PackageProjectUrl>
