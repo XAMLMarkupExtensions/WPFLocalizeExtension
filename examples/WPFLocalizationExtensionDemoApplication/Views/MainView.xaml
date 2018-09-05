@@ -1,0 +1,34 @@
+﻿<UserControl x:Class="WPFLocalizationExtensionDemoApplication.Views.MainView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:local="clr-namespace:WPFLocalizationExtensionDemoApplication"
+             xmlns:viewModel="clr-namespace:WPFLocalizationExtensionDemoApplication.ViewModels"
+             xmlns:micro="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
+             xmlns:lex="http://wpflocalizeextension.codeplex.com"
+             lex:LocalizeDictionary.DesignCulture="en"
+             lex:ResxLocalizationProvider.DefaultAssembly="WPFLocalizationExtensionDemoApplication"
+             lex:ResxLocalizationProvider.DefaultDictionary="Strings"
+             mc:Ignorable="d"
+             d:DesignWidth="600"
+             d:DesignHeight="300"
+             d:DataContext="{d:DesignInstance Type=viewModel:MainViewModel}">
+    <DockPanel>
+        <ToolBarTray DockPanel.Dock="Top">
+            <ToolBar>
+                <ComboBox ItemsSource="{Binding Source={x:Static lex:LocalizeDictionary.Instance}, Path=MergedAvailableCultures}"
+                          SelectedItem="{Binding Source={x:Static lex:LocalizeDictionary.Instance}, Path=Culture}" 
+                          DisplayMemberPath="NativeName" />
+            </ToolBar>
+        </ToolBarTray>
+        <StatusBar DockPanel.Dock="Bottom">
+            <TextBlock>
+                <Run Text="{lex:Loc Key=Toolbar.LanguageLabel}" />
+                <Run Text="{Binding Source={x:Static lex:LocalizeDictionary.Instance}, Path=Culture.DisplayName, Mode=OneWay}" />
+            </TextBlock>
+            <Label Content="Version: 0.1" />
+        </StatusBar>
+        <TabControl Name="Items" />
+    </DockPanel>
+</UserControl>

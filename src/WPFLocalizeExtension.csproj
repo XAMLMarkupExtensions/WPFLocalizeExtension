@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net35</TargetFramework>
+    <AssemblyName>WPFLocalizeExtension</AssemblyName>
+    <AssemblyVersion>3.0.1.0</AssemblyVersion>
+    <Version>3.0.1</Version>
+    <AssemblyTitle>WPFLocalizeExtension</AssemblyTitle>
+    <Authors>Bernhard Millauer,Uwe Mayer</Authors>
+    <PackageLicenseUrl>https://github.com/SeriousM/WPFLocalizationExtension/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/SeriousM/WPFLocalizationExtension/</PackageProjectUrl>
+    <Copyright>Bernhard Millauer, Uwe Mayer</Copyright>
+    <Description>LocalizationExtension is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObjects</Description>
+    <Company />
+    <Product>WPF Localization Extension</Product>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageReleaseNotes>v3.0.1
+* #122 fixed - File version update</PackageReleaseNotes>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <PackageTags>wpf localization extension globalization resx csv resource language</PackageTags>
+    <RepositoryUrl>https://github.com/SeriousM/WPFLocalizationExtension.git</RepositoryUrl>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\net35\WPFLocalizeExtension.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="XAMLMarkupExtensions" Version="1.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Management" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+
+</Project> 

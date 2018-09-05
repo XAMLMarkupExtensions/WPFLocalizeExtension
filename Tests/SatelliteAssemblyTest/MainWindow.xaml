@@ -1,0 +1,18 @@
+﻿<Window x:Class="SatelliteAssemblyTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:l="http://wpflocalizeextension.codeplex.com"
+        l:LocalizeDictionary.DesignCulture="de"
+        l:ResxLocalizationProvider.DefaultAssembly="SatelliteAssemblyTest"
+        l:ResxLocalizationProvider.DefaultDictionary="TestRes"
+        Title="MainWindow" Height="350" Width="525">
+    <StackPanel Margin="10">
+            <ComboBox ItemsSource="{Binding Source={x:Static l:LocalizeDictionary.Instance}, Path=MergedAvailableCultures}"
+                      SelectedItem="{Binding Source={x:Static l:LocalizeDictionary.Instance}, Path=Culture}"
+                      DisplayMemberPath="NativeName"
+                      FontSize="20" Margin="2"/>
+        <Viewbox>
+            <TextBlock Text="{l:Loc HelloWorld}" />
+        </Viewbox>
+    </StackPanel>
+</Window>
