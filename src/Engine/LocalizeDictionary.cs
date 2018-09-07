@@ -734,6 +734,8 @@ namespace WPFLocalizeExtension.Engine
                                 MergedAvailableCultures.Add(c);
                         }
                     }
+
+                    RaisePropertyChanged("DefaultProvider");
                 }
             }
         }
