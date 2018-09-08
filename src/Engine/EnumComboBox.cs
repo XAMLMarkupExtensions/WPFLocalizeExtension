@@ -107,6 +107,7 @@ namespace WPFLocalizeExtension.Engine
 
         private bool _shouldSerializeTemplate;
 
+#pragma warning disable 1591
         protected override void OnItemTemplateChanged(DataTemplate oldItemTemplate, DataTemplate newItemTemplate)
         {
             if (oldItemTemplate != null)
@@ -121,7 +122,8 @@ namespace WPFLocalizeExtension.Engine
                 return false;
 
             return base.ShouldSerializeProperty(dp);
-        } 
+        }
+#pragma warning restore 1591
         #endregion
 
         private void SetType(Type type)

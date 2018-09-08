@@ -119,18 +119,27 @@ namespace WPFLocalizeExtension.Engine
             set => SetValue(FormatStringProperty, value);
         }
 
+        /// <summary>
+        /// Ignore the Less Gaps
+        /// </summary>
         public bool IgnoreLessGaps
         {
             get => (bool)GetValue(IgnoreLessGapsProperty);
             set => SetValue(IgnoreLessGapsProperty, value);
         }
 
+        /// <summary>
+        /// Ignore Duplicate String References
+        /// </summary>
         public bool IgnoreDuplicateStringReferences
         {
             get => (bool)GetValue(IgnoreDuplicateStringReferencesProperty);
             set => SetValue(IgnoreDuplicateStringReferencesProperty, value);
         }
 
+        /// <summary>
+        /// Ignore Duplicate Control References
+        /// </summary>
         public bool IgnoreDuplicateControlReferences
         {
             get => (bool)GetValue(IgnoreDuplicateControlReferencesProperty);
