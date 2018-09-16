@@ -71,4 +71,3 @@ namespace WPFLocalizeExtension.TypeConverters
         }
     }
 }
-

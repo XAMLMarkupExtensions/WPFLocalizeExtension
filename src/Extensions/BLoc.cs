@@ -99,7 +99,6 @@ namespace WPFLocalizeExtension.Extensions
             }
         }
 
-
         /// <summary>
         /// Adds an item to the resource buffer (threadsafe).
         /// </summary>

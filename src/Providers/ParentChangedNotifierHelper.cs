@@ -63,20 +63,32 @@ namespace WPFLocalizeExtension.Providers
 			        break;
 
                 DependencyObject depObjParent;
-          
-		        if (depObj is FrameworkContentElement element)
-			        depObjParent = element.Parent;
-		        else
-		        {
-			        try { depObjParent = depObj.GetParent(false); }
-			        catch { depObjParent = null; }
-		        }
 
-		        if (depObjParent == null)
-		        {
-			        try { depObjParent = depObj.GetParent(true); }
-			        catch { break; }
-		        }
+                if (depObj is FrameworkContentElement element)
+                    depObjParent = element.Parent;
+                else
+                {
+                    try
+                    {
+                        depObjParent = depObj.GetParent(false);
+                    }
+                    catch
+                    {
+                        depObjParent = null;
+                    }
+                }
+
+                if (depObjParent == null)
+                {
+                    try
+                    {
+                        depObjParent = depObj.GetParent(true);
+                    }
+                    catch
+                    {
+                        break;
+                    }
+                }
                     
 		        // If this failed, try again using the Parent property (sometimes this is not covered by the VisualTreeHelper class :-P.
 		        if (depObjParent == null && depObj is FrameworkElement)

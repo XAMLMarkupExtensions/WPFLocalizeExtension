@@ -628,7 +628,7 @@ namespace WPFLocalizeExtension.Engine
                     // Raise the OnLocChanged event
                     DictionaryEvent.Invoke(null, new DictionaryEventArgs(DictionaryEventType.CultureChanged, value));
 
-                    RaisePropertyChanged("Culture");
+                    RaisePropertyChanged(nameof(Culture));
                 }
             }
         }
@@ -644,7 +644,7 @@ namespace WPFLocalizeExtension.Engine
                 if (_setCurrentThreadCulture != value)
                 {
                     _setCurrentThreadCulture = value;
-                    RaisePropertyChanged("SetCurrentThreadCulture");
+                    RaisePropertyChanged(nameof(SetCurrentThreadCulture));
                 }
             }
         }
@@ -735,7 +735,7 @@ namespace WPFLocalizeExtension.Engine
                         }
                     }
 
-                    RaisePropertyChanged("DefaultProvider");
+                    RaisePropertyChanged(nameof(DefaultProvider));
                 }
             }
         }

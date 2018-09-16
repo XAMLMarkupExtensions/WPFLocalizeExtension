@@ -350,7 +350,9 @@ namespace WPFLocalizeExtension.Providers
                             }
                         }
                         // ReSharper disable once EmptyGeneralCatchClause
-                        catch { }
+                        catch
+                        {
+                        }
                     }
 
                     // Prepare and load (new) assembly.

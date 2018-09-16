@@ -219,14 +219,12 @@ namespace WPFLocalizeExtension.Providers
             if (string.IsNullOrEmpty(dictionary))
                 dictionary = GetDictionary(target);
 
-
             var loadedAssemblies = AppDomain.CurrentDomain.GetAssemblies();
             foreach (var assemblyInAppDomain in loadedAssemblies)
             {
                     // get the assembly name object
                     var assemblyName = new AssemblyName(assemblyInAppDomain.FullName);
-
-
+            
                     // check if the name of the assembly is the seached one
                 if (assemblyName.Name == assembly)
                 {

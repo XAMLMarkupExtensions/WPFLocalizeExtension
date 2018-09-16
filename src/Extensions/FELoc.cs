@@ -206,7 +206,14 @@ namespace WPFLocalizeExtension.Extensions
         public object Content
         {
             get => _content;
-            set { _content = value; RaisePropertyChanged("Content"); }
+            set
+            {
+                if (_content != value)
+                {
+                    _content = value;
+                    RaisePropertyChanged(nameof(Content));
+                }
+            }
         }
         #endregion
 

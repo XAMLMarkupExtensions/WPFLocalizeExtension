@@ -1,15 +1,17 @@
-![](/assets/Logo.png)
+![](/docs/Logo.png)
 
 # LocalizationExtension
+[![CodeFactor](https://www.codefactor.io/repository/github/xamlmarkupextensions/wpflocalizationextension/badge/master)](https://www.codefactor.io/repository/github/xamlmarkupextensions/wpflocalizationextension/overview/master)
+[![Nuget](https://img.shields.io/nuget/v/WpfLocalizeExtension.svg)](https://www.nuget.org/packages/WpfLocalizeExtension)
 #### ...is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObjects since 2008!
 
 [![Join the chat at https://gitter.im/SeriousM/WPFLocalizationExtension](https://badges.gitter.im/SeriousM/WPFLocalizationExtension.svg)](https://gitter.im/SeriousM/WPFLocalizationExtension?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-![](/assets/Structure.png)
+![](/docs/Structure.png)
 
 #### Products that use this Solution:
 
-![](/assets/SAPLogo.gif) SAP Crystal Reports, Version for Visual Studio .NET
+![](/docs/SAPLogo.gif) SAP Crystal Reports, Version for Visual Studio .NET
 
 ### Features:
 

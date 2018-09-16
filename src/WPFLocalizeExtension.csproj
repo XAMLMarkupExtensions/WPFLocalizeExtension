@@ -40,7 +40,7 @@
   </Choose>
 
   <ItemGroup>
-    <PackageReference Include="XAMLMarkupExtensions" Version="1.3.0" />
+    <PackageReference Include="XAMLMarkupExtensions" Version="1.4.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -52,20 +52,10 @@
     
     <Reference Condition="'$(TargetFramework)' != 'net35'" Include="System.Xaml" />
     
-    <PackageReference Include="GitVersionTask" Version="4.0.0-beta0008">
+    <PackageReference Include="GitVersionTask" Version="4.0.0-beta0014">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
   </ItemGroup>
-
-  <Target Name="WriteVersion" AfterTargets="GetVersion" Condition="'$(PackageOutputAbsolutePath)' != ''">
-    <WriteLinesToFile File="$(PackageOutputAbsolutePath)\version.txt" Lines="$(GitVersion_NuGetVersion)" Overwrite="true" />
-  </Target>
-
-  <Target Name="SetPackageVersionFromFile" BeforeTargets="GenerateNuspec">
-    <ReadLinesFromFile File="$(PackageOutputAbsolutePath)\version.txt">
-      <Output TaskParameter="Lines" PropertyName="PackageVersion" />
-    </ReadLinesFromFile>
-  </Target>
 
   <Target Name="PublishToNugetWithAPIKey" AfterTargets="GenerateNuspec" Condition="Exists('$(SolutionDir)\..\..\nugetapikey.txt')">
     <ReadLinesFromFile File="$(SolutionDir)\..\..\nugetapikey.txt">
