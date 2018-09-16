@@ -1,0 +1,66 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net35;net452;</TargetFrameworks>
+    <AssemblyName>WPFLocalizeExtension</AssemblyName>   
+    <Version>$(GitVersion_NuGetVersion)</Version>
+    <AssemblyTitle>WPFLocalizeExtension</AssemblyTitle>
+    <Authors>Bernhard Millauer,Uwe Mayer</Authors>
+    <PackageLicenseUrl>https://github.com/XAMLMarkupExtensions/WPFLocalizationExtension/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/XAMLMarkupExtensions/WPFLocalizationExtension/</PackageProjectUrl>
+    <Copyright>Bernhard Millauer, Uwe Mayer</Copyright>
+    <Description>LocalizationExtension is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObjects</Description>
+    <Company />
+    <Product>WPF Localization Extension</Product>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageReleaseNotes></PackageReleaseNotes>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <PackageTags>wpf localization extension globalization resx csv resource language</PackageTags>
+    <RepositoryUrl>https://github.com/XAMLMarkupExtensions/WPFLocalizationExtension.git</RepositoryUrl>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+  </PropertyGroup>
+
+  <Choose>
+    <When Condition="'$(Configuration)' == 'Release'">
+      <PropertyGroup>        
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+        <GenerateDocumentationFile>false</GenerateDocumentationFile>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+
+  <ItemGroup>
+    <PackageReference Include="XAMLMarkupExtensions" Version="1.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Management" />
+    <Reference Include="WindowsBase" />
+    
+    <Reference Condition="'$(TargetFramework)' != 'net35'" Include="System.Xaml" />
+    
+    <PackageReference Include="GitVersionTask" Version="4.0.0-beta0014">
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <Target Name="PublishToNugetWithAPIKey" AfterTargets="GenerateNuspec" Condition="Exists('$(SolutionDir)\..\..\nugetapikey.txt')">
+    <ReadLinesFromFile File="$(SolutionDir)\..\..\nugetapikey.txt">
+      <Output TaskParameter="Lines" PropertyName="NugetAPIKey" />
+    </ReadLinesFromFile>
+    <Exec WorkingDirectory="$(BaseDir)" Command="dotnet nuget push $(PackageOutputAbsolutePath)$(PackageId).$(PackageVersion).nupkg -k $(NugetAPIKey) -s https://api.nuget.org/v3/index.json" />
+  </Target>
+</Project> 

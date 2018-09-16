@@ -1,0 +1,39 @@
+﻿<Fluent:RibbonWindow x:Class="Fluent.Sample.Foundation.Window"
+	                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:Fluent="clr-namespace:Fluent;assembly=Fluent"
+                     xmlns:lex="http://wpflocalizeextension.codeplex.com"
+            lex:LocalizeDictionary.DesignCulture="en"
+            lex:ResxLocalizationProvider.DefaultAssembly="Fluent.Sample.Foundation"
+            lex:ResxLocalizationProvider.DefaultDictionary="Resources"
+                     Title="FluentLexTest"
+	                 Width="500" 
+	                 Height="250"
+	                 Background="#FFEBEDF0">
+	<Grid>
+		<Fluent:Ribbon>		
+			<!--Tabs-->
+			<Fluent:RibbonTabItem Header="Tab">
+				<Fluent:RibbonGroupBox Header="Group">
+					<Fluent:Button x:Name="buttonLanguage" Header="{lex:Loc}" Click="buttonLanguage_Click"/>
+				</Fluent:RibbonGroupBox>
+			</Fluent:RibbonTabItem>
+					
+			<!--Backstage-->
+			<Fluent:Ribbon.Menu>
+                <Fluent:Backstage x:Name="backstage" Header="{lex:Loc}">
+                    <Fluent:BackstageTabControl>
+                        <Fluent:BackstageTabItem x:Name="informationBackStageItem" Header="{lex:Loc}" HorizontalAlignment="Left">
+                            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                                <StackPanel  Width="500" Margin="30" HorizontalAlignment="Left">
+                                    <TextBlock x:Name="textProductInfo" FontSize="18" Text="{lex:Loc}"/>
+                                    <Button Content="{lex:Loc buttonLanguage_Header}" Click="buttonLanguage_Click" />
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Fluent:BackstageTabItem>
+                    </Fluent:BackstageTabControl>
+                </Fluent:Backstage>
+            </Fluent:Ribbon.Menu>
+		</Fluent:Ribbon>
+	</Grid>
+</Fluent:RibbonWindow>

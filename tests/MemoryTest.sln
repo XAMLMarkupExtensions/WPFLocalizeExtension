@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPFLocalizeExtension", "WPFLocalizeExtension\WPFLocalizeExtension.csproj", "{E8C5B094-2CB4-4C26-87F0-351B03612179}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryTest", "Tests\MemoryTest\MemoryTest.csproj", "{3D591943-C256-46EB-88EA-CCA0B3A498E6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E8C5B094-2CB4-4C26-87F0-351B03612179}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8C5B094-2CB4-4C26-87F0-351B03612179}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8C5B094-2CB4-4C26-87F0-351B03612179}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{E8C5B094-2CB4-4C26-87F0-351B03612179}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{E8C5B094-2CB4-4C26-87F0-351B03612179}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E8C5B094-2CB4-4C26-87F0-351B03612179}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8C5B094-2CB4-4C26-87F0-351B03612179}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8C5B094-2CB4-4C26-87F0-351B03612179}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{E8C5B094-2CB4-4C26-87F0-351B03612179}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{E8C5B094-2CB4-4C26-87F0-351B03612179}.Release|x86.ActiveCfg = Release|Any CPU
+		{3D591943-C256-46EB-88EA-CCA0B3A498E6}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{3D591943-C256-46EB-88EA-CCA0B3A498E6}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{3D591943-C256-46EB-88EA-CCA0B3A498E6}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{3D591943-C256-46EB-88EA-CCA0B3A498E6}.Debug|x86.ActiveCfg = Debug|x86
+		{3D591943-C256-46EB-88EA-CCA0B3A498E6}.Debug|x86.Build.0 = Debug|x86
+		{3D591943-C256-46EB-88EA-CCA0B3A498E6}.Release|Any CPU.ActiveCfg = Release|x86
+		{3D591943-C256-46EB-88EA-CCA0B3A498E6}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{3D591943-C256-46EB-88EA-CCA0B3A498E6}.Release|Mixed Platforms.Build.0 = Release|x86
+		{3D591943-C256-46EB-88EA-CCA0B3A498E6}.Release|x86.ActiveCfg = Release|x86
+		{3D591943-C256-46EB-88EA-CCA0B3A498E6}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,17 @@
+﻿<Window x:Class="MemoryTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:lex="http://wpflocalizeextension.codeplex.com"
+        lex:LocalizeDictionary.DesignCulture="de"
+        lex:ResxLocalizationProvider.DefaultAssembly="MemoryTest"
+        lex:ResxLocalizationProvider.DefaultDictionary="Resources"
+        SizeToContent="WidthAndHeight"
+        Title="MainWindow">
+    <StackPanel>
+        <!--<Label Content="{lex:Loc TestText}" />-->
+        <Button Name="OpenWindow" Click="OpenWindow_Click" Content="Open New Window" Margin="5" />
+        <Button Name="OpenWindowUnlocalized" Click="OpenWindowUnlocalized_Click" Content="Open New Unlocalized Window" Margin="5" />
+        <Button Name="CloseWindows" Click="CloseWindows_Click" Content="Close Windows" Margin="5" />
+        <Button Name="GCCollect" Click="GCCollect_Click" Content="GCCollect" Margin="5" />
+    </StackPanel>
+</Window>

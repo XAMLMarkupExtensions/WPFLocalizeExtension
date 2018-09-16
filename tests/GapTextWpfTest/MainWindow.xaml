@@ -1,0 +1,86 @@
+﻿<Window x:Class="GapTextWpfTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GapTextWpfTest"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
+        xmlns:converters="clr-namespace:GapTextWpfTest.Converters"
+        xmlns:lex="http://wpflocalizeextension.codeplex.com"
+        lex:ResxLocalizationProvider.DefaultAssembly="GapTextWpfTest"
+        lex:ResxLocalizationProvider.DefaultDictionary="Resources"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="200"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}">
+    <Window.Resources>
+        <converters:ObjectTypeEqualsConverter x:Key="TypeEqualsConverter" />
+    </Window.Resources>
+    <StackPanel Orientation="Vertical">
+        <!-- first variant: not wrapping between words: -->
+        <Label Background="Red" Content="static WrapPanel" />
+        <WrapPanel Grid.Row="0">
+            <TextBlock Text="Dies ist ein " />
+            <TextBox />
+            <TextBlock Text=". " />
+            <DatePicker Text="" />
+            <TextBlock Text=" ist ein Datum." />
+        </WrapPanel>
+        <!-- second variant, using <Run>: wrapping between words -->
+        <Label Background="Red" Content="static TextBlock with Runs" />
+        <TextBlock HorizontalAlignment="Stretch" 
+                   Grid.Row="1" 
+                   TextWrapping="Wrap"
+                   TextDecorations="Underline"
+                   LineStackingStrategy="BlockLineHeight">
+            <Run Text="The shop in " />
+            <TextBox Text="{Binding City}" />
+            <Run Text=" is open on " />
+            <lex:EnumComboBox Type="{x:Type local:WeekDay}" />
+            <Run Text=" from " />
+            <TextBox Text="{Binding OpeningTime}" />
+            <Run Text=" to " />
+            <TextBox Text="{Binding ClosingTime}" />
+            <Run Text="." />
+        </TextBlock>
+        
+        <Label Background="DarkOrange" Content="Z" />
+        <lex:GapTextControl FormatString="The shop in {0} is open on {1} from {2} to {3}. We could have more of these in {0}!">
+            <lex:GapTextControl.Template>
+                <ControlTemplate>
+                    <TextBlock x:Name="PART_TextBlock" />
+                </ControlTemplate>
+            </lex:GapTextControl.Template>
+            <lex:GapTextControl.Gaps>
+                <TextBox Name="Test" Text="{Binding City}" TextChanged="TestTextChanged" />
+                <lex:EnumComboBox Type="{x:Type local:WeekDay}" />
+                <DatePicker SelectedDate="{Binding OpeningTime}" />
+                <DatePicker SelectedDate="{Binding ClosingTime}" />
+            </lex:GapTextControl.Gaps>
+        </lex:GapTextControl>
+        
+        <Label Background="DarkOrange" Content="Y" />
+        <lex:GapTextControl FormatString="Dies ist ein Test ohne Platzhalter">
+            <lex:GapTextControl.Template>
+                <ControlTemplate>
+                    <TextBlock x:Name="PART_TextBlock" />
+                </ControlTemplate>
+            </lex:GapTextControl.Template>
+        </lex:GapTextControl>
+        
+        <Label Background="DarkOrange" Content="X" />
+        <lex:GapTextControl FormatString="Ein Test mit {0}"
+                                 HorizontalAlignment="Stretch"
+                                 MinHeight="100">
+            <lex:GapTextControl.Template>
+                <ControlTemplate>
+                    <Border BorderBrush="Red">
+                        <TextBlock x:Name="PART_TextBlock" />
+                    </Border>
+                </ControlTemplate>
+            </lex:GapTextControl.Template>
+            <lex:GapTextControl.Gaps>
+                <Run Text="[Test]" />
+            </lex:GapTextControl.Gaps>
+        </lex:GapTextControl>
+    </StackPanel>
+</Window>

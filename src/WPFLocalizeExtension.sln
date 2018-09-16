@@ -1,0 +1,24 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2019
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WPFLocalizeExtension", "WPFLocalizeExtension.csproj", "{E8C5B094-2CB4-4C26-87F0-351B03612179}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E8C5B094-2CB4-4C26-87F0-351B03612179}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8C5B094-2CB4-4C26-87F0-351B03612179}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8C5B094-2CB4-4C26-87F0-351B03612179}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A2E7E737-0020-457E-924B-1A8F5D9CF409}
+	EndGlobalSection
+EndGlobal

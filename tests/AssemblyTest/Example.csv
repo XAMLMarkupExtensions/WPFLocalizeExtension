@@ -1,0 +1,20 @@
+﻿Key;Value
+ButtonAssembly_Background;Aqua
+ButtonAssembly_Content;Change Assembly!
+ButtonAssembly_FlowDirection;LeftToRight
+ButtonAssembly_Margin;10,5,20,15
+ButtonAssembly_Width;150
+ButtonDE;de
+ButtonEN;en
+TestText;This is a test.
+Width;75
+Area;Area
+Country;Country
+CountryKey;Country
+TestFormat;The area of {0} amounts {1} sqkm.
+Tab1;Foo
+Tab2;Bar
+Tab3;Baz
+TestEnum_Input;InputCSV
+TestEnum_Output;OutputCSV
+TestEnum_Processing;ProcessingCSV
