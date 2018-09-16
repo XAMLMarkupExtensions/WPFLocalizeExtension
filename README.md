@@ -3,9 +3,10 @@
 # LocalizationExtension
 [![CodeFactor](https://www.codefactor.io/repository/github/xamlmarkupextensions/wpflocalizationextension/badge/master)](https://www.codefactor.io/repository/github/xamlmarkupextensions/wpflocalizationextension/overview/master)
 [![Nuget](https://img.shields.io/nuget/v/WpfLocalizeExtension.svg)](https://www.nuget.org/packages/WpfLocalizeExtension)
-#### ...is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObjects since 2008!
 
 [![Join the chat at https://gitter.im/SeriousM/WPFLocalizationExtension](https://badges.gitter.im/SeriousM/WPFLocalizationExtension.svg)](https://gitter.im/SeriousM/WPFLocalizationExtension?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
+#### ...is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObjects since 2008!
 
 ![](/docs/Structure.png)
 
@@ -18,7 +19,6 @@
 * First of all: ITS FREE (and will stay free - refer to license section below)
 * Obtain stable results in
 	* WPF applications using .NET 3.5 and higher
-	* Silverlight 5.0 applications
 	* Windows Phone 7.x/8.x applications
 * **New:** Localization source/provider can be changed freely at arbitrary nodes
 	* Use the Provider property in LocalizeDictionary to change the provider for the particular sub tree
@@ -76,28 +76,23 @@
 [On NoDoq](http://www.nudoq.org/#!/Packages/WpfLocalizeExtension)
 
 ### License:
-[MS-PL](https://github.com/SeriousM/WPFLocalizationExtension/blob/master/LICENSE)
+[MS-PL](https://github.com/XAMLMarkupExtensions/WPFLocalizationExtension/blob/master/LICENSE)
 
 -----
 
 ### Homepage:
-https://github.com/SeriousM/WPFLocalizationExtension/
+https://github.com/XAMLMarkupExtensions/WPFLocalizationExtension/
 http://root-project.org/
 
 ### NuGet Package:
 https://nuget.org/packages/WpfLocalizeExtension/
 
 ### Documentation & Tutorial:
-[Documentation / Wiki](https://github.com/SeriousM/WPFLocalizationExtension/wiki)
+[Documentation / Wiki](https://github.com/XAMLMarkupExtensions/WPFLocalizationExtension/wiki)
 
 ### Localization Tools:
 [ResXManager (Visual Studio Plugin and StandAlone)](http://visualstudiogallery.msdn.microsoft.com/3b64e04c-e8de-4b97-8358-06c73a97cc68)  
 [Zeta Resource Editor (Freeware)](http://www.zeta-resource-editor.com/index.html)
 
-_You can do a donation to me and my work._
-_It would be very nice of you :)_
-
-[![PayPal - The safer, easier way to pay online!](https://www.paypal.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=9373425)
-
 ### Based on XAML Markup Extensions:
-XAMLMarkupExtensions [Codeplex](http://xamlmarkupextensions.codeplex.com/) [Github](https://github.com/MrCircuit/XAMLMarkupExtensions)
+XAMLMarkupExtensions [Github](https://github.com/XAMLMarkupExtensions/XAMLMarkupExtensions)
