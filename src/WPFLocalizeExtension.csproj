@@ -52,7 +52,7 @@
     
     <Reference Condition="'$(TargetFramework)' != 'net35'" Include="System.Xaml" />
     
-    <PackageReference Include="GitVersionTask" Version="4.0.0-beta0014">
+    <PackageReference Include="GitVersionTask" Version="4.0.0-beta0015-1644">
       <PrivateAssets>All</PrivateAssets>
     </PackageReference>
   </ItemGroup>
