@@ -17,12 +17,11 @@
     <NeutralLanguage>en-US</NeutralLanguage>
     <PackageTags>wpf localization extension globalization resx csv resource language</PackageTags>
     <RepositoryUrl>https://github.com/XAMLMarkupExtensions/WPFLocalizationExtension.git</RepositoryUrl>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 
-    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
-    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
-  </PropertyGroup>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+   </PropertyGroup>
 
   <Choose>
     <When Condition="'$(Configuration)' == 'Release'">
@@ -40,7 +39,7 @@
   </Choose>
 
   <ItemGroup>
-    <PackageReference Include="XAMLMarkupExtensions" Version="1.4.0" />
+    <PackageReference Include="XAMLMarkupExtensions" Version="1.5.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -52,9 +51,8 @@
     
     <Reference Condition="'$(TargetFramework)' != 'net35'" Include="System.Xaml" />
     
-    <PackageReference Include="GitVersionTask" Version="4.0.0-beta0014">
-      <PrivateAssets>All</PrivateAssets>
-    </PackageReference>
+    <PackageReference Include="GitVersionTask" Version="4.0.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" PrivateAssets="All" />
   </ItemGroup>
 
   <Target Name="PublishToNugetWithAPIKey" AfterTargets="GenerateNuspec" Condition="Exists('$(SolutionDir)\..\..\nugetapikey.txt')">
