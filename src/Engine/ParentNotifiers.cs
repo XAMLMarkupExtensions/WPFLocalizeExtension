@@ -29,7 +29,7 @@ namespace WPFLocalizeExtension.Engine
 		/// <returns>True, if the key exists.</returns>
 		public bool ContainsKey(DependencyObject target)
 		{
-			return _inner.Keys.Any(x => x.IsAlive && ReferenceEquals(x.Target, target));
+			return _inner.Keys.Any(x => ReferenceEquals(x.Target, target));
 		}
 
         /// <summary>
@@ -38,15 +38,14 @@ namespace WPFLocalizeExtension.Engine
         /// <param name="target">The target object.</param>
 		public void Remove(DependencyObject target)
 		{
-			TypedWeakReference<DependencyObject> singleOrDefault = 
-				_inner.Keys.SingleOrDefault(x => ReferenceEquals(x.Target, target));
+			TypedWeakReference<DependencyObject> key = _inner.Keys.SingleOrDefault(x => ReferenceEquals(x.Target, target));
+            if (key == null)
+                return;
 
-			if (singleOrDefault != null)
-			{
-                if (_inner[singleOrDefault].IsAlive)
-                    _inner[singleOrDefault].Target.Dispose();
-				_inner.Remove(singleOrDefault);
-			}
+            ParentChangedNotifier notifier = _inner[key].Target;
+            if (notifier != null)
+                notifier.Dispose();
+			_inner.Remove(key);
 		}
 
         /// <summary>
