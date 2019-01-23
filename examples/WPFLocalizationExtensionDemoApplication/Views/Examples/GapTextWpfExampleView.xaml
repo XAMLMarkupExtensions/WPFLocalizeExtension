@@ -1,25 +1,25 @@
 ﻿<UserControl x:Class="WPFLocalizationExtensionDemoApplication.Views.Examples.GapTextWpfExampleView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:lex ="clr-namespace:WPFLocalizeExtension.Engine;assembly=WPFLocalizeExtension"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:extensions="http://wpflocalizeextension.codeplex.com"
              xmlns:examples="clr-namespace:WPFLocalizationExtensionDemoApplication.ViewModels.Examples"
              lex:LocalizeDictionary.DesignCulture="en"
-             extensions:ResxLocalizationProvider.DefaultAssembly="WPFLocalizationExtensionDemoApplication"
+             extensions:ResxLocalizationProvider.DefaultAssembly="WPFLocalizationExtensionDemoTexts"
              extensions:ResxLocalizationProvider.DefaultDictionary="Strings"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              d:DataContext="{d:DesignInstance {x:Type examples:GapTextWpfExampleViewModel}}"
-             d:DesignHeight="400" 
+             d:DesignHeight="400"
              d:DesignWidth="300">
     <StackPanel Orientation="Vertical">
         <StackPanel Orientation="Horizontal">
             <Label Content="{extensions:Loc Key=Examples.GapTextWpfExample.CityLabel}" />
             <TextBox Text="{Binding City}" />
         </StackPanel>
-        
+
         <GroupBox Header="{extensions:LocText Key=Examples.GapTextWpfExample.Example, FormatSegment1=A}">
             <lex:GapTextControl FormatString="{extensions:Loc Key=Examples.A.ShopInCityOpenWithReprise}">
                 <lex:GapTextControl.Template>
@@ -29,7 +29,7 @@
                 </lex:GapTextControl.Template>
                 <lex:GapTextControl.Gaps>
                     <Run Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=lex:GapTextControl}, Path=DataContext.City}" />
-                    <lex:EnumComboBox Type="{x:Type system:DayOfWeek}" SelectedItem="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=lex:GapTextControl}, Path=DataContext.WeekDay}" />
+                    <lex:EnumComboBox Type="{x:Type system:DayOfWeek}" SelectedItem="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=lex:GapTextControl}, Path=DataContext.WeekDay}" Prefix="Examples.A.DayOfWeek" />
                     <DatePicker SelectedDate="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=lex:GapTextControl}, Path=DataContext.OpeningTime}" />
                     <DatePicker SelectedDate="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=lex:GapTextControl}, Path=DataContext.ClosingTime}" />
                     <Run Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=lex:GapTextControl}, Path=DataContext.WeekDay}" />
@@ -75,9 +75,9 @@
                 </lex:GapTextControl.Template>
                 <lex:GapTextControl.Gaps>
                     <TextBlock Text="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=lex:GapTextControl}, Path=DataContext.SelectedAnimal.Age}" />
-                    <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=lex:GapTextControl}, Path=DataContext.Animals}" 
+                    <ComboBox ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=lex:GapTextControl}, Path=DataContext.Animals}"
                               SelectedItem="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=lex:GapTextControl}, Path=DataContext.SelectedAnimal}"
-                              DisplayMemberPath="Name"/>
+                              DisplayMemberPath="Name" />
                 </lex:GapTextControl.Gaps>
             </lex:GapTextControl>
         </GroupBox>
@@ -98,6 +98,5 @@
                 </lex:GapTextControl.Gaps>
             </lex:GapTextControl>
         </GroupBox>
-
     </StackPanel>
 </UserControl>
