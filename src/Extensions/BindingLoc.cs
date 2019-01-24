@@ -24,8 +24,12 @@ namespace WPFLocalizeExtension.Extensions
         {
             _binding = binding;
             _binding.Converter = new TranslateConverter();
-            _binding.ConverterParameter = this; // Stops garbage collection of this instance in order to receive events from LocalizeDictionary
 
+            // Stops garbage collection of this instance in order to receive events from LocalizeDictionary
+            // Once, the binding is gone, this instance should be garbage collected.
+            _binding.ConverterParameter = this;
+
+            // do not need to remove listener, for LocalizeDictionary keeps weak references
             LocalizeDictionary.DictionaryEvent.AddListener(this);
         }
 

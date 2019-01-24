@@ -24,6 +24,10 @@
         <Style TargetType="TextBlock" x:Key="bindingStyle">
             <Setter Property="Text" Value="{Binding ResourceKey, Converter={StaticResource TranslateConverter}}" />
         </Style>
+
+        <Style TargetType="TextBlock" x:Key="updatableBindingStyle">
+            <Setter Property="Text" Value="{Binding ResourceKeyVM.ResourceKey, Converter={StaticResource TranslateConverter}}" />
+        </Style>
     </UserControl.Resources>
     <StackPanel>
         <!--Normal static localization using a hard coded resource key in xaml -->
@@ -43,5 +47,10 @@
         <!-- No support of automatic refresh on language switching, but can be applied in a style -->
         <TextBlock Text="{Binding ResourceKey, Converter={StaticResource TranslateConverter}}" />
         <TextBlock Style="{StaticResource bindingStyle}" />
+
+        <!--Normal WPF Binding to ViewModel -->
+        <TextBox Text="{Binding ResourceKeyVM.ResourceKey, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBlock Text="{Binding ResourceKeyVM.ResourceKey, Converter={StaticResource TranslateConverter}}" />
+        <TextBlock Style="{StaticResource updatableBindingStyle}" />
     </StackPanel>
 </UserControl>

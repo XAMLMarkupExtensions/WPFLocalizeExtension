@@ -1,4 +1,5 @@
 ﻿using Caliburn.Micro;
+using WPFLocalizeExtension;
 
 namespace WPFLocalizationExtensionDemoApplication.ViewModels.Examples
 {
@@ -21,5 +22,7 @@ namespace WPFLocalizationExtensionDemoApplication.ViewModels.Examples
                 NotifyOfPropertyChange(() => ResourceKey);
             }
         }
+
+        public ResourceKeyViewModel ResourceKeyVM { get; set; } = new ResourceKeyViewModel("TextLocalizationExample");
     }
 }
