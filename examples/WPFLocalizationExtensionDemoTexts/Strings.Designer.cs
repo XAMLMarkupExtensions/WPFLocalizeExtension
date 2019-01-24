@@ -187,6 +187,15 @@ namespace WPFLocalizationExtensionDemoTexts {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to this is different.
+        /// </summary>
+        internal static string TextLocalizationExample2 {
+            get {
+                return ResourceManager.GetString("TextLocalizationExample2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Language:.
         /// </summary>
         internal static string Toolbar_LanguageLabel {

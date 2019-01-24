@@ -11,17 +11,25 @@
              lex:ResxLocalizationProvider.DefaultDictionary="Strings"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance {x:Type examples:TextLocalizationExampleViewModel}}"
-             d:DesignHeight="450" d:DesignWidth="800"
+             Height="450" Width="800"
              Name="me">
+    <UserControl.Resources>
+        <lex:TranslateConverter x:Key="TranslateConverter" />
+    </UserControl.Resources>
     <StackPanel>
         <!--Normal static localization using a hard coded resource key in xaml -->
-        <TextBlock Text="{lex:Loc TextLocalizationExample}" />
+        <!--<TextBlock Text="{lex:Loc TextLocalizationExample}" />-->
+        <!--<TextBlock Text="{lex:BLoc TextLocalizationExample}" />-->
+        <TextBlock Text="{lex:BindingLoc {Binding ResourceKey}}" />
 
         <!--Normal WPF Binding to ViewModel -->
-        <TextBlock Text="{Binding DisplayName}" />
+        <TextBox Text="{Binding ResourceKey, UpdateSourceTrigger=PropertyChanged}" />
 
         <!--Localization using a key provided by WPF Binding to ViewModel -->
-        <lex:LocProxy Name="LocProxy" Source="{Binding DisplayName}" />
-        <TextBlock Text="{Binding ElementName=LocProxy, Path=Result}" />
+        <!--<lex:LocProxy Name="LocProxy" Source="{Binding ResourceKey}" />
+        <TextBlock Text="{Binding ElementName=LocProxy, Path=Result}" />-->
+
+        <!--Localization using TranslateConverter -->
+        <!--<TextBlock Text="{Binding ResourceKey, Converter={StaticResource TranslateConverter}}" />-->
     </StackPanel>
 </UserControl>

@@ -165,4 +165,7 @@
   <data name="TextLocalizationExample" xml:space="preserve">
     <value>TextLocalizationExample de</value>
   </data>
+  <data name="TextLocalizationExample2" xml:space="preserve">
+    <value>das ist anders</value>
+  </data>
 </root>

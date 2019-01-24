@@ -1,17 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Caliburn.Micro;
+﻿using Caliburn.Micro;
 
 namespace WPFLocalizationExtensionDemoApplication.ViewModels.Examples
 {
     public class TextLocalizationExampleViewModel : Screen
     {
+        private string _resourceKey;
+
         public TextLocalizationExampleViewModel()
         {
-            base.DisplayName = "TextLocalizationExample";
+            base.DisplayName = ResourceKey = "TextLocalizationExample";
+        }
+
+        public string ResourceKey
+        {
+            get { return _resourceKey; }
+            set
+            {
+                if (value == _resourceKey) return;
+                _resourceKey = value;
+                NotifyOfPropertyChange(() => ResourceKey);
+            }
         }
     }
 }
