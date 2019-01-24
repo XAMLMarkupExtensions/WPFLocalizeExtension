@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPFLocalizationExtensionDem
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPFLocalizationExtensionDemoTexts", "WPFLocalizationExtensionDemoTexts\WPFLocalizationExtensionDemoTexts.csproj", "{ED4F118B-4A5B-4D5B-BCB7-62A5DC280AA8}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WPFLocalizeExtension", "..\src\WPFLocalizeExtension.csproj", "{ED1805DE-4E8B-418A-A43C-023511C4D005}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{ED4F118B-4A5B-4D5B-BCB7-62A5DC280AA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED4F118B-4A5B-4D5B-BCB7-62A5DC280AA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED4F118B-4A5B-4D5B-BCB7-62A5DC280AA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED1805DE-4E8B-418A-A43C-023511C4D005}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED1805DE-4E8B-418A-A43C-023511C4D005}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED1805DE-4E8B-418A-A43C-023511C4D005}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED1805DE-4E8B-418A-A43C-023511C4D005}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
