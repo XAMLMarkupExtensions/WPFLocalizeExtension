@@ -9,32 +9,39 @@
              lex:LocalizeDictionary.DesignCulture="en"
              lex:ResxLocalizationProvider.DefaultAssembly="WPFLocalizationExtensionDemoTexts"
              lex:ResxLocalizationProvider.DefaultDictionary="Strings"
+    xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance {x:Type examples:TextLocalizationExampleViewModel}}"
              Height="450" Width="800"
              Name="me">
     <UserControl.Resources>
         <lex:TranslateConverter x:Key="TranslateConverter" />
-        <Style TargetType="TextBlock" x:Key="localizedText">
-            <Setter Property="Text" Value="{lex:BindingLoc {Binding ResourceKey}}" />
+
+        <Style TargetType="TextBlock" x:Key="hardCodedStyle">
+            <Setter Property="Text" Value="{lex:BLoc TextLocalizationExample}" />
+        </Style>
+
+        <Style TargetType="TextBlock" x:Key="bindingStyle">
+            <Setter Property="Text" Value="{Binding ResourceKey, Converter={StaticResource TranslateConverter}}" />
         </Style>
     </UserControl.Resources>
     <StackPanel>
         <!--Normal static localization using a hard coded resource key in xaml -->
-        <!--<TextBlock Text="{lex:Loc TextLocalizationExample}" />-->
-        <!--<TextBlock Text="{lex:BLoc TextLocalizationExample}" />-->
-        <!--<TextBlock Text="{lex:BindingLoc {Binding ResourceKey}}" />-->
+        <TextBlock Text="{lex:Loc TextLocalizationExample}" />
 
-        <TextBlock Style="{StaticResource localizedText}" />
+        <!--Normal static localization using a hard coded resource key in xaml style -->
+        <TextBlock Text="{lex:BLoc TextLocalizationExample}" />
+        <TextBlock Style="{StaticResource hardCodedStyle}" />
 
         <!--Normal WPF Binding to ViewModel -->
         <TextBox Text="{Binding ResourceKey, UpdateSourceTrigger=PropertyChanged}" />
 
         <!--Localization using a key provided by WPF Binding to ViewModel -->
-        <!--<lex:LocProxy Name="LocProxy" Source="{Binding ResourceKey}" />
-        <TextBlock Text="{Binding ElementName=LocProxy, Path=Result}" />-->
+        <!-- Supports automatic refresh on language switching, but cannot be applied in a style -->
+        <TextBlock Text="{lex:BindingLoc {Binding ResourceKey}}" />
 
-        <!--Localization using TranslateConverter -->
-        <!--<TextBlock Text="{Binding ResourceKey, Converter={StaticResource TranslateConverter}}" />-->
+        <!-- No support of automatic refresh on language switching, but can be applied in a style -->
+        <TextBlock Text="{Binding ResourceKey, Converter={StaticResource TranslateConverter}}" />
+        <TextBlock Style="{StaticResource bindingStyle}" />
     </StackPanel>
 </UserControl>

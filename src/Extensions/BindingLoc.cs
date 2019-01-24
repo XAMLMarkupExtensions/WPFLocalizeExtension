@@ -6,9 +6,13 @@ using WPFLocalizeExtension.Engine;
 
 namespace WPFLocalizeExtension.Extensions
 {
-    public class BindingLoc : Binding, IDictionaryEventListener
+    /// <summary>
+    /// Applies the given <see cref="Binding"/> to the related <see cref="DependencyProperty"/>.
+    /// </summary>
+    /// <remarks><see cref="MarkupExtension"/>s are not usable within a WPF style.</remarks>
+    public class BindingLoc : MarkupExtension, IDictionaryEventListener
     {
-        private static BindingLoc test;
+        private readonly Binding _binding;
 
         private BindingExpression _bindingExpression;
 
@@ -16,45 +20,37 @@ namespace WPFLocalizeExtension.Extensions
 
         private DependencyProperty _targetProp;
 
-        public BindingLoc(Binding subBinding)
+        public BindingLoc(Binding binding)
         {
-            test = this;
-
-            Path = subBinding.Path;
-            Converter = new TranslateConverter();
+            _binding = binding;
+            _binding.Converter = new TranslateConverter();
+            _binding.ConverterParameter = this; // Stops garbage collection of this instance in order to receive events from LocalizeDictionary
 
             LocalizeDictionary.DictionaryEvent.AddListener(this);
         }
 
-        public object ProvideValue2(IServiceProvider serviceProvider)
+        public override object ProvideValue(IServiceProvider serviceProvider)
         {
             if (_bindingExpression == null)
             {
                 if (serviceProvider.GetService(typeof(IProvideValueTarget)) is IProvideValueTarget pvt)
                 {
                     _target = pvt?.TargetObject as FrameworkElement;
-
-                    // if we are inside a template, WPF will call us again when it is applied
-                    if (_target == null)
-                        return this;
-
                     _targetProp = pvt.TargetProperty as DependencyProperty;
                 }
             }
 
-            return null;// _binding.ProvideValue(serviceProvider);
+            return _binding.ProvideValue(serviceProvider);
         }
 
         public void ResourceChanged(DependencyObject sender, DictionaryEventArgs e)
         {
-            if (_bindingExpression == null
-                && _target != null
-                && _targetProp != null)
+            if (_bindingExpression == null)
             {
                 _bindingExpression = _target.GetBindingExpression(_targetProp);
             }
 
-            _bindingExpression?.UpdateTarget();
+            _bindingExpression.UpdateTarget();
         }
     }
 }

@@ -7,7 +7,7 @@ namespace WPFLocalizationExtensionDemoApplication.ViewModels
     {
         public MainViewModel()
         {
-            //this.Items.Add(new GapTextWpfExampleViewModel());
+            Items.Add(new GapTextWpfExampleViewModel());
             Items.Add(new TextLocalizationExampleViewModel());
         }
     }
