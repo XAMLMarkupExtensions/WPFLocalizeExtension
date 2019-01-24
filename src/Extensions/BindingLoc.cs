@@ -6,11 +6,9 @@ using WPFLocalizeExtension.Engine;
 
 namespace WPFLocalizeExtension.Extensions
 {
-    public class BindingLoc : MarkupExtension, IDictionaryEventListener
+    public class BindingLoc : Binding, IDictionaryEventListener
     {
         private static BindingLoc test;
-
-        private readonly Binding _binding;
 
         private BindingExpression _bindingExpression;
 
@@ -18,38 +16,45 @@ namespace WPFLocalizeExtension.Extensions
 
         private DependencyProperty _targetProp;
 
-        public BindingLoc(Binding binding)
+        public BindingLoc(Binding subBinding)
         {
             test = this;
 
-            _binding = binding;
-            _binding.Converter = new TranslateConverter();
+            Path = subBinding.Path;
+            Converter = new TranslateConverter();
 
             LocalizeDictionary.DictionaryEvent.AddListener(this);
         }
 
-        public override object ProvideValue(IServiceProvider serviceProvider)
+        public object ProvideValue2(IServiceProvider serviceProvider)
         {
             if (_bindingExpression == null)
             {
                 if (serviceProvider.GetService(typeof(IProvideValueTarget)) is IProvideValueTarget pvt)
                 {
                     _target = pvt?.TargetObject as FrameworkElement;
+
+                    // if we are inside a template, WPF will call us again when it is applied
+                    if (_target == null)
+                        return this;
+
                     _targetProp = pvt.TargetProperty as DependencyProperty;
                 }
             }
 
-            return _binding.ProvideValue(serviceProvider);
+            return null;// _binding.ProvideValue(serviceProvider);
         }
 
         public void ResourceChanged(DependencyObject sender, DictionaryEventArgs e)
         {
-            if (_bindingExpression == null)
+            if (_bindingExpression == null
+                && _target != null
+                && _targetProp != null)
             {
                 _bindingExpression = _target.GetBindingExpression(_targetProp);
             }
 
-            _bindingExpression.UpdateTarget();
+            _bindingExpression?.UpdateTarget();
         }
     }
 }

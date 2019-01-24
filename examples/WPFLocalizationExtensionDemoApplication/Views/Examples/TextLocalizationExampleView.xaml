@@ -15,12 +15,17 @@
              Name="me">
     <UserControl.Resources>
         <lex:TranslateConverter x:Key="TranslateConverter" />
+        <Style TargetType="TextBlock" x:Key="localizedText">
+            <Setter Property="Text" Value="{lex:BindingLoc {Binding ResourceKey}}" />
+        </Style>
     </UserControl.Resources>
     <StackPanel>
         <!--Normal static localization using a hard coded resource key in xaml -->
         <!--<TextBlock Text="{lex:Loc TextLocalizationExample}" />-->
         <!--<TextBlock Text="{lex:BLoc TextLocalizationExample}" />-->
-        <TextBlock Text="{lex:BindingLoc {Binding ResourceKey}}" />
+        <!--<TextBlock Text="{lex:BindingLoc {Binding ResourceKey}}" />-->
+
+        <TextBlock Style="{StaticResource localizedText}" />
 
         <!--Normal WPF Binding to ViewModel -->
         <TextBox Text="{Binding ResourceKey, UpdateSourceTrigger=PropertyChanged}" />
