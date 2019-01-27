@@ -8,7 +8,7 @@
              xmlns:micro="clr-namespace:Caliburn.Micro;assembly=Caliburn.Micro"
              xmlns:lex="http://wpflocalizeextension.codeplex.com"
              lex:LocalizeDictionary.DesignCulture="en"
-             lex:ResxLocalizationProvider.DefaultAssembly="WPFLocalizationExtensionDemoApplication"
+             lex:ResxLocalizationProvider.DefaultAssembly="WPFLocalizationExtensionDemoTexts"
              lex:ResxLocalizationProvider.DefaultDictionary="Strings"
              mc:Ignorable="d"
              d:DesignWidth="600"
@@ -18,7 +18,7 @@
         <ToolBarTray DockPanel.Dock="Top">
             <ToolBar>
                 <ComboBox ItemsSource="{Binding Source={x:Static lex:LocalizeDictionary.Instance}, Path=MergedAvailableCultures}"
-                          SelectedItem="{Binding Source={x:Static lex:LocalizeDictionary.Instance}, Path=Culture}" 
+                          SelectedItem="{Binding Source={x:Static lex:LocalizeDictionary.Instance}, Path=Culture}"
                           DisplayMemberPath="NativeName" />
             </ToolBar>
         </ToolBarTray>
