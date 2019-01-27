@@ -49,7 +49,7 @@ namespace WPFLocalizeExtension.Providers
 		        // Try to get the value using the provided GetFunction.
 		        ret = getFunction(depObj);
 
-		        if (ret != null && parentNotifiers.ContainsKey(target))
+		        if (ret != null)
 			        parentNotifiers.Remove(target);
 
 		        // Try to get the parent using the visual tree helper. This may fail on some occations.
@@ -102,13 +102,13 @@ namespace WPFLocalizeExtension.Providers
 				        var pcn = new ParentChangedNotifier(frameworkElement, () =>
 				        {
 							var localTarget = (DependencyObject)weakTarget.Target;
-					        if (!weakTarget.IsAlive) return;
+					        if (localTarget == null)
+                                return;
 					        
 					        // Call the action...
 					        parentChangedAction(localTarget);
 					        // ...and remove the notifier - it will probably not be used again.
-					        if (parentNotifiers.ContainsKey(localTarget))
-						        parentNotifiers.Remove(localTarget);
+					        parentNotifiers.Remove(localTarget);
 				        });
 
 				        parentNotifiers.Add(target, pcn);
