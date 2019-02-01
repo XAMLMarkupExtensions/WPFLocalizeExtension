@@ -6,16 +6,17 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Globalization;
-using System.Resources;
-using System.Windows;
-
-using XAMLMarkupExtensions.Base;
-
 namespace WPFLocalizeExtension.Providers
 {
+    #region Usings
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Globalization;
+    using System.Resources;
+    using System.Windows;
+    using XAMLMarkupExtensions.Base;
+    #endregion
+
     /// <summary>
     /// A singleton RESX provider that uses inheriting attached properties.
     /// </summary>
@@ -139,7 +140,7 @@ namespace WPFLocalizeExtension.Providers
         private InheritingResxLocalizationProvider()
         {
             ResourceManagerList = new Dictionary<string, ResourceManager>();
-            AvailableCultures = new ObservableCollection<CultureInfo> {CultureInfo.InvariantCulture};
+            AvailableCultures = new ObservableCollection<CultureInfo> { CultureInfo.InvariantCulture };
         }
         #endregion
 
@@ -151,7 +152,7 @@ namespace WPFLocalizeExtension.Providers
         /// <returns>The assembly name, if available.</returns>
         protected override string GetAssembly(DependencyObject target)
         {
-            return target?.GetValue(DefaultAssemblyProperty) as string; 
+            return target?.GetValue(DefaultAssemblyProperty) as string;
         }
 
         /// <summary>

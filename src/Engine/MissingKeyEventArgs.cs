@@ -6,10 +6,12 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-using System;
-
 namespace WPFLocalizeExtension.Engine
 {
+    #region Usings
+    using System;
+    #endregion
+
     /// <summary>
     /// Event arguments for a missing key event.
     /// </summary>

@@ -7,20 +7,22 @@
 // <author>Bernhard Millauer</author>
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Resources;
-using System.Windows;
-using System.Management;
-
 namespace WPFLocalizeExtension.Providers
 {
+    #region Usings
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Diagnostics;
+    using System.Globalization;
+    using System.IO;
+    using System.Linq;
+    using System.Management;
+    using System.Reflection;
+    using System.Resources;
+    using System.Windows;
+    #endregion
+
     /// <summary>
     /// The base for RESX file providers.
     /// </summary>
@@ -289,7 +291,7 @@ namespace WPFLocalizeExtension.Providers
             // Here comes our great hack for full VS2012+ design time support with multiple languages.
             // We check only every second to reduce overhead in the designer.
             var now = DateTime.Now;
-            
+
             if (AppDomain.CurrentDomain.FriendlyName.Contains("XDesProc") && ((now - _lastUpdateCheck).TotalSeconds >= 1.0))
             {
                 // This block is only handled during design time.
@@ -498,7 +500,7 @@ namespace WPFLocalizeExtension.Providers
                 {
                     // Get the list of all cultures.
                     var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
-                    
+
                     foreach (var c in cultures)
                     {
                         var rs = resManager.GetResourceSet(c, true, false);
@@ -550,7 +552,7 @@ namespace WPFLocalizeExtension.Providers
                 return null;
 
             ParseKey(key, out var assembly, out var dictionary, out key);
-            
+
             if (string.IsNullOrEmpty(assembly))
                 assembly = GetAssembly(target);
 

@@ -6,16 +6,18 @@
 // <author>Bernhard Millauer</author>
 #endregion
 
-using System;
-using System.Runtime.Serialization;
-
 namespace WPFLocalizeExtension.Engine
 {
+    #region Usings
+    using System;
+    using System.Runtime.Serialization;
+    #endregion
+
     /// <summary>
     /// A types version of <see cref="WeakReference"/>.
     /// </summary>
     /// <typeparam name="T">The reference type.</typeparam>
-	public class TypedWeakReference<T> : WeakReference
+    public class TypedWeakReference<T> : WeakReference
 	{
         /// <summary>
         /// Creates a new instance.

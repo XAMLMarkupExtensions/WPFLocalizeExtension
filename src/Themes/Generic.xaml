@@ -8,7 +8,7 @@
                 <ControlTemplate TargetType="{x:Type engine:GapTextControl}">
                     <Border BorderBrush="SaddleBrown" BorderThickness="5">
                         <TextBlock x:Name="PART_TextBlock"
-                               Background="Orange" 
+                               Background="Orange"
                                MinWidth="100"
                                MinHeight="100" />
                     </Border>

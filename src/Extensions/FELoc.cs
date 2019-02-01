@@ -7,23 +7,24 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Globalization;
-using System.Reflection;
-using System.Windows;
-using System.Windows.Data;
-using System.Windows.Markup.Primitives;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-
-using WPFLocalizeExtension.Engine;
-using WPFLocalizeExtension.TypeConverters;
-using XAMLMarkupExtensions.Base;
-
 namespace WPFLocalizeExtension.Extensions
 {
+    #region Usings
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Globalization;
+    using System.Reflection;
+    using System.Windows;
+    using System.Windows.Data;
+    using System.Windows.Markup.Primitives;
+    using System.Windows.Media;
+    using System.Windows.Media.Imaging;
+    using WPFLocalizeExtension.Engine;
+    using WPFLocalizeExtension.TypeConverters;
+    using XAMLMarkupExtensions.Base;
+    #endregion
+
     /// <summary>
     /// A localization utility based on <see cref="FrameworkElement"/>.
     /// </summary>
@@ -50,7 +51,7 @@ namespace WPFLocalizeExtension.Extensions
         #region Private variables
         private static readonly object ResourceBufferLock = new object();
         private static Dictionary<string, object> _resourceBuffer = new Dictionary<string, object>();
-        
+
         private ParentChangedNotifier _parentChangedNotifier;
         private TargetInfo _targetInfo;
         #endregion
@@ -135,7 +136,7 @@ namespace WPFLocalizeExtension.Extensions
         {
             get => this.GetValueSync<IValueConverter>(ConverterProperty);
             set => this.SetValueSync(ConverterProperty, value);
-        } 
+        }
         #endregion
 
         #region DependencyProperty: ConverterParameter
@@ -292,7 +293,7 @@ namespace WPFLocalizeExtension.Extensions
                     }
                 }
             });
-        } 
+        }
         #endregion
 
         #region Constructors & Dispose

@@ -7,14 +7,15 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-using System;
-using System.Windows.Markup;
-
-using WPFLocalizeExtension.Engine;
-using XAMLMarkupExtensions.Base;
-
 namespace WPFLocalizeExtension.Extensions
 {
+    #region Usings
+    using System;
+    using System.Windows.Markup;
+    using WPFLocalizeExtension.Engine;
+    using XAMLMarkupExtensions.Base;
+    #endregion
+
 #pragma warning disable 1591
 
     [MarkupExtensionReturnType(typeof(System.Windows.Media.Brush))]
@@ -60,7 +61,7 @@ namespace WPFLocalizeExtension.Extensions
 
         #region Enum Definition
         /// <summary>
-        /// This enumeration is used to determine the type 
+        /// This enumeration is used to determine the type
         /// of the return value of <see cref="GetAppendText"/>
         /// </summary>
         protected enum TextAppendType
@@ -74,7 +75,7 @@ namespace WPFLocalizeExtension.Extensions
             /// The return value is used as suffix
             /// </summary>
             Suffix
-        } 
+        }
         #endregion
 
         #region Variables
@@ -91,7 +92,7 @@ namespace WPFLocalizeExtension.Extensions
         /// <summary>
         /// Holds the local format segment array
         /// </summary>
-        private readonly string[] _formatSegments = new string[5]; 
+        private readonly string[] _formatSegments = new string[5];
         #endregion
 
         #region Properties
@@ -171,7 +172,7 @@ namespace WPFLocalizeExtension.Extensions
         {
             get => _formatSegments[4];
             set => _formatSegments[4] = value;
-        } 
+        }
         #endregion
 
         #region Text Formatting
@@ -249,7 +250,7 @@ namespace WPFLocalizeExtension.Extensions
             textMain = FormatText(textPrefix + textMain + textSuffix);
 
             return textMain;
-        } 
+        }
         #endregion
     }
 

@@ -6,15 +6,16 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-using System;
-using System.ComponentModel;
-using System.Windows;
-using System.Windows.Documents;
-
-using WPFLocalizeExtension.Extensions;
-
 namespace WPFLocalizeExtension.Engine
 {
+    #region Usings
+    using System;
+    using System.ComponentModel;
+    using System.Windows;
+    using System.Windows.Documents;
+    using WPFLocalizeExtension.Extensions;
+    #endregion
+
     /// <summary>
     /// An extension of <see cref="T:System.Windows.Documents.Run" /> for displaying localized enums.
     /// </summary>
@@ -93,6 +94,7 @@ namespace WPFLocalizeExtension.Engine
         }
         #endregion
 
+        #region PropertiesChanged
         /// <summary>
         /// A notification handler for changed properties.
         /// </summary>
@@ -114,7 +116,7 @@ namespace WPFLocalizeExtension.Engine
 
                     if (run._ext == null)
                     {
-                        run._ext = new LocExtension {Key = key};
+                        run._ext = new LocExtension { Key = key };
                         run._ext.SetBinding(run, run.GetType().GetProperty("Text"));
                     }
                     else
@@ -122,5 +124,6 @@ namespace WPFLocalizeExtension.Engine
                 }
             }
         }
+        #endregion
     }
 }

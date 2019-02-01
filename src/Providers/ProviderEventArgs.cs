@@ -6,11 +6,13 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-using System;
-using System.Windows;
-
 namespace WPFLocalizeExtension.Providers
 {
+    #region Usings
+    using System;
+    using System.Windows;
+    #endregion
+
     /// <summary>
     /// Events arguments for a ProviderChangedEventHandler.
     /// </summary>

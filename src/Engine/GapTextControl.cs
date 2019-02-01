@@ -7,19 +7,21 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-using System;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Markup;
-using System.Xml;
-
 namespace WPFLocalizeExtension.Engine
 {
+    #region Usings
+    using System;
+    using System.Collections.ObjectModel;
+    using System.IO;
+    using System.Text.RegularExpressions;
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Data;
+    using System.Windows.Documents;
+    using System.Windows.Markup;
+    using System.Xml;
+    #endregion
+
     /// <summary>
     /// A gap text control.
     /// </summary>
@@ -37,12 +39,12 @@ namespace WPFLocalizeExtension.Engine
             new PropertyMetadata(string.Empty, OnFormatStringChanged));
 
         /// <summary>
-        /// If this property is set to true there is no error thrown 
+        /// If this property is set to true there is no error thrown
         /// when the FormatString contains less gaps than placeholders are available.
-        /// Missing placeholders for available elements may be a problem, 
-        /// as something else may refer to the element in a binding e.g. by name, 
+        /// Missing placeholders for available elements may be a problem,
+        /// as something else may refer to the element in a binding e.g. by name,
         /// but the element is not available in the visual tree.
-        /// 
+        ///
         /// As an example consider a submit button would be missing due to a missing placeholder in the FormatString.
         /// </summary>
         public static readonly DependencyProperty IgnoreLessGapsProperty = DependencyProperty.Register(
@@ -71,7 +73,7 @@ namespace WPFLocalizeExtension.Engine
 
         /// <summary>
         /// property that stores the items to be inserted into the gaps.
-        /// any item that can be inserted as such into the TextBox get's inserted itself. 
+        /// any item that can be inserted as such into the TextBox get's inserted itself.
         /// All other items are converted to Text using their ToString() implementation.
         /// </summary>
         public static readonly DependencyProperty GapsProperty = DependencyProperty.Register(
@@ -213,7 +215,7 @@ namespace WPFLocalizeExtension.Engine
 
                 // 1) determine which items are to be used as string and which are to be inserted as controls:
                 // allowed according to https://msdn.microsoft.com/de-de/library/system.windows.documents.inlinecollection%28v=vs.110%29.aspx are
-                // Inline, String (creates an implicit Run), UIElement (creates an implicit InlineUIContainer with the supplied UIElement inside), 
+                // Inline, String (creates an implicit Run), UIElement (creates an implicit InlineUIContainer with the supplied UIElement inside),
                 if (Gaps != null)
                 {
                     var match = Regex.Match(FormatString, RegexPattern);
@@ -266,7 +268,7 @@ namespace WPFLocalizeExtension.Engine
 
                 // add the remaining part:
                 _theTextBlock.Inlines.Add(string.Format(FormatString.Substring(matchedUpToIndex), Gaps));
-                
+
                 InvalidateVisual();
             }
             else
