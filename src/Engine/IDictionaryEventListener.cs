@@ -6,11 +6,13 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-using System;
-using System.Windows;
-
 namespace WPFLocalizeExtension.Engine
 {
+    #region Usings
+    using System;
+    using System.Windows;
+    #endregion
+
     /// <summary>
     /// Interface for listeners on dictionary events of the <see cref="LocalizeDictionary"/> class.
     /// </summary>

@@ -6,16 +6,18 @@
 // <author>Sébastien Sevrin</author>
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Windows;
-using System.Resources;
-using System.Reflection;
-using System.Globalization;
-using System.Collections.ObjectModel;
-
 namespace WPFLocalizeExtension.Providers
 {
+    #region Usings
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Globalization;
+    using System.Reflection;
+    using System.Resources;
+    using System.Windows;
+    #endregion
+
     /// <summary>
     /// The base for CSV file providers.
     /// </summary>

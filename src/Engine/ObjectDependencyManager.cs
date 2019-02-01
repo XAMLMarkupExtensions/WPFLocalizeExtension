@@ -6,12 +6,14 @@
 // <author>Bernhard Millauer</author>
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-
 namespace WPFLocalizeExtension.Engine
 {
+    #region Usings
+    using System;
+    using System.Collections.Generic;
+    using System.Runtime.CompilerServices;
+    #endregion
+
     /// <summary>
     /// This class ensures, that a specific object lives as long a associated object is alive.
     /// </summary>
@@ -23,8 +25,8 @@ namespace WPFLocalizeExtension.Engine
         private static readonly Dictionary<object, List<WeakReference>> InternalList;
 
         /// <summary>
-        /// Initializes static members of the <see cref="ObjectDependencyManager"/> class. 
-        /// Static Constructor. Creates a new instance of 
+        /// Initializes static members of the <see cref="ObjectDependencyManager"/> class.
+        /// Static Constructor. Creates a new instance of
         /// Dictionary(object, <see cref="WeakReference"/>) and set it to the <see cref="InternalList"/>.
         /// </summary>
         static ObjectDependencyManager()
@@ -145,7 +147,7 @@ namespace WPFLocalizeExtension.Engine
                 for (int i = kvp.Value.Count - 1; i >= 0; i--)
                 {
                     // if this weak reference is no more alive, remove it
-					var targetReference = kvp.Value[i].Target;
+                    var targetReference = kvp.Value[i].Target;
                     if (targetReference == null)
                     {
                         kvp.Value.RemoveAt(i);

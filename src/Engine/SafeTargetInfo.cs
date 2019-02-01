@@ -6,11 +6,13 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-using System;
-using XAMLMarkupExtensions.Base;
-
 namespace WPFLocalizeExtension.Engine
 {
+    #region Usings
+    using System;
+    using XAMLMarkupExtensions.Base;
+    #endregion
+
     /// <summary>
     /// An extension to the <see cref="T:XAMLMarkupExtensions.Base.TargetInfo" /> class with WeakReference instead of direct object linking.
     /// </summary>
@@ -20,7 +22,7 @@ namespace WPFLocalizeExtension.Engine
         /// Gets the target object reference.
         /// </summary>
         public WeakReference TargetObjectReference { get; }
-        
+
         /// <summary>
         /// Creates a new TargetInfo instance.
         /// </summary>

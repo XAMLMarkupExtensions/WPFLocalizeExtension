@@ -6,16 +6,18 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-using System;
-using System.Linq;
-using System.ComponentModel;
-using System.Windows;
-using System.Windows.Controls;
-using System.Collections.Generic;
-using System.Windows.Markup;
-
 namespace WPFLocalizeExtension.Engine
 {
+    #region Usings
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Linq;
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Markup;
+    #endregion
+
     /// <summary>
     /// An extended combobox that is enumerating Enum values.
     /// <para>Use the <see cref="T:System.ComponentModel.BrowsableAttribute" /> to hide specific entries.</para>
@@ -44,7 +46,7 @@ namespace WPFLocalizeExtension.Engine
                 return;
 
             ecb.SetType(ecb.Type);
-        } 
+        }
         #endregion
 
         #region PrependType property
@@ -147,7 +149,7 @@ namespace WPFLocalizeExtension.Engine
                     if (attr == null || attr.Browsable)
                         items.Add(field.GetValue(0));
                 }
-                
+
                 ItemsSource = items;
             }
             catch
@@ -162,7 +164,7 @@ namespace WPFLocalizeExtension.Engine
         public EnumComboBox()
         {
             var context = new ParserContext();
-            
+
             context.XmlnsDictionary.Add("", "http://schemas.microsoft.com/winfx/2006/xaml/presentation");
             context.XmlnsDictionary.Add("lex", "http://wpflocalizeextension.codeplex.com");
 

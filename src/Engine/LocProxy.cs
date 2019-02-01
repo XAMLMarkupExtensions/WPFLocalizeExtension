@@ -6,13 +6,14 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-using System.ComponentModel;
-using System.Windows;
-
-using WPFLocalizeExtension.Extensions;
-
 namespace WPFLocalizeExtension.Engine
 {
+    #region Usings
+    using System.ComponentModel;
+    using System.Windows;
+    using WPFLocalizeExtension.Extensions;
+    #endregion
+
     /// <summary>
     /// A proxy class to localize object strings.
     /// </summary>
@@ -54,7 +55,7 @@ namespace WPFLocalizeExtension.Engine
         {
             get => (bool)GetValue(PrependTypeProperty);
             set => SetValue(PrependTypeProperty, value);
-        } 
+        }
         #endregion
 
         #region Separator property
@@ -130,7 +131,7 @@ namespace WPFLocalizeExtension.Engine
 
                     if (proxy._ext == null)
                     {
-                        proxy._ext = new LocExtension {Key = key};
+                        proxy._ext = new LocExtension { Key = key };
                         proxy._ext.SetBinding(proxy, proxy.GetType().GetProperty("Result"));
                     }
                     else
