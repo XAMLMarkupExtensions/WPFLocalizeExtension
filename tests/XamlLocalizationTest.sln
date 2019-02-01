@@ -5,19 +5,19 @@ VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencies", "{7141B014-FF60-4105-B88C-9812838D6D0D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResourceAssembly", "Tests\ResourceAssembly\ResourceAssembly.csproj", "{B76576C2-D09F-417A-AEE3-47F31210DF14}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResourceAssembly", "ResourceAssembly\ResourceAssembly.csproj", "{B76576C2-D09F-417A-AEE3-47F31210DF14}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPFLocalizeExtension", "WPFLocalizeExtension\WPFLocalizeExtension.csproj", "{E8C5B094-2CB4-4C26-87F0-351B03612179}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPFLocalizeExtension", "..\src\WPFLocalizeExtension.csproj", "{E8C5B094-2CB4-4C26-87F0-351B03612179}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssemblyTest", "Tests\AssemblyTest\AssemblyTest.csproj", "{DA56BE11-7D65-4602-9B5B-3EE51C20E830}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssemblyTest", "AssemblyTest\AssemblyTest.csproj", "{DA56BE11-7D65-4602-9B5B-3EE51C20E830}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssemblyTestResourceLib", "Tests\AssemblyTestResourceLib\AssemblyTestResourceLib.csproj", "{F8ED06E5-39CA-458B-8B84-E043C335BDE2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AssemblyTestResourceLib", "AssemblyTestResourceLib\AssemblyTestResourceLib.csproj", "{F8ED06E5-39CA-458B-8B84-E043C335BDE2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProviderExample", "Tests\ProviderExample\ProviderExample.csproj", "{AEECE3FE-7731-47E4-9E0D-D84F18837168}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProviderExample", "ProviderExample\ProviderExample.csproj", "{AEECE3FE-7731-47E4-9E0D-D84F18837168}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryTest", "Tests\MemoryTest\MemoryTest.csproj", "{3D591943-C256-46EB-88EA-CCA0B3A498E6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemoryTest", "MemoryTest\MemoryTest.csproj", "{3D591943-C256-46EB-88EA-CCA0B3A498E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fluent.Sample.Foundation", "Tests\FluentLexTest\Fluent.Sample.Foundation.csproj", "{65C4A879-2E9E-4A74-9AC7-A31C71D1F612}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fluent.Sample.Foundation", "FluentLexTest\Fluent.Sample.Foundation.csproj", "{65C4A879-2E9E-4A74-9AC7-A31C71D1F612}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GapTextWpfTest", "GapTextWpfTest\GapTextWpfTest.csproj", "{777707A8-E4B6-4482-A67B-A80CC789317F}"
 EndProject
