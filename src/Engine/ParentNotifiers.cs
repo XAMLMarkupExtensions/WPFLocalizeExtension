@@ -9,6 +9,7 @@
 namespace WPFLocalizeExtension.Engine
 {
     #region Usings
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Windows;
@@ -20,8 +21,8 @@ namespace WPFLocalizeExtension.Engine
     /// </summary>
     public class ParentNotifiers
     {
-        readonly Dictionary<TypedWeakReference<DependencyObject>, TypedWeakReference<ParentChangedNotifier>> _inner =
-            new Dictionary<TypedWeakReference<DependencyObject>, TypedWeakReference<ParentChangedNotifier>>();
+        readonly Dictionary<WeakReference<DependencyObject>, WeakReference<ParentChangedNotifier>> _inner =
+            new Dictionary<WeakReference<DependencyObject>, WeakReference<ParentChangedNotifier>>();
 
         /// <summary>
         /// Check, if it contains the key.
@@ -30,7 +31,7 @@ namespace WPFLocalizeExtension.Engine
         /// <returns>True, if the key exists.</returns>
         public bool ContainsKey(DependencyObject target)
         {
-            return _inner.Keys.Any(x => ReferenceEquals(x.Target, target));
+            return _inner.Keys.Any(x => x.TryGetTarget(out var item) && ReferenceEquals(item, target));
         }
 
         /// <summary>
@@ -39,13 +40,15 @@ namespace WPFLocalizeExtension.Engine
         /// <param name="target">The target object.</param>
 		public void Remove(DependencyObject target)
         {
-            TypedWeakReference<DependencyObject> key = _inner.Keys.SingleOrDefault(x => ReferenceEquals(x.Target, target));
+            WeakReference<DependencyObject> key = _inner.Keys.SingleOrDefault(x => x.TryGetTarget(out var item) &&  ReferenceEquals(item, target));
             if (key == null)
                 return;
 
-            ParentChangedNotifier notifier = _inner[key].Target;
-            if (notifier != null)
-                notifier.Dispose();
+            if (_inner[key].TryGetTarget(out var notifier))
+            {
+                notifier?.Dispose();
+            }
+
             _inner.Remove(key);
         }
 
@@ -56,7 +59,7 @@ namespace WPFLocalizeExtension.Engine
         /// <param name="parentChangedNotifier">The notifier.</param>
 		public void Add(DependencyObject target, ParentChangedNotifier parentChangedNotifier)
         {
-            _inner.Add(new TypedWeakReference<DependencyObject>(target), new TypedWeakReference<ParentChangedNotifier>(parentChangedNotifier));
+            _inner.Add(new WeakReference<DependencyObject>(target), new WeakReference<ParentChangedNotifier>(parentChangedNotifier));
         }
     }
 }

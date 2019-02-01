@@ -6,6 +6,7 @@
 // <author>Bernhard Millauer</author>
 #endregion
 
+#if NET35
 namespace WPFLocalizeExtension.Engine
 {
     #region Usings
@@ -14,54 +15,68 @@ namespace WPFLocalizeExtension.Engine
     #endregion
 
     /// <summary>
-    /// A types version of <see cref="WeakReference"/>.
+    /// This class implements an wrapper for .NET35, because this is starting from NET45 of <see cref="WeakReference"/>.
     /// </summary>
     /// <typeparam name="T">The reference type.</typeparam>
-    public class TypedWeakReference<T> : WeakReference
-	{
+    public class WeakReference<T> : WeakReference
+    {
         /// <summary>
         /// Creates a new instance.
         /// </summary>
         /// <param name="target">The target.</param>
-		public TypedWeakReference(T target) : base(target)
-		{
-		}
+		public WeakReference(T target) : base(target)
+        {
+        }
 
         /// <summary>
         /// Creates a new instance.
         /// </summary>
         /// <param name="target">The target.</param>
         /// <param name="trackResurrection">The track resurrection flag.</param>
-        public TypedWeakReference(T target, bool trackResurrection)
+        public WeakReference(T target, bool trackResurrection)
             : base(target, trackResurrection)
-		{
-		}
+        {
+        }
 
         /// <summary>
         /// Creates a new instance.
         /// </summary>
         /// <param name="info">The serialization info.</param>
         /// <param name="context">The streaming context.</param>
-        protected TypedWeakReference(SerializationInfo info, StreamingContext context)
+        protected WeakReference(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
+        }
+
+        public bool TryGetTarget(out T target)
+        {
+            var baseTarget = base.Target;
+            if (IsAlive && baseTarget != null)
+            {
+                target = (T)base.Target;
+                return true;
+            }
+
+            target = default(T);
+            return false;
         }
 
         /// <summary>
         /// Gets or sets the target.
         /// </summary>
-        public new T Target
-        {
-            get
-            {
-                var baseTarget = base.Target;
-                if (IsAlive && baseTarget != null)
-                {
-                    return (T)base.Target;
-                }
-                return default(T);
-            }
-            set { base.Target = value; }
-        }
-	}
+        //public new T Target
+        //{
+        //    get
+        //    {
+        //        var baseTarget = base.Target;
+        //        if (IsAlive && baseTarget != null)
+        //        {
+        //            return (T)base.Target;
+        //        }
+        //        return default(T);
+        //    }
+        //    set { base.Target = value; }
+        //}
+    }
 }
+#endif
