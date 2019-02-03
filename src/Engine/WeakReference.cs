@@ -49,14 +49,13 @@ namespace WPFLocalizeExtension.Engine
         }
 
         public bool TryGetTarget(out T target)
-        {
+	{
             var baseTarget = base.Target;
-            if (IsAlive && baseTarget != null)
+            if (baseTarget != null)
             {
-                target = (T)base.Target;
+                target = (T)baseTarget ;
                 return true;
             }
-
             target = default(T);
             return false;
         }
