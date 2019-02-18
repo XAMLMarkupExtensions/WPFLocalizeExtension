@@ -43,7 +43,7 @@
 	</Choose>
 
 	<ItemGroup>
-		<PackageReference Include="XAMLMarkupExtensions" Version="1.6.0-alpha0019" />
+		<PackageReference Include="XAMLMarkupExtensions" Version="1.6.0" />
 	</ItemGroup>
 
 	<ItemGroup>
