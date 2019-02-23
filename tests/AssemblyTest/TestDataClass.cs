@@ -3,9 +3,9 @@
     #region Uses
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Linq;
     using System.Text;
-    using System.ComponentModel;
     #endregion
 
     public class Countries : INotifyPropertyChanged
@@ -45,7 +45,7 @@
             get { return countryDE; }
             set { countryDE = value; OnNotifyPropertyChanged("CountryDE"); }
         }
-        
+
         private double area = 0;
         public double Area
         {

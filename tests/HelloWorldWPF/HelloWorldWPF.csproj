@@ -3,7 +3,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net452</TargetFramework>
-		<RootNamespace>LocalizationTest</RootNamespace>
+		<RootNamespace>HalloWeltWPF</RootNamespace>
 		<OutputType>WinExe</OutputType>
 		<StartupObject />
 	</PropertyGroup>
@@ -18,13 +18,8 @@
 		<Compile Update="**\*.xaml.cs" SubType="Code" DependentUpon="%(Filename)" />
 
 		<!-- Resources -->
-    <EmbeddedResource Update="TestResource.resx" Generator="ResXFileCodeGenerator" LastGenOutput="TestResource.Designer.cs" />
-    <Compile Update="Properties\Settings.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
-		<Compile Update="TestResource.Designer.cs" AutoGen="True" DependentUpon="TestResource.resx" DesignTime="True" />
+		<EmbeddedResource Update="Ressourcen.resx" Generator="ResXFileCodeGenerator" LastGenOutput="Ressourcen.Designer.cs" />
+		<Compile Update="Ressourcen.Designer.cs" AutoGen="True" DependentUpon="Ressourcen.resx" DesignTime="True" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -45,12 +40,5 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\WPFLocalizeExtension.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Update="Properties\Settings.settings">
-	    <Generator>SettingsSingleFileGenerator</Generator>
-	    <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-	  </None>
 	</ItemGroup>
 </Project>

@@ -131,7 +131,7 @@ namespace ProviderExample
         }
 
         private static Dictionary<int, string> executablePaths = new Dictionary<int, string>();
-        
+
         /// <summary>
         /// Get the executable path for both x86 and x64 processes.
         /// </summary>

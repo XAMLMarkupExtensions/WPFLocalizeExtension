@@ -4,7 +4,7 @@
         xmlns:lex="http://wpflocalizeextension.codeplex.com"
         lex:LocalizeDictionary.DesignCulture="en"
         lex:LocalizeDictionary.IncludeInvariantCulture="False"
-        lex:ResxLocalizationProvider.DefaultAssembly="HalloWeltWPF"
+        lex:ResxLocalizationProvider.DefaultAssembly="HelloWorldWPF"
         lex:ResxLocalizationProvider.DefaultDictionary="Ressourcen"
         SizeToContent="WidthAndHeight"
         ResizeMode="NoResize"
