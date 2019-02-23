@@ -4,6 +4,6 @@
              xmlns:local="clr-namespace:GapTextWpfTest"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+
     </Application.Resources>
 </Application>

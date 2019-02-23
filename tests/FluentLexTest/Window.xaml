@@ -7,20 +7,20 @@
             lex:ResxLocalizationProvider.DefaultAssembly="Fluent.Sample.Foundation"
             lex:ResxLocalizationProvider.DefaultDictionary="Resources"
                      Title="FluentLexTest"
-	                 Width="500" 
+	                 Width="500"
 	                 Height="250"
 	                 Background="#FFEBEDF0">
-	<Grid>
-		<Fluent:Ribbon>		
-			<!--Tabs-->
-			<Fluent:RibbonTabItem Header="Tab">
-				<Fluent:RibbonGroupBox Header="Group">
-					<Fluent:Button x:Name="buttonLanguage" Header="{lex:Loc}" Click="buttonLanguage_Click"/>
-				</Fluent:RibbonGroupBox>
-			</Fluent:RibbonTabItem>
-					
-			<!--Backstage-->
-			<Fluent:Ribbon.Menu>
+    <Grid>
+        <Fluent:Ribbon>
+            <!--Tabs-->
+            <Fluent:RibbonTabItem Header="Tab">
+                <Fluent:RibbonGroupBox Header="Group">
+                    <Fluent:Button x:Name="buttonLanguage" Header="{lex:Loc}" Click="buttonLanguage_Click"/>
+                </Fluent:RibbonGroupBox>
+            </Fluent:RibbonTabItem>
+
+            <!--Backstage-->
+            <Fluent:Ribbon.Menu>
                 <Fluent:Backstage x:Name="backstage" Header="{lex:Loc}">
                     <Fluent:BackstageTabControl>
                         <Fluent:BackstageTabItem x:Name="informationBackStageItem" Header="{lex:Loc}" HorizontalAlignment="Left">
@@ -34,6 +34,6 @@
                     </Fluent:BackstageTabControl>
                 </Fluent:Backstage>
             </Fluent:Ribbon.Menu>
-		</Fluent:Ribbon>
-	</Grid>
+        </Fluent:Ribbon>
+    </Grid>
 </Fluent:RibbonWindow>

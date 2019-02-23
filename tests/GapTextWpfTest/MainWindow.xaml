@@ -27,8 +27,8 @@
         </WrapPanel>
         <!-- second variant, using <Run>: wrapping between words -->
         <Label Background="Red" Content="static TextBlock with Runs" />
-        <TextBlock HorizontalAlignment="Stretch" 
-                   Grid.Row="1" 
+        <TextBlock HorizontalAlignment="Stretch"
+                   Grid.Row="1"
                    TextWrapping="Wrap"
                    TextDecorations="Underline"
                    LineStackingStrategy="BlockLineHeight">
@@ -42,7 +42,7 @@
             <TextBox Text="{Binding ClosingTime}" />
             <Run Text="." />
         </TextBlock>
-        
+
         <Label Background="DarkOrange" Content="Z" />
         <lex:GapTextControl FormatString="The shop in {0} is open on {1} from {2} to {3}. We could have more of these in {0}!">
             <lex:GapTextControl.Template>
@@ -57,7 +57,7 @@
                 <DatePicker SelectedDate="{Binding ClosingTime}" />
             </lex:GapTextControl.Gaps>
         </lex:GapTextControl>
-        
+
         <Label Background="DarkOrange" Content="Y" />
         <lex:GapTextControl FormatString="Dies ist ein Test ohne Platzhalter">
             <lex:GapTextControl.Template>
@@ -66,7 +66,7 @@
                 </ControlTemplate>
             </lex:GapTextControl.Template>
         </lex:GapTextControl>
-        
+
         <Label Background="DarkOrange" Content="X" />
         <lex:GapTextControl FormatString="Ein Test mit {0}"
                                  HorizontalAlignment="Stretch"
