@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace AssemblyTestResourceLib2 {
+namespace AssemblyTestResourceLib {
     using System;
     
     
@@ -19,10 +19,10 @@ namespace AssemblyTestResourceLib2 {
     // -Klasse über ein Tool wie ResGen oder Visual Studio automatisch generiert.
     // Um einen Member hinzuzufügen oder zu entfernen, bearbeiten Sie die .ResX-Datei und führen dann ResGen
     // mit der /str-Option erneut aus, oder Sie erstellen Ihr VS-Projekt neu.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class Strings {
+    internal class Strings {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,10 +36,10 @@ namespace AssemblyTestResourceLib2 {
         ///   Gibt die zwischengespeicherte ResourceManager-Instanz zurück, die von dieser Klasse verwendet wird.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
+        internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AssemblyTestResourceLib2.Strings", typeof(Strings).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AssemblyTestResourceLib.Strings", typeof(Strings).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -51,7 +51,7 @@ namespace AssemblyTestResourceLib2 {
         ///   Ressourcenzuordnungen, die diese stark typisierte Ressourcenklasse verwenden.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
+        internal static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace AssemblyTestResourceLib2 {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Aqua ähnelt.
         /// </summary>
-        public static string ButtonAssembly_Background {
+        internal static string ButtonAssembly_Background {
             get {
                 return ResourceManager.GetString("ButtonAssembly_Background", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace AssemblyTestResourceLib2 {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Change Assembly {0}! ähnelt.
         /// </summary>
-        public static string ButtonAssembly_Content {
+        internal static string ButtonAssembly_Content {
             get {
                 return ResourceManager.GetString("ButtonAssembly_Content", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace AssemblyTestResourceLib2 {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die LeftToRight ähnelt.
         /// </summary>
-        public static string ButtonAssembly_FlowDirection {
+        internal static string ButtonAssembly_FlowDirection {
             get {
                 return ResourceManager.GetString("ButtonAssembly_FlowDirection", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace AssemblyTestResourceLib2 {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die 10,5,20,15 ähnelt.
         /// </summary>
-        public static string ButtonAssembly_Margin {
+        internal static string ButtonAssembly_Margin {
             get {
                 return ResourceManager.GetString("ButtonAssembly_Margin", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace AssemblyTestResourceLib2 {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die 150 ähnelt.
         /// </summary>
-        public static string ButtonAssembly_Width {
+        internal static string ButtonAssembly_Width {
             get {
                 return ResourceManager.GetString("ButtonAssembly_Width", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace AssemblyTestResourceLib2 {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die GermanTest ähnelt.
         /// </summary>
-        public static string ButtonDE {
+        internal static string ButtonDE {
             get {
                 return ResourceManager.GetString("ButtonDE", resourceCulture);
             }
@@ -117,7 +117,7 @@ namespace AssemblyTestResourceLib2 {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die English ähnelt.
         /// </summary>
-        public static string ButtonEN {
+        internal static string ButtonEN {
             get {
                 return ResourceManager.GetString("ButtonEN", resourceCulture);
             }
@@ -126,7 +126,7 @@ namespace AssemblyTestResourceLib2 {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Input ähnelt.
         /// </summary>
-        public static string TestEnum_Input {
+        internal static string TestEnum_Input {
             get {
                 return ResourceManager.GetString("TestEnum_Input", resourceCulture);
             }
@@ -135,7 +135,7 @@ namespace AssemblyTestResourceLib2 {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Output ähnelt.
         /// </summary>
-        public static string TestEnum_Output {
+        internal static string TestEnum_Output {
             get {
                 return ResourceManager.GetString("TestEnum_Output", resourceCulture);
             }
@@ -144,7 +144,7 @@ namespace AssemblyTestResourceLib2 {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Processing ähnelt.
         /// </summary>
-        public static string TestEnum_Processing {
+        internal static string TestEnum_Processing {
             get {
                 return ResourceManager.GetString("TestEnum_Processing", resourceCulture);
             }
@@ -153,7 +153,7 @@ namespace AssemblyTestResourceLib2 {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap TestImage {
+        internal static System.Drawing.Bitmap TestImage {
             get {
                 object obj = ResourceManager.GetObject("TestImage", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -163,7 +163,7 @@ namespace AssemblyTestResourceLib2 {
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die Another test - just from another assembly. ähnelt.
         /// </summary>
-        public static string TestText {
+        internal static string TestText {
             get {
                 return ResourceManager.GetString("TestText", resourceCulture);
             }

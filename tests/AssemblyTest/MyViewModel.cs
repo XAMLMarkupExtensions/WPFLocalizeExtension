@@ -49,14 +49,4 @@ namespace AssemblyTest
             ResxLocalizationProvider.Instance.UpdateCultureList("AssemblyTest", "Strings");
         }
     }
-
-    public class Item : ViewModelBase
-    {
-        public string DisplayName
-        {
-            get { return "HOW TO GET TRANSLATED VALUE ?!"; }
-        }
-
-        public string TranslationKey { get; set; }
-    }
 }
