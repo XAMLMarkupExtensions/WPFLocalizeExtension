@@ -963,13 +963,11 @@ namespace WPFLocalizeExtension.Engine
         /// <param name="sender">The sender of the event.</param>
         /// <param name="key">The missing key.</param>
         /// <returns>True, if a reload should be performed.</returns>
-        internal bool OnNewMissingKeyEvent(object sender, string key)
+        internal MissingKeyEventArgs OnNewMissingKeyEvent(object sender, string key)
         {
             var args = new MissingKeyEventArgs(key);
-
             MissingKeyEvent?.Invoke(sender, args);
-
-            return args.Reload;
+            return args;
         }
         #endregion
 

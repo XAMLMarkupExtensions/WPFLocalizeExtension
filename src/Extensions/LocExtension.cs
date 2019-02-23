@@ -530,12 +530,19 @@ namespace WPFLocalizeExtension.Extensions
                 }
                 else
                 {
-                    if (LocalizeDictionary.Instance.OnNewMissingKeyEvent(this, _key))
+                    var missingKeyEventResult = LocalizeDictionary.Instance.OnNewMissingKeyEvent(this, _key);
+
+                    if (missingKeyEventResult.Reload)
                         UpdateNewValue();
 
                     if (LocalizeDictionary.Instance.OutputMissingKeys
                         && !string.IsNullOrEmpty(_key) && (targetType == typeof(String) || targetType == typeof(object)))
-                        result = "Key: " + _key;
+                    {
+                        if (missingKeyEventResult.MissingKeyResult != null)
+                            result = missingKeyEventResult.MissingKeyResult;
+                        else
+                            result = "Key: " + _key;
+                    }
                 }
             }
 
