@@ -17,12 +17,12 @@
         d:DataContext="{d:DesignInstance Type={x:Type Local:MyViewModel}, IsDesignTimeCreatable=True}"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" Height="479" Width="329">
-    
-        <!--Use this syntax to set the inheriting provider-->
-        <!--lex:LocalizeDictionary.DefaultProvider="{x:Static lex:InheritingResxLocalizationProvider.Instance}"
+
+    <!--Use this syntax to set the inheriting provider-->
+    <!--lex:LocalizeDictionary.DefaultProvider="{x:Static lex:InheritingResxLocalizationProvider.Instance}"
         lex:InheritingResxLocalizationProvider.DefaultAssembly="AssemblyTestResourceLib"
         lex:InheritingResxLocalizationProvider.DefaultDictionary="Strings"-->
-    
+
     <!-- **********************************************************************
     Uncomment the block below to test the CSV provider for the entire window
     or copy it to an arbitrary location to affect just the particular sub tree.
@@ -35,7 +35,7 @@
     </lex:LocalizeDictionary.Provider>-->
     <Window.Resources>
         <Example:CSVLocalizationProvider x:Key="CSVProvider" FileName="Example" HasHeader="True" />
-        
+
         <DataTemplate x:Key="TestTemplate">
             <Border>
                 <Grid Margin="5">

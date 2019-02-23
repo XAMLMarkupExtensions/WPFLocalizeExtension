@@ -1,8 +1,8 @@
 ﻿namespace AssemblyTest
 {
-    using System.Windows;
     using System;
-    
+    using System.Windows;
+
     public class StringFormatProxy : FrameworkElement
     {
         /// <summary>

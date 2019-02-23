@@ -3,26 +3,31 @@
 	<PropertyGroup>
 		<TargetFramework>net452</TargetFramework>
 		<RootNamespace>AssemblyTest</RootNamespace>
-		<OutputType>WinExe</OutputType>
-		<StartupObject />
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ApplicationDefinition Include="App.xaml" SubType="Designer" Generator="MSBuild:Compile" />
-
 		<!-- XAML elements -->
-		<Page Include="**\*.xaml" Exclude="App.xaml" SubType="Designer">
+		<Page Include="**\*.xaml" SubType="Designer">
 			<Generator>MSBuild:UpdateDesignTimeXaml</Generator>
 		</Page>
 		<Compile Update="**\*.xaml.cs" SubType="Code" DependentUpon="%(Filename)" />
 
+		<!-- <None Remove="Resources\QlikAppLoading.png" />
+    <EmbeddedResource Include="default.jsconfig" /> -->
+
 		<!-- Resources -->
+		<EmbeddedResource Update="Properties\Resources.resx" Generator="ResXFileCodeGenerator" LastGenOutput="Resources.Designer.cs" />
+		<Compile Update="Properties\Resources.Designer.cs" AutoGen="True" DependentUpon="Resources.resx" DesignTime="True" />
 		<None Update="Example.csv">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<None Update="Example.de.csv">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+
+		<!-- Settings -->
+		<None Update="Properties\Settings.settings" Generator="SettingsSingleFileGenerator" LastGenOutput="Settings.Designer.cs" />
+		<Compile Update="Properties\Settings.Designer.cs" AutoGen="True" DependentUpon="Settings.settings" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -43,8 +48,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\WPFLocalizeExtension.csproj" />
-		<ProjectReference Include="..\AssemblyTestResourceLib\AssemblyTestResourceLib.csproj" />
-		<ProjectReference Include="..\ProviderExample\ProviderExample.csproj" />
 	</ItemGroup>
 </Project>
 
