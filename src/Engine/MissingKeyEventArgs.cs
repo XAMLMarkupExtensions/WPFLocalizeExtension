@@ -28,6 +28,11 @@ namespace WPFLocalizeExtension.Engine
         public bool Reload { get; set; }
 
         /// <summary>
+        /// A custom returnmessage for the missing key
+        /// </summary>
+        public string MissingKeyResult { get; set; }
+
+        /// <summary>
         /// Creates a new instance of <see cref="MissingKeyEventArgs"/>.
         /// </summary>
         /// <param name="key">The missing key.</param>
@@ -35,6 +40,7 @@ namespace WPFLocalizeExtension.Engine
         {
             Key = key;
             Reload = false;
+            MissingKeyResult = null;
         }
     }
 }
