@@ -148,7 +148,6 @@ namespace WPFLocalizeExtension.Engine
                     instances.Remove(entry.Key);
                 }
             }
-
         }
     }
 
@@ -157,6 +156,6 @@ namespace WPFLocalizeExtension.Engine
     /// </summary>
     public interface ILocalizeInstance
     {
-
+    
     }
 }
