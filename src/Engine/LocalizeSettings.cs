@@ -478,8 +478,6 @@ namespace WPFLocalizeExtension.Engine
             {
                 return InstanceLocator.GetTypeInstances<LocalizeDictionary>().Select(x => x.Value as LocalizeDictionary).ToList();
             }
-
-
             #endregion
         }
         #endregion
