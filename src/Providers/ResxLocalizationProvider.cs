@@ -21,7 +21,7 @@ namespace WPFLocalizeExtension.Providers
     /// <summary>
     /// A singleton RESX provider that uses attached properties and the Parent property to iterate through the visual tree.
     /// </summary>
-    public class ResxLocalizationProvider : ResxLocalizationProviderBase
+    public class ResxLocalizationProvider : ResxLocalizationProviderBase, ILocalizeInstance
     {
         #region Dependency Properties
         /// <summary>
@@ -176,41 +176,13 @@ namespace WPFLocalizeExtension.Providers
 
         #region Singleton Variables, Properties & Constructor
         /// <summary>
-        /// The instance of the singleton.
-        /// </summary>
-        private static ResxLocalizationProvider _instance;
-
-        /// <summary>
-        /// Lock object for the creation of the singleton instance.
-        /// </summary>
-        private static readonly object InstanceLock = new object();
-
-        /// <summary>
         /// Gets the <see cref="ResxLocalizationProvider"/> singleton.
         /// </summary>
         public static ResxLocalizationProvider Instance
         {
             get
             {
-                if (_instance == null)
-                {
-                    lock (InstanceLock)
-                    {
-                        if (_instance == null)
-                            _instance = new ResxLocalizationProvider();
-                    }
-                }
-
-                // return the existing/new instance
-                return _instance;
-            }
-
-            set
-            {
-                lock (InstanceLock)
-                {
-                    _instance = value;
-                }
+				return InstanceLocator.Resolve<ResxLocalizationProvider>();
             }
         }
 
@@ -219,16 +191,23 @@ namespace WPFLocalizeExtension.Providers
         /// </summary>
         public static void Reset()
         {
-            Instance = null;
+            var instance = Instance;
+            InstanceLocator.Dissolve(instance);
+            instance = null;
         }
 
         /// <summary>
-        /// The singleton constructor.
+        /// The instance constructor.
         /// </summary>
-        protected ResxLocalizationProvider()
+        public ResxLocalizationProvider()
         {
             ResourceManagerList = new Dictionary<string, ResourceManager>();
             AvailableCultures = new ObservableCollection<CultureInfo> { CultureInfo.InvariantCulture };
+        }
+
+        ~ResxLocalizationProvider()
+        {
+            InstanceLocator.Dissolve(this);
         }
         #endregion
 
