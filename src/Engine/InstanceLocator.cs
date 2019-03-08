@@ -154,8 +154,5 @@ namespace WPFLocalizeExtension.Engine
     /// <summary>
     /// A empty interface - just to indicate a class is useable for the thread / instance logic
     /// </summary>
-    public interface ILocalizeInstance
-    {
-    
-    }
+    public interface ILocalizeInstance { }
 }
