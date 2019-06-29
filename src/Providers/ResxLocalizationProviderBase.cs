@@ -484,6 +484,12 @@ namespace WPFLocalizeExtension.Providers
                 }
                 else
                 {
+                    //To be able to use Microsoft Resource like Key=PresentationCore:ExceptionStringTable:DeleteText. It is not detected at line 437
+                    if (resManagerNameToSearch.StartsWith("."))
+                    {
+                        resManagerNameToSearch = resManagerNameToSearch.Remove(0, 1);
+                        resManagerNameToSearch = resManagerNameToSearch.Replace(ResourceFileExtension, string.Empty);
+                    }
                     resManager = new ResourceManager(resManagerNameToSearch, assembly);
                 }
 
