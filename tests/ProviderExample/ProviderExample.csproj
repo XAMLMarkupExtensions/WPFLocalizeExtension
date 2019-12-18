@@ -1,8 +1,13 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
-	<PropertyGroup>
-		<TargetFramework>net452</TargetFramework>
-		<RootNamespace>ProviderExample</RootNamespace>
+  <PropertyGroup>
+    <TargetFrameworks>net452;netcoreapp3.1</TargetFrameworks>
+    <UseWPF>True</UseWPF>
+    <AutoGenerateBindingRedirects Condition="$(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('net3'))">true</AutoGenerateBindingRedirects>
+    <!--Workaround for Error	MSB4216	Could not run the "GenerateResource" -->
+    <GenerateResourceMSBuildArchitecture>CurrentArchitecture</GenerateResourceMSBuildArchitecture>
+
+    <RootNamespace>ProviderExample</RootNamespace>
 		<Version>1.0.0</Version>
 	</PropertyGroup>
 
@@ -15,26 +20,34 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="XAMLMarkupExtensions" Version="1.6.0" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\..\src\WPFLocalizeExtension.csproj" />
 	</ItemGroup>
 
+  <!--References for .Net Framwork 4 and 35-->
+  <ItemGroup Condition="$(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('net3'))">
+
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+
+  <!--References for .Net Core 3.1-->
+  <ItemGroup Condition="$(TargetFramework.StartsWith('netcore'))">
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="3.1.0" />
+  </ItemGroup>
+
+  <!--PackageReference for all framworks-->
 	<ItemGroup>
-		<Reference Include="System" />
-		<Reference Include="System.Data" />
-		<Reference Include="System.Drawing" />
-		<Reference Include="System.Xml" />
-		<Reference Include="Microsoft.CSharp" />
-		<Reference Include="System.Core" />
-		<Reference Include="System.Xml.Linq" />
-		<Reference Include="System.Data.DataSetExtensions" />
-		<Reference Include="System.Management" />
-		<Reference Include="System.Xaml" />
-		<Reference Include="WindowsBase" />
-		<Reference Include="PresentationCore" />
-		<Reference Include="PresentationFramework" />
-	</ItemGroup>
+    <PackageReference Include="XAMLMarkupExtensions" Version="1.6.0" />
+  </ItemGroup>
 </Project>
