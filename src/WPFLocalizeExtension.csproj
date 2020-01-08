@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
 	<PropertyGroup>
-		<TargetFrameworks>net452;net35;netcoreapp3.1</TargetFrameworks>
+		<TargetFrameworks>net452;net40;net35;netcoreapp3.0;netcoreapp3.1</TargetFrameworks>
     <UseWPF>True</UseWPF>
-    <AutoGenerateBindingRedirects Condition="$(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('net3'))">true</AutoGenerateBindingRedirects>
+    <AutoGenerateBindingRedirects Condition="!$(TargetFramework.StartsWith('netcore'))">true</AutoGenerateBindingRedirects>
     <AssemblyName>WPFLocalizeExtension</AssemblyName>
 		<Version>$(GitVersion_NuGetVersion)</Version>
 		<AssemblyTitle>WPFLocalizeExtension</AssemblyTitle>
@@ -47,7 +47,7 @@
 	</Choose>
   
   <!--References for .Net Framwork 4 and 35-->
-  <ItemGroup Condition="$(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('net3'))">
+  <ItemGroup Condition="!$(TargetFramework.StartsWith('netcore'))">
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -56,7 +56,7 @@
     <Reference Condition="'$(TargetFramework)' != 'net35'" Include="System.Xaml" />
   </ItemGroup>
 
-  <!--References for .Net Core 3.1-->
+  <!--References for .Net Core 3.x-->
   <ItemGroup Condition="$(TargetFramework.StartsWith('netcore'))">
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="3.1.0" />
   </ItemGroup>
@@ -68,12 +68,12 @@
 		<PackageReference Include="GitVersionTask" Version="5.1.3" PrivateAssets="All" />
 	</ItemGroup>
 
-	<Target Name="PublishToNugetWithAPIKey" AfterTargets="GenerateNuspec" Condition="Exists('$(SolutionDir)\..\..\nugetapikey.txt')">
+	<!--<Target Name="PublishToNugetWithAPIKey" AfterTargets="GenerateNuspec" Condition="Exists('$(SolutionDir)\..\..\nugetapikey.txt')">
 		<ReadLinesFromFile File="$(SolutionDir)\..\..\nugetapikey.txt">
 			<Output TaskParameter="Lines" PropertyName="NugetAPIKey" />
 		</ReadLinesFromFile>
 		<Exec WorkingDirectory="$(BaseDir)" Command="dotnet nuget push $(PackageOutputAbsolutePath)$(PackageId).$(PackageVersion).nupkg -k $(NugetAPIKey) -s https://api.nuget.org/v3/index.json" />
-	</Target>
+	</Target>-->
 
 	<Target Name="FixOnGitVersionTaskError" BeforeTargets="GetAssemblyVersion">
 		<CreateProperty Value="0.0.1-notgitversion" Condition="'$(GitVersion_NuGetVersion)' == ''">

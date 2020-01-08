@@ -14,7 +14,7 @@
 	</ItemGroup>
   
   <!--References for .Net Framwork 4 and 35-->
-  <ItemGroup Condition="$(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('net3'))">
+  <ItemGroup Condition="!$(TargetFramework.StartsWith('netcore'))">
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />

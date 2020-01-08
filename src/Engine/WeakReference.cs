@@ -6,13 +6,13 @@
 // <author>Bernhard Millauer</author>
 #endregion
 
-#if NET35
+#if NET35 || NET40
 namespace WPFLocalizeExtension.Engine
 {
-    #region Usings
+#region Usings
     using System;
     using System.Runtime.Serialization;
-    #endregion
+#endregion
 
     /// <summary>
     /// This class implements an wrapper for .NET35, because this is starting from NET45 of <see cref="WeakReference"/>.
@@ -48,21 +48,26 @@ namespace WPFLocalizeExtension.Engine
         {
         }
 
+        /// <summary>
+        /// Tries to retrieve the target object that is referenced by the current WeakReference&lt;T&gt; object.
+        /// </summary>
+        /// <param name="target">The target.</param>
+        /// <returns>true if the target was retrieved; otherwise, false.</returns>
         public bool TryGetTarget(out T target)
-	{
+        {
             var baseTarget = base.Target;
             if (baseTarget != null)
             {
-                target = (T)baseTarget ;
+                target = (T)baseTarget;
                 return true;
             }
-            target = default(T);
+            target = default;
             return false;
         }
 
-        /// <summary>
-        /// Gets or sets the target.
-        /// </summary>
+        // / <summary>
+        // / Gets or sets the target.
+        // / </summary>
         //public new T Target
         //{
         //    get

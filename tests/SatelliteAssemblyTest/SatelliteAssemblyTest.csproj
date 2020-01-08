@@ -4,7 +4,7 @@
 	<PropertyGroup>
     <TargetFrameworks>net452;netcoreapp3.1</TargetFrameworks>
     <UseWPF>True</UseWPF>
-    <AutoGenerateBindingRedirects Condition="$(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('net3'))">true</AutoGenerateBindingRedirects>
+    <AutoGenerateBindingRedirects Condition="!$(TargetFramework.StartsWith('netcore'))">true</AutoGenerateBindingRedirects>
     <RootNamespace>SatelliteAssemblyTest</RootNamespace>
 		<OutputType>WinExe</OutputType>
 		<StartupObject />
@@ -26,7 +26,7 @@
 
 
   <!--References for .Net Framwork 4 and 35-->
-  <ItemGroup Condition="$(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('net3'))">
+  <ItemGroup Condition="!$(TargetFramework.StartsWith('netcore'))">
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
