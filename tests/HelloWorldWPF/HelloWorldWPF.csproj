@@ -1,40 +1,52 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
 	<PropertyGroup>
-		<TargetFramework>net452</TargetFramework>
+    <TargetFrameworks>net452;netcoreapp3.1</TargetFrameworks>
 		<RootNamespace>HalloWeltWPF</RootNamespace>
 		<OutputType>WinExe</OutputType>
 		<StartupObject />
-	</PropertyGroup>
+    <UseWPF>True</UseWPF>
+    <AutoGenerateBindingRedirects Condition="$(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('net3'))">true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
 
 	<ItemGroup>
-		<ApplicationDefinition Include="App.xaml" SubType="Designer" Generator="MSBuild:Compile" />
+		<!--<ApplicationDefinition Include="App.xaml" SubType="Designer" Generator="MSBuild:Compile" />-->
 
 		<!-- XAML elements -->
-		<Page Include="**\*.xaml" Exclude="App.xaml" SubType="Designer">
+		<!--<Page Include="**\*.xaml" Exclude="App.xaml" SubType="Designer">
 			<Generator>MSBuild:UpdateDesignTimeXaml</Generator>
 		</Page>
-		<Compile Update="**\*.xaml.cs" SubType="Code" DependentUpon="%(Filename)" />
+		<Compile Update="**\*.xaml.cs" SubType="Code" DependentUpon="%(Filename)" />-->
 
 		<!-- Resources -->
 		<EmbeddedResource Update="Ressourcen.resx" Generator="ResXFileCodeGenerator" LastGenOutput="Ressourcen.Designer.cs" />
 		<Compile Update="Ressourcen.Designer.cs" AutoGen="True" DependentUpon="Ressourcen.resx" DesignTime="True" />
 	</ItemGroup>
+  
+  <!--References for .Net Framwork 4 and 35-->
+  <ItemGroup Condition="$(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('net3'))">
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
 
+  <!--References for .Net Core 3.1-->
+  <ItemGroup Condition="$(TargetFramework.StartsWith('netcore'))">
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="3.1.0" />
+  </ItemGroup>
+
+  <!--PackageReference for all framworks-->
 	<ItemGroup>
-		<Reference Include="System" />
-		<Reference Include="System.Data" />
-		<Reference Include="System.Drawing" />
-		<Reference Include="System.Xml" />
-		<Reference Include="Microsoft.CSharp" />
-		<Reference Include="System.Core" />
-		<Reference Include="System.Xml.Linq" />
-		<Reference Include="System.Data.DataSetExtensions" />
-		<Reference Include="System.Xaml" />
-		<Reference Include="WindowsBase" />
-		<Reference Include="PresentationCore" />
-		<Reference Include="PresentationFramework" />
 		<PackageReference Include="XAMLMarkupExtensions" Version="1.6.0" />
 	</ItemGroup>
 

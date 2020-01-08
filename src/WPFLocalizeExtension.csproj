@@ -1,8 +1,10 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
 	<PropertyGroup>
-		<TargetFrameworks>net35;net452;</TargetFrameworks>
-		<AssemblyName>WPFLocalizeExtension</AssemblyName>
+		<TargetFrameworks>net452;net35;netcoreapp3.1</TargetFrameworks>
+    <UseWPF>True</UseWPF>
+    <AutoGenerateBindingRedirects Condition="$(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('net3'))">true</AutoGenerateBindingRedirects>
+    <AssemblyName>WPFLocalizeExtension</AssemblyName>
 		<Version>$(GitVersion_NuGetVersion)</Version>
 		<AssemblyTitle>WPFLocalizeExtension</AssemblyTitle>
 		<Authors>Bernhard Millauer,Uwe Mayer, Konrad Mattheis</Authors>
@@ -25,6 +27,8 @@
 		<DelaySign>false</DelaySign>
 		<PublicSign>true</PublicSign>
 		<AssemblyOriginatorKeyFile>public.snk</AssemblyOriginatorKeyFile>
+    <!--Workaround for Error	MSB4216	Could not run the "GenerateResource" -->
+    <GenerateResourceMSBuildArchitecture>CurrentArchitecture</GenerateResourceMSBuildArchitecture>
 	</PropertyGroup>
 
 	<Choose>
@@ -41,20 +45,25 @@
 			</PropertyGroup>
 		</Otherwise>
 	</Choose>
+  
+  <!--References for .Net Framwork 4 and 35-->
+  <ItemGroup Condition="$(TargetFramework.StartsWith('net4')) Or $(TargetFramework.StartsWith('net3'))">
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Management" />
+    <Reference Include="WindowsBase" />
+    <Reference Condition="'$(TargetFramework)' != 'net35'" Include="System.Xaml" />
+  </ItemGroup>
 
+  <!--References for .Net Core 3.1-->
+  <ItemGroup Condition="$(TargetFramework.StartsWith('netcore'))">
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="3.1.0" />
+  </ItemGroup>
+
+  <!--PackageReference for all framworks-->
 	<ItemGroup>
-		<PackageReference Include="XAMLMarkupExtensions" Version="1.6.0" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Reference Include="PresentationCore" />
-		<Reference Include="PresentationFramework" />
-		<Reference Include="System" />
-		<Reference Include="System.Management" />
-		<Reference Include="WindowsBase" />
-
-		<Reference Condition="'$(TargetFramework)' != 'net35'" Include="System.Xaml" />
-
+    <PackageReference Include="XAMLMarkupExtensions" Version="1.7.0-alpha0017" />
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
 		<PackageReference Include="GitVersionTask" Version="5.1.3" PrivateAssets="All" />
 	</ItemGroup>
