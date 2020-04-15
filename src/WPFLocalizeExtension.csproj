@@ -29,6 +29,8 @@
 		<AssemblyOriginatorKeyFile>public.snk</AssemblyOriginatorKeyFile>
     <!--Workaround for Error	MSB4216	Could not run the "GenerateResource" -->
     <GenerateResourceMSBuildArchitecture>CurrentArchitecture</GenerateResourceMSBuildArchitecture>
+
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
 	</PropertyGroup>
 
 	<Choose>
@@ -63,7 +65,7 @@
 
   <!--PackageReference for all framworks-->
 	<ItemGroup>
-    <PackageReference Include="XAMLMarkupExtensions" Version="1.7.0-alpha0017" />
+    <PackageReference Include="XAMLMarkupExtensions" Version="1.8.0" />
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
 		<PackageReference Include="GitVersionTask" Version="5.2.4" PrivateAssets="All" />
 	</ItemGroup>
