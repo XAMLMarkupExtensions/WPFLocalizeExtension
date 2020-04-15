@@ -3,9 +3,9 @@
     #region Uses
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Linq;
     using System.Text;
-    using System.ComponentModel;
     #endregion
 
     public class Countries : INotifyPropertyChanged
@@ -24,10 +24,7 @@
         /// </param>
         internal void OnNotifyPropertyChanged(string property)
         {
-            if (this.PropertyChanged != null)
-            {
-                this.PropertyChanged(this, new PropertyChangedEventArgs(property));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
         }
         #endregion
 
@@ -36,21 +33,34 @@
         public string Country
         {
             get { return country; }
-            set { country = value; OnNotifyPropertyChanged("Country"); OnNotifyPropertyChanged("FlagSource"); }
+            set
+            {
+                country = value;
+                OnNotifyPropertyChanged("Country");
+                OnNotifyPropertyChanged("FlagSource");
+            }
         }
 
         private string countryDE = "";
         public string CountryDE
         {
             get { return countryDE; }
-            set { countryDE = value; OnNotifyPropertyChanged("CountryDE"); }
+            set
+            {
+                countryDE = value;
+                OnNotifyPropertyChanged("CountryDE");
+            }
         }
-        
+
         private double area = 0;
         public double Area
         {
             get { return area; }
-            set { area = value; OnNotifyPropertyChanged("Area"); }
+            set
+            {
+                area = value;
+                OnNotifyPropertyChanged("Area");
+            }
         }
 
         public string FlagSource

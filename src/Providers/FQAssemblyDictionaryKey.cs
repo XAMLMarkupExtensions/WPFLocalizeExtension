@@ -7,10 +7,12 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-using System.Linq;
-
 namespace WPFLocalizeExtension.Providers
 {
+    #region Usings
+    using System.Linq;
+    #endregion
+
     /// <summary>
     /// A class that bundles the key, assembly and dictionary information.
     /// </summary>

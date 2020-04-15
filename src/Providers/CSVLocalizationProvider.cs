@@ -6,17 +6,18 @@
 // <author>Sébastien Sevrin</author>
 #endregion
 
-using System.Collections.ObjectModel;
-using System.Globalization;
-using System.IO;
-using System.Text;
-using System.Windows;
-
-using WPFLocalizeExtension.Engine;
-using XAMLMarkupExtensions.Base;
-
 namespace WPFLocalizeExtension.Providers
 {
+    #region Usings
+    using System.Collections.ObjectModel;
+    using System.Globalization;
+    using System.IO;
+    using System.Text;
+    using System.Windows;
+    using WPFLocalizeExtension.Engine;
+    using XAMLMarkupExtensions.Base;
+    #endregion
+
     /// <summary>
     /// A singleton CSV provider that uses attached properties and the Parent property to iterate through the visual tree.
     /// </summary>
@@ -116,7 +117,7 @@ namespace WPFLocalizeExtension.Providers
         /// </summary>
         private CSVLocalizationProvider()
         {
-            AvailableCultures = new ObservableCollection<CultureInfo> {CultureInfo.InvariantCulture};
+            AvailableCultures = new ObservableCollection<CultureInfo> { CultureInfo.InvariantCulture };
         }
 
         private bool _hasHeader;

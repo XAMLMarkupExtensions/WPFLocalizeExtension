@@ -65,7 +65,11 @@ namespace ProviderExample
         public bool HasHeader
         {
             get { return hasHeader; }
-            set { hasHeader = value; OnProviderChanged(); }
+            set
+            {
+                hasHeader = value;
+                OnProviderChanged();
+            }
         }
 
         /// <summary>
@@ -73,8 +77,7 @@ namespace ProviderExample
         /// </summary>
         private void OnProviderChanged()
         {
-            if (ProviderChanged != null)
-                ProviderChanged(this, new ProviderChangedEventArgs(null));
+            ProviderChanged?.Invoke(this, new ProviderChangedEventArgs(null));
         }
 
         /// <summary>
@@ -85,8 +88,7 @@ namespace ProviderExample
         /// <param name="message">The error message.</param>
         private void OnProviderError(DependencyObject target, string key, string message)
         {
-            if (ProviderError != null)
-                ProviderError(this, new ProviderErrorEventArgs(target, key, message));
+            ProviderError?.Invoke(this, new ProviderErrorEventArgs(target, key, message));
         }
 
         /// <summary>
@@ -131,7 +133,7 @@ namespace ProviderExample
         }
 
         private static Dictionary<int, string> executablePaths = new Dictionary<int, string>();
-        
+
         /// <summary>
         /// Get the executable path for both x86 and x64 processes.
         /// </summary>
@@ -209,8 +211,7 @@ namespace ProviderExample
 
         public FullyQualifiedResourceKeyBase GetFullyQualifiedResourceKey(string key, DependencyObject target)
         {
-            String assembly, dictionary;
-            ParseKey(key, out assembly, out dictionary, out key);
+            ParseKey(key, out string assembly, out string dictionary, out key);
 
             if (target == null)
                 return new FQAssemblyDictionaryKey(key, assembly, dictionary);
@@ -258,8 +259,7 @@ namespace ProviderExample
             {
             }
 
-            if (ProviderChanged != null)
-                ProviderChanged(this, new ProviderChangedEventArgs(target));
+            ProviderChanged?.Invoke(this, new ProviderChangedEventArgs(target));
         }
 
         /// <summary>

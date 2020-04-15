@@ -6,48 +6,51 @@
 // <author>Bernhard Millauer</author>
 #endregion
 
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows;
-
-using XAMLMarkupExtensions.Base;
-
 namespace WPFLocalizeExtension.Engine
 {
+    #region Usings
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Windows;
+    using XAMLMarkupExtensions.Base;
+    #endregion
+
     /// <summary>
     /// A memory safe dictionary storage for <see cref="ParentChangedNotifier"/> instances.
     /// </summary>
-	public class ParentNotifiers
-	{
-		readonly Dictionary<TypedWeakReference<DependencyObject>, TypedWeakReference<ParentChangedNotifier>> _inner = 
-			new Dictionary<TypedWeakReference<DependencyObject>, TypedWeakReference<ParentChangedNotifier>>();
+    public class ParentNotifiers
+    {
+        readonly Dictionary<WeakReference<DependencyObject>, WeakReference<ParentChangedNotifier>> _inner =
+            new Dictionary<WeakReference<DependencyObject>, WeakReference<ParentChangedNotifier>>();
 
-		/// <summary>
-		/// Check, if it contains the key.
-		/// </summary>
-		/// <param name="target">The target object.</param>
-		/// <returns>True, if the key exists.</returns>
-		public bool ContainsKey(DependencyObject target)
-		{
-			return _inner.Keys.Any(x => x.IsAlive && ReferenceEquals(x.Target, target));
-		}
+        /// <summary>
+        /// Check, if it contains the key.
+        /// </summary>
+        /// <param name="target">The target object.</param>
+        /// <returns>True, if the key exists.</returns>
+        public bool ContainsKey(DependencyObject target)
+        {
+            return _inner.Keys.Any(x => x.TryGetTarget(out var item) && ReferenceEquals(item, target));
+        }
 
         /// <summary>
         /// Removes the entry.
         /// </summary>
         /// <param name="target">The target object.</param>
 		public void Remove(DependencyObject target)
-		{
-			TypedWeakReference<DependencyObject> singleOrDefault = 
-				_inner.Keys.SingleOrDefault(x => ReferenceEquals(x.Target, target));
+        {
+            WeakReference<DependencyObject> key = _inner.Keys.SingleOrDefault(x => x.TryGetTarget(out var item) &&  ReferenceEquals(item, target));
+            if (key == null)
+                return;
 
-			if (singleOrDefault != null)
-			{
-                if (_inner[singleOrDefault].IsAlive)
-                    _inner[singleOrDefault].Target.Dispose();
-				_inner.Remove(singleOrDefault);
-			}
-		}
+            if (_inner[key].TryGetTarget(out var notifier))
+            {
+                notifier?.Dispose();
+            }
+
+            _inner.Remove(key);
+        }
 
         /// <summary>
         /// Adds the key-value-pair.
@@ -55,8 +58,8 @@ namespace WPFLocalizeExtension.Engine
         /// <param name="target">The target key object.</param>
         /// <param name="parentChangedNotifier">The notifier.</param>
 		public void Add(DependencyObject target, ParentChangedNotifier parentChangedNotifier)
-		{
-			_inner.Add(new TypedWeakReference<DependencyObject>(target), new TypedWeakReference<ParentChangedNotifier>(parentChangedNotifier));
-		}
-	}
+        {
+            _inner.Add(new WeakReference<DependencyObject>(target), new WeakReference<ParentChangedNotifier>(parentChangedNotifier));
+        }
+    }
 }

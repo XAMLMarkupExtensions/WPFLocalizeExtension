@@ -9,7 +9,7 @@
     using WPFLocalizeExtension.Extensions;
     using WPFLocalizeExtension.Providers;
     using XAMLMarkupExtensions.Base;
-    
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>

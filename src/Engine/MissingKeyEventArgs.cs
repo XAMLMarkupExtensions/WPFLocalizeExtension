@@ -6,10 +6,12 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-using System;
-
 namespace WPFLocalizeExtension.Engine
 {
+    #region Usings
+    using System;
+    #endregion
+
     /// <summary>
     /// Event arguments for a missing key event.
     /// </summary>
@@ -26,6 +28,11 @@ namespace WPFLocalizeExtension.Engine
         public bool Reload { get; set; }
 
         /// <summary>
+        /// A custom returnmessage for the missing key
+        /// </summary>
+        public string MissingKeyResult { get; set; }
+
+        /// <summary>
         /// Creates a new instance of <see cref="MissingKeyEventArgs"/>.
         /// </summary>
         /// <param name="key">The missing key.</param>
@@ -33,6 +40,7 @@ namespace WPFLocalizeExtension.Engine
         {
             Key = key;
             Reload = false;
+            MissingKeyResult = null;
         }
     }
 }

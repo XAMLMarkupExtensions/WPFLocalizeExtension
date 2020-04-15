@@ -3,10 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:lex="clr-namespace:WPFLocalizeExtension.Extensions;assembly=WPFLocalizeExtension"
         xmlns:Engine="clr-namespace:WPFLocalizeExtension.Engine;assembly=WPFLocalizeExtension"
-        Engine:LocalizeDictionary.DesignCulture="en-GB"		
+        Engine:LocalizeDictionary.DesignCulture="en-GB"
         Title="Popup" Height="350" Width="525">
     <Grid>
         <Label Content="{lex:LocText LocalizationTest:TestResource:test_label}" HorizontalAlignment="Left" Margin="19,10,0,0" VerticalAlignment="Top"/>
-
     </Grid>
 </Window>

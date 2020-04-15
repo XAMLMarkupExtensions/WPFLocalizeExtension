@@ -6,17 +6,18 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Globalization;
-using System.Resources;
-using System.Windows;
-
-using WPFLocalizeExtension.Engine;
-using XAMLMarkupExtensions.Base;
-
 namespace WPFLocalizeExtension.Providers
 {
+    #region Usings
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Globalization;
+    using System.Resources;
+    using System.Windows;
+    using WPFLocalizeExtension.Engine;
+    using XAMLMarkupExtensions.Base;
+    #endregion
+
     /// <summary>
     /// A singleton RESX provider that uses attached properties and the Parent property to iterate through the visual tree.
     /// </summary>
@@ -227,7 +228,7 @@ namespace WPFLocalizeExtension.Providers
         protected ResxLocalizationProvider()
         {
             ResourceManagerList = new Dictionary<string, ResourceManager>();
-            AvailableCultures = new ObservableCollection<CultureInfo> {CultureInfo.InvariantCulture};
+            AvailableCultures = new ObservableCollection<CultureInfo> { CultureInfo.InvariantCulture };
         }
         #endregion
 

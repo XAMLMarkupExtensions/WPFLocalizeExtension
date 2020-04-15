@@ -1,0 +1,39 @@
+name: .NET
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Fetch all history for all tags and branches
+      run: |
+        git fetch --prune
+
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v1.0.0
+
+    - name: Cache Nuget
+      uses: actions/cache@v1
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+
+    - name: MSBuild
+      working-directory: src
+      run: |
+        dotnet restore --disable-parallel --locked-mode
+        # can't use pure dotnet build because NET35 compile doesn't work
+        msbuild WPFLocalizeExtension.csproj -verbosity:minimal /p:Configuration=Release
+#    - name: Build with dotnet
+#      run: |
+#        cd src
+#        dotnet build --disable-parallel --configuration Release

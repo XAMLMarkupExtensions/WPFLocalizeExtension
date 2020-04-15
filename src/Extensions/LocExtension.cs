@@ -7,27 +7,28 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Globalization;
-using System.Linq;
-using System.Reflection;
-using System.Windows;
-using System.Windows.Data;
-using System.Windows.Markup;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Media.Media3D;
-
-using WPFLocalizeExtension.Engine;
-using WPFLocalizeExtension.Providers;
-using WPFLocalizeExtension.TypeConverters;
-using XAMLMarkupExtensions.Base;
-
 namespace WPFLocalizeExtension.Extensions
 {
+    #region Usings
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Globalization;
+    using System.Linq;
+    using System.Reflection;
+    using System.Windows;
+    using System.Windows.Data;
+    using System.Windows.Markup;
+    using System.Windows.Media;
+    using System.Windows.Media.Imaging;
+    using System.Windows.Media.Media3D;
+    using WPFLocalizeExtension.Engine;
+    using WPFLocalizeExtension.Providers;
+    using WPFLocalizeExtension.TypeConverters;
+    using XAMLMarkupExtensions.Base;
+    #endregion
+
     /// <summary>
     /// A generic localization extension.
     /// </summary>
@@ -133,7 +134,7 @@ namespace WPFLocalizeExtension.Extensions
             foreach (var ext in LocalizeDictionary.DictionaryEvent.EnumerateListeners<LocExtension>())
             {
                 var ep = ext._lastEndpoint;
-                
+
                 if (ep.TargetObjectReference.Target == null)
                     continue;
 
@@ -173,7 +174,7 @@ namespace WPFLocalizeExtension.Extensions
                 epProp = "Margin";
 
             return epProp;
-        } 
+        }
         #endregion
 
         #region Properties
@@ -450,7 +451,7 @@ namespace WPFLocalizeExtension.Extensions
             // In case of a list target, get the correct list element type.
             if ((info.TargetPropertyIndex != -1) && typeof(IList).IsAssignableFrom(info.TargetPropertyType))
                 targetType = info.TargetPropertyType.GetGenericArguments()[0];
-            
+
             // Try to get the localized input from the resource.
             var resourceKey = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(Key, targetObject);
             var ci = GetForcedCultureOrDefault();
@@ -458,7 +459,7 @@ namespace WPFLocalizeExtension.Extensions
             // Extract the names of the endpoint object and property
             var epProp = GetPropertyName(endPoint.TargetProperty);
             var epName = "";
-            
+
             if (endPoint.TargetObject is FrameworkElement)
                 epName = ((FrameworkElement)endPoint.TargetObject).GetValueSync<string>(FrameworkElement.NameProperty);
             else if (endPoint.TargetObject is FrameworkContentElement)
@@ -486,7 +487,7 @@ namespace WPFLocalizeExtension.Extensions
             else
             {
                 var resKeyNameProp = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(epName + LocalizeDictionary.GetSeparation(targetObject) + epProp, targetObject);
-                
+
                 // Try the automatic lookup function.
                 // First, look for a resource entry named: [FrameworkElement name][Separator][Property name]
                 lock (ResourceBufferLock)
@@ -529,12 +530,19 @@ namespace WPFLocalizeExtension.Extensions
                 }
                 else
                 {
-                    if (LocalizeDictionary.Instance.OnNewMissingKeyEvent(this, _key))
+                    var missingKeyEventResult = LocalizeDictionary.Instance.OnNewMissingKeyEvent(this, _key);
+
+                    if (missingKeyEventResult.Reload)
                         UpdateNewValue();
 
                     if (LocalizeDictionary.Instance.OutputMissingKeys
                         && !string.IsNullOrEmpty(_key) && (targetType == typeof(String) || targetType == typeof(object)))
-                        result = "Key: " + _key;
+                    {
+                        if (missingKeyEventResult.MissingKeyResult != null)
+                            result = missingKeyEventResult.MissingKeyResult;
+                        else
+                            result = "Key: " + _key;
+                    }
                 }
             }
 
@@ -617,11 +625,11 @@ namespace WPFLocalizeExtension.Extensions
                 var resourceKey = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(key, target);
 
                 // Get the localized object from the dictionary
-                var resKey = targetCulture.Name + ":" + typeof (TValue).Name + ":" + resourceKey;
+                var resKey = targetCulture.Name + ":" + typeof(TValue).Name + ":" + resourceKey;
                 var isDefaultConverter = converter is DefaultConverter;
 
                 if (isDefaultConverter && _resourceBuffer.ContainsKey(resKey))
-                    result = (TValue) _resourceBuffer[resKey];
+                    result = (TValue)_resourceBuffer[resKey];
                 else
                 {
                     var localizedObject = LocalizeDictionary.Instance.GetLocalizedObject(resourceKey, target,
@@ -633,7 +641,7 @@ namespace WPFLocalizeExtension.Extensions
                     if (converter == null)
                         converter = new DefaultConverter();
 
-                    var tmp = converter.Convert(localizedObject, typeof (TValue), converterParameter, targetCulture);
+                    var tmp = converter.Convert(localizedObject, typeof(TValue), converterParameter, targetCulture);
 
                     if (tmp is TValue value)
                     {
@@ -725,7 +733,7 @@ namespace WPFLocalizeExtension.Extensions
                         return false;
 
                     var result = Converter.Convert(localizedObject, typeof(TValue), ConverterParameter, targetCulture);
-                
+
                     if (result is TValue value)
                     {
                         resolvedValue = value;
@@ -837,6 +845,7 @@ namespace WPFLocalizeExtension.Extensions
         }
         #endregion
 
+        #region ToString
         /// <summary>
         /// Overridden, to return the key of this instance.
         /// </summary>
@@ -845,5 +854,6 @@ namespace WPFLocalizeExtension.Extensions
         {
             return "Loc:" + _key;
         }
+        #endregion
     }
 }

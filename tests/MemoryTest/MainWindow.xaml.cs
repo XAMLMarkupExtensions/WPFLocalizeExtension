@@ -32,7 +32,7 @@ namespace MemoryTest
         {
             var wnd = new TestWindow();
             windowList.Add(wnd);
-            
+
             wnd.Show();
         }
 

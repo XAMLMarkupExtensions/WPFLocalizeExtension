@@ -12,16 +12,16 @@ using XAMLMarkupExtensions.Base;
 
 namespace ProviderExample
 {
+    using System;
     using System.Collections.ObjectModel;
     using System.Globalization;
-    using System.Windows;
-    using System;
-    using System.Reflection;
     using System.IO;
-    using System.Windows.Media;
-    using WPFLocalizeExtension.Providers;
+    using System.Reflection;
     using System.Runtime.InteropServices;
     using System.Text;
+    using System.Windows;
+    using System.Windows.Media;
+    using WPFLocalizeExtension.Providers;
 
     /// <summary>
     /// A localization provider for comma separated files
@@ -65,7 +65,11 @@ namespace ProviderExample
         public bool HasHeader
         {
             get { return hasHeader; }
-            set { hasHeader = value; OnProviderChanged(); }
+            set
+            {
+                hasHeader = value;
+                OnProviderChanged();
+            }
         }
 
         /// <summary>

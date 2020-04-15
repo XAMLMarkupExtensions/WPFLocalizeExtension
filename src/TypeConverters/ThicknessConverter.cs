@@ -6,12 +6,14 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-using System.ComponentModel;
-using System.Globalization;
-using System.Windows;
-
 namespace WPFLocalizeExtension.TypeConverters
 {
+    #region Usings
+    using System.ComponentModel;
+    using System.Globalization;
+    using System.Windows;
+    #endregion
+
     /// <summary>
     /// A converter for the type <see cref="Thickness"/>.
     /// </summary>

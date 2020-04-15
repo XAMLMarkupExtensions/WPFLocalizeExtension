@@ -7,17 +7,18 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-using System;
-using System.Windows.Data;
-using System.ComponentModel;
-using System.Collections.Generic;
-using System.Windows;
-using System.Globalization;
-
-using WPFLocalizeExtension.Engine;
-
 namespace WPFLocalizeExtension.Extensions
 {
+    #region Usings
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Globalization;
+    using System.Windows;
+    using System.Windows.Data;
+    using WPFLocalizeExtension.Engine;
+    #endregion
+
     /// <summary>
     /// A localization extension based on <see cref="Binding"/>.
     /// </summary>
@@ -83,7 +84,7 @@ namespace WPFLocalizeExtension.Extensions
         /// <summary>
         /// Gets or sets the culture to force a fixed localized object
         /// </summary>
-        public string ForceCulture { get; set; } 
+        public string ForceCulture { get; set; }
         #endregion
 
         #region Resource buffer handling.

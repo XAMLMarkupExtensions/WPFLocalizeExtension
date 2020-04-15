@@ -6,13 +6,14 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-using System.Windows;
-using System.Windows.Data;
-
-using WPFLocalizeExtension.Extensions;
-
 namespace WPFLocalizeExtension.Engine
 {
+    #region Usings
+    using System.Windows;
+    using System.Windows.Data;
+    using WPFLocalizeExtension.Extensions;
+    #endregion
+
     /// <summary>
     /// A binding proxy class that accepts bindings and forwards them to the LocExtension.
     /// Based on: http://www.codeproject.com/Articles/71348/Binding-on-a-Property-which-is-not-a-DependencyPro

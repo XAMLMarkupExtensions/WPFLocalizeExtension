@@ -7,34 +7,37 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Globalization;
-using System.Linq;
-using System.Threading;
-using System.Windows;
-using System.Windows.Input;
+#region AssemblyAttributes
+// TODO: check for move to Assembly.cs,..
 using System.Windows.Markup;
-using System.Windows.Threading;
-
-using WPFLocalizeExtension.Extensions;
-using WPFLocalizeExtension.Providers;
-using XAMLMarkupExtensions.Base;
-
 // Register this namespace one with prefix
 [assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "WPFLocalizeExtension.Engine")]
 [assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "WPFLocalizeExtension.Extensions")]
 [assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "WPFLocalizeExtension.Providers")]
 [assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "WPFLocalizeExtension.TypeConverters")]
-
 // Assign a default namespace prefix for the schema
 [assembly: XmlnsPrefix("http://wpflocalizeextension.codeplex.com", "lex")]
+#endregion
 
 namespace WPFLocalizeExtension.Engine
 {
+    #region Usings
+    using System;
+    using System.Collections.Generic;
+    using System.Collections.ObjectModel;
+    using System.Collections.Specialized;
+    using System.ComponentModel;
+    using System.Globalization;
+    using System.Linq;
+    using System.Threading;
+    using System.Windows;
+    using System.Windows.Input;
+    using System.Windows.Threading;
+    using WPFLocalizeExtension.Extensions;
+    using WPFLocalizeExtension.Providers;
+    using XAMLMarkupExtensions.Base;
+    #endregion
+
     /// <summary>
     /// Represents the culture interface for localization
     /// </summary>
@@ -535,7 +538,7 @@ namespace WPFLocalizeExtension.Engine
                 if (_instance == null)
                 {
                     // if it is null, lock the syncroot.
-                    // if another thread is accessing this too, 
+                    // if another thread is accessing this too,
                     // it have to wait until the syncroot is released
                     lock (SyncRoot)
                     {
@@ -566,7 +569,7 @@ namespace WPFLocalizeExtension.Engine
         /// On set, <see cref="DictionaryEvent"/> is raised.
         /// </summary>
         /// <exception cref="System.InvalidOperationException">
-        /// You have to set <see cref="LocalizeDictionary"/>.Culture first or 
+        /// You have to set <see cref="LocalizeDictionary"/>.Culture first or
         /// wait until System.Windows.Application.Current.MainWindow is created.
         /// Otherwise you will get an Exception.</exception>
         /// <exception cref="System.ArgumentNullException">thrown if Culture will be set to null</exception>
@@ -624,7 +627,7 @@ namespace WPFLocalizeExtension.Engine
                         Thread.CurrentThread.CurrentCulture = _culture;
                         Thread.CurrentThread.CurrentUICulture = _culture;
                     }
-                    
+
                     // Raise the OnLocChanged event
                     DictionaryEvent.Invoke(null, new DictionaryEventArgs(DictionaryEventType.CultureChanged, value));
 
@@ -648,7 +651,7 @@ namespace WPFLocalizeExtension.Engine
                 }
             }
         }
-        
+
         /// <summary>
         /// Gets or sets the flag indicating if the invariant culture is included in the <see cref="MergedAvailableCultures"/> list.
         /// </summary>
@@ -663,7 +666,7 @@ namespace WPFLocalizeExtension.Engine
 
                     var c = CultureInfo.InvariantCulture;
                     var existing = MergedAvailableCultures.Contains(c);
-                    
+
                     if (_includeInvariantCulture && !existing)
                         MergedAvailableCultures.Insert(0, c);
                     else if (!_includeInvariantCulture && existing && MergedAvailableCultures.Count > 1)
@@ -751,7 +754,7 @@ namespace WPFLocalizeExtension.Engine
             {
                 if (_mergedAvailableCultures == null)
                 {
-                    _mergedAvailableCultures = new ObservableCollection<CultureInfo> {CultureInfo.InvariantCulture};
+                    _mergedAvailableCultures = new ObservableCollection<CultureInfo> { CultureInfo.InvariantCulture };
                     _mergedAvailableCultures.CollectionChanged += (s, e) => { Culture = Culture; };
                 }
 
@@ -767,7 +770,7 @@ namespace WPFLocalizeExtension.Engine
         /// <summary>
         /// Gets the specific <see cref="CultureInfo"/> of the current culture.
         /// This can be used for format manners.
-        /// If the Culture is an invariant <see cref="CultureInfo"/>, 
+        /// If the Culture is an invariant <see cref="CultureInfo"/>,
         /// SpecificCulture will also return an invariant <see cref="CultureInfo"/>.
         /// </summary>
         public CultureInfo SpecificCulture => CultureInfo.CreateSpecificCulture(Culture.ToString());
@@ -787,7 +790,7 @@ namespace WPFLocalizeExtension.Engine
         {
             return GetLocalizedObject(source + ":" + dictionary + ":" + key, null, culture, DefaultProvider);
         }
-        
+
         /// <summary>
         /// Get the localized object using the given target for context information.
         /// </summary>
@@ -799,7 +802,7 @@ namespace WPFLocalizeExtension.Engine
         {
             if (DefaultProvider is InheritingResxLocalizationProvider)
                 return GetLocalizedObject(key, target, culture, DefaultProvider);
-                
+
             var provider = target?.GetValue(GetProvider);
 
             if (provider == null)
@@ -859,7 +862,7 @@ namespace WPFLocalizeExtension.Engine
         }
 
         /// <summary>
-        /// Looks up the ResourceManagers for the searched <paramref name="resourceKey"/> 
+        /// Looks up the ResourceManagers for the searched <paramref name="resourceKey"/>
         /// in the <paramref name="resourceDictionary"/> in the <paramref name="resourceAssembly"/>
         /// with an Invariant Culture.
         /// </summary>
@@ -939,7 +942,7 @@ namespace WPFLocalizeExtension.Engine
                     {
                         _isInDesignMode = default(bool);
                     }
-                    
+
                     return _isInDesignMode.Value;
                 }
                 _isInDesignMode = DesignerProperties.GetIsInDesignMode(this);
@@ -960,13 +963,11 @@ namespace WPFLocalizeExtension.Engine
         /// <param name="sender">The sender of the event.</param>
         /// <param name="key">The missing key.</param>
         /// <returns>True, if a reload should be performed.</returns>
-        internal bool OnNewMissingKeyEvent(object sender, string key)
+        internal MissingKeyEventArgs OnNewMissingKeyEvent(object sender, string key)
         {
             var args = new MissingKeyEventArgs(key);
-
             MissingKeyEvent?.Invoke(sender, args);
-
-            return args.Reload;
+            return args;
         }
         #endregion
 
@@ -1103,7 +1104,7 @@ namespace WPFLocalizeExtension.Engine
 
             #region Constructor
             /// <summary>
-            /// Initializes a new instance of the <see cref="CultureInfoDelegateCommand"/> class. 
+            /// Initializes a new instance of the <see cref="CultureInfoDelegateCommand"/> class.
             /// Creates a new command that can always execute.
             /// </summary>
             /// <param name="execute">
@@ -1115,7 +1116,7 @@ namespace WPFLocalizeExtension.Engine
             }
 
             /// <summary>
-            /// Initializes a new instance of the <see cref="CultureInfoDelegateCommand"/> class. 
+            /// Initializes a new instance of the <see cref="CultureInfoDelegateCommand"/> class.
             /// Creates a new command.
             /// </summary>
             /// <param name="execute">
@@ -1133,7 +1134,7 @@ namespace WPFLocalizeExtension.Engine
 
             #region ICommand interface
             /// <summary>
-            /// Occurs when changes occur that affect whether or not the command should execute. 
+            /// Occurs when changes occur that affect whether or not the command should execute.
             /// </summary>
             public event EventHandler CanExecuteChanged
             {
@@ -1161,7 +1162,7 @@ namespace WPFLocalizeExtension.Engine
                 _execute(c);
             }
             #endregion
-        } 
+        }
         #endregion
     }
 }

@@ -7,16 +7,18 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-using System;
-using System.ComponentModel;
-using System.Windows;
-using System.Windows.Media.Imaging;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Globalization;
-
 namespace WPFLocalizeExtension.TypeConverters
 {
+    #region Usings
+    using System;
+    using System.ComponentModel;
+    using System.Drawing;
+    using System.Drawing.Imaging;
+    using System.Globalization;
+    using System.Windows;
+    using System.Windows.Media.Imaging;
+    #endregion
+
     /// <summary>
     /// A type converter class for Bitmap resources that are used in WPF.
     /// </summary>

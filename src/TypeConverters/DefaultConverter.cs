@@ -6,22 +6,24 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-using System;
-using System.Windows;
-using System.Windows.Data;
-using System.Globalization;
-using System.ComponentModel;
-using System.Collections.Generic;
-
 namespace WPFLocalizeExtension.TypeConverters
 {
+    #region Usings
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Globalization;
+    using System.Windows;
+    using System.Windows.Data;
+    #endregion
+
     /// <summary>
     /// Implements a standard converter that calls itself all known type converters.
     /// </summary>
     public class DefaultConverter : IValueConverter
     {
         private static readonly Dictionary<Type, TypeConverter> TypeConverters = new Dictionary<Type, TypeConverter>();
-        
+
         /// <summary>
         /// Modifies the source data before passing it to the target for display in the UI.
         /// </summary>
