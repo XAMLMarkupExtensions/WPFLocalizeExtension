@@ -32,7 +32,7 @@ jobs:
       run: |
         dotnet restore --disable-parallel --locked-mode
         # can't use pure dotnet build because NET35 compile doesn't work
-        msbuild XAMLMarkupExtensions.csproj -verbosity:minimal /p:Configuration=Release
+        msbuild WPFLocalizeExtension.csproj -verbosity:minimal /p:Configuration=Release
 #    - name: Build with dotnet
 #      run: |
 #        cd src
