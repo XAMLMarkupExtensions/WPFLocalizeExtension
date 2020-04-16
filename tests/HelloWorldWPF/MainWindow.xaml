@@ -16,6 +16,7 @@
             <ScaleTransform ScaleX="2.0" ScaleY="2.0" />
         </StackPanel.LayoutTransform>
         <TextBlock Name="MyLabel" FontSize="20" Text="{lex:Loc}" HorizontalAlignment="Center" />
+        <TextBlock Name="MyLabel2" FontSize="20" Text="{lex:Loc PresentationCore:ExceptionStringTable:DeleteText}" HorizontalAlignment="Center" />
         <StackPanel Orientation="Horizontal">
             <Button Content="{lex:Loc de}" Margin="5" CommandParameter="de" Command="{Binding Source={x:Static lex:LocalizeDictionary.Instance}, Path=SetCultureCommand}" />
             <Button Content="{lex:Loc en}" Margin="5" CommandParameter="en" Command="{Binding Source={x:Static lex:LocalizeDictionary.Instance}, Path=SetCultureCommand}" />
