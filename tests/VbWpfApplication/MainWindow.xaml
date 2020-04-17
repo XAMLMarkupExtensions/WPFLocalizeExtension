@@ -6,6 +6,6 @@
     xmlns:lex="clr-namespace:WPFLocalizeExtension.Extensions;assembly=WPFLocalizeExtension"
     Title="MainWindow" Height="350" Width="525">
     <Grid>
-        <Button Content="{lex:LocText Key=Button_Next, Dict=Strings, Assembly=VbWpfApplication}" Height="124" HorizontalAlignment="Left" Margin="141,79,0,0" Name="Button1" VerticalAlignment="Top" Width="231" />
+        <Button Content="{lex:Loc VbWpfApplication:Strings:Button_Next}" Height="124" HorizontalAlignment="Left" Margin="141,79,0,0" Name="Button1" VerticalAlignment="Top" Width="231" />
     </Grid>
 </Window>
