@@ -45,9 +45,4 @@
   <ItemGroup Condition="$(TargetFramework.StartsWith('netcore'))">
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="3.1.0" />
   </ItemGroup>
-
-  <!--PackageReference for all framworks-->
-	<ItemGroup>
-    <PackageReference Include="XAMLMarkupExtensions" Version="1.6.0" />
-  </ItemGroup>
 </Project>
