@@ -1,7 +1,7 @@
 ﻿#region Copyright information
 // <copyright file="ResxLocalizationProviderBase.cs">
 //     Licensed under Microsoft Public License (Ms-PL)
-//     http://wpflocalizeextension.codeplex.com/license
+//     https://github.com/XAMLMarkupExtensions/WPFLocalizationExtension/blob/master/LICENSE
 // </copyright>
 // <author>Uwe Mayer</author>
 // <author>Bernhard Millauer</author>
@@ -419,6 +419,7 @@ namespace WPFLocalizeExtension.Providers
                 }
 
                 // The proposed approach of Andras (http://wpflocalizeextension.codeplex.com/discussions/66098?ProjectName=wpflocalizeextension)
+#pragma warning disable IDE0062
                 string TryGetNamespace(Type type)
                 {
                     // Ignore unloadable types
@@ -431,6 +432,7 @@ namespace WPFLocalizeExtension.Providers
                         return null;
                     }
                 }
+#pragma warning restore IDE0062
 
                 var possiblePrefixes = availableTypes.Select(TryGetNamespace).Where(n => n != null).Distinct().ToList();
 

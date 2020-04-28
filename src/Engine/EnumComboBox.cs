@@ -1,7 +1,7 @@
 ﻿#region Copyright information
 // <copyright file="EnumComboBox.cs">
 //     Licensed under Microsoft Public License (Ms-PL)
-//     http://wpflocalizeextension.codeplex.com/license
+//     https://github.com/XAMLMarkupExtensions/WPFLocalizationExtension/blob/master/LICENSE
 // </copyright>
 // <author>Uwe Mayer</author>
 #endregion
@@ -109,7 +109,7 @@ namespace WPFLocalizeExtension.Engine
 
         private bool _shouldSerializeTemplate;
 
-#pragma warning disable 1591
+        /// <inheritdoc/>
         protected override void OnItemTemplateChanged(DataTemplate oldItemTemplate, DataTemplate newItemTemplate)
         {
             if (oldItemTemplate != null)
@@ -118,6 +118,7 @@ namespace WPFLocalizeExtension.Engine
             base.OnItemTemplateChanged(oldItemTemplate, newItemTemplate);
         }
 
+        /// <inheritdoc/>
         protected override bool ShouldSerializeProperty(DependencyProperty dp)
         {
             if (dp == ItemTemplateProperty && !_shouldSerializeTemplate)
@@ -125,7 +126,6 @@ namespace WPFLocalizeExtension.Engine
 
             return base.ShouldSerializeProperty(dp);
         }
-#pragma warning restore 1591
         #endregion
 
         private void SetType(Type type)

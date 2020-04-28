@@ -1,7 +1,7 @@
 #region Copyright information
 // <copyright file="CSVLocalizationProviderBase.cs">
 //     Licensed under Microsoft Public License (Ms-PL)
-//     http://wpflocalizeextension.codeplex.com/license
+//     https://github.com/XAMLMarkupExtensions/WPFLocalizationExtension/blob/master/LICENSE
 // </copyright>
 // <author>Sébastien Sevrin</author>
 #endregion
@@ -24,21 +24,6 @@ namespace WPFLocalizeExtension.Providers
     public abstract class CSVLocalizationProviderBase : DependencyObject, ILocalizationProvider
     {
         #region Variables
-        /// <summary>
-        /// Holds the name of the Resource Manager.
-        /// </summary>
-        private const string ResourceManagerName = "ResourceManager";
-
-        /// <summary>
-        /// Holds the extension of the resource files.
-        /// </summary>
-        private const string ResourceFileExtension = ".resources";
-
-        /// <summary>
-        /// Holds the binding flags for the reflection to find the resource files.
-        /// </summary>
-        private const BindingFlags ResourceBindingFlags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static;
-
         /// <summary>
         /// Gets the used ResourceManagers with their corresponding <c>namespaces</c>.
         /// </summary>

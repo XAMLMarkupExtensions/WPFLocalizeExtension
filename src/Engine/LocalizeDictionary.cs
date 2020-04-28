@@ -1,22 +1,10 @@
 ﻿#region Copyright information
 // <copyright file="LocalizeDictionary.cs">
 //     Licensed under Microsoft Public License (Ms-PL)
-//     http://wpflocalizeextension.codeplex.com/license
+//     https://github.com/XAMLMarkupExtensions/WPFLocalizationExtension/blob/master/LICENSE
 // </copyright>
 // <author>Bernhard Millauer</author>
 // <author>Uwe Mayer</author>
-#endregion
-
-#region AssemblyAttributes
-// TODO: check for move to Assembly.cs,..
-using System.Windows.Markup;
-// Register this namespace one with prefix
-[assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "WPFLocalizeExtension.Engine")]
-[assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "WPFLocalizeExtension.Extensions")]
-[assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "WPFLocalizeExtension.Providers")]
-[assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "WPFLocalizeExtension.TypeConverters")]
-// Assign a default namespace prefix for the schema
-[assembly: XmlnsPrefix("http://wpflocalizeextension.codeplex.com", "lex")]
 #endregion
 
 namespace WPFLocalizeExtension.Engine
@@ -270,6 +258,7 @@ namespace WPFLocalizeExtension.Engine
             return obj.GetValueSync<ILocalizationProvider>(ProviderProperty);
         }
 
+#pragma warning disable IDE0060
         /// <summary>
         /// Getter of <see cref="DependencyProperty"/> DefaultProvider.
         /// </summary>
@@ -319,6 +308,7 @@ namespace WPFLocalizeExtension.Engine
         {
             return Instance.OutputMissingKeys;
         }
+#pragma warning restore IDE0060
 
         /// <summary>
         /// Getter of <see cref="DependencyProperty"/> DesignCulture.
@@ -348,6 +338,7 @@ namespace WPFLocalizeExtension.Engine
             obj.SetValueSync(ProviderProperty, value);
         }
 
+#pragma warning disable IDE0060
         /// <summary>
         /// Setter of <see cref="DependencyProperty"/> DefaultProvider.
         /// </summary>
@@ -397,6 +388,7 @@ namespace WPFLocalizeExtension.Engine
         {
             Instance.OutputMissingKeys = value;
         }
+#pragma warning restore IDE0060
 
         /// <summary>
         /// Setter of <see cref="DependencyProperty"/> DesignCulture.

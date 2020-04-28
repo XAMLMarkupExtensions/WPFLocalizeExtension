@@ -8,8 +8,9 @@
 		<Version>$(GitVersion_NuGetVersion)</Version>
 		<AssemblyTitle>WPFLocalizeExtension</AssemblyTitle>
 		<Authors>Bernhard Millauer,Uwe Mayer, Konrad Mattheis</Authors>
-		<PackageLicenseUrl>https://github.com/XAMLMarkupExtensions/WPFLocalizationExtension/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageProjectUrl>https://github.com/XAMLMarkupExtensions/WPFLocalizationExtension/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/XAMLMarkupExtensions/WPFLocalizationExtension.git</RepositoryUrl>
 		<Copyright>Bernhard Millauer, Uwe Mayer, Konrad Mattheis</Copyright>
 		<Description>LocalizationExtension is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObjects</Description>
 		<Company />
@@ -18,9 +19,9 @@
 		<PackageReleaseNotes></PackageReleaseNotes>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<PackageTags>wpf localization extension globalization resx csv resource language</PackageTags>
-		<RepositoryUrl>https://github.com/XAMLMarkupExtensions/WPFLocalizationExtension.git</RepositoryUrl>
+    <NoWarn>NU5105</NoWarn>
 
-		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 		<AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
 		<SignAssembly>true</SignAssembly>
@@ -33,6 +34,12 @@
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
 	</PropertyGroup>
 
+  <ItemGroup>
+    <None Include="..\LICENSE" Pack="true" PackagePath=""/>
+    <None Remove="packages.lock.json" />
+    <None Remove="public.snk" />
+  </ItemGroup>
+  
 	<Choose>
 		<When Condition="'$(Configuration)' == 'Release'">
 			<PropertyGroup>

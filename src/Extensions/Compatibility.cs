@@ -1,7 +1,7 @@
 ﻿#region Copyright information
 // <copyright file="Compatibility.cs">
 //     Licensed under Microsoft Public License (Ms-PL)
-//     http://wpflocalizeextension.codeplex.com/license
+//     https://github.com/XAMLMarkupExtensions/WPFLocalizationExtension/blob/master/LICENSE
 // </copyright>
 // <author>Bernhard Millauer</author>
 // <author>Uwe Mayer</author>
@@ -16,46 +16,64 @@ namespace WPFLocalizeExtension.Extensions
     using XAMLMarkupExtensions.Base;
     #endregion
 
-#pragma warning disable 1591
-
+    /// <inheritdoc/>
     [MarkupExtensionReturnType(typeof(System.Windows.Media.Brush))]
     public class LocBrushExtension : LocExtension
     {
+        /// <inheritdoc/>
         public LocBrushExtension()
         { }
+
+        /// <inheritdoc/>
         public LocBrushExtension(string key) : base(key) { }
     }
 
+    /// <inheritdoc/>
     [MarkupExtensionReturnType(typeof(double))]
     public class LocDoubleExtension : LocExtension
     {
+        /// <inheritdoc/>
         public LocDoubleExtension()
         { }
+
+        /// <inheritdoc/>
         public LocDoubleExtension(string key) : base(key) { }
     }
 
+    /// <inheritdoc/>
     [MarkupExtensionReturnType(typeof(System.Windows.FlowDirection))]
     public class LocFlowDirectionExtension : LocExtension
     {
+        /// <inheritdoc/>
         public LocFlowDirectionExtension()
         { }
+
+        /// <inheritdoc/>
         public LocFlowDirectionExtension(string key) : base(key) { }
     }
 
+    /// <inheritdoc/>
     [MarkupExtensionReturnType(typeof(System.Windows.Media.Imaging.BitmapSource))]
     public class LocImageExtension : LocExtension
     {
+        /// <inheritdoc/>
         public LocImageExtension()
         { }
+
+        /// <inheritdoc/>
         public LocImageExtension(string key) : base(key) { }
     }
 
+    /// <inheritdoc/>
     [MarkupExtensionReturnType(typeof(string))]
     public class LocTextExtension : LocExtension
     {
         #region Constructors
+        /// <inheritdoc/>
         public LocTextExtension()
         { }
+
+        /// <inheritdoc/>
         public LocTextExtension(string key) : base(key) { }
         #endregion
 
@@ -254,12 +272,16 @@ namespace WPFLocalizeExtension.Extensions
         #endregion
     }
 
+    /// <inheritdoc/>
     [MarkupExtensionReturnType(typeof(string))]
     public class LocTextLowerExtension : LocTextExtension
     {
         #region Constructors
+        /// <inheritdoc/>
         public LocTextLowerExtension()
         { }
+
+        /// <inheritdoc/>
         public LocTextLowerExtension(string key) : base(key) { }
         #endregion
 
@@ -279,12 +301,16 @@ namespace WPFLocalizeExtension.Extensions
         #endregion
     }
 
+    /// <inheritdoc/>
     [MarkupExtensionReturnType(typeof(string))]
     public class LocTextUpperExtension : LocTextExtension
     {
         #region Constructors
+        /// <inheritdoc/>
         public LocTextUpperExtension()
         { }
+
+        /// <inheritdoc/>
         public LocTextUpperExtension(string key) : base(key) { }
         #endregion
 
@@ -304,13 +330,15 @@ namespace WPFLocalizeExtension.Extensions
         #endregion
     }
 
+    /// <inheritdoc/>
     [MarkupExtensionReturnType(typeof(System.Windows.Thickness))]
     public class LocThicknessExtension : LocExtension
     {
+        /// <inheritdoc/>
         public LocThicknessExtension()
         { }
+
+        /// <inheritdoc/>
         public LocThicknessExtension(string key) : base(key) { }
     }
-
-#pragma warning restore 1591
 }

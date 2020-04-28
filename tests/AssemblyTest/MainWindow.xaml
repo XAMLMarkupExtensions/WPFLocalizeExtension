@@ -16,13 +16,14 @@
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type={x:Type Local:MyViewModel}, IsDesignTimeCreatable=True}"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" Height="479" Width="329">
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" Height="479" Width="329"
 
-    <!--Use this syntax to set the inheriting provider-->
-    <!--lex:LocalizeDictionary.DefaultProvider="{x:Static lex:InheritingResxLocalizationProvider.Instance}"
+   
+    lex:LocalizeDictionary.DefaultProvider="{x:Static lex:InheritingResxLocalizationProvider.Instance}"
         lex:InheritingResxLocalizationProvider.DefaultAssembly="AssemblyTestResourceLib"
-        lex:InheritingResxLocalizationProvider.DefaultDictionary="Strings"-->
-
+        lex:InheritingResxLocalizationProvider.DefaultDictionary="Strings">
+    <!--Use this syntax to set the inheriting provider-->
+    
     <!-- **********************************************************************
     Uncomment the block below to test the CSV provider for the entire window
     or copy it to an arbitrary location to affect just the particular sub tree.
@@ -163,7 +164,7 @@
             <FlowDocument>
                 <Paragraph>
                     <!--<Run Text="{lex:Loc ButtonDE}" />-->
-                    <Run Name="TestObject" lex:ResxLocalizationProvider.DefaultAssembly="AssemblyTest" lex:ResxLocalizationProvider.DefaultDictionary="Resource.With.Dot" Text="{lex:Loc Test}" />
+                    <!--<Run Name="TestObject" lex:ResxLocalizationProvider.DefaultAssembly="AssemblyTest" lex:ResxLocalizationProvider.DefaultDictionary="Resource.With.Dot" Text="{lex:Loc Test}" />-->
                     <Button Content="Who is bound here?" Click="Button_Click" />
                 </Paragraph>
             </FlowDocument>

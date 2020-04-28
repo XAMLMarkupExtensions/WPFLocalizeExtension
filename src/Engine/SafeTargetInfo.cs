@@ -1,7 +1,7 @@
 ﻿#region Copyright information
 // <copyright file="SafeTargetInfo.cs">
 //     Licensed under Microsoft Public License (Ms-PL)
-//     http://wpflocalizeextension.codeplex.com/license
+//     https://github.com/XAMLMarkupExtensions/WPFLocalizationExtension/blob/master/LICENSE
 // </copyright>
 // <author>Uwe Mayer</author>
 #endregion
