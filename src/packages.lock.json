@@ -71,9 +71,9 @@
       },
       "XAMLMarkupExtensions": {
         "type": "Direct",
-        "requested": "[1.8.0, )",
-        "resolved": "1.8.0",
-        "contentHash": "u6NDpNAXfIi6CfPI9wjsEkTHpGRxAO0vm90vo4LT1Fbwc3+VRSYVpKLYMMkjE00ODmujM8yNaHlxK6Qmcq6i1w==",
+        "requested": "[1.9.0-alpha.22, )",
+        "resolved": "1.9.0-alpha.22",
+        "contentHash": "utkRR5p5O0NVEExy/7TWYZCqsSxKqcwTFdvaSyFayLTWNr43HcmqKHa+/dBaYp7pq64pzabLIl8Cwh1o2bRJ9Q==",
         "dependencies": {
           "Microsoft.Windows.Compatibility": "3.1.0"
         }
@@ -604,9 +604,9 @@
       },
       "XAMLMarkupExtensions": {
         "type": "Direct",
-        "requested": "[1.8.0, )",
-        "resolved": "1.8.0",
-        "contentHash": "u6NDpNAXfIi6CfPI9wjsEkTHpGRxAO0vm90vo4LT1Fbwc3+VRSYVpKLYMMkjE00ODmujM8yNaHlxK6Qmcq6i1w==",
+        "requested": "[1.9.0-alpha.22, )",
+        "resolved": "1.9.0-alpha.22",
+        "contentHash": "utkRR5p5O0NVEExy/7TWYZCqsSxKqcwTFdvaSyFayLTWNr43HcmqKHa+/dBaYp7pq64pzabLIl8Cwh1o2bRJ9Q==",
         "dependencies": {
           "Microsoft.Windows.Compatibility": "3.1.0"
         }
@@ -1073,9 +1073,9 @@
       },
       "XAMLMarkupExtensions": {
         "type": "Direct",
-        "requested": "[1.8.0, )",
-        "resolved": "1.8.0",
-        "contentHash": "u6NDpNAXfIi6CfPI9wjsEkTHpGRxAO0vm90vo4LT1Fbwc3+VRSYVpKLYMMkjE00ODmujM8yNaHlxK6Qmcq6i1w=="
+        "requested": "[1.9.0-alpha.22, )",
+        "resolved": "1.9.0-alpha.22",
+        "contentHash": "utkRR5p5O0NVEExy/7TWYZCqsSxKqcwTFdvaSyFayLTWNr43HcmqKHa+/dBaYp7pq64pzabLIl8Cwh1o2bRJ9Q=="
       },
       "Microsoft.Build.Tasks.Git": {
         "type": "Transitive",
@@ -1107,9 +1107,9 @@
       },
       "XAMLMarkupExtensions": {
         "type": "Direct",
-        "requested": "[1.8.0, )",
-        "resolved": "1.8.0",
-        "contentHash": "u6NDpNAXfIi6CfPI9wjsEkTHpGRxAO0vm90vo4LT1Fbwc3+VRSYVpKLYMMkjE00ODmujM8yNaHlxK6Qmcq6i1w=="
+        "requested": "[1.9.0-alpha.22, )",
+        "resolved": "1.9.0-alpha.22",
+        "contentHash": "utkRR5p5O0NVEExy/7TWYZCqsSxKqcwTFdvaSyFayLTWNr43HcmqKHa+/dBaYp7pq64pzabLIl8Cwh1o2bRJ9Q=="
       },
       "Microsoft.Build.Tasks.Git": {
         "type": "Transitive",
