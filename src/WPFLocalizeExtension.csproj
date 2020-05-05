@@ -74,7 +74,7 @@
 	<ItemGroup>
     <PackageReference Include="XAMLMarkupExtensions" Version="1.9.0-alpha.22" />
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
-		<PackageReference Include="GitVersionTask" Version="5.2.4" PrivateAssets="All" />
+		<PackageReference Include="GitVersionTask" Version="5.3.1" PrivateAssets="All" />
 	</ItemGroup>
 
 	<Target Name="PublishToNugetWithAPIKey" AfterTargets="GenerateNuspec" Condition="Exists('$(SolutionDir)\..\..\nugetapikey.txt')">
