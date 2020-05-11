@@ -1,6 +1,17 @@
 name: .NET
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ master, development ]
+    paths-ignore:
+      - '*.md'
+      - 'docs/**'
+
+  pull_request:
+    branches: [ master, development ]
+    paths-ignore:
+      - '*.md'
+      - 'docs/**'
 
 jobs:
   build:
