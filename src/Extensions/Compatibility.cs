@@ -231,11 +231,7 @@ namespace WPFLocalizeExtension.Extensions
             return target ?? string.Empty;
         }
 
-        /// <summary>
-        /// This function returns the properly prepared output of the markup extension.
-        /// </summary>
-        /// <param name="info">Information about the target.</param>
-        /// <param name="endPoint">Information about the endpoint.</param>
+        /// <inheritdoc/>
         public override object FormatOutput(TargetInfo endPoint, TargetInfo info)
         {
             var textMain = base.FormatOutput(endPoint, info) as string ?? string.Empty;
@@ -286,14 +282,7 @@ namespace WPFLocalizeExtension.Extensions
         #endregion
 
         #region Text Formatting
-        /// <summary>
-        /// This method formats the localized text.
-        /// If the passed target text is null, string.empty will be returned.
-        /// </summary>
-        /// <param name="target">The text to format.</param>
-        /// <returns>
-        /// Returns the formated text or string.empty, if the target text was null.
-        /// </returns>
+        /// <inheritdoc/>
         protected override string FormatText(string target)
         {
             return target?.ToLower(GetForcedCultureOrDefault()) ?? string.Empty;
@@ -315,14 +304,7 @@ namespace WPFLocalizeExtension.Extensions
         #endregion
 
         #region Text Formatting
-        /// <summary>
-        /// This method formats the localized text.
-        /// If the passed target text is null, string.empty will be returned.
-        /// </summary>
-        /// <param name="target">The text to format.</param>
-        /// <returns>
-        /// Returns the formated text or string.empty, if the target text was null.
-        /// </returns>
+        /// <inheritdoc/>
         protected override string FormatText(string target)
         {
             return target?.ToUpper(GetForcedCultureOrDefault()) ?? string.Empty;

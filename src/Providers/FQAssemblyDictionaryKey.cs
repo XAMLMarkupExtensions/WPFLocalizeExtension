@@ -53,7 +53,8 @@ namespace WPFLocalizeExtension.Providers
         /// Converts the object to a string.
         /// </summary>
         /// <returns>The joined version of the assembly, dictionary and key.</returns>
-        public override string ToString()
+        public 
+            override string ToString()
         {
             return string.Join(":", new[] { Assembly, Dictionary, Key }.Where(x => !string.IsNullOrEmpty(x)).ToArray());
         }
