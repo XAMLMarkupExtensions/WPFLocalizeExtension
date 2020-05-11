@@ -1,7 +1,7 @@
 ﻿#region Copyright information
 // <copyright file="FELoc.cs">
 //     Licensed under Microsoft Public License (Ms-PL)
-//     http://wpflocalizeextension.codeplex.com/license
+//     https://github.com/XAMLMarkupExtensions/WPFLocalizationExtension/blob/master/LICENSE
 // </copyright>
 // <author>Bernhard Millauer</author>
 // <author>Uwe Mayer</author>
@@ -230,22 +230,6 @@ namespace WPFLocalizeExtension.Extensions
         }
 
         #region Parent changed event
-        private IList<DependencyProperty> GetAttachedProperties(DependencyObject obj)
-        {
-            var attached = new List<DependencyProperty>();
-
-            foreach (PropertyDescriptor pd in TypeDescriptor.GetProperties(obj,
-                new Attribute[] { new PropertyFilterAttribute(PropertyFilterOptions.All) }))
-            {
-                var dpd = DependencyPropertyDescriptor.FromProperty(pd);
-
-                if (dpd != null && dpd.IsAttached)
-                    attached.Add(dpd.DependencyProperty);
-            }
-
-            return attached;
-        }
-
         /// <summary>
         /// Based on http://social.msdn.microsoft.com/Forums/en/wpf/thread/580234cb-e870-4af1-9a91-3e3ba118c89c
         /// </summary>

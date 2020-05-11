@@ -1,7 +1,7 @@
 ﻿#region Copyright information
 // <copyright file="FullyQualifiedResourceKeyBase.cs">
 //     Licensed under Microsoft Public License (Ms-PL)
-//     http://wpflocalizeextension.codeplex.com/license
+//     https://github.com/XAMLMarkupExtensions/WPFLocalizationExtension/blob/master/LICENSE
 // </copyright>
 // <author>Justin Pihony</author>
 // <author>Uwe Mayer</author>

@@ -11,19 +11,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<!--<ApplicationDefinition Include="App.xaml" SubType="Designer" Generator="MSBuild:Compile" />-->
-
-		<!-- XAML elements -->
-		<!--<Page Include="**\*.xaml" Exclude="App.xaml" SubType="Designer">
-			<Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-		</Page>
-		<Compile Update="**\*.xaml.cs" SubType="Code" DependentUpon="%(Filename)" />-->
-
 		<!-- Resources -->
 		<EmbeddedResource Update="TestRes.resx" Generator="ResXFileCodeGenerator" LastGenOutput="TestRes.Designer.cs" />
 		<Compile Update="TestRes.Designer.cs" AutoGen="True" DependentUpon="TestRes.resx" DesignTime="True" />
 	</ItemGroup>
-
 
   <!--References for .Net Framwork 4 and 35-->
   <ItemGroup Condition="!$(TargetFramework.StartsWith('netcore'))">
@@ -45,11 +36,6 @@
   <ItemGroup Condition="$(TargetFramework.StartsWith('netcore'))">
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="3.1.0" />
   </ItemGroup>
-
-  <!--PackageReference for all framworks-->
-	<ItemGroup>
-		<PackageReference Include="XAMLMarkupExtensions" Version="1.6.0" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\WPFLocalizeExtension.csproj" />

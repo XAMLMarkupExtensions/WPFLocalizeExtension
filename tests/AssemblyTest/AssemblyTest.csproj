@@ -12,14 +12,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<!--<ApplicationDefinition Include="App.xaml" SubType="Designer" Generator="MSBuild:Compile" />-->
-
-		<!-- XAML elements -->
-		<!--<Page Include="**\*.xaml" Exclude="App.xaml" SubType="Designer">
-			<Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-		</Page>
-		<Compile Update="**\*.xaml.cs" SubType="Code" DependentUpon="%(Filename)" />-->
-
 		<!-- Resources -->
 		<None Update="Example.csv">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -49,10 +41,6 @@
   <ItemGroup Condition="$(TargetFramework.StartsWith('netcore'))">
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="3.1.0" />
   </ItemGroup>
-  
-	<ItemGroup>
-		<PackageReference Include="XAMLMarkupExtensions" Version="1.6.0" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\src\WPFLocalizeExtension.csproj" />

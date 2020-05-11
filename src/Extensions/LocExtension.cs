@@ -1,7 +1,7 @@
 ﻿#region Copyright information
 // <copyright file="LocExtension.cs">
 //     Licensed under Microsoft Public License (Ms-PL)
-//     http://wpflocalizeextension.codeplex.com/license
+//     https://github.com/XAMLMarkupExtensions/WPFLocalizationExtension/blob/master/LICENSE
 // </copyright>
 // <author>Bernhard Millauer</author>
 // <author>Uwe Mayer</author>
@@ -352,20 +352,19 @@ namespace WPFLocalizeExtension.Extensions
 
         private void ClearItemFromResourceBuffer(DictionaryEventArgs dictionaryEventArgs)
         {
-            if (dictionaryEventArgs.Type == DictionaryEventType.ValueChanged && dictionaryEventArgs.Tag is ValueChangedEventArgs)
+            if (dictionaryEventArgs.Type == DictionaryEventType.ValueChanged && (dictionaryEventArgs.Tag is ValueChangedEventArgs vceArgs))
             {
-                var args = (ValueChangedEventArgs)dictionaryEventArgs.Tag;
-                var ci = args.Tag as CultureInfo;
+                string ciName = (vceArgs.Tag as CultureInfo)?.Name;
 
                 lock (ResolveLock)
                 {
                     foreach (var key in _resourceBuffer.Keys.ToList())
                     {
-                        if (key.EndsWith(args.Key))
+                        if (key.EndsWith(vceArgs.Key))
                         {
-                            if (ci == null || key.StartsWith(ci.Name))
+                            if (ciName == null || key.StartsWith(ciName))
                             {
-                                if (_resourceBuffer[key] != args.Value)
+                                if (_resourceBuffer[key] != vceArgs.Value)
                                     SafeRemoveItemFromResourceBuffer(key);
                             }
                         }
@@ -711,7 +710,7 @@ namespace WPFLocalizeExtension.Extensions
         public bool ResolveLocalizedValue<TValue>(out TValue resolvedValue, CultureInfo targetCulture, DependencyObject target)
         {
             // define the default value of the resolved value
-            resolvedValue = default(TValue);
+            resolvedValue = default;
 
             var resourceKey = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(Key, target);
 

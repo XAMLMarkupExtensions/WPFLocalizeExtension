@@ -13,20 +13,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<!--<ApplicationDefinition Include="Application.xaml" SubType="Designer" Generator="MSBuild:Compile" />-->
-
-		<!-- XAML elements -->
-		<!--<Page Include="**\*.xaml" Exclude="Application.xaml" SubType="Designer">
-			<Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-		</Page>
-		<Compile Update="**\*.xaml.cs" SubType="Code" DependentUpon="%(Filename)" />-->
-
 		<!-- Resources -->
     <EmbeddedResource Update="Properties\Resources.resx" Generator="ResXFileCodeGenerator" LastGenOutput="Properties\Resources.Designer.cs" />
 		<Compile Update="Properties\Resources.Designer.cs" AutoGen="True" DependentUpon="Resources.resx" DesignTime="True" />
 	</ItemGroup>
   
-  <!--References for .Net Framwork 4 and 35-->
+  <!--References for .Net Framwork 4 -->
   <ItemGroup Condition="!$(TargetFramework.StartsWith('netcore'))">
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -49,9 +41,8 @@
 
   <!--PackageReference for all framworks-->
 	<ItemGroup>
-		<PackageReference Include="XAMLMarkupExtensions" Version="1.6.0" />
-    <PackageReference Include="ControlzEx" Version="3.0.2.4" />
-     <PackageReference Include="Fluent.Ribbon" Version="6.1.0.326" />
+    <PackageReference Include="ControlzEx" Version="4.2.2" />
+    <PackageReference Include="Fluent.Ribbon" Version="7.1.0" />
 	</ItemGroup>
 
 	<ItemGroup>
