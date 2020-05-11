@@ -72,7 +72,7 @@
 
   <!--PackageReference for all framworks-->
 	<ItemGroup>
-    <PackageReference Include="XAMLMarkupExtensions" Version="1.9.0-alpha.22" />
+    <PackageReference Include="XAMLMarkupExtensions" Version="1.9.0" />
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
 		<PackageReference Include="GitVersionTask" Version="5.3.2" PrivateAssets="All" />
 	</ItemGroup>
