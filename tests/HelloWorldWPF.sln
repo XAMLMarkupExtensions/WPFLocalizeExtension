@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HelloWorldWPF", "HelloWorldWPF\HelloWorldWPF.csproj", "{64B54D1A-1445-4514-9DEC-7DA11D028F54}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WPFLocalizeExtension", "..\src\WPFLocalizeExtension.csproj", "{E71D5813-672E-4626-A744-904B45D8FDCF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,18 @@ Global
 		{64B54D1A-1445-4514-9DEC-7DA11D028F54}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{64B54D1A-1445-4514-9DEC-7DA11D028F54}.Release|x86.ActiveCfg = Release|Any CPU
 		{64B54D1A-1445-4514-9DEC-7DA11D028F54}.Release|x86.Build.0 = Release|Any CPU
+		{E71D5813-672E-4626-A744-904B45D8FDCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E71D5813-672E-4626-A744-904B45D8FDCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E71D5813-672E-4626-A744-904B45D8FDCF}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{E71D5813-672E-4626-A744-904B45D8FDCF}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{E71D5813-672E-4626-A744-904B45D8FDCF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E71D5813-672E-4626-A744-904B45D8FDCF}.Debug|x86.Build.0 = Debug|Any CPU
+		{E71D5813-672E-4626-A744-904B45D8FDCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E71D5813-672E-4626-A744-904B45D8FDCF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E71D5813-672E-4626-A744-904B45D8FDCF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{E71D5813-672E-4626-A744-904B45D8FDCF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{E71D5813-672E-4626-A744-904B45D8FDCF}.Release|x86.ActiveCfg = Release|Any CPU
+		{E71D5813-672E-4626-A744-904B45D8FDCF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
