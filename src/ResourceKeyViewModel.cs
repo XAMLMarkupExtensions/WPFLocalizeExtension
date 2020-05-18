@@ -5,12 +5,14 @@ using WPFLocalizeExtension.Engine;
 namespace WPFLocalizeExtension
 {
     /// <summary>
-    /// Wrapper around a string that raises <see cref="INotifyPropertyChanged"/>
+    /// Wrappers a <see cref="ResourceKey"/>-string that raises <see cref="INotifyPropertyChanged"/>
     /// when the language changes or when the <see cref="ResourceKey"/> changes.
     /// </summary>
     public class ResourceKeyViewModel : IDictionaryEventListener, INotifyPropertyChanged
     {
         private static PropertyChangedEventArgs ResourceKeyEventArgs = new PropertyChangedEventArgs(nameof(ResourceKey));
+
+        private string _resourceKey;
 
         public ResourceKeyViewModel(string resourceKey)
         {
@@ -21,8 +23,6 @@ namespace WPFLocalizeExtension
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
-
-        private string _resourceKey;
 
         public string ResourceKey
         {

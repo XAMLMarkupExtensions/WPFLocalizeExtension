@@ -7,9 +7,13 @@ using WPFLocalizeExtension.Engine;
 namespace WPFLocalizeExtension.Extensions
 {
     /// <summary>
-    /// Applies the given <see cref="Binding"/> to the related <see cref="DependencyProperty"/>.
+    /// Use this class if you have the ResourcesKey in a property of a ViewModel and want it to be translated in your view.
+    /// Supports automatic refresh on language switching or if the bound ResourceKey changes.
+    /// ATTENTION: <see cref="MarkupExtension"/>s are not usable within a WPF style.
+    /// <code>
+    ///     <TextBlock Text = "{lex:BindingLoc {Binding ResourceKey}}" />
+    /// </code>
     /// </summary>
-    /// <remarks><see cref="MarkupExtension"/>s are not usable within a WPF style.</remarks>
     public class BindingLoc : MarkupExtension, IDictionaryEventListener
     {
         private readonly Binding _binding;
@@ -20,6 +24,9 @@ namespace WPFLocalizeExtension.Extensions
 
         private DependencyProperty _targetProp;
 
+        /// <summary>
+        /// Applies the given <see cref="Binding"/> to the related <see cref="DependencyProperty"/>.
+        /// </summary>
         public BindingLoc(Binding binding)
         {
             _binding = binding;
