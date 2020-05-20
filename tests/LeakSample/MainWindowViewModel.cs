@@ -13,9 +13,6 @@ namespace LeakSample
     {
         public IReadOnlyList<object> Objects { get; private set; }
 
-
-
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
