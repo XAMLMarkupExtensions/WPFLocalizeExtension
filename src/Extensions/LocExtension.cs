@@ -425,11 +425,7 @@ namespace WPFLocalizeExtension.Extensions
         #endregion
 
         #region TargetMarkupExtension implementation
-        /// <summary>
-        /// This function returns the properly prepared output of the markup extension.
-        /// </summary>
-        /// <param name="info">Information about the target.</param>
-        /// <param name="endPoint">Information about the endpoint.</param>
+        /// <inheritdoc/>
         public override object FormatOutput(TargetInfo endPoint, TargetInfo info)
         {
             object result = null;
@@ -548,12 +544,7 @@ namespace WPFLocalizeExtension.Extensions
             return result;
         }
 
-        /// <summary>
-        /// This method must return true, if an update shall be executed when the given endpoint is reached.
-        /// This method is called each time an endpoint is reached.
-        /// </summary>
-        /// <param name="endpoint">Information on the specific endpoint.</param>
-        /// <returns>True, if an update of the path to this endpoint shall be performed.</returns>
+        /// <inheritdoc/>
         protected override bool UpdateOnEndpoint(TargetInfo endpoint)
         {
             // This extension must be updated, when an endpoint is reached.

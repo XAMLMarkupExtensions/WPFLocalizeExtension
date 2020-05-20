@@ -145,21 +145,13 @@ namespace WPFLocalizeExtension.Providers
         #endregion
 
         #region Abstract assembly & dictionary lookup
-        /// <summary>
-        /// Get the assembly from the context, if possible.
-        /// </summary>
-        /// <param name="target">The target object.</param>
-        /// <returns>The assembly name, if available.</returns>
+        /// <inheritdoc/>
         protected override string GetAssembly(DependencyObject target)
         {
             return target?.GetValue(DefaultAssemblyProperty) as string;
         }
 
-        /// <summary>
-        /// Get the dictionary from the context, if possible.
-        /// </summary>
-        /// <param name="target">The target object.</param>
-        /// <returns>The dictionary name, if available.</returns>
+        /// <inheritdoc/>
         protected override string GetDictionary(DependencyObject target)
         {
             return target?.GetValue(DefaultDictionaryProperty) as string;
