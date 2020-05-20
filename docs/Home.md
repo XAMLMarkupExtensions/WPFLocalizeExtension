@@ -15,6 +15,6 @@
 * [LocProxy & EnumComboBox](LocProxy-&-EnumComboBox.md)
 
 ### Common mistakes
-* [Access modifier for resource assemblies](Common-mistakes#access-modifier-for-resource-assemblies.md)
-* [NeutralResourcesLanguage in Assembly Manifest](Common-mistakes#neutralresourceslanguage-in-assembly-manifest.md)
+* [Access modifier for resource assemblies](Common-mistakes.md#access-modifier-for-resource-assemblies)
+* [NeutralResourcesLanguage in Assembly Manifest](Common-mistakes.md#neutralresourceslanguage-in-assembly-manifest)
 * [Bad ResX Filename](Common-mistakes.md#bad-resx-filename)
