@@ -16,7 +16,3 @@ Using our button example we could imagine the following scenario:
 As no key was provided, the extension will first try to resolve a resource key named _MyButton_Content_. If this fails, it will then look for a resource key named _MyButton_. If this fails too, no value will be provided.
 
 The separation character (default is underscore) can be individually set up for each control using the _LocalizeDictionary.Separation_ property.
-
-***
-Previous topic: [Our first localized text](Our-first-localized-text)  
-Next topic: [Multiple assemblies and dictionaries](Multiple-assemblies-and-dictionaries)

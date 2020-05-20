@@ -9,8 +9,4 @@ By using NuGet you just have to choose the projects where you want to use the ex
 
 ### Dependencies
 
-Starting with version 1.0.3, the project depends on the project [XAML Markup Extensions](https://github.com/MrCircuit/XAMLMarkupExtensions). NuGet will automatically ask you to download this package along with the LocalizationExtension.
-
-***
-Previous topic: [Change log](Change-log)  
-Next topic: [Resource files](Resource-files)
+Starting with version 1.0.3, the project depends on the project [XAML Markup Extensions](https://github.com/XAMLMarkupExtensions/XAMLMarkupExtensions). NuGet will automatically ask you to download this package along with the LocalizationExtension.

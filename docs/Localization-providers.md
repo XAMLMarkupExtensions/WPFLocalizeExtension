@@ -41,7 +41,3 @@ public interface ILocalizationProvider
 }
 ```
 You can then assign your own provider to the properties of LocalizeDictionary.
-
-***
-Previous topic: [Multiple assemblies and dictionaries](Multiple-assemblies-and-dictionaries)  
-Next topic: [LocProxy & EnumComboBox](LocProxy-&-EnumComboBox)

@@ -13,7 +13,3 @@ You may also define the assembly or dictionary that will be used at each instanc
 ```
 ### Assembly name differing from the default namespace
 This scenario is supported by the ResxLocalizationProvider. In case you have several resource files in a single assembly with the same name but in different namespaces, you have to provide a qualified name of your dictionary.
-
-***
-Previous topic: [Keys](Keys)  
-Next topic: [Localization providers](Localization-providers)

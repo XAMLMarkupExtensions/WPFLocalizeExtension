@@ -1,8 +1,8 @@
 ### General instructions
 
-As explained in the section [Supported platforms](Supported-platforms), the LocalizationExtension supports **resx** files for the storage of localized values. Create such a resource file with a suitable name and check its access modifier, if needed (refer to [Common mistakes - Access modifier for resource assemblies](Common-mistakes#access-modifier-for-resource-assemblies)). Now, create further resource files for each culture your application will support and give them the same name as the first one - just add the general or specific culture code (e.g. "en-US", "de", "de-AT", ...) before the ".resx" ending yielding: _Name.CultureCode_.resx. Don't forget the dot before the culture code.
+As explained in the section [Supported platforms](Supported-platform.md), the LocalizationExtension supports **resx** files for the storage of localized values. Create such a resource file with a suitable name and check its access modifier, if needed (refer to [Common mistakes - Access modifier for resource assemblies](Common-mistakes.md#access-modifier-for-resource-assemblies)). Now, create further resource files for each culture your application will support and give them the same name as the first one - just add the general or specific culture code (e.g. "en-US", "de", "de-AT", ...) before the ".resx" ending yielding: _Name.CultureCode_.resx. Don't forget the dot before the culture code.
 
-Now, populate the resource files with your key/value pairs. Be sure to have the same name of a particular key for all cultures. You may use the automatic key retrieval mechanism (refer to [Keys](Keys)). 
+Now, populate the resource files with your key/value pairs. Be sure to have the same name of a particular key for all cultures. You may use the automatic key retrieval mechanism (refer to [Keys](Keys.md)). 
 
 ### Pay attention to:
 * The correct naming scheme of culture-specific resource files 
@@ -26,7 +26,3 @@ Now, populate the resource files with your key/value pairs. Be sure to have the 
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
 ```
-
-***
-Previous topic: [Installation and dependencies](Installation-and-dependencies)  
-Next topic: [Preparing the XAML code](Preparing-the-XAML-code)

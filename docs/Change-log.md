@@ -8,7 +8,7 @@ The library is under static development in order to improve it continuously with
 * Sign in to _ProviderChanged_ and _ProviderError_ for notifications about provider changes and errors 
 * Get the list of _AvailableCultures_ 
 * _AttachedProperty_ Provider and _DefaultProvider_ for _LocalizeDictionary_ 
-* _ResxLocalizationProvider_ singleton implementation for full backward compatibility (for small changes please refer to [Common mistakes - Access modifier for resource assemblies](Common-mistakes#access-modifier-for-resource-assemblies)) 
+* _ResxLocalizationProvider_ singleton implementation for full backward compatibility (for small changes please refer to [Common mistakes - Access modifier for resource assemblies](Common-mistakes.md#access-modifier-for-resource-assemblies)) 
 * _CSVLocalizationProvider_ example
 * Needs at least XAML Markup Extensions v1.1.3
 
@@ -29,7 +29,3 @@ The library is under static development in order to improve it continuously with
 * Small bug fixes 
 * Source code transferred to GitHub 
 * Deployment over NuGet
-
-***
-Previous topic: [Supported platforms](Supported-platforms)  
-Next topic: [Installation and dependencies](Installation-and-dependencies)

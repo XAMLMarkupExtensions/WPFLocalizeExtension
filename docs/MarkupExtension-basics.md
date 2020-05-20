@@ -5,7 +5,3 @@ The LocalizationExtension uses this feature in order to provide the culture-spec
 <Element Property="{ExtensionName ...}" />
 ```
 The _ExtensionName_ has to be replaced by the class name of the extension without its ending "Extension". Usually, the XAML editor will propose the possible extensions to you. After the name, several properties of the extension itself can be initialized. It is obvious that this mechanism gives us the possibility to easily mark the localized property and give necessary information to look up its resource key.
-
-***
-Previous topic: [Localization](Localization)  
-Next topic: [Supported platforms](Supported-platforms)

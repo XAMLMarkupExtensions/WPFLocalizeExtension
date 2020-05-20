@@ -4,6 +4,3 @@ Localization is the task to adapt values such as strings, colors or the text flo
 * The designer and/or a translation agency has to fill out a cross-table containing all the keys mentioned above and values for each culture that should be supported by the application.
 
 This project offers the tool to easily define which value has to be localized to the developer - already in design time. It even tries to find the right key if none is given thus speeding up localized XAML coding while still providing a good code readability.
-
-***
-Next topic: [MarkupExtension basics](MarkupExtension-basics)

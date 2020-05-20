@@ -6,6 +6,3 @@ Beginning with v2.1.3 the extension also features an Enum value localization tec
 In general, this proxy class triggers the _ToString_ function of the object that is bound to the **Source** property. It is therefore also applicable to all other kinds of objects where you need value localization.
 
 To enhance this feature, also an **EnumComboBox** class was introduced with v2.1.3. Just feed your enum type to the **Type** property of this class and it does the rest for you, provided, that you correctly style the entries, e.g. using the XAML code snippet from above. You may also hide particular enum values using the **BrowsableAttribute**. A complete example is included in the _AssemblyTest_ example located in the source code of the library.
-
-***
-Previous topic: [Localization providers](Localization-providers)
