@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -18,13 +19,28 @@ namespace HalloWeltWPF
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        public string language { get; set; }
+
         public MainWindow()
         {
             InitializeComponent();
+            language = "de";
+            this.DataContext = this;
 
             LocalizeDictionary.Instance.Culture = new System.Globalization.CultureInfo("de");
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void BindeTestButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (language != "en")
+            language = "en";
+            else
+                language = "de";
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(language)));
         }
     }
 }

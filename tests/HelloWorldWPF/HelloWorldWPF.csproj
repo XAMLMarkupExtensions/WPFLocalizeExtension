@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
 	<PropertyGroup>
-    <TargetFrameworks>net452;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>net452;net40;netcoreapp3.1</TargetFrameworks>
 		<RootNamespace>HalloWeltWPF</RootNamespace>
 		<OutputType>WinExe</OutputType>
 		<StartupObject />
@@ -11,14 +11,6 @@
   </PropertyGroup>
 
 	<ItemGroup>
-		<!--<ApplicationDefinition Include="App.xaml" SubType="Designer" Generator="MSBuild:Compile" />-->
-
-		<!-- XAML elements -->
-		<!--<Page Include="**\*.xaml" Exclude="App.xaml" SubType="Designer">
-			<Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-		</Page>
-		<Compile Update="**\*.xaml.cs" SubType="Code" DependentUpon="%(Filename)" />-->
-
 		<!-- Resources -->
 		<EmbeddedResource Update="Ressourcen.resx" Generator="ResXFileCodeGenerator" LastGenOutput="Ressourcen.Designer.cs" />
 		<Compile Update="Ressourcen.Designer.cs" AutoGen="True" DependentUpon="Ressourcen.resx" DesignTime="True" />

@@ -8,7 +8,7 @@
         lex:ResxLocalizationProvider.DefaultDictionary="Ressourcen"
         SizeToContent="WidthAndHeight"
         ResizeMode="NoResize"
-        Title="{lex:Loc Title}"
+        Title="{lex:LocText Title}"
         Background="{lex:Loc Background}"
         FlowDirection="{lex:Loc FlowDirection}" WindowStartupLocation="CenterScreen">
     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="50,20">
@@ -16,6 +16,10 @@
             <ScaleTransform ScaleX="2.0" ScaleY="2.0" />
         </StackPanel.LayoutTransform>
         <TextBlock Name="MyLabel" FontSize="20" Text="{lex:Loc}" HorizontalAlignment="Center" />
+        <TextBlock Name="BindTest1" Text="{Binding Path=language}" Background="Aqua"></TextBlock>
+        <Button Name="BindeTestButton" Content="Press" Margin="5" Click="BindeTestButton_Click" ></Button>
+        <TextBlock Text="{lex:Loc {Binding language}}" />
+        <TextBlock Text="{lex:Loc {Binding Path=language}}" Background="Aqua"/>
         <TextBlock Name="MyLabel2" FontSize="20" Text="{lex:Loc PresentationCore:ExceptionStringTable:DeleteText}" HorizontalAlignment="Center" />
         <StackPanel Orientation="Horizontal">
             <Button Content="{lex:Loc de}" Margin="5" CommandParameter="de" Command="{Binding Source={x:Static lex:LocalizeDictionary.Instance}, Path=SetCultureCommand}" />

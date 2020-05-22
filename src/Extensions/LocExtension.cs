@@ -14,6 +14,7 @@ namespace WPFLocalizeExtension.Extensions
     using System.Collections;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Data.SqlTypes;
     using System.Globalization;
     using System.Linq;
     using System.Reflection;
@@ -63,6 +64,46 @@ namespace WPFLocalizeExtension.Extensions
         /// Holds the Key to a .resx object
         /// </summary>
         private string _key;
+
+        /// <summary>
+        /// Holds the Binding to a key
+        /// </summary>
+        private Binding _binding;
+
+
+        private static readonly Dictionary<string, (DependencyProperty value, DependencyProperty loc)> internalList = new Dictionary<string, (DependencyProperty value, DependencyProperty loc)>();
+
+        private string AddSpecialBinderAndGetKey(Binding binding, DependencyObject dependencyObject, object property)
+        {
+            var name = dependencyObject.GetType().Name+property.ToString();
+
+            DependencyProperty locDP;
+            DependencyProperty valueDP;
+
+            if (!internalList.ContainsKey(name))
+            {
+                // search for existing DependencyProperty
+                locDP = DependencyProperty.RegisterAttached("LocExtensionMarkup"+ name, typeof(NestedMarkupExtension), typeof(LocExtension),
+                               new PropertyMetadata(null));
+                valueDP = DependencyProperty.RegisterAttached("LocExtensionValue" + name, typeof(string), typeof(LocExtension),
+                                new PropertyMetadata("", (d, e) => { (d?.GetValue(locDP) as LocExtension)?.UpdateNewValue(); }));
+
+                internalList.Add(name, (valueDP, locDP));
+            }
+            else
+            {
+                (valueDP, locDP) = internalList[name];
+            }
+
+            if (dependencyObject.GetValue(locDP) == null)
+            {
+                // set Binding and LocExt DP only if not set
+                BindingOperations.SetBinding(dependencyObject, valueDP, binding);
+                dependencyObject.SetValue(locDP, this);
+            }
+
+            return (string)dependencyObject.GetValue(valueDP);
+        }
 
         /// <summary>
         /// A custom converter, supplied in the XAML code.
@@ -232,16 +273,16 @@ namespace WPFLocalizeExtension.Extensions
         /// <value>The initialize value.</value>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [ConstructorArgument("key")]
-        public string InitializeValue { get; set; }
+        public object InitializeValue { get; set; }
 
         /// <summary>
         /// Gets or sets the Key that identifies a resource (Assembly:Dictionary:Key)
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public string ResourceIdentifierKey
+        public object ResourceIdentifierKey
         {
             get => _key ?? "(null)";
-            set => _key = value;
+            set => _key = value.ToString();
         }
         #endregion
 
@@ -262,10 +303,13 @@ namespace WPFLocalizeExtension.Extensions
         /// Initializes a new instance of the <see cref="LocExtension"/> class.
         /// </summary>
         /// <param name="key">The resource identifier.</param>
-        public LocExtension(string key)
+        public LocExtension(object key)
             : this()
         {
-            Key = key;
+            if (key is Binding binding)
+                _binding = binding;
+            else
+                Key = key?.ToString();
         }
 
         /// <summary>
@@ -428,6 +472,14 @@ namespace WPFLocalizeExtension.Extensions
         /// <inheritdoc/>
         public override object FormatOutput(TargetInfo endPoint, TargetInfo info)
         {
+            if (_binding != null)
+            {
+                if (endPoint.TargetObject is DependencyObject dpo)
+                {
+                    _key = AddSpecialBinderAndGetKey(_binding, dpo, endPoint.TargetProperty);
+                }
+            }
+
             object result = null;
 
             if (endPoint == null)
