@@ -470,7 +470,7 @@ namespace WPFLocalizeExtension.Extensions
 
                         cacheDPKey = mi.Invoke(null, new object[] { name + ".Key", typeof(LocExtension) }) as DependencyProperty
                             ?? DependencyProperty.RegisterAttached(name + ".Key", typeof(string), typeof(LocExtension),
-                                            new PropertyMetadata("", (d, e) => { (d?.GetValue(cacheDPThis) as LocExtension)?.UpdateNewValue(); })); ;
+                                            new PropertyMetadata("", (d, e) => { (d?.GetValue(cacheDPThis) as LocExtension)?.UpdateNewValue(); }));
                         cacheDPName = name;
                     }
 

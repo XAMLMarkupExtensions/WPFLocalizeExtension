@@ -37,7 +37,7 @@ namespace HalloWeltWPF
         private void BindeTestButton_Click(object sender, RoutedEventArgs e)
         {
             if (language != "en")
-            language = "en";
+                language = "en";
             else
                 language = "de";
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(language)));
