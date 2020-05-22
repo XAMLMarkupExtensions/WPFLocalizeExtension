@@ -66,44 +66,24 @@ namespace WPFLocalizeExtension.Extensions
         private string _key;
 
         /// <summary>
-        /// Holds the Binding to a key
+        /// Holds the Binding to get the key
         /// </summary>
         private Binding _binding;
 
+        /// <summary>
+        /// the Name of the cached dynamic generated DependencyProperties
+        /// </summary>
+        private string cacheDPName = null;
 
-        private static readonly Dictionary<string, (DependencyProperty value, DependencyProperty loc)> internalList = new Dictionary<string, (DependencyProperty value, DependencyProperty loc)>();
+        /// <summary>
+        /// Cached DependencyProperty for this object
+        /// </summary>
+        private DependencyProperty cacheDPThis;
 
-        private string AddSpecialBinderAndGetKey(Binding binding, DependencyObject dependencyObject, object property)
-        {
-            var name = dependencyObject.GetType().Name+property.ToString();
-
-            DependencyProperty locDP;
-            DependencyProperty valueDP;
-
-            if (!internalList.ContainsKey(name))
-            {
-                // search for existing DependencyProperty
-                locDP = DependencyProperty.RegisterAttached("LocExtensionMarkup"+ name, typeof(NestedMarkupExtension), typeof(LocExtension),
-                               new PropertyMetadata(null));
-                valueDP = DependencyProperty.RegisterAttached("LocExtensionValue" + name, typeof(string), typeof(LocExtension),
-                                new PropertyMetadata("", (d, e) => { (d?.GetValue(locDP) as LocExtension)?.UpdateNewValue(); }));
-
-                internalList.Add(name, (valueDP, locDP));
-            }
-            else
-            {
-                (valueDP, locDP) = internalList[name];
-            }
-
-            if (dependencyObject.GetValue(locDP) == null)
-            {
-                // set Binding and LocExt DP only if not set
-                BindingOperations.SetBinding(dependencyObject, valueDP, binding);
-                dependencyObject.SetValue(locDP, this);
-            }
-
-            return (string)dependencyObject.GetValue(valueDP);
-        }
+        /// <summary>
+        /// Cached DependencyProperty for key string
+        /// </summary>
+        private DependencyProperty cacheDPKey;
 
         /// <summary>
         /// A custom converter, supplied in the XAML code.
@@ -472,11 +452,38 @@ namespace WPFLocalizeExtension.Extensions
         /// <inheritdoc/>
         public override object FormatOutput(TargetInfo endPoint, TargetInfo info)
         {
-            if (_binding != null)
+            if (_binding != null && endPoint.TargetObject is DependencyObject dpo && endPoint.TargetProperty is DependencyProperty dp)
             {
-                if (endPoint.TargetObject is DependencyObject dpo)
+                try
                 {
-                    _key = AddSpecialBinderAndGetKey(_binding, dpo, endPoint.TargetProperty);
+                    var name = "LocExtension." + dp.OwnerType.FullName + "." + dp.Name;
+                    if (endPoint.TargetPropertyIndex != -1)
+                        name += $"[{endPoint.TargetPropertyIndex}]";
+
+                    if (name != cacheDPName)
+                    {
+                        MethodInfo mi = typeof(DependencyProperty).GetMethod("FromName", BindingFlags.Static | BindingFlags.NonPublic);
+
+                        cacheDPThis = mi.Invoke(null, new object[] { name, typeof(LocExtension) }) as DependencyProperty
+                            ?? DependencyProperty.RegisterAttached(name, typeof(NestedMarkupExtension), typeof(LocExtension),
+                                           new PropertyMetadata(null));
+
+                        cacheDPKey = mi.Invoke(null, new object[] { name + ".Key", typeof(LocExtension) }) as DependencyProperty
+                            ?? DependencyProperty.RegisterAttached(name + ".Key", typeof(string), typeof(LocExtension),
+                                            new PropertyMetadata("", (d, e) => { (d?.GetValue(cacheDPThis) as LocExtension)?.UpdateNewValue(); })); ;
+                        cacheDPName = name;
+                    }
+
+                    if (dpo.GetValue(cacheDPThis) == null)
+                    {
+                        BindingOperations.SetBinding(dpo, cacheDPKey, _binding);
+                        dpo.SetValue(cacheDPThis, this);
+                    }
+
+                    _key = (string)dpo.GetValue(cacheDPKey);
+                }
+                catch
+                {
                 }
             }
 
