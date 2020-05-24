@@ -26,6 +26,24 @@ namespace WPFLocalizeExtension.ValueConverters
     /// </summary>
     public class TranslateConverter : MarkupExtension, IValueConverter, IMultiValueConverter
     {
+        #region IMultiValueConverter
+        /// <inheritdoc/>
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (values != null && values.Length > 0)
+                return this.Convert(values[0], targetType, parameter, culture);
+
+            return null;
+        }
+
+        /// <inheritdoc/>
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
+
+        #region IValueConverter
         /// <inheritdoc/>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -45,30 +63,18 @@ namespace WPFLocalizeExtension.ValueConverters
         }
 
         /// <inheritdoc/>
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (values != null && values.Length > 0)
-                return this.Convert(values[0], targetType, parameter, culture);
-
-            return null;
-        }
-
-        /// <inheritdoc/>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotSupportedException();
         }
+        #endregion
 
-        /// <inheritdoc/>
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-
+        #region MarkupExtension
         /// <inheritdoc/>
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
             return new TranslateConverter();
-        }
+        } 
+        #endregion
     }
 }

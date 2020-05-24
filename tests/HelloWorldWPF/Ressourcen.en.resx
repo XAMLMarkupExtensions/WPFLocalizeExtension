@@ -141,4 +141,10 @@
   <data name="Background" xml:space="preserve">
     <value>White</value>
   </data>
+  <data name="TestEnum__Test1" xml:space="preserve">
+    <value>Hello Test 1</value>
+  </data>
+  <data name="TestEnum__Test2" xml:space="preserve">
+    <value>Hello Test 2</value>
+  </data>
 </root>

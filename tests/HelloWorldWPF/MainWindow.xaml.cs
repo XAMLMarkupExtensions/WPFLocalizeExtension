@@ -21,6 +21,14 @@ namespace HalloWeltWPF
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        public enum TestEnum {
+            Test1,
+            Test2
+        }
+
+        public TestEnum tenum { get; set; }
+    
+
         public string language { get; set; }
 
         public string color { get; set; }
@@ -43,8 +51,15 @@ namespace HalloWeltWPF
                 language = "en";
             else
                 language = "de";
+
+            if (tenum == TestEnum.Test1)
+                tenum = TestEnum.Test2;
+            else
+                tenum = TestEnum.Test1;
+
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(language)));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(color)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(tenum)));
         }
     }
 }
