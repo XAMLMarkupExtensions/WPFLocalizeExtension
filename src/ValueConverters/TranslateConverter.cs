@@ -38,9 +38,7 @@ namespace WPFLocalizeExtension.ValueConverters
                     return LocExtension.GetLocalizedValue(targetType, value.ToString(), culture, null);
                 }
                 catch
-                {
-
-                }
+                { }
             }
 
             return null;
