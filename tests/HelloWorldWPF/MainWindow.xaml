@@ -11,10 +11,40 @@
         Title="{lex:LocText Title}"
         Background="{lex:Loc Background}"
         FlowDirection="{lex:Loc FlowDirection}" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <ResourceDictionary>
+            <lex:TranslateConverter x:Key="TranslateConverter" />
+            <Style x:Key="hardCodedStyle1" TargetType="TextBlock">
+                <Setter Property="Text" Value="{lex:BLoc Key=de}" />
+            </Style>
+            <Style x:Key="hardCodedStyle" TargetType="TextBlock">
+                <Setter Property="Text" >
+                    <Setter.Value>
+                        <MultiBinding Converter="{lex:TranslateConverter}" >
+                            <Binding Path="language" FallbackValue="HelloWorldWPF:Ressourcen:en" />
+                            <Binding Source="{x:Static lex:LocalizeDictionary.Instance}" Path="Culture"/>
+                        </MultiBinding> 
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Foreground">
+                    <Setter.Value>
+                        <MultiBinding Converter="{lex:TranslateConverter}" FallbackValue="#00FF00" >
+                            <Binding Path="color"/>
+                            <Binding Source="{x:Static lex:LocalizeDictionary.Instance}" Path="Culture"/>
+                        </MultiBinding>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+       
+    </Window.Resources>
     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="50,20">
         <StackPanel.LayoutTransform>
             <ScaleTransform ScaleX="2.0" ScaleY="2.0" />
         </StackPanel.LayoutTransform>
+        <TextBlock Style="{StaticResource hardCodedStyle}" Background="Red" />
+        <TextBlock Style="{StaticResource hardCodedStyle1}"/>
+        <TextBlock Text="{Binding ElementName=testFELoc, Path=Content}"></TextBlock>
         <TextBlock Name="MyLabel" FontSize="20" Text="{lex:Loc}" HorizontalAlignment="Center" />
         <TextBlock Name="BindTest1" Text="{lex:Loc {Binding Path=language, FallbackValue=en}}" Background="Aqua"></TextBlock>
         <Button Name="BindeTestButton" Content="Press to toggle binded property" Margin="5" Click="BindeTestButton_Click" ></Button>

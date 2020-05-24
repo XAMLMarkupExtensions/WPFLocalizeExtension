@@ -705,6 +705,55 @@ namespace WPFLocalizeExtension.Extensions
         }
 
         /// <summary>
+        /// Gets a localized value.
+        /// </summary>
+        /// <param name="t">The type of the returned value.</typeparam>
+        /// <param name="key">The key.</param>
+        /// <param name="targetCulture">The target culture.</param>
+        /// <param name="target">The target <see cref="DependencyObject"/>.</param>
+        /// <param name="converter">An optional converter.</param>
+        /// <param name="converterParameter">An optional converter parameter.</param>
+        /// <returns>The resolved localized object.</returns>
+        public static object GetLocalizedValue(Type t,string key, CultureInfo targetCulture, DependencyObject target, IValueConverter converter = null, object converterParameter = null)
+        {
+            lock (ResolveLock)
+            {
+                var result = new object();
+
+                var resourceKey = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(key, target);
+
+                // Get the localized object from the dictionary
+                var resKey = targetCulture.Name + ":" + t.Name + ":" + resourceKey;
+                var isDefaultConverter = converter is DefaultConverter;
+
+                if (isDefaultConverter && _resourceBuffer.ContainsKey(resKey))
+                    result = _resourceBuffer[resKey];
+                else
+                {
+                    var localizedObject = LocalizeDictionary.Instance.GetLocalizedObject(resourceKey, target,
+                        targetCulture);
+
+                    if (localizedObject == null)
+                        return result;
+
+                    if (converter == null)
+                        converter = new DefaultConverter();
+
+                    var tmp = converter.Convert(localizedObject, t, converterParameter, targetCulture);
+
+                    if (t.IsAssignableFrom(tmp.GetType()))
+                    {
+                        result = tmp;
+                        if (isDefaultConverter)
+                            SafeAddItemToResourceBuffer(resKey, result);
+                    }
+                }
+
+                return result;
+            }
+        }
+
+        /// <summary>
         /// Resolves the localized value of the current Assembly, Dict, Key pair.
         /// </summary>
         /// <param name="resolvedValue">The resolved value.</param>

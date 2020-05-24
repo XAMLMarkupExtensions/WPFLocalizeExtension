@@ -23,10 +23,13 @@ namespace HalloWeltWPF
     {
         public string language { get; set; }
 
+        public string color { get; set; }
+
         public MainWindow()
         {
             InitializeComponent();
             language = "de";
+            color = "Background";
             this.DataContext = this;
 
             LocalizeDictionary.Instance.Culture = new System.Globalization.CultureInfo("de");
@@ -41,6 +44,7 @@ namespace HalloWeltWPF
             else
                 language = "de";
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(language)));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(color)));
         }
     }
 }
