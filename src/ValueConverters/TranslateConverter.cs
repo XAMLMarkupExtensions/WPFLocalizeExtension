@@ -24,7 +24,7 @@ namespace WPFLocalizeExtension.ValueConverters
     /// <summary>
     /// Takes given value as resource key and translates it. If no text is found, the received value is returned.
     /// </summary>
-    public class TranslateConverter : MarkupExtension, IValueConverter, IMultiValueConverter
+    public class TranslateConverter : TypeValueConverterBase, IValueConverter, IMultiValueConverter
     {
         #region IMultiValueConverter
         /// <inheritdoc/>
@@ -67,14 +67,6 @@ namespace WPFLocalizeExtension.ValueConverters
         {
             throw new NotSupportedException();
         }
-        #endregion
-
-        #region MarkupExtension
-        /// <inheritdoc/>
-        public override object ProvideValue(IServiceProvider serviceProvider)
-        {
-            return new TranslateConverter();
-        } 
         #endregion
     }
 }
