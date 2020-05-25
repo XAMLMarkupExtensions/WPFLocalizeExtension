@@ -28,7 +28,6 @@ namespace HalloWeltWPF
 
         public TestEnum tenum { get; set; }
     
-
         public string language { get; set; }
 
         public string color { get; set; }
