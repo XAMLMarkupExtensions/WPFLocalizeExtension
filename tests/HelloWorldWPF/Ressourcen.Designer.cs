@@ -142,25 +142,25 @@ namespace HalloWeltWPF {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Test 1.
+        ///   Looks up a localized string similar to Test1.
         /// </summary>
-        internal static string TestEnum_Test1 {
+        internal static string TestEnum__Test1 {
             get {
-                return ResourceManager.GetString("TestEnum:Test1", resourceCulture);
+                return ResourceManager.GetString("TestEnum__Test1", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Test 2.
+        ///   Looks up a localized string similar to Test2.
         /// </summary>
-        internal static string TestEnum_Test2 {
+        internal static string TestEnum__Test2 {
             get {
-                return ResourceManager.GetString("TestEnum:Test2", resourceCulture);
+                return ResourceManager.GetString("TestEnum__Test2", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Title.
+        ///   Looks up a localized string similar to Title2.
         /// </summary>
         internal static string Title {
             get {

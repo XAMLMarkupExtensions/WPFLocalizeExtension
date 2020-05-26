@@ -147,4 +147,10 @@
   <data name="TestEnum__Test2" xml:space="preserve">
     <value>Hello Test 2</value>
   </data>
+  <data name="TestEnum_Test1" xml:space="preserve">
+    <value>Hallo Test1</value>
+  </data>
+  <data name="TestEnum_Test2" xml:space="preserve">
+    <value>Hallo Test 2</value>
+  </data>
 </root>
