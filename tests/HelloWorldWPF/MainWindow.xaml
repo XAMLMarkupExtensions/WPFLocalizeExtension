@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:HalloWeltWPF"
         d:DataContext="{d:DesignInstance Type=local:TestVM, IsDesignTimeCreatable=True}" 
         mc:Ignorable="d"
-        lex:LocalizeDictionary.DesignCulture="de"
+        lex:LocalizeDictionary.DesignCulture="en"
         lex:LocalizeDictionary.IncludeInvariantCulture="False"
         lex:ResxLocalizationProvider.DefaultAssembly="HelloWorldWPF"
         lex:ResxLocalizationProvider.DefaultDictionary="Ressourcen"
@@ -48,7 +48,7 @@
             <ScaleTransform ScaleX="2.0" ScaleY="2.0" />
         </StackPanel.LayoutTransform>
         <lex:LocProxy x:Name="LocProxySessionLabel"  Source="{Binding Path=language, FallbackValue=de}" />
-        <Label  x:Name="SessionLabel" Content="{Binding ElementName=LocProxySessionLabel, Path=Result}" Margin="10,2,10,0" VerticalAlignment="Top" Background="Green" />
+        <Label Background="Green" x:Name="SessionLabel" Content="{Binding ElementName=LocProxySessionLabel, Path=Result}" />
         <TextBlock Style="{StaticResource hardCodedStyle}" Background="Red" />
         <TextBlock Style="{StaticResource hardCodedStyle1}"/>
         <TextBlock Text="{Binding ElementName=testFELoc, Path=Content}"></TextBlock>
