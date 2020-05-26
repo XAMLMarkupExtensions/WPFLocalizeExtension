@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,46 +20,32 @@ namespace HalloWeltWPF
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, INotifyPropertyChanged
+    public partial class MainWindow : Window
     {
-        public enum TestEnum {
-            Test1,
-            Test2
-        }
-
-        public TestEnum tenum { get; set; }
-    
-        public string language { get; set; }
-
-        public string color { get; set; }
+        TestVM vm = new TestVM();
 
         public MainWindow()
         {
             InitializeComponent();
-            language = "de";
-            color = "Background";
-            this.DataContext = this;
+
+            vm.language = "de";
+            vm.color = "Background";
+            this.DataContext = vm;
 
             LocalizeDictionary.Instance.Culture = new System.Globalization.CultureInfo("de");
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
         private void BindeTestButton_Click(object sender, RoutedEventArgs e)
         {
-            if (language != "en")
-                language = "en";
+            if (vm.language != "en")
+                vm.language = "en";
             else
-                language = "de";
+                vm.language = "de";
 
-            if (tenum == TestEnum.Test1)
-                tenum = TestEnum.Test2;
+            if (vm.tenum == TestVM.TestEnum.Test1)
+                vm.tenum = TestVM.TestEnum.Test2;
             else
-                tenum = TestEnum.Test1;
-
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(language)));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(color)));
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(tenum)));
+                vm.tenum = TestVM.TestEnum.Test1;
         }
     }
 }

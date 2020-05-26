@@ -2,7 +2,12 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:lex="http://wpflocalizeextension.codeplex.com"
-        lex:LocalizeDictionary.DesignCulture="en"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:HalloWeltWPF"
+        d:DataContext="{d:DesignInstance Type=local:TestVM, IsDesignTimeCreatable=True}" 
+        mc:Ignorable="d"
+        lex:LocalizeDictionary.DesignCulture="de"
         lex:LocalizeDictionary.IncludeInvariantCulture="False"
         lex:ResxLocalizationProvider.DefaultAssembly="HelloWorldWPF"
         lex:ResxLocalizationProvider.DefaultDictionary="Ressourcen"
@@ -42,6 +47,8 @@
         <StackPanel.LayoutTransform>
             <ScaleTransform ScaleX="2.0" ScaleY="2.0" />
         </StackPanel.LayoutTransform>
+        <lex:LocProxy x:Name="LocProxySessionLabel"  Source="{Binding Path=language, FallbackValue=de}" />
+        <Label  x:Name="SessionLabel" Content="{Binding ElementName=LocProxySessionLabel, Path=Result}" Margin="10,2,10,0" VerticalAlignment="Top" Background="Green" />
         <TextBlock Style="{StaticResource hardCodedStyle}" Background="Red" />
         <TextBlock Style="{StaticResource hardCodedStyle1}"/>
         <TextBlock Text="{Binding ElementName=testFELoc, Path=Content}"></TextBlock>
