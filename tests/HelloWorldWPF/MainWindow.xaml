@@ -1,5 +1,6 @@
 ﻿<Window x:Class="HalloWeltWPF.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:lex="http://wpflocalizeextension.codeplex.com"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -40,8 +41,8 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+            <lex:StringFormatConverter x:Key="stringFormatConverter"/>
         </ResourceDictionary>
-       
     </Window.Resources>
     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="50,20">
         <StackPanel.LayoutTransform>
@@ -52,6 +53,18 @@
         <TextBlock Style="{StaticResource hardCodedStyle}" Background="Red" />
         <TextBlock Style="{StaticResource hardCodedStyle1}"/>
         <TextBlock Text="{Binding ElementName=testFELoc, Path=Content}"></TextBlock>
+
+        <!--Converter="{StaticResource stringFormatConverter}"-->
+
+        <!--StringFormat="Binding test (no design time!): {0} - {1}"-->
+        <TextBlock Name="MyLabel3" FontSize="20" HorizontalAlignment="Center">
+                   <TextBlock.Text>
+                <MultiBinding Converter="{StaticResource stringFormatConverter}" >
+                    <lex:BLoc Key="HelloWorldWPF:Ressourcen:MyLabel2"></lex:BLoc>
+                    <Binding Path="Hours" FallbackValue=""/>
+                </MultiBinding>
+                   </TextBlock.Text>
+        </TextBlock> 
         <TextBlock Name="MyLabel" FontSize="20" Text="{lex:Loc}" HorizontalAlignment="Center" />
         <TextBlock Name="BindTest1" Text="{lex:Loc {Binding Path=language, FallbackValue=en}}" Background="Aqua"></TextBlock>
         <TextBlock Text="{lex:Loc {Binding tenum, StringFormat=TestEnum_{0}}}"></TextBlock>

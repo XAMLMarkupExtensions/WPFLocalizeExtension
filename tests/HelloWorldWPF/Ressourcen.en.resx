@@ -153,4 +153,7 @@
   <data name="TestEnum_Test2" xml:space="preserve">
     <value>Hallo Test 2</value>
   </data>
+  <data name="MyLabel2" xml:space="preserve">
+    <value>Hello World! {0} {0:one|default}</value>
+  </data>
 </root>

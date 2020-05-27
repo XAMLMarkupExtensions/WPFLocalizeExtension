@@ -11,6 +11,10 @@
   </PropertyGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="SmartFormat.NET" Version="2.5.0" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<EmbeddedResource Update="Ressourcen.resx" Generator="ResXFileCodeGenerator" LastGenOutput="Ressourcen.Designer.cs" />
 	</ItemGroup>
   

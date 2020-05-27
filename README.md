@@ -73,8 +73,6 @@
 	* Does not need an additional build task
 	* Is in use in various productive systems
 
-### Documentation:
-[On NoDoq](http://www.nudoq.org/#!/Packages/WpfLocalizeExtension)
 
 ### License:
 [MS-PL](https://github.com/XAMLMarkupExtensions/WPFLocalizationExtension/blob/master/LICENSE)
@@ -89,7 +87,7 @@ http://root-project.org/
 https://nuget.org/packages/WpfLocalizeExtension/
 
 ### Documentation & Tutorial:
-[Documentation / Wiki](https://github.com/XAMLMarkupExtensions/WPFLocalizationExtension/wiki)
+[Documentation / Wiki](docs/Home.md)
 
 ### Localization Tools:
 [ResXManager (Visual Studio Plugin and StandAlone)](http://visualstudiogallery.msdn.microsoft.com/3b64e04c-e8de-4b97-8358-06c73a97cc68)  

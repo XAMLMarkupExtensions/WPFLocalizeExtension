@@ -30,13 +30,16 @@ namespace HalloWeltWPF
 
             vm.language = "de";
             vm.color = "Background";
+            vm.Hours = 0;
             this.DataContext = vm;
-
+            
             LocalizeDictionary.Instance.Culture = new System.Globalization.CultureInfo("de");
         }
 
         private void BindeTestButton_Click(object sender, RoutedEventArgs e)
         {
+            vm.Hours = vm.Hours + 1;
+        
             if (vm.language != "en")
                 vm.language = "en";
             else
