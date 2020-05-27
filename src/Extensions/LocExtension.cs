@@ -707,7 +707,7 @@ namespace WPFLocalizeExtension.Extensions
         /// <summary>
         /// Gets a localized value.
         /// </summary>
-        /// <param name="t">The type of the returned value.</typeparam>
+        /// <param name="t">The type of the returned value.</param>
         /// <param name="key">The key.</param>
         /// <param name="targetCulture">The target culture.</param>
         /// <param name="target">The target <see cref="DependencyObject"/>.</param>

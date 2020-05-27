@@ -20,11 +20,15 @@ namespace WPFLocalizeExtension.ValueConverters
     using System.Windows.Data;
     #endregion
 
+    /// <summary>
+    /// Takes the first value as StringFormat and the other values as Parameter for the StringFormat
+    /// </summary>
     public class StringFormatConverter : TypeValueConverterBase, IMultiValueConverter
     {
         private static MethodInfo miFormat = null;
 
         #region IMultiValueConverter
+        /// <inheritdoc/>
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             if (miFormat == null)
@@ -58,6 +62,7 @@ namespace WPFLocalizeExtension.ValueConverters
             return (string)miFormat.Invoke(null, values);
         }
 
+        /// <inheritdoc/>
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
             return null;
