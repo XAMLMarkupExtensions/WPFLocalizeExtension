@@ -29,7 +29,7 @@
                         <MultiBinding Converter="{lex:TranslateConverter}" >
                             <Binding Path="language" FallbackValue="HelloWorldWPF:Ressourcen:en" />
                             <Binding Source="{x:Static lex:LocalizeDictionary.Instance}" Path="Culture"/>
-                        </MultiBinding> 
+                        </MultiBinding>
                     </Setter.Value>
                 </Setter>
                 <Setter Property="Foreground">
@@ -41,7 +41,6 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-            <lex:StringFormatConverter x:Key="stringFormatConverter"/>
         </ResourceDictionary>
     </Window.Resources>
     <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="50,20">
@@ -54,17 +53,14 @@
         <TextBlock Style="{StaticResource hardCodedStyle1}"/>
         <TextBlock Text="{Binding ElementName=testFELoc, Path=Content}"></TextBlock>
 
-        <!--Converter="{StaticResource stringFormatConverter}"-->
-
-        <!--StringFormat="Binding test (no design time!): {0} - {1}"-->
         <TextBlock Name="MyLabel3" FontSize="20" HorizontalAlignment="Center">
-                   <TextBlock.Text>
-                <MultiBinding Converter="{StaticResource stringFormatConverter}" >
+            <TextBlock.Text>
+                <MultiBinding Converter="{lex:StringFormatConverter}" >
                     <lex:BLoc Key="HelloWorldWPF:Ressourcen:MyLabel2"></lex:BLoc>
                     <Binding Path="Hours" FallbackValue=""/>
                 </MultiBinding>
-                   </TextBlock.Text>
-        </TextBlock> 
+            </TextBlock.Text>
+        </TextBlock>
         <TextBlock Name="MyLabel" FontSize="20" Text="{lex:Loc}" HorizontalAlignment="Center" />
         <TextBlock Name="BindTest1" Text="{lex:Loc {Binding Path=language, FallbackValue=en}}" Background="Aqua"></TextBlock>
         <TextBlock Text="{lex:Loc {Binding tenum, StringFormat=TestEnum_{0}}}"></TextBlock>
