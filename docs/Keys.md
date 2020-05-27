@@ -1,31 +1,8 @@
-# Key strategy
-
-## Resx Provider 
-
-To find a resx ressource the system needs an assembly name, a ressource name and the key for the resx ressource.
-The easiest way to provide the Assembly and Ressource via the Attached properties:
-
-ResxLocalizationProvider.DefaultAssembly  and ResxLocalizationProvider.DefaultDictionary
-
-You can attach this properties to any element in the visual tree and this is valid for all child nodes.
-If you want to override you can add this again on a child node and override so all childs.
-
-[ADD SCOPE EXAMPLE PICTURE]
-
-In the key retrieval process there is the possibility to directly define the dictionary & assembly.
-
+Keys are entered either directly after the extension name or using the Key property of the LocExtension class. Both will yield the same result (here with the key named Test):
 ```xaml
-{lex:Loc KEY}
-{lex:Loc DICTIONARY:KEY}
-{lex:Loc ASSEMBLY:DICTIONARY:KEY}
+<Button Content="{lex:Loc Test}" />
+<Button Content="{lex:Loc Key=Test}" />
 ```
-
-### Inheriting Resx
-
-The is also an Inheriting Resx Proviver there all attached properties are defined with the FrameworkPropertyMetadataOptions.Inherits attribute,
-so that WPF make on each child node a copy. This reduces the overhead because no search on parent nodes is nessesary, but decrease massive the
-WPF perfomance because of the copy process. So we intent not to use it.
-
 ### Automatic key retrieval
 If the control already got or can get a value for its _Name_ or _x:Name_ property, the key may be neglected, provided, that a key exists that matches one of the following criteria (checked in exactly this order): 
 

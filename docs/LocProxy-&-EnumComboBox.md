@@ -1,9 +1,3 @@
-# LocProxy (deprecation notice)
-
-**will be removed because LocExtension now supports direct [Binding](Localize.md#Binding).**
-
-
-
 Beginning with v2.1.3 the extension also features an Enum value localization technique. To achieve this one has to employ the new **LocProxy** class. Just pass the particular enum value to the **Source** property and check the right setting of the **PrependType** flag. If this is used, you may also specify a **Separator** that will be used between the type suffix and the value itself leading to key entries like this "MyEnum_MyValue" using underscore as the separator. This allows us to create unique localization keys for different enum types and their values. To get the localized value, just bind your text element to the **Result** property of the **LocProxy**:
 ```xaml
 <lex:LocProxy Source="{Binding}" x:Name="Proxy" PrependType="True" />

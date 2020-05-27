@@ -136,33 +136,9 @@
     <value>MyLabel_Text</value>
   </data>
   <data name="Title" xml:space="preserve">
-    <value>Title2</value>
+    <value>Title</value>
   </data>
   <data name="Background" xml:space="preserve">
     <value>Background</value>
-  </data>
-  <data name="Test1" xml:space="preserve">
-    <value>Test1</value>
-  </data>
-  <data name="Test2" xml:space="preserve">
-    <value>Test2</value>
-  </data>
-  <data name="TestEnum:Test1" xml:space="preserve">
-    <value>Test 1</value>
-  </data>
-  <data name="TestEnum:Test2" xml:space="preserve">
-    <value>Test 2</value>
-  </data>
-  <data name="TestEnum__Test1" xml:space="preserve">
-    <value>Test1</value>
-  </data>
-  <data name="TestEnum__Test2" xml:space="preserve">
-    <value>Test2</value>
-  </data>
-  <data name="TestEnum_Test1" xml:space="preserve">
-    <value>Test1</value>
-  </data>
-  <data name="TestEnum_Test2" xml:space="preserve">
-    <value>Test2</value>
   </data>
 </root>
