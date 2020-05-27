@@ -9,7 +9,7 @@
 * [Resource files](Resource-files.md)
 * [Preparing the XAML code](Preparing-the-XAML-code.md)
 * [Our first localized text](Our-first-localized-text.md)
-* [Keys](Keys.md)
+* [Keys](Keys)
 * [Multiple assemblies and dictionaries](Multiple-assemblies-and-dictionaries.md)
 * [Localization providers](Localization-providers.md)
 * [LocProxy & EnumComboBox](LocProxy-&-EnumComboBox.md)
