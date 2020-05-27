@@ -1,3 +1,25 @@
+# FAQ
+
+## Strong Name and signing
+
+The current nuget is public signed, this is in general a good compromise, but there are sometimes issue like:
+
+* "Could not load file or assembly 'WPFLocalizeExtension' ... Strong name signature could not be verified
+    * xUnit can be solve with disable shadowCoping see #225
+    * in general integrate [StrongNameSigner](https://github.com/brutaldev/StrongNameSigner)
+
+There is also a long discussion here just some issues: #225 #150 #141 #110 #106
+
+
+## Issued Design mode
+
+We try to do our best to have the extension as best as possible working in Visual Studio Designer, but in some cases
+this doesn't work even everything is fine. Here some points / steps that can help:
+1. restart / reopen (xaml, sln, complete Visualt Studio)
+2. remove cache (bin/obj dirs + %USERPROFILE%\AppData\Local\Microsoft\VisualStudio\\**[VS VERSION]**\Designer\ShadowCache)
+3. check .net compile proj with any cpu or 32bit see #217
+
+
 ### Access modifier for resource assemblies
 The LocalizationExtension will fail to look up a localized value, if the resource is compiled with its access modifier set to internal. To set up the resource build tool to use a public access modifier, open the resource file and change the value of the field.
 
