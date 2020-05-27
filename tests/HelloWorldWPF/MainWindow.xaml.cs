@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,19 +22,33 @@ namespace HalloWeltWPF
     /// </summary>
     public partial class MainWindow : Window
     {
-        public int Hours
-        {
-            get
-            {
-                return 1;
-            }
-        }
+        TestVM vm = new TestVM();
 
         public MainWindow()
         {
             InitializeComponent();
-            this.DataContext = this;
+
+            vm.language = "de";
+            vm.color = "Background";
+            vm.Hours = 0;
+            this.DataContext = vm;
+            
             LocalizeDictionary.Instance.Culture = new System.Globalization.CultureInfo("de");
+        }
+
+        private void BindeTestButton_Click(object sender, RoutedEventArgs e)
+        {
+            vm.Hours = vm.Hours + 1;
+        
+            if (vm.language != "en")
+                vm.language = "en";
+            else
+                vm.language = "de";
+
+            if (vm.tenum == TestVM.TestEnum.Test1)
+                vm.tenum = TestVM.TestEnum.Test2;
+            else
+                vm.tenum = TestVM.TestEnum.Test1;
         }
     }
 }
