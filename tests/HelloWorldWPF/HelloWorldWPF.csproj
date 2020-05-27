@@ -11,14 +11,10 @@
   </PropertyGroup>
 
 	<ItemGroup>
-		<!--<ApplicationDefinition Include="App.xaml" SubType="Designer" Generator="MSBuild:Compile" />-->
+	  <PackageReference Include="SmartFormat.NET" Version="2.5.0" />
+	</ItemGroup>
 
-		<!-- XAML elements -->
-		<!--<Page Include="**\*.xaml" Exclude="App.xaml" SubType="Designer">
-			<Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-		</Page>
-		<Compile Update="**\*.xaml.cs" SubType="Code" DependentUpon="%(Filename)" />-->
-
+	<ItemGroup>
 		<!-- Resources -->
 		<EmbeddedResource Update="Ressourcen.resx" Generator="ResXFileCodeGenerator" LastGenOutput="Ressourcen.Designer.cs" />
 		<Compile Update="Ressourcen.Designer.cs" AutoGen="True" DependentUpon="Ressourcen.resx" DesignTime="True" />

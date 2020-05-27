@@ -20,10 +20,18 @@ namespace HalloWeltWPF
     /// </summary>
     public partial class MainWindow : Window
     {
+        public int Hours
+        {
+            get
+            {
+                return 1;
+            }
+        }
+
         public MainWindow()
         {
             InitializeComponent();
-
+            this.DataContext = this;
             LocalizeDictionary.Instance.Culture = new System.Globalization.CultureInfo("de");
         }
     }

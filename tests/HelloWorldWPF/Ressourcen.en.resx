@@ -141,4 +141,7 @@
   <data name="Background" xml:space="preserve">
     <value>White</value>
   </data>
+  <data name="MyLabel2" xml:space="preserve">
+    <value>Hello World! {0} {0:one|default}</value>
+  </data>
 </root>
