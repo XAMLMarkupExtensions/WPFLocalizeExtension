@@ -1,5 +1,7 @@
 The project was restructured to separate the target identification and value conversion in the markup extension from the logic that actually provides the value by introducing the ILocalizationProvider interface. This enables us to plug in other provider services without touching the base, the LocExtension. 
 
+![](Structure.png)
+
 ### Changing the provider
 The provider can be changed using the **LocalizeDictionary.Provider** attached property at any node in the XAML document. Depending on the provider, a static singleton reference (e.g. resx provider) or an instance (e.g. csv provider) must be assigned to this property.
 
