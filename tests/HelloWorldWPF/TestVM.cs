@@ -43,6 +43,17 @@ namespace HalloWeltWPF
             }
         }
 
+        private int _hours;
+        public int Hours
+        {
+            get => _hours;
+            set
+            {
+                _hours = value;
+                RaisePropertyChanged(nameof(Hours));
+            }
+        }
+
         private string _language;
         public string language
         {
