@@ -45,15 +45,31 @@ namespace WPFLocalizeExtension.ValueConverters
 
         #region IValueConverter
         /// <inheritdoc/>
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public virtual object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value != null)
             {
                 try
                 {
                     culture = LocalizeDictionary.Instance.SpecificCulture;
+                    var _key = value.ToString();
 
-                    return LocExtension.GetLocalizedValue(targetType, value.ToString(), culture, null);
+                    var result = LocExtension.GetLocalizedValue(targetType, _key, culture, null);
+
+                    if (result == null)
+                    {
+                        var missingKeyEventResult = LocalizeDictionary.Instance.OnNewMissingKeyEvent(this, _key);
+
+                        if (LocalizeDictionary.Instance.OutputMissingKeys
+                            && !string.IsNullOrEmpty(_key) && (targetType == typeof(String) || targetType == typeof(object)))
+                        {
+                            if (missingKeyEventResult.MissingKeyResult != null)
+                                result = missingKeyEventResult.MissingKeyResult;
+                            else
+                                result = "Key: " + _key;
+                        }
+                    }
+                    return result;
                 }
                 catch
                 { }
@@ -63,7 +79,7 @@ namespace WPFLocalizeExtension.ValueConverters
         }
 
         /// <inheritdoc/>
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public virtual object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotSupportedException();
         }

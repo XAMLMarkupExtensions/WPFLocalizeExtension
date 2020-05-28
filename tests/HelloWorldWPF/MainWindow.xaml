@@ -19,7 +19,6 @@
         FlowDirection="{lex:Loc FlowDirection}" WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <ResourceDictionary>
-            <lex:TranslateConverter x:Key="TranslateConverter" />
             <Style x:Key="hardCodedStyle1" TargetType="TextBlock">
                 <Setter Property="Text" Value="{lex:BLoc Key=de}" />
             </Style>
@@ -27,7 +26,7 @@
                 <Setter Property="Text" >
                     <Setter.Value>
                         <MultiBinding Converter="{lex:TranslateConverter}" >
-                            <Binding Path="language" FallbackValue="HelloWorldWPF:Ressourcen:en" />
+                            <Binding Path="language" />
                             <Binding Source="{x:Static lex:LocalizeDictionary.Instance}" Path="Culture"/>
                         </MultiBinding>
                     </Setter.Value>

@@ -718,7 +718,7 @@ namespace WPFLocalizeExtension.Extensions
         {
             lock (ResolveLock)
             {
-                var result = new object();
+                object result = null;
 
                 var resourceKey = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(key, target);
 
