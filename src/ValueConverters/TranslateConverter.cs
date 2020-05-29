@@ -52,8 +52,24 @@ namespace WPFLocalizeExtension.ValueConverters
                 try
                 {
                     culture = LocalizeDictionary.Instance.SpecificCulture;
+                    var _key = value.ToString();
 
-                    return LocExtension.GetLocalizedValue(targetType, value.ToString(), culture, null);
+                    var result = LocExtension.GetLocalizedValue(targetType, _key, culture, null);
+
+                    if (result == null)
+                    {
+                        var missingKeyEventResult = LocalizeDictionary.Instance.OnNewMissingKeyEvent(this, _key);
+
+                        if (LocalizeDictionary.Instance.OutputMissingKeys
+                            && !string.IsNullOrEmpty(_key) && (targetType == typeof(String) || targetType == typeof(object)))
+                        {
+                            if (missingKeyEventResult.MissingKeyResult != null)
+                                result = missingKeyEventResult.MissingKeyResult;
+                            else
+                                result = "Key: " + _key;
+                        }
+                    }
+                    return result;
                 }
                 catch
                 { }

@@ -34,16 +34,32 @@ namespace HalloWeltWPF
             this.DataContext = vm;
             
             LocalizeDictionary.Instance.Culture = new System.Globalization.CultureInfo("de");
+
+            LocalizeDictionary.Instance.OutputMissingKeys = true;
+            LocalizeDictionary.Instance.MissingKeyEvent += Instance_MissingKeyEvent;
+        }
+
+        private void Instance_MissingKeyEvent(object sender, MissingKeyEventArgs e)
+        {
+       
+            e.MissingKeyResult = "Hello World";
         }
 
         private void BindeTestButton_Click(object sender, RoutedEventArgs e)
         {
             vm.Hours = vm.Hours + 1;
-        
-            if (vm.language != "en")
-                vm.language = "en";
-            else
-                vm.language = "de";
+
+            switch (vm.language)
+            {
+                case "en": vm.language = "de";
+                    break;
+                case "de":
+                    vm.language = "error";
+                    break;
+                default:
+                    vm.language = "en";
+                    break;
+            }
 
             if (vm.tenum == TestVM.TestEnum.Test1)
                 vm.tenum = TestVM.TestEnum.Test2;
