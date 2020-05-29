@@ -128,6 +128,59 @@ namespace WPFLocalizeExtension.Extensions
         }
         #endregion
 
+        #region Block some Binding Parameters
+        /// <inheritdoc/>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public new PropertyPath Path
+        {
+            get { return null; }
+            set
+            {
+                throw new Exception(nameof(Path) + " not allowed for BLoc");
+            }
+        }
+
+        /// <inheritdoc/>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public new object Source
+        {
+            get => null;
+            set => throw new Exception(nameof(Source) + " not allowed for BLoc");
+        }
+
+        /// <inheritdoc/>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public new RelativeSource RelativeSource
+        {
+            get => null;
+            set => throw new Exception(nameof(RelativeSource) + " not allowed for BLoc");
+        }
+
+        /// <inheritdoc/>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public new string ElementName
+        {
+            get => null;
+            set => throw new Exception(nameof(ElementName) + " not allowed for BLoc");
+        }
+
+        /// <inheritdoc/>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public new BindingMode Mode
+        {
+            get => BindingMode.Default;
+            set => throw new Exception(nameof(Mode) + " not allowed for BLoc");
+        }
+
+        /// <inheritdoc/>
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public new string XPath
+        {
+            get => null;
+            set => throw new Exception(nameof(XPath) + " not allowed for BLoc");
+        }
+        #endregion
+
         #region Constructors & Dispose
         /// <summary>
         /// Initializes a new instance of the <see cref="BLoc"/> class.
@@ -135,8 +188,8 @@ namespace WPFLocalizeExtension.Extensions
         public BLoc()
         {
             LocalizeDictionary.DictionaryEvent.AddListener(this);
-            Path = new PropertyPath("Value");
-            Source = this;
+            base.Path = new PropertyPath("Value");
+            base.Source = this;
         }
 
         /// <summary>
