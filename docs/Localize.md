@@ -2,7 +2,7 @@
 
 The main Extension that will be used is `{lex:Loc}` and is a Markupextension with a wide range usage.
 For some use cases there it is not possible to use a Markupextension in XAML like Multibindings, Trigger, ...
-there are substitutes that try to fullfill the job, but they don't have 100% compatibility.
+there are substitutes [BLoc and FELoc](BLoc-and-FELoc.md) that try to fullfill the job, but they don't have 100% compatibility. 
 
 ```xaml
 {lex:Loc Key=, ForceCulture=, Converter=, ConverterParameter=,}
