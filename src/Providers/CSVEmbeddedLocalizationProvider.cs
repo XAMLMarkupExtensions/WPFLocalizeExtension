@@ -26,7 +26,7 @@ namespace WPFLocalizeExtension.Providers
     /// <summary>
     /// A singleton CSV provider that uses attached properties and the Parent property to iterate through the visual tree.
     /// </summary>
-    public class CSVEmbeddedLocalizationProvider : CSVLocalizationProviderBase
+    public class CSVEmbeddedLocalizationProvider : CSVLocalizationProviderBase, ILocalizeInstance
     {
         #region Dependency Properties
         /// <summary>
@@ -117,40 +117,20 @@ namespace WPFLocalizeExtension.Providers
 
         #region Singleton Variables, Properties & Constructor
         /// <summary>
-        /// The instance of the singleton.
-        /// </summary>
-        private static CSVEmbeddedLocalizationProvider _instance;
-
-        /// <summary>
-        /// Lock object for the creation of the singleton instance.
-        /// </summary>
-        private static readonly object InstanceLock = new object();
-
-        /// <summary>
         /// Gets the <see cref="CSVEmbeddedLocalizationProvider"/> singleton.
         /// </summary>
         public static CSVEmbeddedLocalizationProvider Instance
         {
             get
             {
-                if (_instance == null)
-                {
-                    lock (InstanceLock)
-                    {
-                        if (_instance == null)
-                            _instance = new CSVEmbeddedLocalizationProvider();
-                    }
-                }
-
-                // return the existing/new instance
-                return _instance;
+                return InstanceLocator.Resolve<CSVEmbeddedLocalizationProvider>();
             }
         }
 
         /// <summary>
-        /// The singleton constructor.
+        /// The instance constructor.
         /// </summary>
-        private CSVEmbeddedLocalizationProvider()
+        public CSVEmbeddedLocalizationProvider()
         {
             ResourceManagerList = new Dictionary<string, ResourceManager>();
             AvailableCultures = new ObservableCollection<CultureInfo> { CultureInfo.InvariantCulture };

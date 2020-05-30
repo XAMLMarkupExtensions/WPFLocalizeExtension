@@ -29,7 +29,7 @@ namespace WPFLocalizeExtension.Engine
     /// <summary>
     /// Represents the culture interface for localization
     /// </summary>
-    public sealed class LocalizeDictionary : DependencyObject, INotifyPropertyChanged
+    public sealed class LocalizeDictionary : DependencyObject, INotifyPropertyChanged, ILocalizeInstance
     {
         #region INotifyPropertyChanged Implementation
         /// <summary>
@@ -90,7 +90,7 @@ namespace WPFLocalizeExtension.Engine
                 "Separation",
                 typeof(string),
                 typeof(LocalizeDictionary),
-                new PropertyMetadata(DefaultSeparation, SetSeparationFromDependencyProperty));
+                new PropertyMetadata(LocalizeSettings.Instance.Separation, SetSeparationFromDependencyProperty));
 
         /// <summary>
         /// A flag indicating that the invariant culture should be included.
@@ -100,7 +100,7 @@ namespace WPFLocalizeExtension.Engine
                 "IncludeInvariantCulture",
                 typeof(bool),
                 typeof(LocalizeDictionary),
-                new PropertyMetadata(true, SetIncludeInvariantCultureFromDependencyProperty));
+                new PropertyMetadata(LocalizeSettings.Instance.IncludeInvariantCulture, SetIncludeInvariantCultureFromDependencyProperty));
 
         /// <summary>
         /// A flag indicating that the cache is disabled.
@@ -110,7 +110,7 @@ namespace WPFLocalizeExtension.Engine
                 "DisableCache",
                 typeof(bool),
                 typeof(LocalizeDictionary),
-                new PropertyMetadata(false, SetDisableCacheFromDependencyProperty));
+                new PropertyMetadata(LocalizeSettings.Instance.DisableCache, SetDisableCacheFromDependencyProperty));
 
         /// <summary>
         /// A flag indicating that missing keys should be output.
@@ -120,7 +120,7 @@ namespace WPFLocalizeExtension.Engine
                 "OutputMissingKeys",
                 typeof(bool),
                 typeof(LocalizeDictionary),
-                new PropertyMetadata(true, SetOutputMissingKeysFromDependencyProperty));
+                new PropertyMetadata(LocalizeSettings.Instance.OutputMissingKeys, SetOutputMissingKeysFromDependencyProperty));
         #endregion
 
         #region Dependency Property Callbacks
@@ -412,11 +412,6 @@ namespace WPFLocalizeExtension.Engine
         private static readonly object SyncRoot = new object();
 
         /// <summary>
-        /// Holds the instance of singleton
-        /// </summary>
-        private static LocalizeDictionary _instance;
-
-        /// <summary>
         /// Holds the current chosen <see cref="CultureInfo"/>
         /// </summary>
         private CultureInfo _culture;
@@ -424,22 +419,22 @@ namespace WPFLocalizeExtension.Engine
         /// <summary>
         /// Holds the separation char/string.
         /// </summary>
-        private string _separation = DefaultSeparation;
+        private string _separation = LocalizeSettings.Instance.Separation;
 
         /// <summary>
         /// Determines, if the <see cref="MergedAvailableCultures"/> contains the invariant culture.
         /// </summary>
-        private bool _includeInvariantCulture = true;
+        private bool _includeInvariantCulture = LocalizeSettings.Instance.IncludeInvariantCulture;
 
         /// <summary>
         /// Determines, if the cache is disabled.
         /// </summary>
-        private bool _disableCache = true;
+        private bool _disableCache = LocalizeSettings.Instance.DisableCache;
 
         /// <summary>
         /// Determines, if missing keys should be output.
         /// </summary>
-        private bool _outputMissingKeys = true;
+        private bool _outputMissingKeys = LocalizeSettings.Instance.OutputMissingKeys;
 
         /// <summary>
         /// A default provider.
@@ -449,7 +444,7 @@ namespace WPFLocalizeExtension.Engine
         /// <summary>
         /// Determines, if the CurrentThread culture is set along with the Culture property.
         /// </summary>
-        private bool _setCurrentThreadCulture = true;
+        private bool _setCurrentThreadCulture = LocalizeSettings.Instance.SetCurrentThreadCulture;
 
         /// <summary>
         /// Determines if the code is run in DesignMode or not.
@@ -463,10 +458,10 @@ namespace WPFLocalizeExtension.Engine
         /// Prevents a default instance of the <see cref="T:WPFLocalizeExtension.Engine.LocalizeDictionary" /> class from being created.
         /// Static Constructor
         /// </summary>
-        private LocalizeDictionary()
+        public LocalizeDictionary()
         {
-            DefaultProvider = ResxLocalizationProvider.Instance;
-            SetCultureCommand = new CultureInfoDelegateCommand(SetCulture);
+            DefaultProvider = InstanceLocator.Resolve(LocalizeSettings.Instance.LocalizationProviderType) as ILocalizationProvider;
+            SetCultureCommand = new CultureInfoDelegateCommand((c) => LocalizeSettings.Instance.Culture = c);
         }
 
         private void AvailableCulturesCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -501,9 +496,14 @@ namespace WPFLocalizeExtension.Engine
         /// </summary>
         ~LocalizeDictionary()
         {
-            LocExtension.ClearResourceBuffer();
-            FELoc.ClearResourceBuffer();
-            BLoc.ClearResourceBuffer();
+			// do not clear the resource buffer on multi threaded applications
+            if (!LocalizeSettings.Instance.UseThreadInstances)
+            {
+                LocExtension.ClearResourceBuffer();
+                FELoc.ClearResourceBuffer();
+                BLoc.ClearResourceBuffer();
+            }
+            InstanceLocator.Dissolve(this);
         }
         #endregion
 
@@ -514,11 +514,6 @@ namespace WPFLocalizeExtension.Engine
         public static CultureInfo DefaultCultureInfo => CultureInfo.InvariantCulture;
 
         /// <summary>
-        /// Gets the default separation char/string.
-        /// </summary>
-        public static string DefaultSeparation => "_";
-
-        /// <summary>
         /// Gets the <see cref="LocalizeDictionary"/> singleton.
         /// If the underlying instance is null, a instance will be created.
         /// </summary>
@@ -526,26 +521,8 @@ namespace WPFLocalizeExtension.Engine
         {
             get
             {
-                // check if the underlying instance is null
-                if (_instance == null)
-                {
-                    // if it is null, lock the syncroot.
-                    // if another thread is accessing this too,
-                    // it have to wait until the syncroot is released
-                    lock (SyncRoot)
-                    {
-                        // check again, if the underlying instance is null
-                        if (_instance == null)
-                        {
-                            // create a new instance
-                            _instance = new LocalizeDictionary();
-                        }
-                    }
-                }
-
-                // return the existing/new instance
-                return _instance;
-            }
+				return InstanceLocator.Resolve<LocalizeDictionary>();
+			}
         }
 
         /// <summary>
@@ -964,13 +941,21 @@ namespace WPFLocalizeExtension.Engine
         #endregion
 
         #region DictionaryEvent (using weak references)
-        internal static class DictionaryEvent
+        internal class DictionaryEvent : ILocalizeInstance
         {
             /// <summary>
             /// The list of listeners
             /// </summary>
-            private static readonly List<WeakReference> Listeners = new List<WeakReference>();
-            private static readonly object ListenersLock = new object();
+            private readonly List<WeakReference> Listeners = new List<WeakReference>();
+            private readonly object ListenersLock = new object();
+
+            private static DictionaryEvent Instance
+            {
+                get
+                {
+                    return InstanceLocator.Resolve<DictionaryEvent>();
+                }
+            }
 
             /// <summary>
             /// Fire the event.
@@ -980,16 +965,17 @@ namespace WPFLocalizeExtension.Engine
             internal static void Invoke(DependencyObject sender, DictionaryEventArgs args)
             {
                 var list = new List<IDictionaryEventListener>();
+                var instance = Instance;
 
-                lock (ListenersLock)
+                lock (instance.ListenersLock)
                 {
-                    foreach (var wr in Listeners.ToList())
+                    foreach (var wr in instance.Listeners.ToList())
                     {
                         var targetReference = wr.Target;
                         if (targetReference != null)
                             list.Add((IDictionaryEventListener)targetReference);
                         else
-                            Listeners.Remove(wr);
+                            instance.Listeners.Remove(wr);
                     }
                 }
 
@@ -1006,23 +992,25 @@ namespace WPFLocalizeExtension.Engine
                 if (listener == null)
                     return;
 
+                var instance = Instance;
+
                 // Check, if this listener already was added.
                 bool listenerExists = false;
 
-                lock (ListenersLock)
+                lock (instance.ListenersLock)
                 {
-                    foreach (var wr in Listeners.ToList())
+                    foreach (var wr in instance.Listeners.ToList())
                     {
                         var targetReference = wr.Target;
                         if (targetReference == null)
-                            Listeners.Remove(wr);
+                            instance.Listeners.Remove(wr);
                         else if (targetReference == listener)
                             listenerExists = true;
                     }
 
                     // Add it now.
                     if (!listenerExists)
-                        Listeners.Add(new WeakReference(listener));
+                        instance.Listeners.Add(new WeakReference(listener));
                 }
             }
 
@@ -1035,15 +1023,17 @@ namespace WPFLocalizeExtension.Engine
                 if (listener == null)
                     return;
 
-                lock (ListenersLock)
+                var instance = Instance;
+
+                lock (instance.ListenersLock)
                 {
-                    foreach (var wr in Listeners.ToList())
+                    foreach (var wr in instance.Listeners.ToList())
                     {
                         var targetReference = wr.Target;
                         if (targetReference == null)
-                            Listeners.Remove(wr);
+                            instance.Listeners.Remove(wr);
                         else if ((IDictionaryEventListener)targetReference == listener)
-                            Listeners.Remove(wr);
+                            instance.Listeners.Remove(wr);
                     }
                 }
             }
@@ -1055,14 +1045,15 @@ namespace WPFLocalizeExtension.Engine
             /// <returns>An enumeration of listeners.</returns>
             internal static IEnumerable<T> EnumerateListeners<T>()
             {
-                lock (ListenersLock)
+                var instance = Instance;
+                lock (instance.ListenersLock)
                 {
-                    foreach (var wr in Listeners.ToList())
+                    foreach (var wr in instance.Listeners.ToList())
                     {
                         var targetReference = wr.Target;
 
                         if (targetReference == null)
-                            Listeners.Remove(wr);
+                            instance.Listeners.Remove(wr);
                         else if (targetReference is T)
                             yield return (T)targetReference;
                     }
@@ -1072,11 +1063,6 @@ namespace WPFLocalizeExtension.Engine
         #endregion
 
         #region CultureInfoDelegateCommand
-        private void SetCulture(CultureInfo c)
-        {
-            Culture = c;
-        }
-
         /// <summary>
         /// A class for culture commands.
         /// </summary>

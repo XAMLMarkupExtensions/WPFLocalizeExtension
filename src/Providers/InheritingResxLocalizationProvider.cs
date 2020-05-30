@@ -14,13 +14,14 @@ namespace WPFLocalizeExtension.Providers
     using System.Globalization;
     using System.Resources;
     using System.Windows;
+    using WPFLocalizeExtension.Engine;
     using XAMLMarkupExtensions.Base;
     #endregion
 
     /// <summary>
     /// A singleton RESX provider that uses inheriting attached properties.
     /// </summary>
-    public class InheritingResxLocalizationProvider : ResxLocalizationProviderBase
+    public class InheritingResxLocalizationProvider : ResxLocalizationProviderBase, ILocalizeInstance
     {
         #region Dependency Properties
         /// <summary>
@@ -104,40 +105,20 @@ namespace WPFLocalizeExtension.Providers
 
         #region Singleton Variables, Properties & Constructor
         /// <summary>
-        /// The instance of the singleton.
-        /// </summary>
-        private static InheritingResxLocalizationProvider _instance;
-
-        /// <summary>
-        /// Lock object for the creation of the singleton instance.
-        /// </summary>
-        private static readonly object InstanceLock = new object();
-
-        /// <summary>
         /// Gets the <see cref="ResxLocalizationProvider"/> singleton.
         /// </summary>
         public static InheritingResxLocalizationProvider Instance
         {
             get
             {
-                if (_instance == null)
-                {
-                    lock (InstanceLock)
-                    {
-                        if (_instance == null)
-                            _instance = new InheritingResxLocalizationProvider();
-                    }
-                }
-
-                // return the existing/new instance
-                return _instance;
+                return InstanceLocator.Resolve<InheritingResxLocalizationProvider>();
             }
         }
 
         /// <summary>
-        /// The singleton constructor.
+        /// The instance constructor.
         /// </summary>
-        private InheritingResxLocalizationProvider()
+        public InheritingResxLocalizationProvider()
         {
             ResourceManagerList = new Dictionary<string, ResourceManager>();
             AvailableCultures = new ObservableCollection<CultureInfo> { CultureInfo.InvariantCulture };
