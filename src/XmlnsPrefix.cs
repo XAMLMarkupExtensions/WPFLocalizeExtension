@@ -15,7 +15,9 @@ using System.Windows.Markup;
 [assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "WPFLocalizeExtension.TypeConverters")]
 [assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "WPFLocalizeExtension.ValueConverters")]
 [assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "WPFLocalizeExtension.Deprecated.Engine")]
+[assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "WPFLocalizeExtension.Deprecated.Extensions")]
 [assembly: XmlnsDefinition("http://wpflocalizeextension.codeplex.com", "WPFLocalizeExtension.Deprecated.Providers")]
+
 
 [assembly: XmlnsDefinition("https://github.com/XAMLMarkupExtensions/WPFLocalizationExtension", "WPFLocalizeExtension.Engine")]
 [assembly: XmlnsDefinition("https://github.com/XAMLMarkupExtensions/WPFLocalizationExtension", "WPFLocalizeExtension.Extensions")]
