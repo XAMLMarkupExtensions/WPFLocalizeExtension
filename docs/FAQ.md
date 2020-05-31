@@ -28,7 +28,7 @@ If you like to see what keys are not translated you can easily register to the f
 LocalizeDictionary.Instance.MissingKeyEvent += Instance_MissingKeyEvent;
 ```
 
-The issue or bad design is that this is only triggered if you use the LocExtension and not if you make codebehind translation.
+The issue or bad design is that this is only triggered if you use the LocExtension, BLoc and not if you make codebehind translation.
 If you do that you should use a different Event.
 
 ```csharp
@@ -36,6 +36,16 @@ LocalizeDictionary.Instance.GetLocalizedObject(....)
 
 LocalizeDictionary.Instance.DefaultProvider.ProviderError  += ...
 ```
+
+## Binding cannot be changed after it has been used
+
+Binding does not support any changes on Properties after it is bound the firts time. So if you like to do thinks like:
+
+```xaml
+{Binding Source={lex:Loc Foo}}
+{Binding StringFormat={lex:Loc Bar}}
+```
+This will crash. For StringFormat use cases we have implemented a [StringFormatConverter](ValueConverters.md).
 
 ## Access modifier for resource assemblies
 The LocalizationExtension will fail to look up a localized value, if the resource is compiled with its access modifier set to internal. To set up the resource build tool to use a public access modifier, open the resource file and change the value of the field.

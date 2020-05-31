@@ -6,9 +6,10 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-namespace WPFLocalizeExtension.Engine
+namespace WPFLocalizeExtension.Deprecated.Engine
 {
     #region Usings
+    using System;
     using System.ComponentModel;
     using System.Windows;
     using WPFLocalizeExtension.Extensions;
@@ -17,6 +18,7 @@ namespace WPFLocalizeExtension.Engine
     /// <summary>
     /// A proxy class to localize object strings.
     /// </summary>
+    [Obsolete("LocProxy is deprecated and will be removed in version 4.0, because lex:Loc supports now direct Binding, see documentation", false)]
     public class LocProxy : FrameworkElement
     {
         /// <summary>

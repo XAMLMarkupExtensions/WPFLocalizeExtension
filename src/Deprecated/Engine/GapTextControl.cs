@@ -7,7 +7,7 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-namespace WPFLocalizeExtension.Engine
+namespace WPFLocalizeExtension.Deprecated.Engine
 {
     #region Usings
     using System;
@@ -25,6 +25,7 @@ namespace WPFLocalizeExtension.Engine
     /// <summary>
     /// A gap text control.
     /// </summary>
+    [Obsolete("GapTextControl is deprecated and will be removed in version 4.0, see documentation",false)]
     [TemplatePart(Name = PART_TextBlock, Type = typeof(TextBlock))]
     public class GapTextControl : Control
     {

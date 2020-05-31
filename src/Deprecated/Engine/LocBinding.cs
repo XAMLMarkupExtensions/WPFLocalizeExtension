@@ -6,9 +6,10 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-namespace WPFLocalizeExtension.Engine
+namespace WPFLocalizeExtension.Deprecated.Engine
 {
     #region Usings
+    using System;
     using System.Windows;
     using System.Windows.Data;
     using WPFLocalizeExtension.Extensions;
@@ -18,6 +19,7 @@ namespace WPFLocalizeExtension.Engine
     /// A binding proxy class that accepts bindings and forwards them to the LocExtension.
     /// Based on: http://www.codeproject.com/Articles/71348/Binding-on-a-Property-which-is-not-a-DependencyPro
     /// </summary>
+    [Obsolete("LocBinding is deprecated and will be removed in version 4.0, because lex:Loc supports now direct Binding, see documentation", false)]
     public class LocBinding : FrameworkElement
     {
         #region Source DP
