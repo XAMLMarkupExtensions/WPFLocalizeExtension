@@ -80,3 +80,13 @@ key *TestEnum_Test1*. To make this now working you have two options.
 
 1. use `{lex:Loc {Binding Path=Foo, StringFormat=TestEnum_{0}}}` with the disadvantage that you have to manually type the TypeName of the enum and that refactoring is not working. On the otherhand you are fully free to change the key.
 2. use `{lex:Loc {Binding Path=Foo, Converter={lex:PrependTypeConverter}}}` and get the automated prepending of the type to the key retreval process. This works also for any kind ot .net type, but we see at the moment only the use case for enums. For a details and the possibility to change the separation character read the details [ValueConverters](ValueConverters.md) doc.
+
+### Gap texts / complex translation with pluralisation
+
+For translation of complex texts there some value should be in the text like this:
+
+>You have selected 10 car(s).
+
+TWe have introduces a StringFormatConverter see [ValueConverters](ValueConverters.md) with automatic using of [smartFormat](https://github.com/axuno/SmartFormat) if this is available.
+A detailed explanation how to use can be found [here](GapText.md). 
+
