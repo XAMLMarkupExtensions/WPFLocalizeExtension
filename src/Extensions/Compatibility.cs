@@ -17,6 +17,7 @@ namespace WPFLocalizeExtension.Extensions
     #endregion
 
     /// <inheritdoc/>
+    [Obsolete("LocBrushExtension is deprecated and will be removed in version 4.0, please use lex:Loc instead and see documentation", false)]
     [MarkupExtensionReturnType(typeof(System.Windows.Media.Brush))]
     public class LocBrushExtension : LocExtension
     {
@@ -29,6 +30,7 @@ namespace WPFLocalizeExtension.Extensions
     }
 
     /// <inheritdoc/>
+    [Obsolete("LocDoubleExtension is deprecated and will be removed in version 4.0, please use lex:Loc instead and see documentation", false)]
     [MarkupExtensionReturnType(typeof(double))]
     public class LocDoubleExtension : LocExtension
     {
@@ -42,6 +44,7 @@ namespace WPFLocalizeExtension.Extensions
 
     /// <inheritdoc/>
     [MarkupExtensionReturnType(typeof(System.Windows.FlowDirection))]
+    [Obsolete("LocFlowDirectionExtension is deprecated and will be removed in version 4.0, please use lex:Loc instead and see documentation", false)]
     public class LocFlowDirectionExtension : LocExtension
     {
         /// <inheritdoc/>
@@ -54,6 +57,7 @@ namespace WPFLocalizeExtension.Extensions
 
     /// <inheritdoc/>
     [MarkupExtensionReturnType(typeof(System.Windows.Media.Imaging.BitmapSource))]
+    [Obsolete("LocImageExtension is deprecated and will be removed in version 4.0, please use lex:Loc instead and see documentation", false)]
     public class LocImageExtension : LocExtension
     {
         /// <inheritdoc/>
@@ -66,6 +70,7 @@ namespace WPFLocalizeExtension.Extensions
 
     /// <inheritdoc/>
     [MarkupExtensionReturnType(typeof(string))]
+    [Obsolete("LocTextExtension is deprecated and will be removed in version 4.0, please use lex:Loc instead and see documentation", false)]
     public class LocTextExtension : LocExtension
     {
         #region Constructors
@@ -270,6 +275,7 @@ namespace WPFLocalizeExtension.Extensions
 
     /// <inheritdoc/>
     [MarkupExtensionReturnType(typeof(string))]
+    [Obsolete("LocTextLowerExtension is deprecated and will be removed in version 4.0, please use lex:Loc instead and see documentation", false)]
     public class LocTextLowerExtension : LocTextExtension
     {
         #region Constructors
@@ -292,6 +298,7 @@ namespace WPFLocalizeExtension.Extensions
 
     /// <inheritdoc/>
     [MarkupExtensionReturnType(typeof(string))]
+    [Obsolete("LocTextUpperExtension is deprecated and will be removed in version 4.0, please use lex:Loc instead and see documentation", false)]
     public class LocTextUpperExtension : LocTextExtension
     {
         #region Constructors
@@ -314,6 +321,7 @@ namespace WPFLocalizeExtension.Extensions
 
     /// <inheritdoc/>
     [MarkupExtensionReturnType(typeof(System.Windows.Thickness))]
+    [Obsolete("LocThicknessExtension is deprecated and will be removed in version 4.0, please use lex:Loc instead and see documentation", false)]
     public class LocThicknessExtension : LocExtension
     {
         /// <inheritdoc/>
