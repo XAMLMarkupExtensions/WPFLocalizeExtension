@@ -21,6 +21,7 @@ namespace WPFLocalizeExtension.Providers
     /// <summary>
     /// The base for CSV file providers.
     /// </summary>
+    [Obsolete("CSVLocalizationProviderBase is deprecated and will be removed in version 4.0, see documentation", false)]
     public abstract class CSVLocalizationProviderBase : DependencyObject, ILocalizationProvider
     {
         #region Variables

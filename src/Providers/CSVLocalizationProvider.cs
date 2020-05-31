@@ -9,6 +9,7 @@
 namespace WPFLocalizeExtension.Providers
 {
     #region Usings
+    using System;
     using System.Collections.ObjectModel;
     using System.Globalization;
     using System.IO;
@@ -21,6 +22,7 @@ namespace WPFLocalizeExtension.Providers
     /// <summary>
     /// A singleton CSV provider that uses attached properties and the Parent property to iterate through the visual tree.
     /// </summary>
+    [Obsolete("CSVLocalizationProvider is deprecated and will be removed in version 4.0, see documentation", false)]
     public class CSVLocalizationProvider : CSVLocalizationProviderBase
     {
         #region Dependency Properties

@@ -26,6 +26,7 @@ namespace WPFLocalizeExtension.Providers
     /// <summary>
     /// A singleton CSV provider that uses attached properties and the Parent property to iterate through the visual tree.
     /// </summary>
+    [Obsolete("CSVEmbeddedLocalizationProvider is deprecated and will be removed in version 4.0, see documentation", false)]
     public class CSVEmbeddedLocalizationProvider : CSVLocalizationProviderBase
     {
         #region Dependency Properties

@@ -76,6 +76,10 @@
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
 		<PackageReference Include="GitVersionTask" Version="5.3.4" PrivateAssets="All" />
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Deprecated\Engine\" />
+	  <Folder Include="Deprecated\Providers\" />
+	</ItemGroup>
 
 	<Target Name="PublishToNugetWithAPIKey" AfterTargets="GenerateNuspec" Condition="Exists('$(SolutionDir)\..\..\nugetapikey.txt')">
 		<ReadLinesFromFile File="$(SolutionDir)\..\..\nugetapikey.txt">
