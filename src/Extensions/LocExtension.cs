@@ -332,7 +332,7 @@ namespace WPFLocalizeExtension.Extensions
 
             foreach (var dObj in targetDOs)
             {
-                if (LocalizeDictionary.Instance.DefaultProvider is InheritingResxLocalizationProvider)
+                if (LocalizeDictionary.Instance.DefaultProvider is IInheritingLocalizationProvider)
                 {
                     UpdateNewValue();
                     break;
