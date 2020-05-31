@@ -7,12 +7,13 @@
 // <author>Uwe Mayer</author>
 #endregion
 
-namespace WPFLocalizeExtension.Extensions
+namespace WPFLocalizeExtension.Deprecated.Extensions
 {
     #region Usings
     using System;
     using System.Windows.Markup;
     using WPFLocalizeExtension.Engine;
+    using WPFLocalizeExtension.Extensions;
     using XAMLMarkupExtensions.Base;
     #endregion
 
