@@ -6,7 +6,7 @@
 // <author>Sébastien Sevrin</author>
 #endregion
 
-namespace WPFLocalizeExtension.Providers
+namespace WPFLocalizeExtension.Deprecated.Providers
 {
     #region Usings
     using System;
@@ -16,6 +16,7 @@ namespace WPFLocalizeExtension.Providers
     using System.Text;
     using System.Windows;
     using WPFLocalizeExtension.Engine;
+    using WPFLocalizeExtension.Providers;
     using XAMLMarkupExtensions.Base;
     #endregion
 
