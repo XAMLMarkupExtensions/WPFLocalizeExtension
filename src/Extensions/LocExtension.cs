@@ -286,6 +286,18 @@ namespace WPFLocalizeExtension.Extensions
         public LocExtension(object key)
             : this()
         {
+            if (key is TemplateBindingExpression tbe)
+            {
+                var newBinding = new Binding();
+
+                var tb = tbe.TemplateBindingExtension;
+                newBinding.Converter = tb.Converter;
+                newBinding.ConverterParameter = tb.ConverterParameter;
+                newBinding.Path = new PropertyPath(tb.Property.Name);
+                newBinding.RelativeSource = new RelativeSource(RelativeSourceMode.TemplatedParent);
+                key = newBinding;
+            }
+
             if (key is Binding binding)
                 _binding = binding;
             else

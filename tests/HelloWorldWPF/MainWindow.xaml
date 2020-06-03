@@ -62,6 +62,17 @@
         </TextBlock>
         <TextBlock Name="MyLabel" FontSize="20" Text="{lex:Loc}" HorizontalAlignment="Center" />
         <TextBlock Name="BindTest1" Text="{lex:Loc {Binding Path=language, FallbackValue=en}}" Background="Aqua"></TextBlock>
+        <Button Height="30" Tag="en">
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Canvas>
+                        <Ellipse Width="100" Height="{TemplateBinding Height}" Fill="DarkCyan"></Ellipse>
+                        <TextBox Text="{lex:Loc {Binding RelativeSource={RelativeSource TemplatedParent}, Path=Tag}}"></TextBox>
+                        <TextBox Canvas.Left="100" Text="{lex:Loc {TemplateBinding Tag}}"></TextBox>
+                    </Canvas>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
         <TextBlock Text="{lex:Loc {Binding tenum, StringFormat=TestEnum_{0}}}"></TextBlock>
         <TextBlock Text="{lex:Loc {Binding tenum, Converter={lex:PrependTypeConverter}, ConverterParameter=__}}"></TextBlock>
         <Button Name="BindeTestButton" Content="Press to toggle binded property" Margin="5" Click="BindeTestButton_Click" ></Button>
