@@ -28,9 +28,11 @@ For a detailed explanation please red the [Key strategy](Keys.md)
 
 In the this example the Extension would look into the defaultassembly and then into the defaultressource and search for this 3 keys
 
-| Content=...   | MyButton_Content  | string
-| ToolTip=...   | MyButton_ToolTip  | string
-| FontSize=...  | MyButton_FontSize | double 
+| Property      | Requested Key     | Type    |
+|---------------|-------------------|---------|
+| Content=...   | MyButton_Content  | string  |
+| ToolTip=...   | MyButton_ToolTip  | string  |
+| FontSize=...  | MyButton_FontSize | double  |
 
 If the resource has a different type the extensions try to convert is. This is more details describe in Target types.
 
