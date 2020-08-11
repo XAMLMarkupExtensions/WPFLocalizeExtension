@@ -18,55 +18,15 @@
           "Microsoft.SourceLink.Common": "1.0.0"
         }
       },
-      "Microsoft.Windows.Compatibility": {
+      "System.Management": {
         "type": "Direct",
-        "requested": "[3.1.0, )",
-        "resolved": "3.1.0",
-        "contentHash": "8rPxICe6kb6Ubi/MDvVfwJfv20iZ1dqb9ipT9Fm+3qdwLPtWN/6hmEjC7s38AagZoIEWxfxL8sVqTw+BgXjOAg==",
+        "requested": "[4.7.0, )",
+        "resolved": "4.7.0",
+        "contentHash": "IY+uuGhgzWiCg21i8IvQeY/Z7m1tX8VuPF+ludfn7iTCaccTtJo5HkjZbBEL8kbBubKhAKKtNXr7uMtmAc28Pw==",
         "dependencies": {
+          "Microsoft.NETCore.Platforms": "3.1.0",
           "Microsoft.Win32.Registry": "4.7.0",
-          "Microsoft.Win32.Registry.AccessControl": "4.7.0",
-          "Microsoft.Win32.SystemEvents": "4.7.0",
-          "System.CodeDom": "4.7.0",
-          "System.ComponentModel.Composition": "4.7.0",
-          "System.ComponentModel.Composition.Registration": "4.7.0",
-          "System.Configuration.ConfigurationManager": "4.7.0",
-          "System.Data.DataSetExtensions": "4.5.0",
-          "System.Data.Odbc": "4.7.0",
-          "System.Data.OleDb": "4.7.0",
-          "System.Data.SqlClient": "4.8.0",
-          "System.Diagnostics.EventLog": "4.7.0",
-          "System.Diagnostics.PerformanceCounter": "4.7.0",
-          "System.DirectoryServices": "4.7.0",
-          "System.DirectoryServices.AccountManagement": "4.7.0",
-          "System.DirectoryServices.Protocols": "4.7.0",
-          "System.Drawing.Common": "4.7.0",
-          "System.IO.FileSystem.AccessControl": "4.7.0",
-          "System.IO.Packaging": "4.7.0",
-          "System.IO.Pipes.AccessControl": "4.5.1",
-          "System.IO.Ports": "4.7.0",
-          "System.Management": "4.7.0",
-          "System.Reflection.Context": "4.7.0",
-          "System.Reflection.Emit": "4.7.0",
-          "System.Reflection.Emit.ILGeneration": "4.7.0",
-          "System.Reflection.Emit.Lightweight": "4.7.0",
-          "System.Runtime.Caching": "4.7.0",
-          "System.Security.AccessControl": "4.7.0",
-          "System.Security.Cryptography.Cng": "4.7.0",
-          "System.Security.Cryptography.Pkcs": "4.7.0",
-          "System.Security.Cryptography.ProtectedData": "4.7.0",
-          "System.Security.Cryptography.Xml": "4.7.0",
-          "System.Security.Permissions": "4.7.0",
-          "System.Security.Principal.Windows": "4.7.0",
-          "System.ServiceModel.Duplex": "4.7.0",
-          "System.ServiceModel.Http": "4.7.0",
-          "System.ServiceModel.NetTcp": "4.7.0",
-          "System.ServiceModel.Primitives": "4.7.0",
-          "System.ServiceModel.Security": "4.7.0",
-          "System.ServiceModel.Syndication": "4.7.0",
-          "System.ServiceProcess.ServiceController": "4.7.0",
-          "System.Text.Encoding.CodePages": "4.7.0",
-          "System.Threading.AccessControl": "4.7.0"
+          "System.CodeDom": "4.7.0"
         }
       },
       "XAMLMarkupExtensions": {
@@ -117,6 +77,56 @@
         "contentHash": "mtVirZr++rq+XCDITMUdnETD59XoeMxSpLRIII7JRI6Yj0LEDiO1pPn0ktlnIj12Ix8bfvQqQDMMIF9wC98oCA==",
         "dependencies": {
           "Microsoft.NETCore.Platforms": "3.1.0"
+        }
+      },
+      "Microsoft.Windows.Compatibility": {
+        "type": "Transitive",
+        "resolved": "3.1.0",
+        "contentHash": "8rPxICe6kb6Ubi/MDvVfwJfv20iZ1dqb9ipT9Fm+3qdwLPtWN/6hmEjC7s38AagZoIEWxfxL8sVqTw+BgXjOAg==",
+        "dependencies": {
+          "Microsoft.Win32.Registry": "4.7.0",
+          "Microsoft.Win32.Registry.AccessControl": "4.7.0",
+          "Microsoft.Win32.SystemEvents": "4.7.0",
+          "System.CodeDom": "4.7.0",
+          "System.ComponentModel.Composition": "4.7.0",
+          "System.ComponentModel.Composition.Registration": "4.7.0",
+          "System.Configuration.ConfigurationManager": "4.7.0",
+          "System.Data.DataSetExtensions": "4.5.0",
+          "System.Data.Odbc": "4.7.0",
+          "System.Data.OleDb": "4.7.0",
+          "System.Data.SqlClient": "4.8.0",
+          "System.Diagnostics.EventLog": "4.7.0",
+          "System.Diagnostics.PerformanceCounter": "4.7.0",
+          "System.DirectoryServices": "4.7.0",
+          "System.DirectoryServices.AccountManagement": "4.7.0",
+          "System.DirectoryServices.Protocols": "4.7.0",
+          "System.Drawing.Common": "4.7.0",
+          "System.IO.FileSystem.AccessControl": "4.7.0",
+          "System.IO.Packaging": "4.7.0",
+          "System.IO.Pipes.AccessControl": "4.5.1",
+          "System.IO.Ports": "4.7.0",
+          "System.Management": "4.7.0",
+          "System.Reflection.Context": "4.7.0",
+          "System.Reflection.Emit": "4.7.0",
+          "System.Reflection.Emit.ILGeneration": "4.7.0",
+          "System.Reflection.Emit.Lightweight": "4.7.0",
+          "System.Runtime.Caching": "4.7.0",
+          "System.Security.AccessControl": "4.7.0",
+          "System.Security.Cryptography.Cng": "4.7.0",
+          "System.Security.Cryptography.Pkcs": "4.7.0",
+          "System.Security.Cryptography.ProtectedData": "4.7.0",
+          "System.Security.Cryptography.Xml": "4.7.0",
+          "System.Security.Permissions": "4.7.0",
+          "System.Security.Principal.Windows": "4.7.0",
+          "System.ServiceModel.Duplex": "4.7.0",
+          "System.ServiceModel.Http": "4.7.0",
+          "System.ServiceModel.NetTcp": "4.7.0",
+          "System.ServiceModel.Primitives": "4.7.0",
+          "System.ServiceModel.Security": "4.7.0",
+          "System.ServiceModel.Syndication": "4.7.0",
+          "System.ServiceProcess.ServiceController": "4.7.0",
+          "System.Text.Encoding.CodePages": "4.7.0",
+          "System.Threading.AccessControl": "4.7.0"
         }
       },
       "runtime.linux-arm.runtime.native.System.IO.Ports": {
@@ -342,16 +352,6 @@
           "runtime.native.System.IO.Ports": "4.7.0"
         }
       },
-      "System.Management": {
-        "type": "Transitive",
-        "resolved": "4.7.0",
-        "contentHash": "IY+uuGhgzWiCg21i8IvQeY/Z7m1tX8VuPF+ludfn7iTCaccTtJo5HkjZbBEL8kbBubKhAKKtNXr7uMtmAc28Pw==",
-        "dependencies": {
-          "Microsoft.NETCore.Platforms": "3.1.0",
-          "Microsoft.Win32.Registry": "4.7.0",
-          "System.CodeDom": "4.7.0"
-        }
-      },
       "System.Private.ServiceModel": {
         "type": "Transitive",
         "resolved": "4.7.0",
@@ -551,55 +551,15 @@
           "Microsoft.SourceLink.Common": "1.0.0"
         }
       },
-      "Microsoft.Windows.Compatibility": {
+      "System.Management": {
         "type": "Direct",
-        "requested": "[3.1.0, )",
-        "resolved": "3.1.0",
-        "contentHash": "8rPxICe6kb6Ubi/MDvVfwJfv20iZ1dqb9ipT9Fm+3qdwLPtWN/6hmEjC7s38AagZoIEWxfxL8sVqTw+BgXjOAg==",
+        "requested": "[4.7.0, )",
+        "resolved": "4.7.0",
+        "contentHash": "IY+uuGhgzWiCg21i8IvQeY/Z7m1tX8VuPF+ludfn7iTCaccTtJo5HkjZbBEL8kbBubKhAKKtNXr7uMtmAc28Pw==",
         "dependencies": {
+          "Microsoft.NETCore.Platforms": "3.1.0",
           "Microsoft.Win32.Registry": "4.7.0",
-          "Microsoft.Win32.Registry.AccessControl": "4.7.0",
-          "Microsoft.Win32.SystemEvents": "4.7.0",
-          "System.CodeDom": "4.7.0",
-          "System.ComponentModel.Composition": "4.7.0",
-          "System.ComponentModel.Composition.Registration": "4.7.0",
-          "System.Configuration.ConfigurationManager": "4.7.0",
-          "System.Data.DataSetExtensions": "4.5.0",
-          "System.Data.Odbc": "4.7.0",
-          "System.Data.OleDb": "4.7.0",
-          "System.Data.SqlClient": "4.8.0",
-          "System.Diagnostics.EventLog": "4.7.0",
-          "System.Diagnostics.PerformanceCounter": "4.7.0",
-          "System.DirectoryServices": "4.7.0",
-          "System.DirectoryServices.AccountManagement": "4.7.0",
-          "System.DirectoryServices.Protocols": "4.7.0",
-          "System.Drawing.Common": "4.7.0",
-          "System.IO.FileSystem.AccessControl": "4.7.0",
-          "System.IO.Packaging": "4.7.0",
-          "System.IO.Pipes.AccessControl": "4.5.1",
-          "System.IO.Ports": "4.7.0",
-          "System.Management": "4.7.0",
-          "System.Reflection.Context": "4.7.0",
-          "System.Reflection.Emit": "4.7.0",
-          "System.Reflection.Emit.ILGeneration": "4.7.0",
-          "System.Reflection.Emit.Lightweight": "4.7.0",
-          "System.Runtime.Caching": "4.7.0",
-          "System.Security.AccessControl": "4.7.0",
-          "System.Security.Cryptography.Cng": "4.7.0",
-          "System.Security.Cryptography.Pkcs": "4.7.0",
-          "System.Security.Cryptography.ProtectedData": "4.7.0",
-          "System.Security.Cryptography.Xml": "4.7.0",
-          "System.Security.Permissions": "4.7.0",
-          "System.Security.Principal.Windows": "4.7.0",
-          "System.ServiceModel.Duplex": "4.7.0",
-          "System.ServiceModel.Http": "4.7.0",
-          "System.ServiceModel.NetTcp": "4.7.0",
-          "System.ServiceModel.Primitives": "4.7.0",
-          "System.ServiceModel.Security": "4.7.0",
-          "System.ServiceModel.Syndication": "4.7.0",
-          "System.ServiceProcess.ServiceController": "4.7.0",
-          "System.Text.Encoding.CodePages": "4.7.0",
-          "System.Threading.AccessControl": "4.7.0"
+          "System.CodeDom": "4.7.0"
         }
       },
       "XAMLMarkupExtensions": {
@@ -650,6 +610,56 @@
         "contentHash": "mtVirZr++rq+XCDITMUdnETD59XoeMxSpLRIII7JRI6Yj0LEDiO1pPn0ktlnIj12Ix8bfvQqQDMMIF9wC98oCA==",
         "dependencies": {
           "Microsoft.NETCore.Platforms": "3.1.0"
+        }
+      },
+      "Microsoft.Windows.Compatibility": {
+        "type": "Transitive",
+        "resolved": "3.1.0",
+        "contentHash": "8rPxICe6kb6Ubi/MDvVfwJfv20iZ1dqb9ipT9Fm+3qdwLPtWN/6hmEjC7s38AagZoIEWxfxL8sVqTw+BgXjOAg==",
+        "dependencies": {
+          "Microsoft.Win32.Registry": "4.7.0",
+          "Microsoft.Win32.Registry.AccessControl": "4.7.0",
+          "Microsoft.Win32.SystemEvents": "4.7.0",
+          "System.CodeDom": "4.7.0",
+          "System.ComponentModel.Composition": "4.7.0",
+          "System.ComponentModel.Composition.Registration": "4.7.0",
+          "System.Configuration.ConfigurationManager": "4.7.0",
+          "System.Data.DataSetExtensions": "4.5.0",
+          "System.Data.Odbc": "4.7.0",
+          "System.Data.OleDb": "4.7.0",
+          "System.Data.SqlClient": "4.8.0",
+          "System.Diagnostics.EventLog": "4.7.0",
+          "System.Diagnostics.PerformanceCounter": "4.7.0",
+          "System.DirectoryServices": "4.7.0",
+          "System.DirectoryServices.AccountManagement": "4.7.0",
+          "System.DirectoryServices.Protocols": "4.7.0",
+          "System.Drawing.Common": "4.7.0",
+          "System.IO.FileSystem.AccessControl": "4.7.0",
+          "System.IO.Packaging": "4.7.0",
+          "System.IO.Pipes.AccessControl": "4.5.1",
+          "System.IO.Ports": "4.7.0",
+          "System.Management": "4.7.0",
+          "System.Reflection.Context": "4.7.0",
+          "System.Reflection.Emit": "4.7.0",
+          "System.Reflection.Emit.ILGeneration": "4.7.0",
+          "System.Reflection.Emit.Lightweight": "4.7.0",
+          "System.Runtime.Caching": "4.7.0",
+          "System.Security.AccessControl": "4.7.0",
+          "System.Security.Cryptography.Cng": "4.7.0",
+          "System.Security.Cryptography.Pkcs": "4.7.0",
+          "System.Security.Cryptography.ProtectedData": "4.7.0",
+          "System.Security.Cryptography.Xml": "4.7.0",
+          "System.Security.Permissions": "4.7.0",
+          "System.Security.Principal.Windows": "4.7.0",
+          "System.ServiceModel.Duplex": "4.7.0",
+          "System.ServiceModel.Http": "4.7.0",
+          "System.ServiceModel.NetTcp": "4.7.0",
+          "System.ServiceModel.Primitives": "4.7.0",
+          "System.ServiceModel.Security": "4.7.0",
+          "System.ServiceModel.Syndication": "4.7.0",
+          "System.ServiceProcess.ServiceController": "4.7.0",
+          "System.Text.Encoding.CodePages": "4.7.0",
+          "System.Threading.AccessControl": "4.7.0"
         }
       },
       "runtime.linux-arm.runtime.native.System.IO.Ports": {
@@ -866,16 +876,6 @@
         "dependencies": {
           "Microsoft.Win32.Registry": "4.7.0",
           "runtime.native.System.IO.Ports": "4.7.0"
-        }
-      },
-      "System.Management": {
-        "type": "Transitive",
-        "resolved": "4.7.0",
-        "contentHash": "IY+uuGhgzWiCg21i8IvQeY/Z7m1tX8VuPF+ludfn7iTCaccTtJo5HkjZbBEL8kbBubKhAKKtNXr7uMtmAc28Pw==",
-        "dependencies": {
-          "Microsoft.NETCore.Platforms": "3.1.0",
-          "Microsoft.Win32.Registry": "4.7.0",
-          "System.CodeDom": "4.7.0"
         }
       },
       "System.Private.ServiceModel": {
