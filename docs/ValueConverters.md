@@ -26,3 +26,8 @@ to the key.
 This converter solves the issue that Binding unfortunately don't support changing of the StringFormat after the firts usage of the Binding.
 The StringFormatConverter expects as the first value the StringFormat and all further Values are given the StringFormat as paramter.
 If [smartFormat](https://github.com/axuno/SmartFormat) is available it will be automatically used for the StringFormat for extended possibilities especially pluralisation.
+
+## ToLower & ToUpperConverter
+
+This converter just make an ToLower or ToUpper to the value. If you used the deprecated LocTextUpperExtension & LocTextLowerExtension this
+this is the Converter to have the same effect.
