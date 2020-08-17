@@ -68,7 +68,7 @@ namespace WPFLocalizeExtension.Extensions
         /// <summary>
         /// Holds the Binding to get the key
         /// </summary>
-        private Binding _binding;
+        private BindingBase _binding;
 
         /// <summary>
         /// the Name of the cached dynamic generated DependencyProperties
@@ -259,10 +259,10 @@ namespace WPFLocalizeExtension.Extensions
         /// Gets or sets the Key that identifies a resource (Assembly:Dictionary:Key)
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public object ResourceIdentifierKey
+        public BindingBase ResourceIdentifierKey
         {
-            get => _key ?? "(null)";
-            set => _key = value.ToString();
+            get => _binding;
+            set => _binding = value;
         }
         #endregion
 
@@ -298,7 +298,7 @@ namespace WPFLocalizeExtension.Extensions
                 key = newBinding;
             }
 
-            if (key is Binding binding)
+            if (key is BindingBase binding)
                 _binding = binding;
             else
                 Key = key?.ToString();

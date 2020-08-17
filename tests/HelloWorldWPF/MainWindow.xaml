@@ -74,6 +74,15 @@
             </Button.Template>
         </Button>
         <TextBlock Text="{lex:Loc {Binding tenum, StringFormat=TestEnum_{0}}}"></TextBlock>
+        <TextBlock>
+            <TextBlock.Text>
+                <lex:Loc>
+                    <MultiBinding StringFormat="{}{0}">
+                        <Binding Path="tenum" StringFormat="TestEnum_{0}"/>
+                    </MultiBinding>
+                </lex:Loc>
+            </TextBlock.Text>
+        </TextBlock>
         <TextBlock Text="{lex:Loc {Binding tenum, Converter={lex:PrependTypeConverter}, ConverterParameter=__}}"></TextBlock>
         <Button Name="BindeTestButton" Content="Press to toggle binded property" Margin="5" Click="BindeTestButton_Click" ></Button>
         <TextBlock Name="MyLabel2" FontSize="20" Text="{lex:Loc PresentationCore:ExceptionStringTable:DeleteText}" HorizontalAlignment="Center" />
