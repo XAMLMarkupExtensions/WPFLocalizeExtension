@@ -1,0 +1,55 @@
+name: Publish
+
+on:
+  release:
+    types: [ published ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Fetch all history for all tags and branches
+      run: |
+        git fetch --prune
+
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v1.0.0
+
+    - name: Restore
+      working-directory: src
+      run: |
+        dotnet restore --disable-parallel --locked-mode
+
+    - name: Only Build
+      if: "github.event.release.prerelease"
+      working-directory: src
+      run: |
+        msbuild WPFLocalizeExtension.csproj -verbosity:minimal /p:Configuration=Release
+
+    - name: Build & Publish
+      if: "!github.event.release.prerelease"
+      working-directory: src
+      run: |
+        msbuild WPFLocalizeExtension.csproj -verbosity:minimal /p:Configuration=Release /property:NugetAPIKey=${{ secrets.NugetAPIKey }}
+
+    - name: Get Name of Nuget
+      working-directory: src/bin/Release/
+      shell: powershell
+      run: |
+        Get-ChildItem -Path *.nupkg  | ForEach-Object {Write-Output "::set-env name=NUPKG::$($_.Name)"}
+
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: '${{ github.event.release.upload_url }}'
+        asset_path: ./src/bin/Release/${{ env.NUPKG }}
+        asset_name: ${{ env.NUPKG }}
+        asset_content_type: application/zip

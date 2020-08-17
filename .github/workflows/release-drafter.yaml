@@ -1,0 +1,37 @@
+name: Release
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'src/**'
+      - '.github/workflows/release.yml'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v0.9.3
+      with:
+         versionSpec: '5.3.x'
+
+    - name: checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Use GitVersion
+      id: gitversion
+      uses: gittools/actions/gitversion/execute@v0.9.3
+
+    - name: create release
+      id: create_release
+      uses: release-drafter/release-drafter@v5
+      with:
+        tag: '${{ steps.gitversion.outputs.semVer }}'
+        name: 'Release ${{ steps.gitversion.outputs.semVer }}'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
