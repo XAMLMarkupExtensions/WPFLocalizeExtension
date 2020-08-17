@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
 	<PropertyGroup>
-    <TargetFrameworks>net452;net40;netcoreapp3.1</TargetFrameworks>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
 		<RootNamespace>HalloWeltWPF</RootNamespace>
 		<OutputType>WinExe</OutputType>
 		<StartupObject />
