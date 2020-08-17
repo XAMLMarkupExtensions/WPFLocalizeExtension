@@ -48,12 +48,35 @@ Binding does not support any changes on Properties after it is bound the firts t
 This will crash. For StringFormat use cases we have implemented a [StringFormatConverter](ValueConverters.md).
 
 ## Access modifier for resource assemblies
-The LocalizationExtension will fail to look up a localized value, if the resource is compiled with its access modifier set to internal. To set up the resource build tool to use a public access modifier, open the resource file and change the value of the field.
+The LocalizationExtension will fail to look up a localized value, if the resource is compiled with its access modifier set to internal.
+To set up the resource build tool to use a public access modifier, open the resource file and change the value of the field.
 
 ## NeutralResourcesLanguage in Assembly Manifest
-The Assembly.cs contains sometimes the line _[assembly: NeutralResourcesLanguage("en-US", UltimateResourceFallbackLocation.MainAssembly)]_ which has side effects on resource lookups.
+The Assembly.cs contains sometimes the line _[assembly: NeutralResourcesLanguage("en-US", UltimateResourceFallbackLocation.MainAssembly)]_
+which has side effects on resource lookups.
 
 Please remove it.
 
 ## Bad ResX Filename
-As long as you are using custom ResX files that are not located under the Properties folder in your project you **may not call the file Resource**. It will break the lookup mechanism for the resources.
+As long as you are using custom ResX files that are not located under the Properties folder
+in your project you **may not call the file Resource**.
+It will break the lookup mechanism for the resources.
+
+## Startuptime for Available Cultures Search with Resx Provider
+To reduce the full search through all cultures and all resx files if they are available per
+culture you can set the searchlist of the culture. _ResxLocalizationProviderBase.SearchCultures_
+
+<details><summary>Example/summary>
+<p>
+```csharp
+ (LocalizeDictionary.Instance.DefaultProvider as ResxLocalizationProvider).SearchCultures =
+                new List<System.Globalization.CultureInfo>()
+                {
+                    System.Globalization.CultureInfo.GetCultureInfo("de-de"),
+                    System.Globalization.CultureInfo.GetCultureInfo("en"),
+                    System.Globalization.CultureInfo.GetCultureInfo("he"),
+                    System.Globalization.CultureInfo.GetCultureInfo("ar"),
+                };
+```
+</p>
+</details>

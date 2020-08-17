@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -14,6 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WPFLocalizeExtension.Engine;
+using WPFLocalizeExtension.Providers;
 
 namespace HalloWeltWPF
 {
@@ -26,22 +28,26 @@ namespace HalloWeltWPF
 
         public MainWindow()
         {
-            InitializeComponent();
-
             vm.language = "de";
             vm.color = "Background";
             vm.Hours = 0;
             this.DataContext = vm;
-            
-            LocalizeDictionary.Instance.Culture = new System.Globalization.CultureInfo("de");
 
+            LocalizeDictionary.Instance.Culture = new System.Globalization.CultureInfo("de");
+            (LocalizeDictionary.Instance.DefaultProvider as ResxLocalizationProvider).SearchCultures =
+                new List<System.Globalization.CultureInfo>()
+                {
+                    System.Globalization.CultureInfo.GetCultureInfo("de-de"),
+                    System.Globalization.CultureInfo.GetCultureInfo("en"),
+                    System.Globalization.CultureInfo.GetCultureInfo("he"),
+                    System.Globalization.CultureInfo.GetCultureInfo("ar"),
+                };
             LocalizeDictionary.Instance.OutputMissingKeys = true;
             LocalizeDictionary.Instance.MissingKeyEvent += Instance_MissingKeyEvent;
         }
 
         private void Instance_MissingKeyEvent(object sender, MissingKeyEventArgs e)
         {
-       
             e.MissingKeyResult = "Hello World";
         }
 
@@ -49,18 +55,12 @@ namespace HalloWeltWPF
         {
             vm.Hours = vm.Hours + 1;
 
-            switch (vm.language)
+            vm.language = vm.language switch
             {
-                case "en": vm.language = "de";
-                    break;
-                case "de":
-                    vm.language = "error";
-                    break;
-                default:
-                    vm.language = "en";
-                    break;
-            }
-
+                "en" => "de",
+                "de" => "error",
+                _ => "en",
+            };
             if (vm.tenum == TestVM.TestEnum.Test1)
                 vm.tenum = TestVM.TestEnum.Test2;
             else
