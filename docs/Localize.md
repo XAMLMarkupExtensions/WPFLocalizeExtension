@@ -53,6 +53,25 @@ the extensions support to add the Binding as Constructor. Because of WPF restric
 {lex:Loc {Binding Path=Foo}}
 ```
 
+or via content
+
+```xaml
+<lex:Loc>
+    <Binding Path="Foo" "/>
+</lex:Loc>
+```
+
+Multibinding only possible via content please use the following syntax:
+
+```xaml
+<lex:Loc>
+    <MultiBinding Converter="FooAndBarConverter">
+        <Binding Path="Foo" "/>
+        <Binding Path="Bar" "/>
+    </MultiBinding>
+</lex:Loc>
+```
+
 This gives you the full flexibility because the Markupextensions is the pure Binding and this supports Converters, StringFormat, ...
 
 ### Enums
@@ -89,6 +108,6 @@ For translation of complex texts there some value should be in the text like thi
 
 >You have selected 10 car(s).
 
-TWe have introduces a StringFormatConverter see [ValueConverters](ValueConverters.md) with automatic using of [smartFormat](https://github.com/axuno/SmartFormat) if this is available.
+We have introduced a StringFormatConverter see [ValueConverters](ValueConverters.md) with automatic using of [smartFormat](https://github.com/axuno/SmartFormat) if this is available.
 A detailed explanation how to use can be found [here](GapText.md). 
 
