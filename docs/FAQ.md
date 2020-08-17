@@ -66,8 +66,9 @@ It will break the lookup mechanism for the resources.
 To reduce the full search through all cultures and all resx files if they are available per
 culture you can set the searchlist of the culture. _ResxLocalizationProviderBase.SearchCultures_
 
-<details><summary>Example/summary>
+<details><summary>Example</summary>
 <p>
+   
 ```csharp
  (LocalizeDictionary.Instance.DefaultProvider as ResxLocalizationProvider).SearchCultures =
                 new List<System.Globalization.CultureInfo>()
@@ -78,5 +79,6 @@ culture you can set the searchlist of the culture. _ResxLocalizationProviderBase
                     System.Globalization.CultureInfo.GetCultureInfo("ar"),
                 };
 ```
+
 </p>
 </details>
