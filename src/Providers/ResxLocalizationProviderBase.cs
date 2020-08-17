@@ -68,6 +68,21 @@ namespace WPFLocalizeExtension.Providers
             get => _ignoreCase;
             set => _ignoreCase = value;
         }
+
+        private List<CultureInfo> searchCultures = null;
+        public List<CultureInfo> SearchCultures
+        {
+            get
+            {
+                if (searchCultures == null)
+                    searchCultures = CultureInfo.GetCultures(CultureTypes.AllCultures).ToList();
+                return searchCultures;
+            }
+            set
+            {
+                searchCultures = value;
+            }
+        }
         #endregion
 
         #region Helper functions
@@ -506,10 +521,8 @@ namespace WPFLocalizeExtension.Providers
 
                 try
                 {
-                    // Get the list of all cultures.
-                    var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
-
-                    foreach (var c in cultures)
+                    // Look in all cultures and check available ressources.
+                    foreach (var c in SearchCultures)
                     {
                         var rs = resManager.GetResourceSet(c, true, false);
                         if (rs != null)
