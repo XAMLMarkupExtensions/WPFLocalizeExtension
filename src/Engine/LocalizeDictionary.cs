@@ -792,7 +792,7 @@ namespace WPFLocalizeExtension.Engine
         /// <returns>The value corresponding to the source/dictionary/key path for the given culture (otherwise NULL).</returns>
         public object GetLocalizedObject(string key, DependencyObject target, CultureInfo culture)
         {
-            if (DefaultProvider is InheritingResxLocalizationProvider)
+            if (DefaultProvider is IInheritingLocalizationProvider)
                 return GetLocalizedObject(key, target, culture, DefaultProvider);
 
             var provider = target?.GetValue(GetProvider);
@@ -827,7 +827,7 @@ namespace WPFLocalizeExtension.Engine
         /// <returns>Returns an object with all possible pieces of the given key (Assembly, Dictionary, Key)</returns>
         public FullyQualifiedResourceKeyBase GetFullyQualifiedResourceKey(string key, DependencyObject target)
         {
-            if (DefaultProvider is InheritingResxLocalizationProvider)
+            if (DefaultProvider is IInheritingLocalizationProvider)
                 return GetFullyQualifiedResourceKey(key, target, DefaultProvider);
 
             var provider = target?.GetValue(GetProvider);

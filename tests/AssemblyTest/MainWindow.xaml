@@ -19,7 +19,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" Height="479" Width="329"
 
    
-    lex:LocalizeDictionary.DefaultProvider="{x:Static lex:InheritingResxLocalizationProvider.Instance}"
+        lex:LocalizeDictionary.DefaultProvider="{x:Static lex:InheritingResxLocalizationProvider.Instance}"
         lex:InheritingResxLocalizationProvider.DefaultAssembly="AssemblyTestResourceLib"
         lex:InheritingResxLocalizationProvider.DefaultDictionary="Strings">
     <!--Use this syntax to set the inheriting provider-->

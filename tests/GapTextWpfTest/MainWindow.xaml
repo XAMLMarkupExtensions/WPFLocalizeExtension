@@ -15,7 +15,18 @@
     <Window.Resources>
         <converters:ObjectTypeEqualsConverter x:Key="TypeEqualsConverter" />
     </Window.Resources>
+   
     <StackPanel Orientation="Vertical">
+        <Button Content="Right-click me!" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Button.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="{lex:Loc Friday}" />
+                    <MenuItem Header="Menu item 2" />
+                    <Separator />
+                    <MenuItem Header="Menu item 3" />
+                </ContextMenu>
+            </Button.ContextMenu>
+        </Button>
         <!-- first variant: not wrapping between words: -->
         <Label Background="Red" Content="static WrapPanel" />
         <WrapPanel Grid.Row="0">

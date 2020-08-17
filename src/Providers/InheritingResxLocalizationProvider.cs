@@ -20,7 +20,7 @@ namespace WPFLocalizeExtension.Providers
     /// <summary>
     /// A singleton RESX provider that uses inheriting attached properties.
     /// </summary>
-    public class InheritingResxLocalizationProvider : ResxLocalizationProviderBase
+    public class InheritingResxLocalizationProvider : ResxLocalizationProviderBase, IInheritingLocalizationProvider
     {
         #region Dependency Properties
         /// <summary>

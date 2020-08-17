@@ -14,6 +14,7 @@ namespace WPFLocalizeExtension.Extensions
     using System.Collections;
     using System.Collections.Generic;
     using System.ComponentModel;
+    using System.Data.SqlTypes;
     using System.Globalization;
     using System.Linq;
     using System.Reflection;
@@ -63,6 +64,26 @@ namespace WPFLocalizeExtension.Extensions
         /// Holds the Key to a .resx object
         /// </summary>
         private string _key;
+
+        /// <summary>
+        /// Holds the Binding to get the key
+        /// </summary>
+        private Binding _binding;
+
+        /// <summary>
+        /// the Name of the cached dynamic generated DependencyProperties
+        /// </summary>
+        private string cacheDPName = null;
+
+        /// <summary>
+        /// Cached DependencyProperty for this object
+        /// </summary>
+        private DependencyProperty cacheDPThis;
+
+        /// <summary>
+        /// Cached DependencyProperty for key string
+        /// </summary>
+        private DependencyProperty cacheDPKey;
 
         /// <summary>
         /// A custom converter, supplied in the XAML code.
@@ -232,16 +253,16 @@ namespace WPFLocalizeExtension.Extensions
         /// <value>The initialize value.</value>
         [EditorBrowsable(EditorBrowsableState.Never)]
         [ConstructorArgument("key")]
-        public string InitializeValue { get; set; }
+        public object InitializeValue { get; set; }
 
         /// <summary>
         /// Gets or sets the Key that identifies a resource (Assembly:Dictionary:Key)
         /// </summary>
         [EditorBrowsable(EditorBrowsableState.Never)]
-        public string ResourceIdentifierKey
+        public object ResourceIdentifierKey
         {
             get => _key ?? "(null)";
-            set => _key = value;
+            set => _key = value.ToString();
         }
         #endregion
 
@@ -262,10 +283,25 @@ namespace WPFLocalizeExtension.Extensions
         /// Initializes a new instance of the <see cref="LocExtension"/> class.
         /// </summary>
         /// <param name="key">The resource identifier.</param>
-        public LocExtension(string key)
+        public LocExtension(object key)
             : this()
         {
-            Key = key;
+            if (key is TemplateBindingExpression tbe)
+            {
+                var newBinding = new Binding();
+
+                var tb = tbe.TemplateBindingExtension;
+                newBinding.Converter = tb.Converter;
+                newBinding.ConverterParameter = tb.ConverterParameter;
+                newBinding.Path = new PropertyPath(tb.Property.Name);
+                newBinding.RelativeSource = new RelativeSource(RelativeSourceMode.TemplatedParent);
+                key = newBinding;
+            }
+
+            if (key is Binding binding)
+                _binding = binding;
+            else
+                Key = key?.ToString();
         }
 
         /// <summary>
@@ -308,7 +344,7 @@ namespace WPFLocalizeExtension.Extensions
 
             foreach (var dObj in targetDOs)
             {
-                if (LocalizeDictionary.Instance.DefaultProvider is InheritingResxLocalizationProvider)
+                if (LocalizeDictionary.Instance.DefaultProvider is IInheritingLocalizationProvider)
                 {
                     UpdateNewValue();
                     break;
@@ -428,6 +464,41 @@ namespace WPFLocalizeExtension.Extensions
         /// <inheritdoc/>
         public override object FormatOutput(TargetInfo endPoint, TargetInfo info)
         {
+            if (_binding != null && endPoint.TargetObject is DependencyObject dpo && endPoint.TargetProperty is DependencyProperty dp)
+            {
+                try
+                {
+                    var name = "LocExtension." + dp.OwnerType.FullName + "." + dp.Name;
+                    if (endPoint.TargetPropertyIndex != -1)
+                        name += $"[{endPoint.TargetPropertyIndex}]";
+
+                    if (name != cacheDPName)
+                    {
+                        MethodInfo mi = typeof(DependencyProperty).GetMethod("FromName", BindingFlags.Static | BindingFlags.NonPublic);
+
+                        cacheDPThis = mi.Invoke(null, new object[] { name, typeof(LocExtension) }) as DependencyProperty
+                            ?? DependencyProperty.RegisterAttached(name, typeof(NestedMarkupExtension), typeof(LocExtension),
+                                           new PropertyMetadata(null));
+
+                        cacheDPKey = mi.Invoke(null, new object[] { name + ".Key", typeof(LocExtension) }) as DependencyProperty
+                            ?? DependencyProperty.RegisterAttached(name + ".Key", typeof(string), typeof(LocExtension),
+                                            new PropertyMetadata("", (d, e) => { (d?.GetValue(cacheDPThis) as LocExtension)?.UpdateNewValue(); }));
+                        cacheDPName = name;
+                    }
+
+                    if (dpo.GetValue(cacheDPThis) == null)
+                    {
+                        BindingOperations.SetBinding(dpo, cacheDPKey, _binding);
+                        dpo.SetValue(cacheDPThis, this);
+                    }
+
+                    _key = (string)dpo.GetValue(cacheDPKey);
+                }
+                catch
+                {
+                }
+            }
+
             object result = null;
 
             if (endPoint == null)
@@ -636,6 +707,55 @@ namespace WPFLocalizeExtension.Extensions
                     if (tmp is TValue value)
                     {
                         result = value;
+                        if (isDefaultConverter)
+                            SafeAddItemToResourceBuffer(resKey, result);
+                    }
+                }
+
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// Gets a localized value.
+        /// </summary>
+        /// <param name="t">The type of the returned value.</param>
+        /// <param name="key">The key.</param>
+        /// <param name="targetCulture">The target culture.</param>
+        /// <param name="target">The target <see cref="DependencyObject"/>.</param>
+        /// <param name="converter">An optional converter.</param>
+        /// <param name="converterParameter">An optional converter parameter.</param>
+        /// <returns>The resolved localized object.</returns>
+        public static object GetLocalizedValue(Type t,string key, CultureInfo targetCulture, DependencyObject target, IValueConverter converter = null, object converterParameter = null)
+        {
+            lock (ResolveLock)
+            {
+                object result = null;
+
+                var resourceKey = LocalizeDictionary.Instance.GetFullyQualifiedResourceKey(key, target);
+
+                // Get the localized object from the dictionary
+                var resKey = targetCulture.Name + ":" + t.Name + ":" + resourceKey;
+                var isDefaultConverter = converter is DefaultConverter;
+
+                if (isDefaultConverter && _resourceBuffer.ContainsKey(resKey))
+                    result = _resourceBuffer[resKey];
+                else
+                {
+                    var localizedObject = LocalizeDictionary.Instance.GetLocalizedObject(resourceKey, target,
+                        targetCulture);
+
+                    if (localizedObject == null)
+                        return result;
+
+                    if (converter == null)
+                        converter = new DefaultConverter();
+
+                    var tmp = converter.Convert(localizedObject, t, converterParameter, targetCulture);
+
+                    if (t.IsAssignableFrom(tmp.GetType()))
+                    {
+                        result = tmp;
                         if (isDefaultConverter)
                             SafeAddItemToResourceBuffer(resKey, result);
                     }
