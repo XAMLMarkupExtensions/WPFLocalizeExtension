@@ -78,7 +78,7 @@
             <TextBlock.Text>
                 <lex:Loc>
                     <MultiBinding StringFormat="{}{0}">
-                        <Binding Path="tenum" StringFormat="TestEnum_{0}"/>
+                        <Binding Path="tenum"  Converter="{lex:PrependTypeConverter}" ConverterParameter="__"/>
                     </MultiBinding>
                 </lex:Loc>
             </TextBlock.Text>
