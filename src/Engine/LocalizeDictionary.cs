@@ -501,7 +501,7 @@ namespace WPFLocalizeExtension.Engine
         /// </summary>
         ~LocalizeDictionary()
         {
-            LocExtension.ClearResourceBuffer();
+            LocBaseExtension.ClearResourceBuffer();
             FELoc.ClearResourceBuffer();
             BLoc.ClearResourceBuffer();
         }

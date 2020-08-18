@@ -45,11 +45,11 @@ namespace WPFLocalizeExtension.Deprecated.Engine
         #endregion
 
         #region Target LocExtension
-        private LocExtension _target;
+        private LocBaseExtension _target;
         /// <summary>
         /// The target extension.
         /// </summary>
-        public LocExtension Target
+        public LocBaseExtension Target
         {
             get => _target;
             set
