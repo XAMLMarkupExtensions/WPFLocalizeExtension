@@ -8,6 +8,7 @@
         xmlns:local="clr-namespace:HalloWeltWPF"
         d:DataContext="{d:DesignInstance Type=local:TestVM, IsDesignTimeCreatable=True}" 
         mc:Ignorable="d"
+
         lex:LocalizeDictionary.DesignCulture="en"
         lex:LocalizeDictionary.IncludeInvariantCulture="False"
         lex:ResxLocalizationProvider.DefaultAssembly="HelloWorldWPF"
@@ -74,6 +75,18 @@
             </Button.Template>
         </Button>
         <TextBlock Text="{lex:Loc {Binding tenum, StringFormat=TestEnum_{0}}}"></TextBlock>
+        <TextBlock>
+            <TextBlock.Text>
+                <lex:Loc>
+                    en
+                    <!--<lex:Loc.KeyBinding>-->
+                        <!--<MultiBinding StringFormat="{}{0}">
+                            <Binding Path="tenum"  Converter="{lex:PrependTypeConverter}" ConverterParameter="__"/>
+                        </MultiBinding>-->
+                    <!--</lex:Loc.KeyBinding>-->
+                </lex:Loc>
+            </TextBlock.Text>
+        </TextBlock>
         <TextBlock Text="{lex:Loc {Binding tenum, Converter={lex:PrependTypeConverter}, ConverterParameter=__}}"></TextBlock>
         <Button Name="BindeTestButton" Content="Press to toggle binded property" Margin="5" Click="BindeTestButton_Click" ></Button>
         <TextBlock Name="MyLabel2" FontSize="20" Text="{lex:Loc PresentationCore:ExceptionStringTable:DeleteText}" HorizontalAlignment="Center" />

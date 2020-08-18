@@ -22,9 +22,9 @@ namespace WPFLocalizeExtension.Deprecated.Engine
     public class LocProxy : FrameworkElement
     {
         /// <summary>
-        /// Our own <see cref="LocExtension"/> instance.
+        /// Our own <see cref="LocBaseExtension"/> instance.
         /// </summary>
-        private LocExtension _ext;
+        private LocBaseExtension _ext;
 
         #region Source property
         /// <summary>
@@ -133,7 +133,7 @@ namespace WPFLocalizeExtension.Deprecated.Engine
 
                     if (proxy._ext == null)
                     {
-                        proxy._ext = new LocExtension { Key = key };
+                        proxy._ext = new LocBaseExtension { Key = key };
                         proxy._ext.SetBinding(proxy, proxy.GetType().GetProperty("Result"));
                     }
                     else

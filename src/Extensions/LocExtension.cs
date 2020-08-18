@@ -24,6 +24,7 @@ namespace WPFLocalizeExtension.Extensions
     using System.Windows.Media;
     using System.Windows.Media.Imaging;
     using System.Windows.Media.Media3D;
+    using WPFLocalizeExtension.Deprecated.Engine;
     using WPFLocalizeExtension.Engine;
     using WPFLocalizeExtension.Providers;
     using WPFLocalizeExtension.TypeConverters;
@@ -33,8 +34,7 @@ namespace WPFLocalizeExtension.Extensions
     /// <summary>
     /// A generic localization extension.
     /// </summary>
-    [ContentProperty("ResourceIdentifierKey")]
-    public class LocExtension : NestedMarkupExtension, INotifyPropertyChanged, IDictionaryEventListener, IDisposable
+    public abstract class LocBaseExtension : NestedMarkupExtension, INotifyPropertyChanged, IDictionaryEventListener, IDisposable
     {
         #region PropertyChanged Logic
         /// <summary>
@@ -68,7 +68,7 @@ namespace WPFLocalizeExtension.Extensions
         /// <summary>
         /// Holds the Binding to get the key
         /// </summary>
-        private Binding _binding;
+        private BindingBase _binding;
 
         /// <summary>
         /// the Name of the cached dynamic generated DependencyProperties
@@ -150,9 +150,9 @@ namespace WPFLocalizeExtension.Extensions
         /// <param name="property">The target property name.</param>
         /// <param name="propertyIndex">The index in the property (if applicable).</param>
         /// <returns>The bound extension or null, if not available.</returns>
-        public static LocExtension GetBoundExtension(object target, string property, int propertyIndex = -1)
+        public static LocBaseExtension GetBoundExtension(object target, string property, int propertyIndex = -1)
         {
-            foreach (var ext in LocalizeDictionary.DictionaryEvent.EnumerateListeners<LocExtension>())
+            foreach (var ext in LocalizeDictionary.DictionaryEvent.EnumerateListeners<LocBaseExtension>())
             {
                 var ep = ext._lastEndpoint;
 
@@ -200,7 +200,7 @@ namespace WPFLocalizeExtension.Extensions
 
         #region Properties
         /// <summary>
-        /// Gets or sets the Key to a .resx object
+        /// Gets or sets the Key that identifies a resource (Assembly:Dictionary:Key)
         /// </summary>
         public string Key
         {
@@ -210,6 +210,24 @@ namespace WPFLocalizeExtension.Extensions
                 if (_key != value)
                 {
                     _key = value;
+                    UpdateNewValue();
+
+                    OnNotifyPropertyChanged(nameof(Key));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the Binding that delivers the Key that identifies a resource (Assembly:Dictionary:Key)
+        /// </summary>
+        public BindingBase KeyBinding
+        {
+            get => _binding;
+            set 
+            {
+                if (_binding != value)
+                {
+                    _binding = value;
                     UpdateNewValue();
 
                     OnNotifyPropertyChanged(nameof(Key));
@@ -268,9 +286,9 @@ namespace WPFLocalizeExtension.Extensions
 
         #region Constructors & Dispose
         /// <summary>
-        /// Initializes a new instance of the <see cref="LocExtension"/> class.
+        /// Initializes a new instance of the <see cref="LocBaseExtension"/> class.
         /// </summary>
-        public LocExtension()
+        public LocBaseExtension()
         {
             // Register this extension as an event listener on the first target.
             OnFirstTarget = () =>
@@ -280,10 +298,10 @@ namespace WPFLocalizeExtension.Extensions
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LocExtension"/> class.
+        /// Initializes a new instance of the <see cref="LocBaseExtension"/> class.
         /// </summary>
         /// <param name="key">The resource identifier.</param>
-        public LocExtension(object key)
+        public LocBaseExtension(object key)
             : this()
         {
             if (key is TemplateBindingExpression tbe)
@@ -298,7 +316,7 @@ namespace WPFLocalizeExtension.Extensions
                 key = newBinding;
             }
 
-            if (key is Binding binding)
+            if (key is BindingBase binding)
                 _binding = binding;
             else
                 Key = key?.ToString();
@@ -317,7 +335,7 @@ namespace WPFLocalizeExtension.Extensions
         /// <summary>
         /// The finalizer.
         /// </summary>
-        ~LocExtension()
+        ~LocBaseExtension()
         {
             Dispose();
         }
@@ -476,13 +494,13 @@ namespace WPFLocalizeExtension.Extensions
                     {
                         MethodInfo mi = typeof(DependencyProperty).GetMethod("FromName", BindingFlags.Static | BindingFlags.NonPublic);
 
-                        cacheDPThis = mi.Invoke(null, new object[] { name, typeof(LocExtension) }) as DependencyProperty
-                            ?? DependencyProperty.RegisterAttached(name, typeof(NestedMarkupExtension), typeof(LocExtension),
+                        cacheDPThis = mi.Invoke(null, new object[] { name, typeof(LocBaseExtension) }) as DependencyProperty
+                            ?? DependencyProperty.RegisterAttached(name, typeof(NestedMarkupExtension), typeof(LocBaseExtension),
                                            new PropertyMetadata(null));
 
-                        cacheDPKey = mi.Invoke(null, new object[] { name + ".Key", typeof(LocExtension) }) as DependencyProperty
-                            ?? DependencyProperty.RegisterAttached(name + ".Key", typeof(string), typeof(LocExtension),
-                                            new PropertyMetadata("", (d, e) => { (d?.GetValue(cacheDPThis) as LocExtension)?.UpdateNewValue(); }));
+                        cacheDPKey = mi.Invoke(null, new object[] { name + ".Key", typeof(LocBaseExtension) }) as DependencyProperty
+                            ?? DependencyProperty.RegisterAttached(name + ".Key", typeof(string), typeof(LocBaseExtension),
+                                            new PropertyMetadata("", (d, e) => { (d?.GetValue(cacheDPThis) as LocBaseExtension)?.UpdateNewValue(); }));
                         cacheDPName = name;
                     }
 

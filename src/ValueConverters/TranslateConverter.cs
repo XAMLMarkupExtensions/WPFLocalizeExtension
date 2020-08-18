@@ -54,7 +54,7 @@ namespace WPFLocalizeExtension.ValueConverters
                     culture = LocalizeDictionary.Instance.SpecificCulture;
                     var _key = value.ToString();
 
-                    var result = LocExtension.GetLocalizedValue(targetType, _key, culture, null);
+                    var result = LocBaseExtension.GetLocalizedValue(targetType, _key, culture, null);
 
                     if (result == null)
                     {

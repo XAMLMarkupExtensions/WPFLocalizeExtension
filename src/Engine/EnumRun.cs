@@ -22,9 +22,9 @@ namespace WPFLocalizeExtension.Engine
     public class EnumRun : Run
     {
         /// <summary>
-        /// Our own <see cref="LocExtension"/> instance.
+        /// Our own <see cref="LocBaseExtension"/> instance.
         /// </summary>
-        private LocExtension _ext;
+        private LocBaseExtension _ext;
 
         #region EnumValue property
         /// <summary>
@@ -116,7 +116,7 @@ namespace WPFLocalizeExtension.Engine
 
                     if (run._ext == null)
                     {
-                        run._ext = new LocExtension { Key = key };
+                        run._ext = new LocBaseExtension { Key = key };
                         run._ext.SetBinding(run, run.GetType().GetProperty("Text"));
                     }
                     else
