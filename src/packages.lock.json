@@ -41,9 +41,9 @@
       },
       "XAMLMarkupExtensions": {
         "type": "Direct",
-        "requested": "[2.0.0, )",
-        "resolved": "2.0.0",
-        "contentHash": "lf2OKHcoLWEmLy4WxI4D6IrAv5xCwGLMnrjTQWGPaxUYMdd9/oA4HaE7sX2QIZefruth+sJi0+nzg4dDEILPOQ=="
+        "requested": "[2.1.0, )",
+        "resolved": "2.1.0",
+        "contentHash": "3FKlGMp6PxB2zMjyz23xhpOGacxmIOirh70xo+AbjL5c0gYpVONJZq4dPP5ynd6TOCg30BXMSsyNEmK76yyYrg=="
       },
       "Microsoft.Build.Tasks.Git": {
         "type": "Transitive",
@@ -137,9 +137,9 @@
       },
       "XAMLMarkupExtensions": {
         "type": "Direct",
-        "requested": "[2.0.0, )",
-        "resolved": "2.0.0",
-        "contentHash": "lf2OKHcoLWEmLy4WxI4D6IrAv5xCwGLMnrjTQWGPaxUYMdd9/oA4HaE7sX2QIZefruth+sJi0+nzg4dDEILPOQ=="
+        "requested": "[2.1.0, )",
+        "resolved": "2.1.0",
+        "contentHash": "3FKlGMp6PxB2zMjyz23xhpOGacxmIOirh70xo+AbjL5c0gYpVONJZq4dPP5ynd6TOCg30BXMSsyNEmK76yyYrg=="
       },
       "Microsoft.Build.Tasks.Git": {
         "type": "Transitive",
@@ -212,9 +212,9 @@
       },
       "XAMLMarkupExtensions": {
         "type": "Direct",
-        "requested": "[2.0.0, )",
-        "resolved": "2.0.0",
-        "contentHash": "lf2OKHcoLWEmLy4WxI4D6IrAv5xCwGLMnrjTQWGPaxUYMdd9/oA4HaE7sX2QIZefruth+sJi0+nzg4dDEILPOQ=="
+        "requested": "[2.1.0, )",
+        "resolved": "2.1.0",
+        "contentHash": "3FKlGMp6PxB2zMjyz23xhpOGacxmIOirh70xo+AbjL5c0gYpVONJZq4dPP5ynd6TOCg30BXMSsyNEmK76yyYrg=="
       },
       "Microsoft.Build.Tasks.Git": {
         "type": "Transitive",
@@ -246,9 +246,9 @@
       },
       "XAMLMarkupExtensions": {
         "type": "Direct",
-        "requested": "[2.0.0, )",
-        "resolved": "2.0.0",
-        "contentHash": "lf2OKHcoLWEmLy4WxI4D6IrAv5xCwGLMnrjTQWGPaxUYMdd9/oA4HaE7sX2QIZefruth+sJi0+nzg4dDEILPOQ=="
+        "requested": "[2.1.0, )",
+        "resolved": "2.1.0",
+        "contentHash": "3FKlGMp6PxB2zMjyz23xhpOGacxmIOirh70xo+AbjL5c0gYpVONJZq4dPP5ynd6TOCg30BXMSsyNEmK76yyYrg=="
       },
       "Microsoft.Build.Tasks.Git": {
         "type": "Transitive",
