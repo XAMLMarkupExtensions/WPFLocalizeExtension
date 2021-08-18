@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
 	<PropertyGroup>
-		<TargetFrameworks>net452;net40;netcoreapp3.1</TargetFrameworks>
+		<!--<TargetFrameworks>net452;net40;netcoreapp3.1</TargetFrameworks>-->
+    <TargetFramework>net452</TargetFramework>
 		<UseWPF>True</UseWPF>
 		<AutoGenerateBindingRedirects Condition="!$(TargetFramework.StartsWith('netcore'))">true</AutoGenerateBindingRedirects>
 		<AssemblyName>WPFLocalizeExtension</AssemblyName>
-		<Version>$(GitVersion_NuGetVersion)</Version>
+		<!--<Version>$(GitVersion_NuGetVersion)</Version>-->
 		<AssemblyTitle>WPFLocalizeExtension</AssemblyTitle>
 		<Authors>Bernhard Millauer,Uwe Mayer, Konrad Mattheis</Authors>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
@@ -36,7 +37,12 @@
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 		<GenerateDocumentationFile>false</GenerateDocumentationFile>
 
-		<UnSignedFlag></UnSignedFlag>
+    <!--Workaround AssemblyVersion Duplicate from UseWPF" -->
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+
+    <UnSignedFlag></UnSignedFlag>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -61,7 +67,7 @@
 		<AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>
 		<PackageId>$(AssemblyName).UnSigned</PackageId>
 		<UnSignedFlag>.UnSigned</UnSignedFlag>
-		<!-- we can handle only one packages.lock.json so for now for unsigned just disable the usages -->
+		 <!--we can handle only one packages.lock.json so for now for unsigned just disable the usages--> 
 		<RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
 	</PropertyGroup>
   
@@ -76,15 +82,15 @@
 		<PackageReference Include="System.Drawing.Common" Version="4.7.0" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="XAMLMarkupExtensions$(UnSignedFlag)" Version="2.1.0" />
-	</ItemGroup>
-
 	<!--PackageReference for all framworks-->
 	<ItemGroup>
-		<PackageReference Include="GitVersion.MsBuild" Version="5.6.11" PrivateAssets="All" />
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+    <PackageReference Include="GitVersion.MsBuild" Version="5.7.0" PrivateAssets="all" />
 	</ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="XAMLMarkupExtensions$(UnSignedFlag)" Version="2.0.0" />
+  </ItemGroup>
 
 	<Target Name="PublishToNugetWithAPIKey" AfterTargets="GenerateNuspec">
 		<ReadLinesFromFile Condition="Exists('$(SolutionDir)\..\..\nugetapikey.txt')" File="$(SolutionDir)\..\..\nugetapikey.txt">
