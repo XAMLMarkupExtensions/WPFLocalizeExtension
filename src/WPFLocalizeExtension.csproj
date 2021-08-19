@@ -1,16 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
 	<PropertyGroup>
-		<TargetFrameworks>net452;net40;netcoreapp3.0;netcoreapp3.1</TargetFrameworks>
-    <UseWPF>True</UseWPF>
-    <AutoGenerateBindingRedirects Condition="!$(TargetFramework.StartsWith('netcore'))">true</AutoGenerateBindingRedirects>
-    <AssemblyName>WPFLocalizeExtension</AssemblyName>
+		<TargetFrameworks>net452;net40;netcoreapp3.1</TargetFrameworks>
+		<UseWPF>True</UseWPF>
+		<AutoGenerateBindingRedirects Condition="!$(TargetFramework.StartsWith('netcore'))">true</AutoGenerateBindingRedirects>
+		<AssemblyName>WPFLocalizeExtension</AssemblyName>
 		<Version>$(GitVersion_NuGetVersion)</Version>
 		<AssemblyTitle>WPFLocalizeExtension</AssemblyTitle>
 		<Authors>Bernhard Millauer,Uwe Mayer, Konrad Mattheis</Authors>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageProjectUrl>https://github.com/XAMLMarkupExtensions/WPFLocalizationExtension/</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/XAMLMarkupExtensions/WPFLocalizationExtension.git</RepositoryUrl>
+		<RepositoryUrl>https://github.com/XAMLMarkupExtensions/WPFLocalizationExtension.git</RepositoryUrl>
 		<Copyright>Bernhard Millauer, Uwe Mayer, Konrad Mattheis</Copyright>
 		<Description>LocalizationExtension is a really easy way to localize any type of DependencyProperties or native Properties on DependencyObjects</Description>
 		<Company />
@@ -19,66 +19,84 @@
 		<PackageReleaseNotes></PackageReleaseNotes>
 		<NeutralLanguage>en-US</NeutralLanguage>
 		<PackageTags>wpf localization extension globalization resx csv resource language</PackageTags>
-    <NoWarn>NU5105</NoWarn>
+		<NoWarn>NU5105</NoWarn>
 
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
 		<AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
 		<SignAssembly>true</SignAssembly>
 		<DelaySign>false</DelaySign>
 		<PublicSign>true</PublicSign>
 		<AssemblyOriginatorKeyFile>public.snk</AssemblyOriginatorKeyFile>
-    <!--Workaround for Error	MSB4216	Could not run the "GenerateResource" -->
-    <GenerateResourceMSBuildArchitecture>CurrentArchitecture</GenerateResourceMSBuildArchitecture>
+		<!--Workaround for Error	MSB4216	Could not run the "GenerateResource" -->
+		<GenerateResourceMSBuildArchitecture>CurrentArchitecture</GenerateResourceMSBuildArchitecture>
 
-    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+		<GenerateDocumentationFile>false</GenerateDocumentationFile>
+
+		<!--Workaround AssemblyVersion Duplicate from UseWPF" -->
+		<GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+		<GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+
+		<UnSignedFlag></UnSignedFlag>
 	</PropertyGroup>
 
-  <ItemGroup>
-    <None Include="..\LICENSE" Pack="true" PackagePath="" />
-    <None Remove="packages.lock.json" />
-    <None Remove="public.snk" />
-  </ItemGroup>
-  
-	<Choose>
-		<When Condition="'$(Configuration)' == 'Release'">
-			<PropertyGroup>
-				<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-				<GenerateDocumentationFile>true</GenerateDocumentationFile>
-			</PropertyGroup>
-		</When>
-		<Otherwise>
-			<PropertyGroup>
-				<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-				<GenerateDocumentationFile>false</GenerateDocumentationFile>
-			</PropertyGroup>
-		</Otherwise>
-	</Choose>
-  
-  <!--References for .Net Framwork 4 and 35-->
-  <ItemGroup Condition="!$(TargetFramework.StartsWith('netcore'))">
-    <Reference Include="System.Management" />
-  </ItemGroup>
-
-  <!--References for .Net Core 3.x-->
-  <ItemGroup Condition="$(TargetFramework.StartsWith('netcore'))">
-    <PackageReference Include="System.Management" Version="4.7.0" />
-    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
-  </ItemGroup>
-
-  <!--PackageReference for all framworks-->
 	<ItemGroup>
-    <PackageReference Include="XAMLMarkupExtensions" Version="2.1.0" />
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
-		<PackageReference Include="GitVersionTask" Version="5.3.7" PrivateAssets="All" />
+		<None Include="..\LICENSE" Pack="true" PackagePath="" />
+		<None Remove="packages.lock.json" />
+		<None Remove="public.snk" />
+	</ItemGroup>
+  
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="Exists('$(SolutionDir)\src\fullkey.snk')">
+		<PublicSign>false</PublicSign>
+		<AssemblyOriginatorKeyFile>fullkey.snk</AssemblyOriginatorKeyFile>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(UnSigned)' == 'true'">
+		<SignAssembly>false</SignAssembly>
+		<PublicSign>false</PublicSign>
+		<AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>
+		<PackageId>$(AssemblyName).UnSigned</PackageId>
+		<UnSignedFlag>.UnSigned</UnSignedFlag>
+		 <!--we can handle only one packages.lock.json so for now for unsigned just disable the usages--> 
+		<RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
+	</PropertyGroup>
+  
+	<!--References for .Net Framwork 4 and 35-->
+	<ItemGroup Condition="!$(TargetFramework.StartsWith('netcore'))">
+		<Reference Include="System.Management" />
 	</ItemGroup>
 
-  <Target Name="PublishToNugetWithAPIKey" AfterTargets="GenerateNuspec">
-    <ReadLinesFromFile Condition="Exists('$(SolutionDir)\..\..\nugetapikey.txt')" File="$(SolutionDir)\..\..\nugetapikey.txt">
-      <Output TaskParameter="Lines" PropertyName="NugetAPIKey" />
-    </ReadLinesFromFile>
-    <Exec Condition="('$(NugetAPIKey)' != '')" WorkingDirectory="$(BaseDir)" Command="dotnet nuget push $(PackageOutputAbsolutePath)$(PackageId).$(PackageVersion).nupkg -k $(NugetAPIKey) -s https://api.nuget.org/v3/index.json" />
-  </Target>
+	<!--References for .Net Core 3.x-->
+	<ItemGroup Condition="$(TargetFramework.StartsWith('netcore'))">
+		<PackageReference Include="System.Management" Version="5.0.0" />
+		<PackageReference Include="System.Drawing.Common" Version="5.0.2" />
+	</ItemGroup>
+
+	<!--PackageReference for all framworks-->
+	<ItemGroup>
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+    <PackageReference Include="GitVersion.MsBuild" Version="5.7.0" PrivateAssets="all" />
+	</ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="XAMLMarkupExtensions$(UnSignedFlag)" Version="2.1.0" />
+  </ItemGroup>
+
+	<Target Name="PublishToNugetWithAPIKey" AfterTargets="GenerateNuspec">
+		<ReadLinesFromFile Condition="Exists('$(SolutionDir)\..\..\nugetapikey.txt')" File="$(SolutionDir)\..\..\nugetapikey.txt">
+			<Output TaskParameter="Lines" PropertyName="NugetAPIKey" />
+		</ReadLinesFromFile>
+		<Exec Condition="('$(NugetAPIKey)' != '')" WorkingDirectory="$(BaseDir)" Command="dotnet nuget push $(PackageOutputAbsolutePath)$(PackageId).$(PackageVersion).nupkg -k $(NugetAPIKey) -s https://api.nuget.org/v3/index.json" />
+	</Target>
 
 	<Target Name="FixOnGitVersionTaskError" BeforeTargets="GetAssemblyVersion">
 		<CreateProperty Value="0.0.1-notgitversion" Condition="'$(GitVersion_NuGetVersion)' == ''">

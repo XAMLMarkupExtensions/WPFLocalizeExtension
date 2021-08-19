@@ -6,5 +6,10 @@ updates:
     interval: daily
     time: "08:00"
     timezone: Europe/Berlin
-  open-pull-requests-limit: 10
   target-branch: development
+
+- package-ecosystem: "github-actions"
+  directory: "/"
+  schedule:
+    # Check for updates to GitHub Actions every weekday
+    interval: "daily"
