@@ -61,6 +61,8 @@
 		<AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>
 		<PackageId>$(AssemblyName).UnSigned</PackageId>
 		<UnSignedFlag>.UnSigned</UnSignedFlag>
+		<!-- we can handle only one packages.lock.json so for now for unsigned just disable the usages -->
+		<RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
 	</PropertyGroup>
   
 	<!--References for .Net Framwork 4 and 35-->
