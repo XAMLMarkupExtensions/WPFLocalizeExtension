@@ -37,12 +37,12 @@
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 		<GenerateDocumentationFile>false</GenerateDocumentationFile>
 
-    <!--Workaround AssemblyVersion Duplicate from UseWPF" -->
-    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<!--Workaround AssemblyVersion Duplicate from UseWPF" -->
+		<GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+		<GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 
-    <UnSignedFlag></UnSignedFlag>
+		<UnSignedFlag></UnSignedFlag>
 	</PropertyGroup>
 
 	<ItemGroup>
