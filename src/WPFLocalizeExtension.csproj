@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
 	<PropertyGroup>
-		<!--<TargetFrameworks>net452;net40;netcoreapp3.1</TargetFrameworks>-->
-    <TargetFramework>net452</TargetFramework>
+		<TargetFrameworks>net452;net40;netcoreapp3.1</TargetFrameworks>
 		<UseWPF>True</UseWPF>
 		<AutoGenerateBindingRedirects Condition="!$(TargetFramework.StartsWith('netcore'))">true</AutoGenerateBindingRedirects>
 		<AssemblyName>WPFLocalizeExtension</AssemblyName>
