@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
 	<PropertyGroup>
-		<!--<TargetFrameworks>net452;net40;netcoreapp3.1</TargetFrameworks>-->
-    <TargetFramework>net452</TargetFramework>
+		<TargetFrameworks>net452;net40;netcoreapp3.1</TargetFrameworks>
 		<UseWPF>True</UseWPF>
 		<AutoGenerateBindingRedirects Condition="!$(TargetFramework.StartsWith('netcore'))">true</AutoGenerateBindingRedirects>
 		<AssemblyName>WPFLocalizeExtension</AssemblyName>
@@ -37,12 +36,12 @@
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 		<GenerateDocumentationFile>false</GenerateDocumentationFile>
 
-    <!--Workaround AssemblyVersion Duplicate from UseWPF" -->
-    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<!--Workaround AssemblyVersion Duplicate from UseWPF" -->
+		<GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+		<GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 
-    <UnSignedFlag></UnSignedFlag>
+		<UnSignedFlag></UnSignedFlag>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -89,7 +88,7 @@
 	</ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="XAMLMarkupExtensions$(UnSignedFlag)" Version="2.0.0" />
+    <PackageReference Include="XAMLMarkupExtensions$(UnSignedFlag)" Version="2.1.0" />
   </ItemGroup>
 
 	<Target Name="PublishToNugetWithAPIKey" AfterTargets="GenerateNuspec">
