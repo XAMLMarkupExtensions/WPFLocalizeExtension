@@ -5,7 +5,7 @@
 		<UseWPF>True</UseWPF>
 		<AutoGenerateBindingRedirects Condition="!$(TargetFramework.StartsWith('netcore'))">true</AutoGenerateBindingRedirects>
 		<AssemblyName>WPFLocalizeExtension</AssemblyName>
-		<!--<Version>$(GitVersion_NuGetVersion)</Version>-->
+		<Version>$(GitVersion_NuGetVersion)</Version>
 		<AssemblyTitle>WPFLocalizeExtension</AssemblyTitle>
 		<Authors>Bernhard Millauer,Uwe Mayer, Konrad Mattheis</Authors>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
