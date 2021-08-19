@@ -11,45 +11,40 @@ jobs:
     steps:
     - name: checkout
       uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-
-    - name: Fetch all history for all tags and branches
-      run: |
-        git fetch --prune
 
     - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v1.0.0
+      uses: microsoft/setup-msbuild@v1.0.2
+
+    - name: Write Fullkey.snk
+      uses: RollyPeres/base64-to-path@v1
+      with:
+        filePath: ${{ github.workspace }}/src/fullkey.snk
+        encodedString: ${{ secrets.SIGNKEY }}
+
+    - name: Create msbuild params
+      run: |
+        echo "::set-output name=params::${{ github.event.repository.name }}.csproj -verbosity:minimal /p:Configuration=Release /property:DisableGitVersionTask=true /property:GitVersion_NuGetVersion=${{ github.event.release.tag_name }}"
+      id: msbuild
+    
+    - name: add nuget API Key for releases
+      if: "!github.event.release.prerelease"
+      run: |
+        echo "::set-output name=params::/property:NugetAPIKey=${{ secrets.NugetAPIKey }}"      
+      id: apikey
 
     - name: Restore
       working-directory: src
       run: |
-        dotnet restore --disable-parallel --locked-mode
+        dotnet restore --disable-parallel
 
-    - name: Only Build
-      if: "github.event.release.prerelease"
+    - name: Restore & Build & (Publish)
       working-directory: src
       run: |
-        msbuild WPFLocalizeExtension.csproj -verbosity:minimal /p:Configuration=Release
+        msbuild ${{ steps.msbuild.outputs.params }} ${{ steps.apikey.outputs.params }}
+        rm -R .\obj\Release
+        msbuild ${{ steps.msbuild.outputs.params }} ${{ steps.apikey.outputs.params }} /property:UnSigned=true
 
-    - name: Build & Publish
-      if: "!github.event.release.prerelease"
-      working-directory: src
-      run: |
-        msbuild WPFLocalizeExtension.csproj -verbosity:minimal /p:Configuration=Release /property:NugetAPIKey=${{ secrets.NugetAPIKey }}
-
-    - name: Get Name of Nuget
-      working-directory: src/bin/Release/
-      shell: powershell
-      run: |
-        Get-ChildItem -Path *.nupkg  | ForEach-Object {Write-Output "::set-env name=NUPKG::$($_.Name)"}
-
-    - name: Upload Release Asset
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Upload Release Assets
+      uses: softprops/action-gh-release@v1
       with:
-        upload_url: '${{ github.event.release.upload_url }}'
-        asset_path: ./src/bin/Release/${{ env.NUPKG }}
-        asset_name: ${{ env.NUPKG }}
-        asset_content_type: application/zip
+        files: src/bin/Release/*.nupkg

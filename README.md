@@ -1,7 +1,7 @@
-# WPFLocalizationExtension
-[![CodeFactor](https://www.codefactor.io/repository/github/xamlmarkupextensions/wpflocalizationextension/badge/master)](https://www.codefactor.io/repository/github/xamlmarkupextensions/wpflocalizationextension/overview/master)
+# WPFLocalizeExtension
+[![CodeFactor](https://www.codefactor.io/repository/github/xamlmarkupextensions/WPFLocalizeExtension/badge/master)](https://www.codefactor.io/repository/github/xamlmarkupextensions/WPFLocalizeExtension/overview/master)
 [![Nuget](https://img.shields.io/nuget/v/WpfLocalizeExtension.svg)](https://www.nuget.org/packages/WpfLocalizeExtension)
-![.NET](https://github.com/XAMLMarkupExtensions/WPFLocalizationExtension/workflows/.NET/badge.svg)
+![.NET](https://github.com/XAMLMarkupExtensions/WPFLocalizeExtension/workflows/.NET/badge.svg)
 [![Join the chat at https://gitter.im/SeriousM/WPFLocalizationExtension](https://badges.gitter.im/SeriousM/WPFLocalizationExtension.svg)](https://gitter.im/SeriousM/WPFLocalizationExtension?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 #### ...is a really the easiest way to localize any type of DependencyProperties or native Properties on DependencyObjects since 2008!
