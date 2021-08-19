@@ -89,7 +89,7 @@
 	</ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="XAMLMarkupExtensions$(UnSignedFlag)" Version="2.0.0" />
+    <PackageReference Include="XAMLMarkupExtensions$(UnSignedFlag)" Version="2.1.0" />
   </ItemGroup>
 
 	<Target Name="PublishToNugetWithAPIKey" AfterTargets="GenerateNuspec">
