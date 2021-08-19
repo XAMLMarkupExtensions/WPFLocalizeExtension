@@ -50,7 +50,7 @@ jobs:
         dotnet restore --disable-parallel
         # dotnet build --disable-parallel --configuration Release
         # can't use pure dotnet build because gitversion issues
-        msbuild XAMLMarkupExtensions.csproj -verbosity:minimal /p:Configuration=Release
+        msbuild ${{ github.event.repository.name }}.csproj -verbosity:minimal /p:Configuration=Release
 
         # add check for PR against master from development -> build preRelease to nuget
         # if merged into master -> build Release -> nuget
