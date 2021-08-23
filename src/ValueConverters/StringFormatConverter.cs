@@ -10,6 +10,7 @@ namespace WPFLocalizeExtension.ValueConverters
 {
     #region Usings
     using System;
+    using System.Linq;
     using System.Globalization;
     using System.Reflection;
     using System.Windows;
