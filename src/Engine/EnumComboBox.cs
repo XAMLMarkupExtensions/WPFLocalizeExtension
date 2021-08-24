@@ -56,7 +56,7 @@ namespace WPFLocalizeExtension.Engine
         public static DependencyProperty PrependTypeProperty = DependencyProperty.Register("PrependType", typeof(bool), typeof(EnumComboBox), new PropertyMetadata(false));
 
         /// <summary>
-        /// The backing property for <see cref="LocProxy.PrependTypeProperty"/>
+        /// The backing property for <see cref="EnumComboBox.PrependTypeProperty"/>
         /// </summary>
         [Category("Common")]
         public bool PrependType
@@ -73,7 +73,7 @@ namespace WPFLocalizeExtension.Engine
         public static DependencyProperty SeparatorProperty = DependencyProperty.Register("Separator", typeof(string), typeof(EnumComboBox), new PropertyMetadata("_"));
 
         /// <summary>
-        /// The backing property for <see cref="LocProxy.SeparatorProperty"/>
+        /// The backing property for <see cref="EnumComboBox.SeparatorProperty"/>
         /// </summary>
         [Category("Common")]
         public string Separator
@@ -90,7 +90,7 @@ namespace WPFLocalizeExtension.Engine
         public static DependencyProperty PrefixProperty = DependencyProperty.Register("Prefix", typeof(string), typeof(EnumComboBox), new PropertyMetadata(null));
 
         /// <summary>
-        /// The backing property for <see cref="LocProxy.PrefixProperty"/>
+        /// The backing property for <see cref="EnumComboBox.PrefixProperty"/>
         /// </summary>
         [Category("Common")]
         public string Prefix
