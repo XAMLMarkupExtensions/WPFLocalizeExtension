@@ -981,12 +981,22 @@ namespace WPFLocalizeExtension.Engine
             {
                 lock (ListenersLock)
                 {
+                    var exceptions = new List<Exception>();
+                    
                     foreach (var listener in Listeners.GetListeners())
                     {
-                        listener.ResourceChanged(sender, args);
+                        try
+                        {
+                            listener.ResourceChanged(sender, args);
+                        }
+                        catch (Exception e)
+                        {
+                            exceptions.Add(e);
+                        }
                     }
-                    
-                    Listeners.ClearDeadReferences();
+
+                    if (exceptions.Count > 0)
+                        throw new AggregateException(exceptions);
                 }
             }
 
@@ -1033,8 +1043,6 @@ namespace WPFLocalizeExtension.Engine
                     {
                         yield return listener;
                     }
-                    
-                    Listeners.ClearDeadReferences();
                 }
             }
         }

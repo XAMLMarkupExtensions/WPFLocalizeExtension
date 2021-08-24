@@ -37,6 +37,8 @@
         /// </summary>
         public void AddListener(IDictionaryEventListener listener)
         {
+            ClearDeadReferences();
+            
             // Add listener if it not registered yet.
             var weakReference = new WeakReference(listener);
             var hashCode = listener.GetHashCode();
@@ -57,6 +59,8 @@
         /// </summary>
         public IEnumerable<IDictionaryEventListener> GetListeners()
         {
+            ClearDeadReferences();
+                
             foreach (var listener in listeners)
             {
                 var listenerReference = listener.Key.Target as IDictionaryEventListener;
@@ -75,6 +79,8 @@
         /// </summary>
         public void RemoveListener(IDictionaryEventListener listener)
         {
+            ClearDeadReferences();
+            
             var hashCode = listener.GetHashCode();
             if (!listenersHashCodes.TryGetValue(hashCode, out var hashCodes))
                 return;
@@ -94,8 +100,11 @@
         /// <summary>
         /// Clear internal list from all dead listeners.
         /// </summary>
-        public void ClearDeadReferences()
+        private void ClearDeadReferences()
         {
+            if (deadListeners.Count == 0)
+                return;
+            
             foreach (var deadListener in deadListeners)
             {
                 var hashCode = listeners[deadListener];
