@@ -37,8 +37,6 @@
         /// </summary>
         public void AddListener(IDictionaryEventListener listener)
         {
-            ClearDeadReferences();
-            
             // Add listener if it not registered yet.
             var weakReference = new WeakReference(listener);
             var hashCode = listener.GetHashCode();
@@ -59,18 +57,25 @@
         /// </summary>
         public IEnumerable<IDictionaryEventListener> GetListeners()
         {
-            ClearDeadReferences();
-                
-            foreach (var listener in listeners)
+            try
             {
-                var listenerReference = listener.Key.Target as IDictionaryEventListener;
-                if (listenerReference == null)
+                foreach (var listener in listeners)
                 {
-                    deadListeners.Add(listener.Key);
-                    continue;
-                }
+                    var listenerReference = listener.Key.Target as IDictionaryEventListener;
+                    if (listenerReference == null)
+                    {
+                        deadListeners.Add(listener.Key);
+                        continue;
+                    }
 
-                yield return listenerReference;
+                    yield return listenerReference;
+                }
+            }
+            finally
+            {
+                // Finally block is necessary because of `yield return`.
+                // It guarantees this method will be called even if listeners won't enumerate till the end.
+                ClearDeadReferences();
             }
         }
 
@@ -79,8 +84,6 @@
         /// </summary>
         public void RemoveListener(IDictionaryEventListener listener)
         {
-            ClearDeadReferences();
-            
             var hashCode = listener.GetHashCode();
             if (!listenersHashCodes.TryGetValue(hashCode, out var hashCodes))
                 return;
