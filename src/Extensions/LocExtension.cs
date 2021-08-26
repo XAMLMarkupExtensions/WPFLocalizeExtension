@@ -266,17 +266,13 @@ namespace WPFLocalizeExtension.Extensions
         }
         #endregion
 
-        #region Constructors & Dispose
+        #region Constructors
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="LocExtension"/> class.
         /// </summary>
         public LocExtension()
         {
-            // Register this extension as an event listener on the first target.
-            OnFirstTarget = () =>
-            {
-                LocalizeDictionary.DictionaryEvent.AddListener(this);
-            };
         }
 
         /// <summary>
@@ -304,25 +300,28 @@ namespace WPFLocalizeExtension.Extensions
                 Key = key?.ToString();
         }
 
-        /// <summary>
-        /// Removes the listener from the dictionary.
-        /// <para>The "new" keyword is just a temporary hack in order to keep XAMLMarkupExtensions on the current version.</para>
-        /// </summary>
-        public new void Dispose()
+        #endregion
+
+        #region OnFirstTargetAdded/OnLastTargetRemoved
+
+        /// <inheritdoc />
+        protected override void OnFirstTargetAdded()
         {
-            base.Dispose();
+            base.OnFirstTargetAdded();
+            
+            LocalizeDictionary.DictionaryEvent.AddListener(this);
+        }
+
+        /// <inheritdoc />
+        protected override void OnLastTargetRemoved()
+        {
+            base.OnLastTargetRemoved();
+            
             LocalizeDictionary.DictionaryEvent.RemoveListener(this);
         }
 
-        /// <summary>
-        /// The finalizer.
-        /// </summary>
-        ~LocExtension()
-        {
-            Dispose();
-        }
         #endregion
-
+        
         #region IDictionaryEventListener implementation
         /// <summary>
         /// This method is called when the resource somehow changed.

@@ -70,6 +70,9 @@ namespace WPFLocalizeExtension.Providers
         }
 
         private List<CultureInfo> searchCultures = null;
+        /// <summary>
+        /// Gets or sets the cultures there the RESX Provider search for.
+        /// </summary>
         public List<CultureInfo> SearchCultures
         {
             get
