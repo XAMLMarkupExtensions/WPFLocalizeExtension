@@ -969,7 +969,7 @@ namespace WPFLocalizeExtension.Engine
             /// <summary>
             /// The list of listeners
             /// </summary>
-            private static readonly List<WeakReference> Listeners = new List<WeakReference>();
+            private static readonly ListenersList Listeners = new ListenersList();
             private static readonly object ListenersLock = new object();
 
             /// <summary>
@@ -979,22 +979,25 @@ namespace WPFLocalizeExtension.Engine
             /// <param name="args">The event arguments.</param>
             internal static void Invoke(DependencyObject sender, DictionaryEventArgs args)
             {
-                var list = new List<IDictionaryEventListener>();
-
                 lock (ListenersLock)
                 {
-                    foreach (var wr in Listeners.ToList())
+                    var exceptions = new List<Exception>();
+                    
+                    foreach (var listener in Listeners.GetListeners())
                     {
-                        var targetReference = wr.Target;
-                        if (targetReference != null)
-                            list.Add((IDictionaryEventListener)targetReference);
-                        else
-                            Listeners.Remove(wr);
+                        try
+                        {
+                            listener.ResourceChanged(sender, args);
+                        }
+                        catch (Exception e)
+                        {
+                            exceptions.Add(e);
+                        }
                     }
-                }
 
-                foreach (var item in list)
-                    item.ResourceChanged(sender, args);
+                    if (exceptions.Count > 0)
+                        throw new AggregateException(exceptions);
+                }
             }
 
             /// <summary>
@@ -1005,24 +1008,10 @@ namespace WPFLocalizeExtension.Engine
             {
                 if (listener == null)
                     return;
-
-                // Check, if this listener already was added.
-                bool listenerExists = false;
-
+                
                 lock (ListenersLock)
                 {
-                    foreach (var wr in Listeners.ToList())
-                    {
-                        var targetReference = wr.Target;
-                        if (targetReference == null)
-                            Listeners.Remove(wr);
-                        else if (targetReference == listener)
-                            listenerExists = true;
-                    }
-
-                    // Add it now.
-                    if (!listenerExists)
-                        Listeners.Add(new WeakReference(listener));
+                    Listeners.AddListener(listener);
                 }
             }
 
@@ -1037,14 +1026,7 @@ namespace WPFLocalizeExtension.Engine
 
                 lock (ListenersLock)
                 {
-                    foreach (var wr in Listeners.ToList())
-                    {
-                        var targetReference = wr.Target;
-                        if (targetReference == null)
-                            Listeners.Remove(wr);
-                        else if ((IDictionaryEventListener)targetReference == listener)
-                            Listeners.Remove(wr);
-                    }
+                    Listeners.RemoveListener(listener);
                 }
             }
 
@@ -1057,14 +1039,9 @@ namespace WPFLocalizeExtension.Engine
             {
                 lock (ListenersLock)
                 {
-                    foreach (var wr in Listeners.ToList())
+                    foreach (var listener in Listeners.GetListeners().OfType<T>())
                     {
-                        var targetReference = wr.Target;
-
-                        if (targetReference == null)
-                            Listeners.Remove(wr);
-                        else if (targetReference is T)
-                            yield return (T)targetReference;
+                        yield return listener;
                     }
                 }
             }

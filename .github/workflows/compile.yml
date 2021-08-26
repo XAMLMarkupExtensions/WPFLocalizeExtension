@@ -13,6 +13,12 @@ on:
       - '*.md'
       - 'docs/**'
 
+  workflow_dispatch:
+    branches: [ master, development ]
+    paths-ignore:
+      - '*.md'
+      - 'docs/**'
+
 jobs:
   build:
     runs-on: windows-latest
@@ -28,23 +34,25 @@ jobs:
         git fetch --prune
 
     - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v1.0.0
+      uses: microsoft/setup-msbuild@v1
 
     - name: Cache Nuget
-      uses: actions/cache@v1
+      uses: actions/cache@v2.1.6
       with:
         path: ~/.nuget/packages
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+        key: ${{ runner.os }}-nugetv1-${{ hashFiles('**/packages.lock.json') }}
         restore-keys: |
-          ${{ runner.os }}-nuget-
+          ${{ runner.os }}-nugetv1-
 
-    - name: MSBuild
+    - name: Build
       working-directory: src
       run: |
-        dotnet restore --disable-parallel --locked-mode
-        # can't use pure dotnet build because NET35 compile doesn't work
-        msbuild WPFLocalizeExtension.csproj -verbosity:minimal /p:Configuration=Release
-#    - name: Build with dotnet
-#      run: |
-#        cd src
-#        dotnet build --disable-parallel --configuration Release
+        dotnet restore --disable-parallel
+        # dotnet build --disable-parallel --configuration Release
+        # can't use pure dotnet build because gitversion issues
+        msbuild ${{ github.event.repository.name }}.csproj -verbosity:minimal /p:Configuration=Release
+
+        # add check for PR against master from development -> build preRelease to nuget
+        # if merged into master -> build Release -> nuget
+        # if: github.ref == 'refs/heads/master' || (startsWith(github.ref, 'refs/tags/') && contains(github.ref,'-alpha'))
+        #/property:NugetAPIKey=${{ secrets.NugetAPIKey }}

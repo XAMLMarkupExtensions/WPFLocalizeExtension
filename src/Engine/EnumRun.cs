@@ -33,7 +33,7 @@ namespace WPFLocalizeExtension.Engine
         public static DependencyProperty EnumValueProperty = DependencyProperty.Register("EnumValue", typeof(Enum), typeof(EnumRun), new PropertyMetadata(PropertiesChanged));
 
         /// <summary>
-        /// The backing property for <see cref="EnumValueProperty"/>
+        /// The backing property for <see cref="EnumRun.EnumValueProperty"/>
         /// </summary>
         [Category("Common")]
         public Enum EnumValue
@@ -50,7 +50,7 @@ namespace WPFLocalizeExtension.Engine
         public static DependencyProperty PrependTypeProperty = DependencyProperty.Register("PrependType", typeof(bool), typeof(EnumRun), new PropertyMetadata(false, PropertiesChanged));
 
         /// <summary>
-        /// The backing property for <see cref="LocProxy.PrependTypeProperty"/>
+        /// The backing property for <see cref="EnumRun.PrependTypeProperty"/>
         /// </summary>
         [Category("Common")]
         public bool PrependType
@@ -67,7 +67,7 @@ namespace WPFLocalizeExtension.Engine
         public static DependencyProperty SeparatorProperty = DependencyProperty.Register("Separator", typeof(string), typeof(EnumRun), new PropertyMetadata("_", PropertiesChanged));
 
         /// <summary>
-        /// The backing property for <see cref="LocProxy.SeparatorProperty"/>
+        /// The backing property for <see cref="EnumRun.SeparatorProperty"/>
         /// </summary>
         [Category("Common")]
         public string Separator
@@ -84,7 +84,7 @@ namespace WPFLocalizeExtension.Engine
         public static DependencyProperty PrefixProperty = DependencyProperty.Register("Prefix", typeof(string), typeof(EnumRun), new PropertyMetadata(null, PropertiesChanged));
 
         /// <summary>
-        /// The backing property for <see cref="LocProxy.PrefixProperty"/>
+        /// The backing property for <see cref="EnumRun.PrefixProperty"/>
         /// </summary>
         [Category("Common")]
         public string Prefix

@@ -10,7 +10,9 @@ namespace WPFLocalizeExtension.ValueConverters
 {
     #region Usings
     using System;
+    using System.Linq;
     using System.Globalization;
+    using System.Reflection;
     using System.Windows;
     using System.Windows.Data;
     #endregion
@@ -20,10 +22,28 @@ namespace WPFLocalizeExtension.ValueConverters
     /// </summary>
     public class StringFormatConverter : TypeValueConverterBase, IMultiValueConverter
     {
+        private static MethodInfo miFormat = null;
+
         #region IMultiValueConverter
         /// <inheritdoc/>
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
+            if (miFormat == null)
+            {
+                try
+                {
+                    // try to load SmartFormat Assembly
+                    var asSmartFormat = Assembly.Load("SmartFormat");
+                    var tt = asSmartFormat.GetType("SmartFormat.Smart");
+                    miFormat = tt.GetMethod("Format", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(string), typeof(object[]) }, null);
+                }
+                catch
+                {
+                    // fallback just take String.Format
+                    miFormat = typeof(string).GetMethod("Format", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(string), typeof(object[]) }, null);
+                }
+            }
+
             if (!targetType.IsAssignableFrom(typeof(string)))
                 throw new Exception("TargetType is not supported strings");
 
@@ -36,13 +56,7 @@ namespace WPFLocalizeExtension.ValueConverters
             if (values.Length > 1 && values[1] == DependencyProperty.UnsetValue)
                 return null;
 
-            var format = values[0].ToString();
-            if (values.Length == 1)
-                return format;
-
-            var args = new object[values.Length - 1];
-            Array.Copy(values, 1, args, 0, args.Length);
-            return string.Format(format, args);
+            return (string)miFormat.Invoke(null, new[] { values[0], values.Skip(1).ToArray() });
         }
 
         /// <inheritdoc/>
