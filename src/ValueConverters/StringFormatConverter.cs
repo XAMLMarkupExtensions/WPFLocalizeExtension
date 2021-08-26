@@ -14,6 +14,7 @@ namespace WPFLocalizeExtension.ValueConverters
     using System.Reflection;
     using System.Windows;
     using System.Windows.Data;
+    using System.Linq;
     #endregion
 
     /// <summary>
@@ -59,8 +60,7 @@ namespace WPFLocalizeExtension.ValueConverters
             if (values.Length == 1)
                 return format;
 
-            var args = new object[values.Length - 1];
-            Array.Copy(values, 1, args, 0, args.Length);
+            var args = values.Skip(1).ToArray();
             return (string)miFormat.Invoke(null, new object[] { format, args });
         }
 
