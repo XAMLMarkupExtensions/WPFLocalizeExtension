@@ -10,7 +10,6 @@ namespace WPFLocalizeExtension.ValueConverters
 {
     #region Usings
     using System;
-    using System.Linq;
     using System.Globalization;
     using System.Reflection;
     using System.Windows;
@@ -56,7 +55,13 @@ namespace WPFLocalizeExtension.ValueConverters
             if (values.Length > 1 && values[1] == DependencyProperty.UnsetValue)
                 return null;
 
-            return (string)miFormat.Invoke(null, new[] { values[0], values.Skip(1).ToArray() });
+            var format = values[0].ToString();
+            if (values.Length == 1)
+                return format;
+
+            var args = new object[values.Length - 1];
+            Array.Copy(values, 1, args, 0, args.Length);
+            return (string)miFormat.Invoke(null, new object[] { format, args });
         }
 
         /// <inheritdoc/>

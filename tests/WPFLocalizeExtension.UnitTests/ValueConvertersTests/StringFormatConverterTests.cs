@@ -29,6 +29,7 @@
                 new object[] { "hello world", "hello world" },
                 new object[] { "01.01.1970", "{0:dd.MM.yyyy}", new DateTime(1970, 1, 1, 10, 0, 0) },
                 new object[] { "hello world", new StringBuilder("{0} {1}"), "hello", "world" },
+                new object[] { "hello world", "hello world" },
             };
         
         /// <summary>
