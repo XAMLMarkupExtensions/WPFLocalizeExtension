@@ -21,7 +21,7 @@ dotnet add package WPFLocalizationExtension
 
 ## Getting started
 
-cooming soon
+Coming soon
 
 ## Documentation & Tutorial:
 [Documentation / Wiki](docs/README.md)
