@@ -77,13 +77,13 @@
 
 	<!--References for .Net Core 3.x-->
 	<ItemGroup Condition="$(TargetFramework.StartsWith('netcore'))">
-		<PackageReference Include="System.Management" Version="5.0.0" />
-		<PackageReference Include="System.Drawing.Common" Version="5.0.2" />
+		<PackageReference Include="System.Management" Version="6.0.0" />
+		<PackageReference Include="System.Drawing.Common" Version="6.0.0" />
 	</ItemGroup>
 
 	<!--PackageReference for all framworks-->
 	<ItemGroup>
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.0" PrivateAssets="All" />
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
     <PackageReference Include="GitVersion.MsBuild" Version="5.7.0" PrivateAssets="all" />
 	</ItemGroup>
 
