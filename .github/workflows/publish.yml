@@ -23,7 +23,7 @@ jobs:
 
     - name: Create msbuild params
       run: |
-        echo "::set-output name=params::${{ github.event.repository.name }}.csproj -verbosity:minimal /p:Configuration=Release /property:DisableGitVersionTask=true /property:GitVersion_NuGetVersion=${{ github.event.release.tag_name }}"
+        echo "::set-output name=params::${{ github.event.repository.name }}.csproj -verbosity:minimal /p:Configuration=Release /property:DisableGitVersionTask=true /property:GitVersion_NuGetVersion=${{ github.event.release.tag_name }} /property:Version=${{ github.event.release.tag_name }}"
       id: msbuild
     
     - name: add nuget API Key for releases
