@@ -37,7 +37,7 @@ jobs:
       uses: microsoft/setup-msbuild@v1
 
     - name: Cache Nuget
-      uses: actions/cache@v2.1.6
+      uses: actions/cache@v2.1.7
       with:
         path: ~/.nuget/packages
         key: ${{ runner.os }}-nugetv1-${{ hashFiles('**/packages.lock.json') }}
