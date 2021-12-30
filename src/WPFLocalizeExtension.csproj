@@ -36,11 +36,6 @@
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 		<GenerateDocumentationFile>false</GenerateDocumentationFile>
 
-		<!--Workaround AssemblyVersion Duplicate from UseWPF" -->
-		<GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-		<GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-
 		<UnSignedFlag></UnSignedFlag>
 	</PropertyGroup>
 
@@ -84,7 +79,7 @@
 	<!--PackageReference for all framworks-->
 	<ItemGroup>
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
-    <PackageReference Include="GitVersion.MsBuild" Version="5.7.0" PrivateAssets="all" />
+    <PackageReference Include="GitVersion.MsBuild" Version="5.8.1" PrivateAssets="all" />
 	</ItemGroup>
 
   <ItemGroup>
