@@ -21,8 +21,8 @@ namespace WPFLocalizeExtension.Engine
     /// </summary>
     public class ParentNotifiers
     {
-        readonly Dictionary<WeakReference<DependencyObject>, WeakReference<ParentChangedNotifier>> _inner =
-            new Dictionary<WeakReference<DependencyObject>, WeakReference<ParentChangedNotifier>>();
+        readonly Dictionary<WeakReference<DependencyObject>, ParentChangedNotifier> _inner =
+            new Dictionary<WeakReference<DependencyObject>, ParentChangedNotifier>();
 
         /// <summary>
         /// Check, if it contains the key.
@@ -38,18 +38,27 @@ namespace WPFLocalizeExtension.Engine
         /// Removes the entry.
         /// </summary>
         /// <param name="target">The target object.</param>
-		public void Remove(DependencyObject target)
+        public void Remove(DependencyObject target)
         {
-            WeakReference<DependencyObject> key = _inner.Keys.SingleOrDefault(x => x.TryGetTarget(out var item) &&  ReferenceEquals(item, target));
-            if (key == null)
+            if (_inner.Count == 0)
                 return;
 
-            if (_inner[key].TryGetTarget(out var notifier))
+            var deadItems = new List<KeyValuePair<WeakReference<DependencyObject>, ParentChangedNotifier>>();
+
+            foreach (var item in _inner)
             {
-                notifier?.Dispose();
+                // If we can't get target (== target is dead) or this is the item which we have to remove - add it to the collection for removing.
+                if (!item.Key.TryGetTarget(out var itemTarget) || ReferenceEquals(itemTarget, target))
+                {
+                    deadItems.Add(item);
+                }
             }
 
-            _inner.Remove(key);
+            foreach (var deadItem in deadItems)
+            {
+                deadItem.Value?.Dispose();
+                _inner.Remove(deadItem.Key);
+            }
         }
 
         /// <summary>
@@ -57,9 +66,9 @@ namespace WPFLocalizeExtension.Engine
         /// </summary>
         /// <param name="target">The target key object.</param>
         /// <param name="parentChangedNotifier">The notifier.</param>
-		public void Add(DependencyObject target, ParentChangedNotifier parentChangedNotifier)
+        public void Add(DependencyObject target, ParentChangedNotifier parentChangedNotifier)
         {
-            _inner.Add(new WeakReference<DependencyObject>(target), new WeakReference<ParentChangedNotifier>(parentChangedNotifier));
+            _inner.Add(new WeakReference<DependencyObject>(target), parentChangedNotifier);
         }
     }
 }
