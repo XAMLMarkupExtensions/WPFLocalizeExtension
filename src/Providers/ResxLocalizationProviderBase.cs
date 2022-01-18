@@ -566,8 +566,8 @@ namespace WPFLocalizeExtension.Providers
             }
 
             return resourceManager != null;
-
         }
+
         private ResourceManager GetResourceManagerFromType(IReflect type)
         {
             if (type == null)
