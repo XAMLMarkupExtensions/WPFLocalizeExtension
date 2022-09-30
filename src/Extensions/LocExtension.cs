@@ -264,6 +264,12 @@ namespace WPFLocalizeExtension.Extensions
             get => _key ?? "(null)";
             set => _key = value.ToString();
         }
+        
+        /// <summary>
+        /// Behavior when key is not found at the localization provider.
+        /// </summary>
+        public FallbackBehavior FallbackBehavior { get; set; }
+        
         #endregion
 
         #region Constructors
@@ -606,7 +612,23 @@ namespace WPFLocalizeExtension.Extensions
                         if (missingKeyEventResult.MissingKeyResult != null)
                             result = missingKeyEventResult.MissingKeyResult;
                         else
-                            result = "Key: " + _key;
+                        {
+                            switch (FallbackBehavior)
+                            {
+                                case FallbackBehavior.Key:
+                                    result = _key;
+                                    break;
+                                
+                                case FallbackBehavior.EmptyString:
+                                    result = string.Empty;
+                                    break;
+                                
+                                case FallbackBehavior.Default:
+                                default:
+                                    result = "Key: " + _key;
+                                    break;
+                            }
+                        }
                     }
                 }
             }
