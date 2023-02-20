@@ -48,6 +48,10 @@ namespace HalloWeltWPF
 
         private void Instance_MissingKeyEvent(object sender, MissingKeyEventArgs e)
         {
+            // Test of FallbackBehavior.
+            if (e.Key == "UndefinedKey")
+                return;
+            
             e.MissingKeyResult = "Hello World";
         }
 

@@ -77,6 +77,11 @@
         <TextBlock Text="{lex:Loc {Binding tenum, Converter={lex:PrependTypeConverter}, ConverterParameter=__}}"></TextBlock>
         <Button Name="BindeTestButton" Content="Press to toggle binded property" Margin="5" Click="BindeTestButton_Click" ></Button>
         <TextBlock Name="MyLabel2" FontSize="20" Text="{lex:Loc PresentationCore:ExceptionStringTable:DeleteText}" HorizontalAlignment="Center" />
+        <StackPanel Margin="20,0,0,0">
+            <TextBlock FontSize="20" Text="{lex:Loc UndefinedKey, FallbackBehavior=Default}" />
+            <TextBlock FontSize="20" Text="{lex:Loc UndefinedKey, FallbackBehavior=Key}" />
+            <TextBlock FontSize="20" Text="{lex:Loc UndefinedKey, FallbackBehavior=EmptyString}" />
+        </StackPanel>
         <StackPanel Orientation="Horizontal">
             <Button Content="{lex:Loc de}" Margin="5" CommandParameter="de" Command="{Binding Source={x:Static lex:LocalizeDictionary.Instance}, Path=SetCultureCommand}" />
             <Button Content="{lex:Loc en}" Margin="5" CommandParameter="en" Command="{Binding Source={x:Static lex:LocalizeDictionary.Instance}, Path=SetCultureCommand}" />
