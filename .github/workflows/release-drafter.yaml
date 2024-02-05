@@ -32,7 +32,7 @@ jobs:
 
     - name: create release
       id: create_release
-      uses: release-drafter/release-drafter@v5
+      uses: release-drafter/release-drafter@v6
       with:
         tag: '${{ steps.gitversion.outputs.semVer }}'
         name: 'Release ${{ steps.gitversion.outputs.semVer }}'
