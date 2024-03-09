@@ -13,7 +13,7 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Setup MSBuild.exe
-      uses: microsoft/setup-msbuild@v1.0.2
+      uses: microsoft/setup-msbuild@v2
 
     - name: Write Fullkey.snk
       uses: RollyPeres/base64-to-path@v1
