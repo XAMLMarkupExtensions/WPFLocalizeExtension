@@ -11,6 +11,7 @@ namespace WPFLocalizeExtension.Providers
     #region Usings
     using System;
     using System.Windows;
+    using System.Windows.Controls;
     using System.Windows.Media;
     using System.Windows.Media.Media3D;
     using WPFLocalizeExtension.Engine;
@@ -53,8 +54,8 @@ namespace WPFLocalizeExtension.Providers
                 if (ret != null)
                     parentNotifiers.Remove(target);
 
-                // Try to get the parent using the visual tree helper. This may fail on some occations.
-                if (depObj is System.Windows.Controls.ToolTip)
+                // Try to get the parent using the visual tree helper. This may fail on some occasions.
+                if (depObj is ToolTip || depObj is ContextMenu)
                     break;
 
                 if (!(depObj is Visual) && !(depObj is Visual3D) && !(depObj is FrameworkContentElement))
