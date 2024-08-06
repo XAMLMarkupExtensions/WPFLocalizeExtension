@@ -470,6 +470,13 @@ namespace WPFLocalizeExtension.Providers
                     // remove ".resources" from the end
                     foundResource = foundResource.Substring(0, foundResource.Length - ResourceFileExtension.Length);
 
+                    if (TryCreateResourceManager(foundResource, assembly, out ResourceManager resourceManager))
+                    {
+                        CacheResourceManager(resManKey, resourceManager);
+
+                        return resourceManager;
+                    }
+                    
                     // First try the simple retrieval
                     Type resourceManagerType;
                     try
@@ -519,27 +526,46 @@ namespace WPFLocalizeExtension.Providers
                 if (resManager == null)
                     throw new ArgumentException(string.Format("No resource manager for dictionary '{0}' in assembly '{1}' found! ({1}.{0})", resourceDictionary, resourceAssembly));
 
-                // Add the ResourceManager to the cachelist
-                Add(resManKey, resManager);
-
-                try
-                {
-                    // Look in all cultures and check available ressources.
-                    foreach (var c in SearchCultures)
-                    {
-                        var rs = resManager.GetResourceSet(c, true, false);
-                        if (rs != null)
-                            AddCulture(c);
-                    }
-                }
-                catch
-                {
-                    // ignored
-                }
+                CacheResourceManager(resManKey, resManager);
             }
 
             // return the found ResourceManager
             return resManager;
+        }
+
+        private void CacheResourceManager(string resManKey, ResourceManager resManager)
+        {
+            // Add the ResourceManager to the cachelist
+            Add(resManKey, resManager);
+
+            try
+            {
+                // Look in all cultures and check available ressources.
+                foreach (var c in SearchCultures)
+                {
+                    var rs = resManager.GetResourceSet(c, true, false);
+                    if (rs != null)
+                        AddCulture(c);
+                }
+            }
+            catch
+            {
+                // ignored
+            }
+        }
+
+        private bool TryCreateResourceManager(string resourceManagerBaseName, Assembly resourceManagerAssembly, out ResourceManager resourceManager)
+        {
+            try
+            {
+                resourceManager = new ResourceManager(resourceManagerBaseName, resourceManagerAssembly);
+            }
+            catch
+            {
+                resourceManager = null;
+            }
+
+            return resourceManager != null;
         }
 
         private ResourceManager GetResourceManagerFromType(IReflect type)
@@ -561,9 +587,9 @@ namespace WPFLocalizeExtension.Providers
                 return null;
             }
         }
-        #endregion
+#endregion
 
-        #region ILocalizationProvider implementation
+#region ILocalizationProvider implementation
         /// <summary>
         /// Uses the key and target to build a fully qualified resource key (Assembly, Dictionary, Key)
         /// </summary>
@@ -711,6 +737,6 @@ namespace WPFLocalizeExtension.Providers
         /// An observable list of available cultures.
         /// </summary>
         public ObservableCollection<CultureInfo> AvailableCultures { get; protected set; }
-        #endregion
+#endregion
     }
 }
