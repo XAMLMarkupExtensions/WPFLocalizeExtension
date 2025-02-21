@@ -35,12 +35,12 @@ namespace WPFLocalizeExtension.ValueConverters
                     // try to load SmartFormat Assembly
                     var asSmartFormat = Assembly.Load("SmartFormat");
                     var tt = asSmartFormat.GetType("SmartFormat.Smart");
-                    miFormat = tt.GetMethod("Format", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(string), typeof(object[]) }, null);
+                    miFormat = tt.GetMethod("Format", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(IFormatProvider), typeof(string), typeof(object[]) }, null);
                 }
                 catch
                 {
                     // fallback just take String.Format
-                    miFormat = typeof(string).GetMethod("Format", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(string), typeof(object[]) }, null);
+                    miFormat = typeof(string).GetMethod("Format", BindingFlags.Static | BindingFlags.Public, null, new Type[] { typeof(IFormatProvider), typeof(string), typeof(object[]) }, null);
                 }
             }
 
@@ -61,7 +61,7 @@ namespace WPFLocalizeExtension.ValueConverters
                 return format;
 
             var args = values.Skip(1).ToArray();
-            return (string)miFormat.Invoke(null, new object[] { format, args });
+            return (string)miFormat.Invoke(null, new object[] { culture, format, args });
         }
 
         /// <inheritdoc/>

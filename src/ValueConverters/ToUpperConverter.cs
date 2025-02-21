@@ -30,7 +30,7 @@ namespace WPFLocalizeExtension.ValueConverters
         {
             if (value != null)
             {
-                return value.ToString().ToUpper();
+                return value.ToString().ToUpper(culture);
             }
 
             return null;
