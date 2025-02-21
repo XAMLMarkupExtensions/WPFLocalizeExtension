@@ -30,7 +30,7 @@ namespace WPFLocalizeExtension.ValueConverters
         {
             if (value != null)
             {
-                return value.ToString().ToLower();
+                return value.ToString().ToLower(culture);
             }
 
             return null;
